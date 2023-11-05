@@ -1,41 +1,30 @@
-import type { MetaFunction } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+// import { getPosts } from "~/model/post.server";
+// import { response } from "~/utils/response.server";
+import {
+  HomeHeader,
+  About,
+  // , RecentPosts
+} from "~/components/home";
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
-  ];
-};
-
+// export async function loader({ request }: LoaderFunctionArgs) {
+//   try {
+//     // const { posts } = await getPosts(request);
+//     // return json(response({ data: { posts } }));
+//     return null;
+//   } catch (error) {
+//     // return json(response({ error, ok: false }));
+//   }
+// }
 export default function Index() {
+  // const loaderData = useLoaderData();
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1>Welcome to Remix</h1>
-      <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
-      </ul>
-    </div>
+    <main>
+      <HomeHeader />
+      <About />
+      {/* <RecentPosts loaderData={loaderData} /> */}
+    </main>
   );
 }

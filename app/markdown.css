@@ -1,0 +1,16 @@
+code {
+  font-family: "Fira Code", "Lucida Sans", "Lucida Sans Regular",
+    "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  font-size: small !important;
+}
+
+.markdown {
+  font-family: "Mulish", "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+
+.markdown > p {
+  margin-top: 12px;
+  font-size: large;
+  line-height: 1.7em;
+}
