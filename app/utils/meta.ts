@@ -1,8 +1,8 @@
 import homeImage from "~/assets/home.webp";
 type MetaDataParams = {
   data?: any;
-  matches?: Match[];
-  error?: ErrorData;
+  matches?: any;
+  error?: any;
   title?: string;
   url?: string;
   // Add other properties as needed

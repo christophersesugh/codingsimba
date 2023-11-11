@@ -12,7 +12,7 @@ export function NavButton({ className, to, children, ...props }: NavButton) {
   return (
     <NavLink
       className={({ isActive }) => (isActive ? "underline text-blue-500" : "")}
-      prefetch="intent"
+      prefetch="render"
       to={to}
     >
       <Button className={clsx("text-lg", className)} {...props}>
