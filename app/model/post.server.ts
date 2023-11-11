@@ -24,6 +24,8 @@ const ttl: number = 7 * 60 * 60;
  */
 async function createPost(formData: FormData): Promise<any> {
   const { fileContent, title, filePath } = await formatMDXContent(formData);
+  console.log(fileContent, title, filePath);
+
   const { data } = await octokit.rest.repos.createOrUpdateFileContents({
     owner,
     repo,

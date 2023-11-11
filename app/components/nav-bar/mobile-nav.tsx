@@ -38,7 +38,7 @@ export function MobileNav({
               to={item.link}
               onClick={() => setIsOpen(false)}
               className="capitalize w-full"
-              ariaLabel={item.name}
+              aria-label={item.name}
             >
               {item.name}
             </NavButton>
@@ -49,7 +49,7 @@ export function MobileNav({
           <Button
             onClick={handleButtonClick}
             className="rounded-3xl border-2 p-2"
-            ariaLabel="toggle theme mode"
+            aria-label="toggle theme mode"
           >
             {theme === Theme.LIGHT ? (
               <>

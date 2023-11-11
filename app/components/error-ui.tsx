@@ -1,6 +1,7 @@
 import React from "react";
 import { Section } from "./section";
 import { useNavigate, useNavigation } from "@remix-run/react";
+import { Button } from "./button";
 
 export function ErrorUI({ error }: { error: unknown | Error }) {
   const navigate = useNavigate();
@@ -15,12 +16,12 @@ export function ErrorUI({ error }: { error: unknown | Error }) {
         <p className="text-lg text-red-500">
           {error instanceof Error ? error.message : "Unknown error."}
         </p>
-        <button
+        <Button
           onClick={() => navigate(0)}
           className="rounded-md border-2 p-2 mt-4 uppercase"
         >
           {isLoading ? "retrying..." : "retry"}
-        </button>
+        </Button>
       </div>
     </Section>
   );

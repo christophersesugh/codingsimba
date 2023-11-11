@@ -1,5 +1,8 @@
 /** @type {import('@remix-run/dev').AppConfig} */
 export default {
+  browserNodeBuiltinsPolyfill: {
+    modules: { punycode: true, stream: true, util: true },
+  },
   ignoredRouteFiles: ["**/.*"],
   serverDependenciesToBundle: [
     /^rehype.*/,

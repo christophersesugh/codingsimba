@@ -4,31 +4,18 @@ import type { ButtonProps } from "../button";
 import clsx from "clsx";
 import { Button } from "../button";
 
-interface NavButtonProps extends ButtonProps {
+interface NavButton extends ButtonProps {
   to: string;
-  ariaLabel: string;
 }
 
-export function NavButton({
-  children,
-  className,
-  onClick,
-  disabled,
-  to,
-  ariaLabel,
-}: NavButtonProps) {
+export function NavButton({ className, to, children, ...props }: NavButton) {
   return (
     <NavLink
       className={({ isActive }) => (isActive ? "underline text-blue-500" : "")}
       prefetch="intent"
       to={to}
     >
-      <Button
-        className={clsx("text-lg", className)}
-        ariaLabel={ariaLabel}
-        onClick={onClick}
-        disabled={disabled}
-      >
+      <Button className={clsx("text-lg", className)} {...props}>
         {children}
       </Button>
     </NavLink>

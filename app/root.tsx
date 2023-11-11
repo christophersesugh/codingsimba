@@ -4,6 +4,7 @@ import type {
   LoaderFunctionArgs,
   // MetaFunction,
 } from "@remix-run/node";
+import type { Theme } from "~/context/theme-context";
 import {
   Links,
   LiveReload,
@@ -64,12 +65,13 @@ export const links: LinksFunction = () => [
   { rel: "stylesheet", href: markdownEditor },
 ];
 
-function Document({ children }: PropsWithChildren<{}>) {
+function Document({
+  children,
+  theme,
+  headData,
+}: PropsWithChildren<{ headData?: any; theme?: Theme | null }>) {
   const navigation = useNavigation();
-  const data = useLoaderData<typeof loader>();
-  const [theme] = useTheme();
   const isLoading = navigation.state === "loading";
-
   return (
     <html lang="en" className={clsx(theme)}>
       <head>
@@ -77,7 +79,7 @@ function Document({ children }: PropsWithChildren<{}>) {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
-        <RemoveThemeFlashes ssrTheme={Boolean(data.theme)} />
+        {headData}
       </head>
       <body
         className={clsx(
@@ -94,13 +96,26 @@ function Document({ children }: PropsWithChildren<{}>) {
   );
 }
 
+export function ThemeApp({ children }: PropsWithChildren) {
+  const data = useLoaderData<typeof loader>();
+  const [theme] = useTheme();
+  return (
+    <Document
+      headData={<RemoveThemeFlashes ssrTheme={Boolean(data.theme)} />}
+      theme={theme}
+    >
+      {children}
+    </Document>
+  );
+}
+
 export default function App() {
   const data = useLoaderData<typeof loader>();
   return (
     <ThemeProvider sTheme={data.theme}>
-      <Document>
+      <ThemeApp>
         <RootLayout />
-      </Document>
+      </ThemeApp>
     </ThemeProvider>
   );
 }
@@ -108,8 +123,8 @@ export default function App() {
 export function ErrorBoundary() {
   const error = useRouteError();
   return (
-    // <Document>
-    <ErrorUI error={error} />
-    // </Document>
+    <Document>
+      <ErrorUI error={error} />
+    </Document>
   );
 }

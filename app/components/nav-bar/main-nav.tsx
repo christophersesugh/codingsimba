@@ -33,7 +33,7 @@ export function MainNav({
             <NavButton
               to={item.link}
               className={`capitalize hover:underline underline-offset-8 transition-all duration-300 hover:ease-linear dark:text-slate-300`}
-              ariaLabel={item.name}
+              aria-label={item.name}
             >
               {item.name}
             </NavButton>

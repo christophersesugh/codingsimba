@@ -3,37 +3,29 @@ import clsx from "clsx";
 
 export interface ButtonProps {
   children: React.ReactNode;
-  id?: string;
-  name?: string;
-  value?: string;
-  type?: "button" | "submit" | "reset";
-  ariaLabel?: string;
   className?: string;
   onClick?: any;
-  disabled?: boolean;
+  value?: string | undefined;
+  name?: string | undefined;
+  type?: "button" | "submit" | "reset";
 }
 
 export function Button({
   children,
-  id,
-  name,
-  value,
-  type = "button",
-  ariaLabel,
   className,
   onClick,
-  disabled,
+  name,
+  value,
+  ...props
 }: ButtonProps) {
   return (
     <button
-      id={id}
-      onClick={onClick}
-      type={type}
-      name={name}
+      type="button"
       value={value}
-      disabled={disabled}
-      aria-label={ariaLabel}
+      name={name}
+      onClick={onClick}
       className={clsx("p-2 rounded-md", className)}
+      {...props}
     >
       {children}
     </button>

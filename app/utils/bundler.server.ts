@@ -1,25 +1,22 @@
-import React from "react";
-import { Section } from "~/components/section";
-import { Markdown } from "~/components/markdown";
-import { DiscordButton } from "~/components/discord-button";
+import { bundleMDX } from "mdx-bundler";
+import remarkGfm from "remark-gfm";
 
-export default function About() {
-  return (
-    <Section className="flex flex-col">
-      <h1 className="text-2xl mb-4">About CS</h1>
-      <p className="text-lg">
-        Hi, I&apos;m Christopher A. Sesugh, I&apos;m a software engineer and an
-        educator. I help change the world by building better software and
-        sharing my existing knowledge with others by teaching.
-      </p>
-      <p className="py-4 self-start">
-        You can find my social media handles in the footer of my website.
-      </p>
-      <div className="dark:text-slate-300 text-slate-600">
-        <Markdown source={content} />
-      </div>{" "}
-      <DiscordButton />
-    </Section>
+import path from "path";
+
+if (process.platform === "win32") {
+  process.env.ESBUILD_BINARY_PATH = path.join(
+    process.cwd(),
+    "node_modules",
+    "esbuild",
+    "esbuild.exe",
+  );
+} else {
+  process.env.ESBUILD_BINARY_PATH = path.join(
+    process.cwd(),
+    "node_modules",
+    "esbuild",
+    "bin",
+    "esbuild",
   );
 }
 
@@ -48,3 +45,14 @@ and embark on this tech adventure with me.
 Thank you for being a part of "Coding Simba Community". Together, we'll unlock the
 endless possibilities of the tech universe.
 `;
+
+export function mdxBundler() {
+  return bundleMDX({
+    source: content,
+    mdxOptions(options, frontmatter) {
+      options.remarkPlugins = [...(options.remarkPlugins ?? []), remarkGfm];
+      //   options.rehypePlugins = [...(options.rehypePlugins ?? []), myRehypePlugin]
+      return options;
+    },
+  });
+}

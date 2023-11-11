@@ -3,7 +3,7 @@ import { BsDiscord } from "react-icons/bs";
 import { PageHeader } from "~/components/home/page-header";
 import { HeaderButton } from "~/components/header-button";
 import { Section } from "~/components/section";
-import { Markdown } from "~/components/markdown";
+import { Markdown } from "~/components/markdown/mdx";
 import { DiscordButton } from "~/components/discord-button";
 // import { metaData } from "~/utils/meta";
 

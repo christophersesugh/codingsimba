@@ -15,13 +15,17 @@ export function HeaderButton({
   buttonText,
   icon,
   otherProps,
+  ...props
 }: HeaderButtonProps) {
   return (
     <div>
       {otherProps ? otherProps : null}
       <div className="flex items-center gap-6 mt-12">
         <Link to={to}>
-          <Button className="!rounded-full  text-xl p-4  border-2 border-slate-400 hover:border-slate-800 dark:hover:border-[#fff]">
+          <Button
+            {...props}
+            className="!rounded-full  text-xl p-4  border-2 border-slate-400 hover:border-slate-800 dark:hover:border-[#fff]"
+          >
             {icon ? icon : <BsArrowDown className="text-lg animate-bounce" />}
           </Button>
         </Link>
