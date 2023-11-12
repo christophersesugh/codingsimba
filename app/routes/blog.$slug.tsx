@@ -3,12 +3,12 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import invariant from "invariant";
-import { getPost } from "~/model/post.server";
 import { response } from "~/utils/response.server";
 import { BlogCard } from "~/components/blog-card";
 import { ContentContainer } from "~/components/content-container";
 import { EmptyContentUI } from "~/components/empty-content-ui";
 import { ContentErrorUI } from "~/components/content-error-ui";
+import { fetchMdxContentBySlug } from "~/utils/fetch-mdx";
 // import { metaData } from "~/utils/meta";
 
 export async function loader(request: LoaderFunctionArgs) {
@@ -16,7 +16,9 @@ export async function loader(request: LoaderFunctionArgs) {
 
   invariant(params.slug, "Missing post slug");
   try {
-    const post = await getPost(request);
+    // const post = await getPost(request);
+    const post = await fetchMdxContentBySlug(params.slug);
+
     return json(response({ data: { post } }), 200);
   } catch (error) {
     return json(response({ ok: false }), 500);
@@ -47,7 +49,7 @@ export default function BlogPostRoute() {
       <hr />
       <div className="flex flex-col gap-6 mt-6 px-4">
         <h2 className="text-2xl font-bold">Related posts</h2>
-        {post?.relatedPosts?.length ? (
+        {/* {post?.relatedPosts?.length ? (
           <div className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-20 justify-evenly mb-12">
             {post?.relatedPosts.map(
               (post: { data: { slug: any } }, index: number) => (
@@ -60,7 +62,7 @@ export default function BlogPostRoute() {
             message="no related posts for this post."
             className="!text-xl !-mt-4"
           />
-        )}
+        )} */}
       </div>
     </div>
   );

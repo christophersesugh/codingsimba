@@ -12,14 +12,17 @@ import { Tags } from "~/components/tags";
 import { EmptyContentUI } from "~/components/empty-content-ui";
 import { ContentErrorUI } from "~/components/content-error-ui";
 import { metaData } from "~/utils/meta";
+import { getMdxFiles } from "~/utils/fetch-mdx";
 
 export const meta = metaData({ title: "Blog", url: "blog" });
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
-    const tags = await getTags();
-    const { posts } = await getPosts(request);
-    return json(response({ data: { posts, tags } }));
+    // const tags = await getTags();
+    // const { posts } = await getPosts(request);
+    const posts = await getMdxFiles();
+
+    return json(response({ data: { posts } }));
   } catch (error) {
     return json(response({ ok: false }), 500);
   }
@@ -28,6 +31,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 type SubmitOptions = {
   method: "GET" | "POST";
   preventScrollReset: boolean;
+};
+
+type POST = {
+  frontmatter: {
+    slug: string;
+  };
 };
 
 function Blog() {
@@ -43,7 +52,8 @@ function Blog() {
     [],
   );
 
-  const { posts, tags } = data as any;
+  const { posts } = data as any;
+  console.log(posts);
 
   function handleFormChange(event: {
     target: { name: string; value: string };
@@ -51,7 +61,6 @@ function Blog() {
     const { name, value } = event.target;
     submit({ [name]: value }, submitOptions);
   }
-  console.log("blog index");
 
   const increasePostLimit = React.useCallback(() => {
     setPostLimit((prevLimit) => {
@@ -79,7 +88,7 @@ function Blog() {
           className="p-4 bg-slate-300 text-black md:w-[50%]"
         />
         {/* post tags */}
-        <Tags tags={tags} />
+        {/* <Tags tags={tags} /> */}
       </div>
 
       <div>
@@ -94,8 +103,8 @@ function Blog() {
       {/* success UI */}
       <div className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-20 justify-evenly my-12">
         {posts && ok && posts?.length
-          ? posts.map((post: { data: { slug: string } }, index: number) => (
-              <BlogCard post={post} key={`${post.data.slug}-${index}`} />
+          ? posts.map((post: POST, index: number) => (
+              <BlogCard post={post} key={`${post.frontmatter.slug}-${index}`} />
             ))
           : null}
       </div>

@@ -7,14 +7,14 @@ import { BackButton } from "./back-button";
 import { Iframe } from "./iframe";
 
 type Post = {
-  data: {
+  frontmatter: {
     title: string;
     description: string;
     photo: string;
     video: string;
     createdAt: string;
   };
-  content: string;
+  code: string;
 };
 export function ContentContainer({
   to,
@@ -25,30 +25,34 @@ export function ContentContainer({
   text: string;
   post: Post;
 }) {
-  const { data, content } = post as unknown as Post;
-  const stats = readingTime(content);
+  const { frontmatter, code } = post as unknown as Post;
+  const stats = readingTime(code);
   return (
     <Section className="!max-w-3xl md:px-0 flex flex-col gap-8">
       <BackButton to={to} text={text} className="pl-0 mb-4" />
       <div>
-        <h1 className="text-4xl font-bold capitalize mb-4">{data.title}</h1>
+        <h1 className="text-4xl font-bold capitalize mb-4">
+          {frontmatter.title}
+        </h1>
         <p className="text-slate-400">
-          {moment(data.createdAt).format("MMM DD, YYYY")} -- {stats.text}
+          {moment(frontmatter.createdAt).format("MMM DD, YYYY")} -- {stats.text}
         </p>
       </div>
-      {data.photo ? (
+      {frontmatter.photo ? (
         <img
-          src={data.photo}
-          alt={data.title}
-          title={data.title}
+          src={frontmatter.photo}
+          alt={frontmatter.title}
+          title={frontmatter.title}
           className="w-full rounded-md h-[18rem] md:h-[30rem]"
         />
       ) : null}
-      <h2 className="text-xl font-bold">{data.description}</h2>
+      <h2 className="text-xl font-bold">{frontmatter.description}</h2>
 
-      {data.video ? <Iframe src={data.video} title={data.title} /> : null}
+      {frontmatter.video ? (
+        <Iframe src={frontmatter.video} title={frontmatter.title} />
+      ) : null}
       <div className="dark:text-slate-300 text-slate-800 markdown">
-        <Markdown source={content} />
+        <Markdown source={code} />
       </div>
     </Section>
   );

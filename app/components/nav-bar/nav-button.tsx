@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "@remix-run/react";
-import type { ButtonProps } from "../button";
 import clsx from "clsx";
+import type { ButtonProps } from "../button";
 import { Button } from "../button";
 
 interface NavButton extends ButtonProps {

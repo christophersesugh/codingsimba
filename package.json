@@ -28,7 +28,6 @@
     "@tiptap/starter-kit": "^2.1.12",
     "bcryptjs": "^2.4.3",
     "better-react-mathjax": "^2.0.3",
-    "builtin-modules": "^3.3.0",
     "clsx": "^2.0.0",
     "dashify": "^2.0.0",
     "esbuild": "^0.19.5",

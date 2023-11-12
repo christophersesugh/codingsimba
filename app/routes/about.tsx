@@ -1,29 +1,14 @@
 import React from "react";
 import { Section } from "~/components/section";
-import { Markdown } from "~/components/markdown";
 import { DiscordButton } from "~/components/discord-button";
+import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import { mdxBundle } from "~/utils/bundler.server";
+import { Markdown } from "~/components/markdown";
+import { getMdxFiles } from "~/utils/fetch-mdx";
 
-export default function About() {
-  return (
-    <Section className="flex flex-col">
-      <h1 className="text-2xl mb-4">About CS</h1>
-      <p className="text-lg">
-        Hi, I&apos;m Christopher A. Sesugh, I&apos;m a software engineer and an
-        educator. I help change the world by building better software and
-        sharing my existing knowledge with others by teaching.
-      </p>
-      <p className="py-4 self-start">
-        You can find my social media handles in the footer of my website.
-      </p>
-      <div className="dark:text-slate-300 text-slate-600">
-        <Markdown source={content} />
-      </div>{" "}
-      <DiscordButton />
-    </Section>
-  );
-}
-
-const content = `Welcome to "Coding Simba," your gateway to the world of technology and
+export async function loader() {
+  const content = `Welcome to "Coding Simba," your gateway to the world of technology and
 coding! I'm Christopher A. Sesugh, the curator of this tech-savvy haven.
 With a passion for all things tech and a love for coding, I've embarked on
 a journey to share my insights, knowledge, and experiences with you.
@@ -48,3 +33,32 @@ and embark on this tech adventure with me.
 Thank you for being a part of "Coding Simba Community". Together, we'll unlock the
 endless possibilities of the tech universe.
 `;
+  const mdxFiles = await getMdxFiles();
+  console.log("Files:", mdxFiles);
+
+  console.log("MDX Files:", mdxFiles);
+
+  const { code } = await mdxBundle({ source: content });
+  return json({ code });
+}
+
+export default function About() {
+  const { code } = useLoaderData<typeof loader>();
+  return (
+    <Section className="flex flex-col">
+      <h1 className="text-2xl mb-4">About CS</h1>
+      <p className="text-lg">
+        Hi, I&apos;m Christopher A. Sesugh, I&apos;m a software engineer and an
+        educator. I help change the world by building better software and
+        sharing my existing knowledge with others by teaching.
+      </p>
+      <p className="py-4 self-start">
+        You can find my social media handles in the footer of my website.
+      </p>
+      <div className="dark:text-slate-300 text-slate-600">
+        <Markdown source={code} />
+      </div>{" "}
+      <DiscordButton />
+    </Section>
+  );
+}

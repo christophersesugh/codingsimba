@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { FiAlertCircle } from "react-icons/fi";
 
 interface CEUIProps {
-  error?: { message: string };
+  error: any;
   className?: string;
 }
 
