@@ -38,13 +38,17 @@ export async function requireUserId(request: Request) {
   if (!userId || typeof userId !== "number") {
     throw redirect(`/login`);
   }
-  return userId;
+  const user = await getUser(userId, request);
+  if (user?.role !== "ADMIN") {
+    throw redirect(`/login`);
+  }
+  return user;
 }
 
-export async function createUserSession(userId: number) {
+export async function createUserSession(userId: number | undefined) {
   const session = await storage.getSession();
   session.set("userId", userId);
-  return redirect("/", {
+  return redirect("/admin", {
     headers: {
       "Set-Cookie": await storage.commitSession(session),
     },
@@ -57,9 +61,9 @@ type User = {
 };
 
 export async function register({ email, password }: User) {
-  const hashPassword = await bcrypt.hash(password, 10);
+  const passwordHash = await bcrypt.hash(password, 10);
   const user = await db.user.create({
-    data: { email, hashPassword },
+    data: { email, passwordHash },
   });
   return { id: user.id, email, role: user.role };
 }
@@ -72,7 +76,7 @@ export async function login({ email, password }: User) {
     return null;
   }
 
-  const isCorrectPassword = await bcrypt.compare(password, user.hashPassword);
+  const isCorrectPassword = await bcrypt.compare(password, user.passwordHash);
   if (!isCorrectPassword) {
     return null;
   }
@@ -80,9 +84,8 @@ export async function login({ email, password }: User) {
   return { id: user.id, email: user.email, role: user.role };
 }
 
-export async function getUser(request: Request) {
-  const userId = await getUserId(request);
-  if (typeof userId !== "string") {
+export async function getUser(userId: number | undefined, request: Request) {
+  if (typeof userId !== "number") {
     return null;
   }
 

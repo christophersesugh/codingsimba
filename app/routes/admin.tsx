@@ -1,13 +1,14 @@
-import { redirect, type LoaderFunctionArgs, json } from "@remix-run/node";
+import { redirect, type LoaderFunctionArgs } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
-import { getUser } from "~/model/auth.server";
+import { requireUserId } from "~/model/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const user = await getUser(request);
-  if (!user || user.role !== "ADMIN") {
-    throw redirect("/");
+  const userId = await requireUserId(request);
+  if (!userId) {
+    throw redirect("/logout");
   }
-  return json({ user });
+
+  return null;
 }
 
 export default function AdminRoute() {

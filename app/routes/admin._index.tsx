@@ -1,5 +1,5 @@
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { Button } from "~/components/button";
 import { Section } from "~/components/section";
 import { getPosts } from "~/utils/fetch-mdx";
@@ -31,6 +31,9 @@ export default function AdminIndexRoute() {
             ))
           : null}
       </ul>
+      <Link to="/logout">
+        <Button>log out</Button>
+      </Link>
     </Section>
   );
 }
