@@ -98,10 +98,6 @@ export async function getUser(request: Request) {
   return user;
 }
 
-export async function verifyUser(request: Request) {
-  return getUser(request);
-}
-
 export async function logout(request: Request) {
   const session = await getUserSession(request);
   return redirect("/", {
