@@ -1,9 +1,5 @@
 import type { PropsWithChildren } from "react";
-import type {
-  LinksFunction,
-  LoaderFunctionArgs,
-  // MetaFunction,
-} from "@remix-run/node";
+import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import type { Theme } from "~/context/theme-context";
 import {
   Links,
@@ -27,7 +23,6 @@ import {
 import { RootLayout } from "~/components/layout";
 import { ErrorUI } from "~/components/error-ui";
 import { getThemeSession } from "~/model/theme.server";
-// import { metaData } from "~/utils/meta";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const themeSession = await getThemeSession(request);
@@ -36,10 +31,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
   return data;
 }
-
-// export const meta: MetaFunction = metaData({
-//   title: "Home",
-// });
 
 export const links: LinksFunction = () => [
   {

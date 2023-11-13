@@ -1,5 +1,4 @@
 import dashify from "dashify";
-import matter from "gray-matter";
 import NodeCache from "node-cache";
 import { octokit } from "~/libs/octokit.server";
 
@@ -49,146 +48,6 @@ async function updatePost(formData: FormData): Promise<any> {
     sha: existingFileContent.data.sha,
   });
   return data;
-}
-
-/**
- * getPosts - get all posts from github
- * @param {Object} request
- * @returns {Object}
- */
-async function getPosts(request: any): Promise<any> {
-  let url: URL | undefined;
-  let postLimit: number = 9;
-  let search: string | null = null;
-  let tag: string | null = null;
-
-  if (request) {
-    url = new URL(request.url);
-    if (url.pathname === "/") {
-      postLimit = 3;
-    } else {
-      const reqLimit = parseInt(url.searchParams.get("postLimit") || "0");
-      postLimit += reqLimit;
-    }
-    search = url.searchParams.get("search");
-    tag = url.searchParams.get("tag");
-  }
-
-  const cachedData: { posts?: any[] } = cache.get(postsCacheKey) || {};
-  if (Array.isArray(cachedData.posts)) {
-    const { posts } = cachedData;
-
-    if (search) {
-      const filteredPosts = posts?.filter(
-        (post: { data: { title: string | string[] } }) =>
-          post.data.title.includes(search!),
-      );
-
-      const limitedPosts = limitPosts(filteredPosts, postLimit);
-      return { posts: limitedPosts };
-    }
-
-    if (tag) {
-      const tagFilteredPosts = posts?.filter(
-        (post: { data: { tags: string | string[] } }) =>
-          post.data.tags.includes(tag!),
-      );
-
-      const limitedPosts = limitPosts(tagFilteredPosts, postLimit);
-      return { posts: limitedPosts };
-    }
-
-    const limitedPosts = limitPosts(posts, postLimit);
-    return { posts: limitedPosts };
-  }
-
-  const response = await fetchAllFilesProps();
-  const posts = await fetchAllPosts(response);
-
-  cache.set(postsCacheKey, { posts }, ttl);
-  if (search) {
-    const filteredPosts = posts?.filter(
-      (post: { data: { title: string | string[] } }) =>
-        post.data.title.includes(search!),
-    );
-
-    const limitedPosts = limitPosts(filteredPosts, postLimit);
-    return { posts: limitedPosts };
-  }
-
-  if (tag) {
-    const tagFilteredPosts = posts?.filter(
-      (post: { data: { tags: string | string[] } }) =>
-        post.data.tags.includes(tag!),
-    );
-
-    const limitedPosts = limitPosts(tagFilteredPosts, postLimit);
-    return { posts: limitedPosts };
-  }
-  const limitedPosts = limitPosts(posts, postLimit);
-  return { posts: limitedPosts };
-}
-
-/**
- * getTags - get all tags from posts
- * @returns {Array} uniqueTags
- */
-async function getTags(): Promise<string[]> {
-  const cachedTags: string[] | undefined = cache.get(tagsCacheKey);
-  if (cachedTags) {
-    return cachedTags;
-  }
-
-  const response = await fetchAllFilesProps();
-  const files = response.data?.filter(
-    (file: any) => file.type === "file" && file.name.endsWith(".mdx"),
-  );
-
-  const allTags: string[] = [];
-
-  for (const file of files) {
-    const contentResponse = await fetchAllFilesProps(file.path);
-
-    const postContent = Buffer.from(
-      contentResponse.data.content,
-      "base64",
-    ).toString("utf-8");
-
-    const { data } = matter(postContent);
-    if (typeof data.tags === "string") {
-      const tagsArray = data.tags.split(",");
-      allTags.push(...tagsArray);
-    }
-  }
-
-  const uniqueTags = Array.from(new Set(allTags));
-  cache.set(tagsCacheKey, uniqueTags, ttl);
-  return uniqueTags;
-}
-
-/**
- * getPost - get a single post from github
- * @param {Object} request
- * @returns {Object}
- */
-async function getPost(request: any): Promise<any> {
-  const cacheKey = `${cacheKeyPrefix}${request.params.slug}`;
-
-  const cachedData = cache.get(cacheKey);
-  if (cachedData) {
-    return cachedData;
-  }
-
-  const postPath = `${path}/${request.params.slug}.mdx`;
-  const response = await fetchAllFilesProps(postPath);
-  const postContent = Buffer.from(response.data.content, "base64").toString(
-    "utf-8",
-  );
-
-  const { data, content } = matter(postContent);
-  const relatedPosts = await fetchRelatedPosts(data);
-  cache.set(cacheKey, { data, content, relatedPosts }, ttl);
-  return { data, content, relatedPosts };
 }
 
 /**
@@ -271,30 +130,6 @@ ${content}
  * @param {Object} postData
  * @returns {Array}
  */
-async function fetchRelatedPosts(postData: any): Promise<any> {
-  const currentPostTags = postData?.tags
-    .split(",")
-    .map((tag: string) => tag.trim());
-  try {
-    const allPostsResponse = await fetchAllFilesProps();
-    const allPosts = await fetchAllPosts(allPostsResponse);
-
-    const relatedPosts = allPosts?.filter((post: any) => {
-      if (post.data.slug === postData.slug) {
-        return false;
-      }
-      const postTags = post.data.tags
-        .split(",")
-        .map((tag: string) => tag.trim());
-      return postTags.some((tag: any) => currentPostTags.includes(tag));
-    });
-
-    const limitedRelatedPosts = limitPosts(relatedPosts);
-    return limitedRelatedPosts;
-  } catch (error) {
-    return error;
-  }
-}
 
 /**
  * fetchAllFilesProps - fetch all files from github
@@ -319,32 +154,6 @@ async function fetchAllFilesProps(filePath?: string): Promise<any> {
  * @param {Object} allPostsResponse
  * @returns {Object}
  */
-async function fetchAllPosts(allPostsResponse: any): Promise<any> {
-  try {
-    const files = allPostsResponse?.data?.filter(
-      (file: any) => file.type === "file" && file.name.endsWith(".mdx"),
-    );
-    const allPosts = await Promise.all(
-      files.map(async (file: any) => {
-        const contentResponse = await octokit.rest.repos.getContent({
-          owner,
-          repo,
-          path: file.path,
-        });
-
-        const postContent = Buffer.from(
-          contentResponse.data.content,
-          "base64",
-        ).toString("utf-8");
-        const { data, content } = matter(postContent);
-        return { data, content };
-      }),
-    );
-    return allPosts;
-  } catch (error) {
-    return error;
-  }
-}
 
 /**
  * limitPosts - limit the number of posts to be displayed
@@ -356,4 +165,4 @@ function limitPosts(data: any[], limit?: number): any[] {
   return data?.slice(0, limit ? limit : 3);
 }
 
-export { createPost, updatePost, getPosts, getTags, getPost, deletePost };
+export { createPost, updatePost, deletePost };

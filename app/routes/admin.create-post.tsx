@@ -1,4 +1,3 @@
-import React from "react";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useNavigation, useActionData } from "@remix-run/react";
@@ -7,13 +6,7 @@ import { response } from "~/utils/response.server";
 import { Section } from "~/components/section";
 import { BlogForm } from "~/components/blog-form";
 import { useLocalStorageState } from "~/utils/hooks";
-import { Markdown } from "~/components/markdown";
 import { PageTitle } from "~/components/page-title";
-// import { metaData } from "~/utils/meta";
-
-// export const meta = metaData({
-//   title: "Create post",
-// });
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -61,9 +54,6 @@ export default function CreatePostRoute() {
         navigation={navigation}
         handleFormInputChange={handleFormInputChange}
       />
-      <div className="markdown">
-        <Markdown source={values.postContent} />
-      </div>
     </Section>
   );
 }

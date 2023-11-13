@@ -1,8 +1,8 @@
 import React from "react";
 import { Section } from "../section";
-// import { BlogCard } from "../blog/blog-card";
 import { EmptyContentUI } from "../empty-content-ui";
 import { ContentErrorUI } from "~/components/content-error-ui";
+import { BlogCard } from "../blog-card";
 
 export function RecentPosts({ loaderData }: { loaderData: any }) {
   const {
@@ -18,10 +18,8 @@ export function RecentPosts({ loaderData }: { loaderData: any }) {
           <ContentErrorUI error={error} />
         ) : ok && posts?.length ? (
           <div className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-20 justify-evenly mb-12">
-            {posts.map((post: { data: { slug: string } }, index: number) => (
-              // <BlogCard post={post} key={`${post.data.slug}-${index}`} />
-              // eslint-disable-next-line react/jsx-key
-              <div>some</div>
+            {posts.map((post: any, index: number) => (
+              <BlogCard post={post} key={`${post.frontmatter.slug}-${index}`} />
             ))}
           </div>
         ) : ok && !posts?.length ? (

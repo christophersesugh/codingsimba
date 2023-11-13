@@ -51,13 +51,12 @@ export async function createUserSession(userId: number) {
   });
 }
 
-export async function register({
-  email,
-  password,
-}: {
+type User = {
   email: string;
   password: string;
-}) {
+};
+
+export async function register({ email, password }: User) {
   const hashPassword = await bcrypt.hash(password, 10);
   const user = await db.user.create({
     data: { email, hashPassword },
@@ -65,13 +64,7 @@ export async function register({
   return { id: user.id, email, role: user.role };
 }
 
-export async function login({
-  email,
-  password,
-}: {
-  email: string;
-  password: string;
-}) {
+export async function login({ email, password }: User) {
   const user = await db.user.findUnique({
     where: { email },
   });
@@ -94,7 +87,7 @@ export async function getUser(request: Request) {
   }
 
   const user = await db.user.findUnique({
-    select: { id: true, email: true },
+    select: { id: true, email: true, role: true },
     where: { id: userId },
   });
 
@@ -103,6 +96,10 @@ export async function getUser(request: Request) {
   }
 
   return user;
+}
+
+export async function verifyUser(request: Request) {
+  return getUser(request);
 }
 
 export async function logout(request: Request) {

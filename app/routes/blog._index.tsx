@@ -2,7 +2,7 @@ import React from "react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData, useSubmit } from "@remix-run/react";
-import { getPosts, getTags } from "~/model/post.server";
+// import { getPosts, getTags } from "~/model/post.server";
 import { response } from "~/utils/response.server";
 import { Section } from "~/components/section";
 import { BlogCard } from "~/components/blog-card";
@@ -11,20 +11,17 @@ import { FormInput } from "~/components/form-input";
 import { Tags } from "~/components/tags";
 import { EmptyContentUI } from "~/components/empty-content-ui";
 import { ContentErrorUI } from "~/components/content-error-ui";
-import { metaData } from "~/utils/meta";
-import { getMdxFiles } from "~/utils/fetch-mdx";
-
-export const meta = metaData({ title: "Blog", url: "blog" });
+import { getTags, getPosts } from "~/utils/fetch-mdx";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
     // const tags = await getTags();
     // const { posts } = await getPosts(request);
-    const posts = await getMdxFiles();
-
-    return json(response({ data: { posts } }));
+    const tags = await getTags();
+    const posts = await getPosts(request);
+    return json(response({ data: { posts, tags } }));
   } catch (error) {
-    return json(response({ ok: false }), 500);
+    throw error;
   }
 }
 
@@ -52,8 +49,7 @@ function Blog() {
     [],
   );
 
-  const { posts } = data as any;
-  console.log(posts);
+  const { posts, tags } = data as any;
 
   function handleFormChange(event: {
     target: { name: string; value: string };
@@ -88,7 +84,7 @@ function Blog() {
           className="p-4 bg-slate-300 text-black md:w-[50%]"
         />
         {/* post tags */}
-        {/* <Tags tags={tags} /> */}
+        <Tags tags={tags} />
       </div>
 
       <div>

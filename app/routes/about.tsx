@@ -5,7 +5,6 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { mdxBundle } from "~/utils/bundler.server";
 import { Markdown } from "~/components/markdown";
-import { getMdxFiles } from "~/utils/fetch-mdx";
 
 export async function loader() {
   const content = `Welcome to "Coding Simba," your gateway to the world of technology and
@@ -33,11 +32,6 @@ and embark on this tech adventure with me.
 Thank you for being a part of "Coding Simba Community". Together, we'll unlock the
 endless possibilities of the tech universe.
 `;
-  const mdxFiles = await getMdxFiles();
-  console.log("Files:", mdxFiles);
-
-  console.log("MDX Files:", mdxFiles);
-
   const { code } = await mdxBundle({ source: content });
   return json({ code });
 }

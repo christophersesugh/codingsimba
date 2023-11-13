@@ -1,5 +1,4 @@
 import type { InputHTMLAttributes } from "react";
-import React from "react";
 import clsx from "clsx";
 
 interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -15,7 +14,10 @@ export function FormInput({ className, label, ...props }: FormInputProps) {
       </label>
       <input
         {...props}
-        className={clsx("p-2 rounded-md w-full bg-slate-100", className)}
+        className={clsx(
+          "p-2 rounded-md w-full bg-slate-100 text-slate-500",
+          className,
+        )}
       />
     </div>
   );

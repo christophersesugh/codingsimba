@@ -1,11 +1,7 @@
-type ErrorResponse = {
-  message: string;
-};
-
 type Response<T> = {
   ok: boolean;
   data: T | undefined; // Initialize as undefined
-  error: ErrorResponse | null;
+  error: any;
 };
 
 function response<T>({
