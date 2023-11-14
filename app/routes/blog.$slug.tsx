@@ -32,10 +32,12 @@ export default function BlogPostRoute() {
       ) : null}
 
       <hr />
-      <div className="flex flex-col gap-6 mt-6 px-4">
-        <h2 className="text-2xl font-bold">Related posts</h2>
+      <div className="flex flex-col gap-6 mt-6">
+        <h2 className="text-2xl font-bold px-4">
+          You may also like to read the following articles:
+        </h2>
         {post?.relatedPosts?.length ? (
-          <div className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-20 justify-evenly mb-12">
+          <div className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-20 justify-between mb-12">
             {post?.relatedPosts.map((post: any, index: number) => (
               <BlogCard post={post} key={`${post.frontmatter.slug}-${index}`} />
             ))}

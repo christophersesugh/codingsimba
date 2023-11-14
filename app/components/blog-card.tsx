@@ -8,7 +8,7 @@ function Card({ post }: any) {
   const stats = readingTime(code);
   return (
     <Link to={`/blog/${file}`}>
-      <article className="flex flex-col gap-2 drop-shadow-xl border-2 hover:border-blue-500 hover:border-2 duration-200 rounded-md">
+      <article className="flex flex-col gap-2 drop-shadow-xl border-2 hover:border-blue-500 hover:border-2 duration-200 rounded-md min-h-[22rem] max-w-[20rem] mx-auto">
         <div className="h-[60%] w-full rounded-tl-3xl rounded-tr-3xl">
           <img
             src={frontmatter.photo}
@@ -34,7 +34,7 @@ function Card({ post }: any) {
             ))}
           </div>
         </div>
-        <h1 className="text-lg p-2 capitalize">{frontmatter.title}</h1>
+        <h1 className="text-lg p-2 capitalize my-auto">{frontmatter.title}</h1>
       </article>
     </Link>
   );
