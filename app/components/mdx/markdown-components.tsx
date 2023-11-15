@@ -109,7 +109,7 @@ export function Img({ node, children, ...props }: any) {
       // alt={props.alt}
       // height={props.height}
       // width={props.width}
-      className="my-6 rounded-sm"
+      className="my-6 rounded-md"
       {...props}
       alt={node}
     />
