@@ -4,6 +4,10 @@ code {
   font-size: small !important;
 }
 
+.markdown > pre {
+  margin: 1rem 0;
+}
+
 .markdown {
   font-family: "Mulish", "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;

@@ -1,8 +1,7 @@
-import React from "react";
-import { Link } from "@remix-run/react";
-import { Button } from "./button";
-import { AiOutlineArrowLeft } from "react-icons/ai";
 import clsx from "clsx";
+import { Link } from "@remix-run/react";
+import { AiOutlineArrowLeft } from "react-icons/ai";
+import { Button } from "./button";
 
 type BackButtonProps = {
   to: string;

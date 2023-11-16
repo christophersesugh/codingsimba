@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import React from "react";
 
 type IframeProps = {
   src: string;
@@ -11,7 +10,7 @@ export function Iframe({ src, title, className }: IframeProps) {
   return (
     <iframe
       className={clsx(
-        "mx-auto w-full h-64 md:h-96 lg:h-128 max-h-[32rem] rounded-md",
+        "mx-auto w-full h-64 md:h-[28rem] lg:h-128 max-h-[32rem] rounded-md my-12",
         className,
       )}
       src={`https://www.youtube.com/embed/${src}`}

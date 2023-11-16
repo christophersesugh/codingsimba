@@ -1,5 +1,6 @@
 import { redirect, type LoaderFunctionArgs } from "@remix-run/node";
-import { Outlet } from "@remix-run/react";
+import { Outlet, useRouteError } from "@remix-run/react";
+import { ContentErrorUI } from "~/components/content-error-ui";
 import { requireUserId } from "~/model/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -13,4 +14,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function AdminRoute() {
   return <Outlet />;
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  return <ContentErrorUI error={error} />;
 }

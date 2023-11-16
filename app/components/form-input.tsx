@@ -8,14 +8,14 @@ interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export function FormInput({ className, label, ...props }: FormInputProps) {
   return (
-    <div className="w-full">
+    <div className="w-full ">
       <label htmlFor={props?.id} className="block">
         {label}
       </label>
       <input
         {...props}
         className={clsx(
-          "p-2 rounded-md w-full bg-slate-100 text-slate-500",
+          "p-2 rounded-md w-full bg-slate-100 text-black outline-none",
           className,
         )}
       />

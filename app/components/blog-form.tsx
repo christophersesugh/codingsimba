@@ -5,7 +5,19 @@ import { Editor } from "~/components/markdown";
 import { FormInput } from "~/components/form-input";
 import { Button } from "~/components/button";
 
+export interface PostValueProps {
+  postTitle: string;
+  postTags: string;
+  postPhoto: string;
+  postDescription: string;
+  postVideo: string;
+  postContent: string;
+  postSlug: string;
+  postPublished: boolean;
+}
+
 export function BlogForm({
+  actionType,
   values,
   setValues,
   navigation,
@@ -18,7 +30,7 @@ export function BlogForm({
   return (
     <Form method="POST" action={formAction} className="flex flex-col gap-8">
       <FormInput
-        value={values.postTitle}
+        value={values?.postTitle ?? values.data?.title}
         id="post-title"
         name="postTitle"
         label="title"
@@ -26,7 +38,7 @@ export function BlogForm({
         onChange={handleFormInputChange}
       />
       <FormInput
-        value={values.postTags}
+        value={values?.postTags ?? values.data?.tags}
         id="post-tags"
         name="postTags"
         label="tags"
@@ -34,7 +46,7 @@ export function BlogForm({
         onChange={handleFormInputChange}
       />
       <FormInput
-        value={values.postPhoto}
+        value={values?.postPhoto ?? values.data?.photo}
         id="post-photo"
         name="postPhoto"
         label="photo url"
@@ -42,7 +54,7 @@ export function BlogForm({
         onChange={handleFormInputChange}
       />
       <FormInput
-        value={values.postDescription}
+        value={values?.postDescription ?? values.data?.description}
         id="post-description"
         name="postDescription"
         label="description"
@@ -50,15 +62,29 @@ export function BlogForm({
         onChange={handleFormInputChange}
       />
       <FormInput
-        value={values.postVideo}
+        value={values?.postVideo ?? values.data?.video}
         id="post-video"
         name="postVideo"
         label="video URL"
         placeholder="video URL"
         onChange={handleFormInputChange}
       />
+      <div className="flex gap-4 items-center">
+        <input
+          type="checkbox"
+          checked={
+            values?.postPublished ?? (values.data?.postPublished || false)
+          }
+          value={values?.published ?? (values.data?.published || false)}
+          id="post-published"
+          name="postPublished"
+          className="block"
+          onChange={handleFormInputChange}
+        />
+        <label htmlFor="post-published">publish post</label>
+      </div>
       <Editor
-        value={values.postContent}
+        value={values?.postContent ?? values?.content}
         id="post-content"
         name="postContent"
         label="content"
@@ -81,7 +107,7 @@ export function BlogForm({
           {isLoading ? (
             <FaSpinner className="text-lg animate-spin" />
           ) : (
-            "create post"
+            actionType
           )}
         </Button>
       </div>

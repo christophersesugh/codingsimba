@@ -2,9 +2,34 @@ import React from "react";
 import { HiOutlineMailOpen } from "react-icons/hi";
 import { MdShareLocation } from "react-icons/md";
 import { Section } from "~/components/section";
-// import { metaData } from "~/utils/meta";
+import homeImage from "~/assets/home.webp";
+import type { MetaFunction } from "@remix-run/node";
 
-// export const meta = metaData({ title: "Contact CS", url: "contact" });
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Contact | Coding Simba" },
+    {
+      property: "og:title",
+      content: "Contact | Coding Simba",
+    },
+    {
+      name: "description",
+      content: "Helping change the world through building quality software.",
+    },
+    {
+      property: "og:description",
+      content: "Helping change the world through building quality software.",
+    },
+    {
+      property: "og:image",
+      content: `https://codingsimba.com/${homeImage}`,
+    },
+    {
+      property: "og:url",
+      content: "https://codingsimba.com/contact",
+    },
+  ];
+};
 
 export default function Contact() {
   return (

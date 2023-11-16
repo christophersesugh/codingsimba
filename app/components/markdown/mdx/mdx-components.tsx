@@ -6,7 +6,7 @@ import { nightOwl } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import clsx from "clsx";
 
 type ElemProps = {
-  children?: React.ReactNode;
+  children: React.ReactNode;
 };
 
 export function P(props: ElemProps): React.ReactElement {
@@ -119,10 +119,10 @@ export function MdLink(props: any): React.ReactElement {
 }
 
 type CodeBlockProps = {
-  node?: any;
+  node?: React.ReactNode;
   inline?: boolean;
   className?: string;
-  children?: React.ReactNode;
+  children: React.ReactNode;
 };
 
 export function CodeBlock(props: CodeBlockProps): React.ReactElement {

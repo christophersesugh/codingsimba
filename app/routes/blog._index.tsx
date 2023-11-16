@@ -1,9 +1,9 @@
 import React from "react";
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData, useSubmit } from "@remix-run/react";
-// import { getPosts, getTags } from "~/model/post.server";
 import { response } from "~/utils/response.server";
+import { getPosts, getTags } from "~/model/post.server";
 import { Section } from "~/components/section";
 import { BlogCard } from "~/components/blog-card";
 import { Button } from "~/components/button";
@@ -11,12 +11,36 @@ import { FormInput } from "~/components/form-input";
 import { Tags } from "~/components/tags";
 import { EmptyContentUI } from "~/components/empty-content-ui";
 import { ContentErrorUI } from "~/components/content-error-ui";
-import { getTags, getPosts } from "~/utils/fetch-mdx";
+import homeImage from "~/assets/home.webp";
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Blog | Coding Simba" },
+    {
+      property: "og:title",
+      content: "Blog | Coding Simba",
+    },
+    {
+      name: "description",
+      content: "Helping change the world through building quality software.",
+    },
+    {
+      property: "og:description",
+      content: "Helping change the world through building quality software.",
+    },
+    {
+      property: "og:image",
+      content: `https://codingsimba.com/${homeImage}`,
+    },
+    {
+      property: "og:url",
+      content: "https://codingsimba.com/blog",
+    },
+  ];
+};
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
-    // const tags = await getTags();
-    // const { posts } = await getPosts(request);
     const tags = await getTags();
     const posts = await getPosts(request);
     return json(response({ data: { posts, tags } }));

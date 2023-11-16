@@ -1,4 +1,3 @@
-import React from "react";
 import { Outlet, useRouteError } from "@remix-run/react";
 import { ContentErrorUI } from "~/components/content-error-ui";
 

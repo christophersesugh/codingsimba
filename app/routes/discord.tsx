@@ -6,11 +6,36 @@ import { Section } from "~/components/section";
 import { Markdown } from "~/components/markdown";
 import { DiscordButton } from "~/components/discord-button";
 import { mdxBundle } from "~/utils/bundler.server";
+import type { MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-// import { metaData } from "~/utils/meta";
+import homeImage from "~/assets/home.webp";
 
-// export const meta = metaData({ title: "Discord", url: "discord" });
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Discord | Coding Simba" },
+    {
+      property: "og:title",
+      content: "Discord | Coding Simba",
+    },
+    {
+      name: "description",
+      content: "Helping change the world through building quality software.",
+    },
+    {
+      property: "og:description",
+      content: "Helping change the world through building quality software.",
+    },
+    {
+      property: "og:image",
+      content: `https://codingsimba.com/${homeImage}`,
+    },
+    {
+      property: "og:url",
+      content: "https://codingsimba.com/discord",
+    },
+  ];
+};
 
 export async function loader() {
   const source = `

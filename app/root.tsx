@@ -1,5 +1,9 @@
 import type { PropsWithChildren } from "react";
-import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
+import type {
+  LinksFunction,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from "@remix-run/node";
 import type { Theme } from "~/context/theme-context";
 import {
   Links,
@@ -23,6 +27,7 @@ import {
 import { RootLayout } from "~/components/layout";
 import { ErrorUI } from "~/components/error-ui";
 import { getThemeSession } from "~/model/theme.server";
+import homeImage from "~/assets/home.webp";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const themeSession = await getThemeSession(request);
@@ -31,6 +36,32 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
   return data;
 }
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Home | Coding Simba" },
+    {
+      property: "og:title",
+      content: "Home | Coding Simba",
+    },
+    {
+      name: "description",
+      content: "Helping change the world through building quality software.",
+    },
+    {
+      property: "og:description",
+      content: "Helping change the world through building quality software.",
+    },
+    {
+      property: "og:image",
+      content: `https://codingsimba.com/${homeImage}`,
+    },
+    {
+      property: "og:url",
+      content: "https://codingsimba.com",
+    },
+  ];
+};
 
 export const links: LinksFunction = () => [
   {

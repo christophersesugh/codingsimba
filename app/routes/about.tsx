@@ -1,10 +1,38 @@
 import React from "react";
 import { Section } from "~/components/section";
 import { DiscordButton } from "~/components/discord-button";
+import type { MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { mdxBundle } from "~/utils/bundler.server";
 import { Markdown } from "~/components/markdown";
+import homeImage from "~/assets/home.webp";
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "About | Coding Simba" },
+    {
+      property: "og:title",
+      content: "About | Coding Simba",
+    },
+    {
+      name: "description",
+      content: "Helping change the world through building quality software.",
+    },
+    {
+      property: "og:description",
+      content: "Helping change the world through building quality software.",
+    },
+    {
+      property: "og:image",
+      content: `https://codingsimba.com/${homeImage}`,
+    },
+    {
+      property: "og:url",
+      content: "https://codingsimba.com/about",
+    },
+  ];
+};
 
 export async function loader() {
   const content = `Welcome to "Coding Simba," your gateway to the world of technology and

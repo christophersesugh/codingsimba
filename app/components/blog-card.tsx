@@ -4,22 +4,22 @@ import moment from "moment";
 import readingTime from "reading-time";
 
 function Card({ post }: any) {
-  const { file, frontmatter, code } = post;
+  const { frontmatter, code } = post;
   const stats = readingTime(code);
   return (
-    <Link to={`/blog/${file}`}>
-      <article className="flex flex-col gap-2 drop-shadow-xl border-2 hover:border-blue-500 hover:border-2 duration-200 rounded-md min-h-[22rem] max-w-[20rem] mx-auto">
-        <div className="h-[60%] w-full rounded-tl-3xl rounded-tr-3xl">
+    <Link to={`/blog/${frontmatter.slug}`}>
+      <article className="flex flex-col gap-2 drop-shadow-xl max-w-[20rem] mx-auto">
+        <div className="min-h-[50%] w-full rounded-md p-1 hover:border-4 duration-300 hover:border-blue-500">
           <img
             src={frontmatter.photo}
             alt={frontmatter.title}
-            className="w-full h-full rounded-tr-md rounded-tl-md"
+            className="w-full min-h-full rounded-md object-cover"
           />
         </div>
 
         <div className="flex flex-col gap-2 p-2">
-          <p className="text-slate-500 dark:text-slate-400">
-            {moment(frontmatter?.createdAt).format("MMM DD, YYYY")} --{" "}
+          <p className="text-slate-500 text-lg dark:text-slate-400">
+            {moment(frontmatter.createdAt).format("MMM DD, YYYY")} --{" "}
             {stats.text}
           </p>
 

@@ -34,7 +34,7 @@ export function ContentContainer({
         <h1 className="text-4xl font-bold capitalize mb-4">
           {frontmatter.title}
         </h1>
-        <p className="text-slate-400">
+        <p className="text-slate-500 font-black text-lg">
           {moment(frontmatter.createdAt).format("MMM DD, YYYY")} -- {stats.text}
         </p>
       </div>
@@ -43,10 +43,12 @@ export function ContentContainer({
           src={frontmatter.photo}
           alt={frontmatter.title}
           title={frontmatter.title}
-          className="w-full rounded-md h-[18rem] md:h-[30rem]"
+          className="w-full rounded-md h-[16rem] md:h-[28rem]"
         />
       ) : null}
-      <h2 className="text-xl font-bold">{frontmatter.description}</h2>
+      <h2 className="text-xl font-black text-slate-600 dark:text-slate-300 p-4 mt-8 border-l-8 rounded-md border-blue-500 dark:bg-slate-700 bg-slate-200 ">
+        {frontmatter.description}
+      </h2>
 
       {frontmatter.video ? (
         <Iframe src={frontmatter.video} title={frontmatter.title} />

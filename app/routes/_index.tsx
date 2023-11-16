@@ -1,9 +1,9 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
+import { getPosts } from "~/model/post.server";
 import { useLoaderData } from "@remix-run/react";
 import { response } from "~/utils/response.server";
 import { HomeHeader, About, RecentPosts } from "~/components/home";
-import { getPosts } from "~/utils/fetch-mdx";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
