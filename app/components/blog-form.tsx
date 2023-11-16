@@ -16,6 +16,16 @@ export interface PostValueProps {
   postPublished: boolean;
 }
 
+type BlogFormProps = {
+  actionType: string;
+  values: any;
+  setValues: React.Dispatch<React.SetStateAction<PostValueProps>>;
+  navigation: unknown;
+  actionData: any;
+  formAction: string;
+  handleFormInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
 export function BlogForm({
   actionType,
   values,
@@ -24,7 +34,7 @@ export function BlogForm({
   actionData,
   formAction,
   handleFormInputChange,
-}: any) {
+}: BlogFormProps) {
   const isLoading = navigation === "loading";
 
   return (
@@ -94,7 +104,7 @@ export function BlogForm({
         <Button
           type="reset"
           aria-label="reset form"
-          onClick={() => setValues({})}
+          onClick={() => setValues({} as PostValueProps)}
           className="capitalize border-2"
         >
           reset
