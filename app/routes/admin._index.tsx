@@ -5,8 +5,8 @@ import type { SubmitOptions } from "@remix-run/react";
 import {
   Form,
   Link,
-  useLoaderData,
   useFetcher,
+  useLoaderData,
   useNavigation,
   useSubmit,
 } from "@remix-run/react";
@@ -40,9 +40,7 @@ export async function action({ request }: ActionFunctionArgs) {
     if (postDelete) {
       console.log("deleting");
       console.log(postDelete);
-
       const response = await deletePost(postDelete);
-
       return json({ data: { response }, ok: true });
     }
     return json({ ok: false });
@@ -55,12 +53,11 @@ export default function AdminIndexRoute() {
   const [postLimit, setPostLimit] = React.useState(2);
   const { posts, tags } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
+  const submit = useSubmit();
   const fetcher = useFetcher();
 
   const isLoading = navigation.state === "loading";
   const isSubmitting = navigation.state === "submitting";
-
-  const submit = useSubmit();
 
   const submitOptions: SubmitOptions = React.useMemo(
     () => ({
@@ -140,28 +137,30 @@ export default function AdminIndexRoute() {
                     {post.frontmatter.title}
                   </h1>
                 </Link>
-                <Link to={`/admin/edit/${post.frontmatter.slug}`}>
-                  <Button>
-                    {isLoading || isSubmitting ? (
-                      <FaSpinner className="animate-spin" />
-                    ) : (
-                      <MdEditDocument className="text-blue-500" />
-                    )}
-                  </Button>
-                </Link>
-                <fetcher.Form method="POST" action="/admin?index">
-                  <Button
-                    type="submit"
-                    name="delete"
-                    value={post.frontmatter.slug}
-                  >
-                    {isLoading || isSubmitting ? (
-                      <FaSpinner className="animate-spin" />
-                    ) : (
-                      <MdDelete className="text-red-500" />
-                    )}
-                  </Button>
-                </fetcher.Form>
+                <div className="flex gap-4">
+                  <Link to={`/admin/edit/${post.frontmatter.slug}`}>
+                    <Button>
+                      {isLoading || isSubmitting ? (
+                        <FaSpinner className="animate-spin" />
+                      ) : (
+                        <MdEditDocument className="text-blue-500" />
+                      )}
+                    </Button>
+                  </Link>
+                  <fetcher.Form method="POST" action="/admin?index">
+                    <Button
+                      type="submit"
+                      name="delete"
+                      value={post.frontmatter.slug}
+                    >
+                      {isLoading || isSubmitting ? (
+                        <FaSpinner className="animate-spin" />
+                      ) : (
+                        <MdDelete className="text-red-500" />
+                      )}
+                    </Button>
+                  </fetcher.Form>
+                </div>
               </li>
             ))
           : null}

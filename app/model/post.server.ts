@@ -185,10 +185,11 @@ export async function updatePost(formData: FormData): Promise<any> {
 export async function deletePost(fileSlug: FormDataEntryValue): Promise<any> {
   try {
     const response = await fetchAllFilesProps();
-    const fileToDelete = response.find(
-      (file: any) =>
-        file.data.type === "file" && file.data.name === fileSlug + ".mdx",
+
+    const fileToDelete = response.data.find(
+      (file: any) => file.type === "file" && file.name === fileSlug + ".mdx",
     );
+
     if (!fileToDelete) {
       throw new Error("File not found");
     }
@@ -196,10 +197,11 @@ export async function deletePost(fileSlug: FormDataEntryValue): Promise<any> {
     const deleteResponse = await octokit.rest.repos.deleteFile({
       owner,
       repo,
-      path: `${path}/${fileSlug}`,
+      path: `${contentPath}/${fileSlug}.mdx`,
       message: `Delete blog post: ${fileSlug}`,
       sha: fileToDelete.sha,
     });
+
     return deleteResponse;
   } catch (error) {
     return error;
