@@ -48,7 +48,7 @@ export async function getPosts(request: Request) {
   const posts = await fetchAllPosts();
   const allPosts = await Promise.all(posts);
   const filterByTitle = searchTerm
-    ? allPosts.filter(
+    ? allPosts?.filter(
         (post) =>
           post.frontmatter.title
             .toLowerCase()
@@ -213,7 +213,7 @@ export async function deletePost(fileSlug: FormDataEntryValue): Promise<any> {
 async function fetchAllPosts() {
   const posts = fs
     .readdirSync(mdxDirectory, "utf-8")
-    .filter((file) => file.endsWith(".mdx"))
+    .filter((file) => file?.endsWith(".mdx"))
     .map(async (file) => {
       const filePath = path.join(mdxDirectory, file);
       const content = fs.readFileSync(filePath, "utf-8");

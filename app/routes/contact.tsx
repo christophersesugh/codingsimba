@@ -1,35 +1,10 @@
-import React from "react";
+import type { MetaFunction } from "@remix-run/node";
 import { HiOutlineMailOpen } from "react-icons/hi";
 import { MdShareLocation } from "react-icons/md";
 import { Section } from "~/components/section";
-import homeImage from "~/assets/home.webp";
-import type { MetaFunction } from "@remix-run/node";
+import { metaFn } from "~/utils/meta";
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: "Contact | Coding Simba" },
-    {
-      property: "og:title",
-      content: "Contact | Coding Simba",
-    },
-    {
-      name: "description",
-      content: "Helping change the world through building quality software.",
-    },
-    {
-      property: "og:description",
-      content: "Helping change the world through building quality software.",
-    },
-    {
-      property: "og:image",
-      content: `https://codingsimba.com/${homeImage}`,
-    },
-    {
-      property: "og:url",
-      content: "https://codingsimba.com/contact",
-    },
-  ];
-};
+export const meta: MetaFunction = metaFn;
 
 export default function Contact() {
   return (

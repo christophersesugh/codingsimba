@@ -11,33 +11,9 @@ import { FormInput } from "~/components/form-input";
 import { Tags } from "~/components/tags";
 import { EmptyContentUI } from "~/components/empty-content-ui";
 import { ContentErrorUI } from "~/components/content-error-ui";
-import homeImage from "~/assets/home.webp";
+import { metaFn } from "~/utils/meta";
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: "Blog | Coding Simba" },
-    {
-      property: "og:title",
-      content: "Blog | Coding Simba",
-    },
-    {
-      name: "description",
-      content: "Helping change the world through building quality software.",
-    },
-    {
-      property: "og:description",
-      content: "Helping change the world through building quality software.",
-    },
-    {
-      property: "og:image",
-      content: `https://codingsimba.com/${homeImage}`,
-    },
-    {
-      property: "og:url",
-      content: "https://codingsimba.com/blog",
-    },
-  ];
-};
+export const meta: MetaFunction = metaFn;
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {

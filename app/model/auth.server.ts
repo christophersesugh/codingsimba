@@ -26,7 +26,7 @@ function getUserSession(request: Request) {
 export async function getUserId(request: Request) {
   const session = await getUserSession(request);
   const userId = session.get("userId");
-  if (!userId || typeof userId !== "number") {
+  if (!userId || typeof userId !== "string") {
     return null;
   }
   return userId;
@@ -35,7 +35,7 @@ export async function getUserId(request: Request) {
 export async function requireUserId(request: Request) {
   const session = await getUserSession(request);
   const userId = session.get("userId");
-  if (!userId || typeof userId !== "number") {
+  if (!userId || typeof userId !== "string") {
     throw redirect(`/login`);
   }
   const user = await getUser(userId, request);
@@ -45,7 +45,7 @@ export async function requireUserId(request: Request) {
   return user;
 }
 
-export async function createUserSession(userId: number | undefined) {
+export async function createUserSession(userId: string | undefined) {
   const session = await storage.getSession();
   session.set("userId", userId);
   return redirect("/admin", {
@@ -84,8 +84,8 @@ export async function login({ email, password }: User) {
   return { id: user.id, email: user.email, role: user.role };
 }
 
-export async function getUser(userId: number | undefined, request: Request) {
-  if (typeof userId !== "number") {
+export async function getUser(userId: string | undefined, request: Request) {
+  if (typeof userId !== "string") {
     return null;
   }
 

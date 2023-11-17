@@ -1,8 +1,7 @@
-import React from "react";
 import { Link } from "@remix-run/react";
-// import { metaData } from "~/utils/meta";
+import { metaFn } from "~/utils/meta";
 
-// export const meta = metaData({ title: "Page not found" });
+export const meta = metaFn;
 
 export default function NotFoundRoute() {
   return (
