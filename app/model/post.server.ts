@@ -248,7 +248,7 @@ function formatMDXContent(formData: FormData): {
     .replace(/\s/g, "-")
     .replace(/(\?)+$/, "")}.mdx`;
 
-  const filePath = `${path}/${fileName}`;
+  const filePath = `${contentPath}/${fileName}`;
 
   const fileContent = `---
   title: ${title}

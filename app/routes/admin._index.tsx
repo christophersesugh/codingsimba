@@ -140,17 +140,16 @@ export default function AdminIndexRoute() {
                     {post.frontmatter.title}
                   </h1>
                 </Link>
-
+                <Link to={`/admin/edit/${post.frontmatter.slug}`}>
+                  <Button>
+                    {isLoading || isSubmitting ? (
+                      <FaSpinner className="animate-spin" />
+                    ) : (
+                      <MdEditDocument className="text-blue-500" />
+                    )}
+                  </Button>
+                </Link>
                 <fetcher.Form method="POST" action="/admin?index">
-                  <Link to={`/admin/edit/${post.frontmatter.slug}`}>
-                    <Button>
-                      {isLoading || isSubmitting ? (
-                        <FaSpinner className="animate-spin" />
-                      ) : (
-                        <MdEditDocument className="text-blue-500" />
-                      )}
-                    </Button>
-                  </Link>
                   <Button
                     type="submit"
                     name="delete"
