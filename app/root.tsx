@@ -38,31 +38,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export const meta: MetaFunction = metaFn;
-// () => {
-//   return [
-//     { title: "Home | Coding Simba" },
-//     {
-//       property: "og:title",
-//       content: "Home | Coding Simba",
-//     },
-//     {
-//       name: "description",
-//       content: "Helping change the world through building quality software.",
-//     },
-//     {
-//       property: "og:description",
-//       content: "Helping change the world through building quality software.",
-//     },
-//     {
-//       property: "og:image",
-//       content: `https://codingsimba.com/${homeImage}`,
-//     },
-//     {
-//       property: "og:url",
-//       content: "https://codingsimba.com",
-//     },
-//   ];
-// };
 
 export const links: LinksFunction = () => [
   {

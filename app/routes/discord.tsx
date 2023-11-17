@@ -9,7 +9,7 @@ import { mdxBundle } from "~/utils/bundler.server";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { metaFn } from "~/utils/meta";
-import { discordContent } from "~/constants/page-content";
+import { discordContent } from "~/constants/page-content.server";
 
 export const meta: MetaFunction = metaFn;
 

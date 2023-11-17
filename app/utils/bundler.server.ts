@@ -21,7 +21,7 @@ export function mdxBundle({ source }: { source: string }) {
   return bundleMDX({
     source,
     mdxOptions(options, frontmatter) {
-      options.remarkPlugins = [...(options.remarkPlugins ?? []), remarkGfm];
+      // options.remarkPlugins = [...(options.remarkPlugins ?? []), remarkGfm];
       //   options.rehypePlugins = [...(options.rehypePlugins ?? []), myRehypePlugin]
       return options;
     },

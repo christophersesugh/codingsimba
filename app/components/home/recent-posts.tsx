@@ -10,6 +10,8 @@ export function RecentPosts({ loaderData }: { loaderData: any }) {
     error,
     ok,
   } = loaderData;
+  console.log(posts);
+
   return (
     <Section className="md:max-w-4xl">
       <div className="flex flex-col gap-6 mt-12">
@@ -18,9 +20,13 @@ export function RecentPosts({ loaderData }: { loaderData: any }) {
           <ContentErrorUI error={error} />
         ) : ok && posts?.length ? (
           <div className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-20 justify-evenly mb-12">
-            {posts?.map((post: any, index: number) => (
-              <BlogCard post={post} key={`${post.frontmatter.slug}-${index}`} />
-            ))}
+            {posts.length &&
+              posts.map((post: any, index: number) => (
+                <BlogCard
+                  post={post}
+                  key={`${post.frontmatter.slug}-${index}`}
+                />
+              ))}
           </div>
         ) : ok && !posts?.length ? (
           <EmptyContentUI

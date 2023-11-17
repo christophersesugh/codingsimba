@@ -6,7 +6,7 @@ import { useLoaderData } from "@remix-run/react";
 import { mdxBundle } from "~/utils/bundler.server";
 import { Markdown } from "~/components/markdown";
 import { metaFn } from "~/utils/meta";
-import { aboutContent } from "~/constants/page-content";
+import { aboutContent } from "~/constants/page-content.server";
 
 export const meta: MetaFunction = metaFn;
 

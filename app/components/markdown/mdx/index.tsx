@@ -1,6 +1,7 @@
 import React from "react";
 import { getMDXComponent } from "mdx-bundler/client/index.js";
 import {
+  B,
   BlockQuote,
   CodeBlock,
   H1,
@@ -13,6 +14,7 @@ import {
   MdLink,
   OL,
   P,
+  Strong,
   UL,
 } from "./mdx-components";
 
@@ -32,7 +34,9 @@ export function Markdown({ source }: { source: string }) {
           ol: OL,
           ul: UL,
           a: MdLink,
+          b: B,
           blockquote: BlockQuote,
+          strong: Strong,
           img: Img,
           code: CodeBlock,
         }}
@@ -40,12 +44,3 @@ export function Markdown({ source }: { source: string }) {
     </>
   );
 }
-
-// const Code: React.FC = (props) => {
-//   return (
-//     <code
-//       className="bg-slate-300 rounded-sm px-1"
-//       {...props}
-//     />
-//   );
-// }

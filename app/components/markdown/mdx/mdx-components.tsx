@@ -6,7 +6,7 @@ import { nightOwl } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import clsx from "clsx";
 
 type ElemProps = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export function P(props: ElemProps): React.ReactElement {
@@ -74,11 +74,13 @@ export function H6(props: ElemProps): React.ReactElement {
 }
 
 export function UL(props: ElemProps): React.ReactElement {
-  return <ul className="list-disc space-y-4" {...props} />;
+  return <ul className="list-disc list-inside space-y-3 text-lg" {...props} />;
 }
 
 export function OL(props: ElemProps): React.ReactElement {
-  return <ol className="list-decimal space-y-4" {...props} />;
+  return (
+    <ol className="list-decimal list-inside space-y-3 text-lg" {...props} />
+  );
 }
 
 export function BlockQuote(props: ElemProps): React.ReactElement {
@@ -93,18 +95,26 @@ export function BlockQuote(props: ElemProps): React.ReactElement {
   );
 }
 
+export function Strong(props: ElemProps): React.ReactElement {
+  return <strong className="font-black" {...props} />;
+}
+
+export function B(props: ElemProps): React.ReactElement {
+  return <b className="font-black" {...props} />;
+}
+
 export function Img(props: React.ImgHTMLAttributes<HTMLImageElement>) {
   return <img className="my-6 rounded-sm mx-auto" {...props} alt={props.alt} />;
 }
 
-// interface LinkProps extends React.HTMLAttributes<HTMLAnchorElement> {
-//   href: string | undefined;
-//   target?: "_blank" | "_self" | "_parent" | "_top" | string;
-//   rel?: string;
-//   children: React.ReactNode;
-// }
+interface LinkProps {
+  href: string;
+  target?: "_blank" | "_self" | "_parent" | "_top" | string;
+  rel?: string;
+  children?: React.ReactNode;
+}
 
-export function MdLink(props: any): React.ReactElement {
+export function MdLink(props: LinkProps): React.ReactElement {
   return (
     <Link
       to={props.href}
@@ -122,7 +132,7 @@ type CodeBlockProps = {
   node?: React.ReactNode;
   inline?: boolean;
   className?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export function CodeBlock(props: CodeBlockProps): React.ReactElement {
@@ -141,7 +151,10 @@ export function CodeBlock(props: CodeBlockProps): React.ReactElement {
   ) : (
     <code
       {...props}
-      className={clsx("rounded-sm px-1 bg-slate-300", className)}
+      className={clsx(
+        "rounded-sm px-1 bg-slate-200 dark:bg-slate-500 dark:text-white text-lg",
+        className,
+      )}
     >
       {children}
     </code>

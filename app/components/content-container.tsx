@@ -34,7 +34,7 @@ export function ContentContainer({
         <h1 className="text-4xl font-bold capitalize mb-4">
           {frontmatter.title}
         </h1>
-        <p className="text-slate-500 font-black text-lg">
+        <p className="text-slate-500 dark:text-slate-400 font-black text-lg">
           {moment(frontmatter.createdAt).format("MMM DD, YYYY")} -- {stats.text}
         </p>
       </div>

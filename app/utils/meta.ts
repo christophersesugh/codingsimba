@@ -21,19 +21,21 @@ export const metaFn: MetaFunction = ({ matches, data }) => {
     matches.forEach((match) => {
       if (match.id !== "root" && match.pathname !== "/") {
         if (match.id !== "routes/blog.$slug") {
-          pageTitle = `${match.pathname.replace(/\//g, "")} | Coding Simba`;
+          pageTitle = `${match.pathname
+            .replace(/\//g, "")
+            .replace(/-/g, " ")} | Coding Simba`;
           if (match.id === "routes/blog._index") {
             pageTitle = "The Coding Simba's Blog";
           }
           if (match.id === "routes/about") {
-            pageTitle = "About Coding Simba";
+            pageTitle = "About The Coding Simba";
           }
 
           if (match.id === "routes/contact") {
-            pageTitle = "Get in touch with Coding Simba";
+            pageTitle = "Get in touch with The Coding Simba";
           }
           if (match.id === "routes/discord") {
-            pageTitle = "The Coding Simba's Community on Discord";
+            pageTitle = "The Coding Simba Community on Discord";
           }
         }
       } else {

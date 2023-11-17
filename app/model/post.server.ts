@@ -75,7 +75,6 @@ export async function getPosts(request: Request) {
       .filter((post) => post.frontmatter.published)
       .slice(0, limit);
   }
-
   return sortedPosts.slice(0, limit);
 }
 
@@ -104,6 +103,9 @@ export async function getPost(slug: string) {
   try {
     const filePath = path.join(mdxDirectory, slug + ".mdx");
     const content = fs.readFileSync(filePath, "utf-8");
+    if (!content) {
+      throw new Error("Post not found");
+    }
     return content;
   } catch (error) {
     throw error;
@@ -222,6 +224,10 @@ async function fetchAllPosts() {
       const { code, frontmatter } = await mdxBundle({ source: content });
       return { file, frontmatter, code };
     });
+
+  if (!posts) {
+    throw new Error("No posts found");
+  }
   return posts;
 }
 
