@@ -5,7 +5,7 @@
   photo: https://res.cloudinary.com/christo/image/upload/v1700228783/remix-seo_aykobs.jpg
   description: A comprehensive guide to optimizing SEO and enhancing user experience in your Remix applications.
   video: 
-  createdAt: 1700582605525
+  createdAt: 1700583361232
   published: false 
 ---
 
@@ -43,7 +43,7 @@ The HTML meta tag is a crucial element used to provide metadata about a document
 
 1\. **Charset:**
 
-```
+```xml
 <meta charset="UTF-8"/>
 ```
 
@@ -51,7 +51,7 @@ This tag defines the character set used in the document. UTF-8 is widely used an
 
 2\. **Viewport:**
 
-```
+```xml
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 ```
 
@@ -59,7 +59,7 @@ This is important for responsive web design. It ensures that the width of the pa
 
 3\. **Description:**
 
-```
+```xml
 <meta name="description" content="A brief description of the page"/>
 ```
 
@@ -67,7 +67,7 @@ This tag provides a concise summary of the page's content. Search engines often 
 
 4\. **Keywords (Deprecated):**
 
-```
+```xml
 <meta name="keywords" content="keyword1, keyword2, keyword3"/>
 ```
 
@@ -75,7 +75,7 @@ Historically used to specify keywords relevant to the page. However, major searc
 
 5\. **Author:**
 
-```
+```xml
 <meta name="author" content="Author Name"/>
 ```
 
@@ -83,7 +83,7 @@ Indicates the author of the page.
 
 6\. **Robots:**
 
-```
+```xml
 <meta name="robots" content="index, follow"/>
 ```
 
@@ -91,11 +91,9 @@ Directs search engine crawlers on whether to index the content and follow the li
 
 8\. **Open Graph (for social media):**
 
-```
+```xml
  <meta property="og:title" content="Title">
-
  <meta property="og:description" content="Description">
-
  <meta property="og:image" content="URL to an image">
 ```
 
@@ -127,7 +125,7 @@ export const meta: MetaFunction = () => {
 
 Produces this HTML:
 
-```
+```xml
 <title>Remix</title>
 <meta property="og:title" content="Remix" />;
 <meta name="description" content="This is a Remix App." />
