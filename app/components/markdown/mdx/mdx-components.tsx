@@ -107,14 +107,15 @@ export function Img(props: React.ImgHTMLAttributes<HTMLImageElement>) {
   return <img className="my-6 rounded-sm mx-auto" {...props} alt={props.alt} />;
 }
 
-interface LinkProps {
-  href: string;
-  target?: "_blank" | "_self" | "_parent" | "_top" | string;
-  rel?: string;
-  children?: React.ReactNode;
-}
+// interface LinkProps {
+//   href: string;
+//   target?: "_blank" | "_self" | "_parent" | "_top" | string;
+//   rel?: string;
+//   prefetch?: "intent" | "none";
+//   children?: React.ReactNode;
+// }
 
-export function MdLink(props: LinkProps): React.ReactElement {
+export function MdLink(props: any): React.ReactElement {
   return (
     <Link
       to={props.href}
@@ -128,14 +129,14 @@ export function MdLink(props: LinkProps): React.ReactElement {
   );
 }
 
-type CodeBlockProps = {
-  node?: React.ReactNode;
-  inline?: boolean;
-  className?: string;
-  children?: React.ReactNode;
-};
+// type CodeBlockProps = {
+//   node: React.ReactElement;
+//   inline?: boolean;
+//   className?: string;
+//   children?: React.ReactNode;
+// };
 
-export function CodeBlock(props: CodeBlockProps): React.ReactElement {
+export function CodeBlock(props: any): React.ReactElement {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { node, inline, className, children } = props;
   const match = /language-(\w+)/.exec(className || "");

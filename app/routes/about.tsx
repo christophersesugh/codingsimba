@@ -3,7 +3,7 @@ import { Section } from "~/components/section";
 import { DiscordButton } from "~/components/discord-button";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { mdxBundle } from "~/utils/bundler.server";
+// import { mdxBundle } from "~/utils/bundler.server";
 import { Markdown } from "~/components/markdown";
 import { metaFn } from "~/utils/meta";
 import { aboutContent } from "~/constants/page-content.server";
@@ -11,8 +11,8 @@ import { aboutContent } from "~/constants/page-content.server";
 export const meta: MetaFunction = metaFn;
 
 export async function loader() {
-  const { code: content } = await mdxBundle({ source: aboutContent });
-  return json({ content });
+  // const { code: content } = await mdxBundle({ source: aboutContent });
+  return json({ content: aboutContent });
 }
 
 export default function About() {

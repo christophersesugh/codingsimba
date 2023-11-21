@@ -3,7 +3,8 @@ import path from "path";
 import dashify from "dashify";
 // import NodeCache from "node-cache";
 import { octokit } from "~/libs/octokit.server";
-import { mdxBundle } from "~/utils/bundler.server";
+import matter from "gray-matter";
+// import { mdxBundle } from "~/utils/bundler.server";
 
 // const cache = new NodeCache();
 const { GITHUB_USERNAME, GITHUB_REPO } = process.env;
@@ -50,31 +51,26 @@ export async function getPosts(request: Request) {
   const filterByTitle = searchTerm
     ? allPosts?.filter(
         (post) =>
-          post.frontmatter.title
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          post.frontmatter.description
+          post.data.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          post.data.description
             .toLowerCase()
             .includes(searchTerm.toLowerCase()),
       )
     : allPosts;
 
   const filterByTag = tag
-    ? filterByTitle.filter((post) =>
-        post.frontmatter.tags.includes(tag.toLowerCase()),
-      )
+    ? filterByTitle.filter((post) => post.data.tags.includes(tag.toLowerCase()))
     : filterByTitle;
 
   const sortedPosts = filterByTag.sort((a, b) => {
-    const dateA = new Date(a.frontmatter.date);
-    const dateB = new Date(b.frontmatter.date);
+    const dateA = new Date(a.data.date);
+    const dateB = new Date(b.data.date);
     return dateB.getTime() - dateA.getTime();
   });
   if (url.pathname === "/blog" || url.pathname === "/") {
-    return sortedPosts
-      .filter((post) => post.frontmatter.published)
-      .slice(0, limit);
+    return sortedPosts.filter((post) => post.data.published).slice(0, limit);
   }
+
   return sortedPosts.slice(0, limit);
 }
 
@@ -86,9 +82,9 @@ export async function getTags() {
   const posts = await fetchAllPosts();
   const allPosts = await Promise.all(posts);
   const allTags = allPosts
-    .filter((post) => post.frontmatter.tags && post.frontmatter.published)
+    .filter((post) => post.data.tags && post.data.published)
     .flatMap((post) =>
-      post.frontmatter.tags.split(",").map((tag: string) => tag.trim()),
+      post.data.tags.split(",").map((tag: string) => tag.trim()),
     );
   const uniqueTags = [...new Set(allTags)];
   return uniqueTags;
@@ -102,11 +98,12 @@ export async function getTags() {
 export async function getPost(slug: string) {
   try {
     const filePath = path.join(mdxDirectory, slug + ".mdx");
-    const content = fs.readFileSync(filePath, "utf-8");
-    if (!content) {
+    const mdxContent = fs.readFileSync(filePath, "utf-8");
+    if (!mdxContent) {
       throw new Error("Post not found");
     }
-    return content;
+    const { data, content } = matter(mdxContent);
+    return { data, content };
   } catch (error) {
     throw error;
   }
@@ -123,23 +120,27 @@ export async function getRelatedPosts(tags: string[], currentSlug: string) {
   const relatedPosts = [];
   for (const file of files) {
     if (file.endsWith(".mdx")) {
-      const content = fs.readFileSync(path.join(mdxDirectory, file), "utf-8");
-      const { frontmatter, code } = await mdxBundle({ source: content });
+      const mdxContent = fs.readFileSync(
+        path.join(mdxDirectory, file),
+        "utf-8",
+      );
+      // const { data, code } = await mdxBundle({ source: mdxContent });
+      const { data, content } = matter(mdxContent);
 
       if (
-        frontmatter.tags &&
-        frontmatter.tags
+        data.tags &&
+        data.tags
           .split(",")
           .map((tag: string) => tag.trim())
           .some((tag: string) => tags.includes(tag)) &&
-        frontmatter.slug !== currentSlug
+        data.slug !== currentSlug
       ) {
-        relatedPosts.push({ file, frontmatter, code });
+        relatedPosts.push({ file, data, content });
       }
     }
   }
 
-  return relatedPosts.slice(0, 3).filter((post) => post.frontmatter.published);
+  return relatedPosts.slice(0, 3).filter((post) => post.data.published);
 }
 
 /**
@@ -155,6 +156,7 @@ export async function createPost(formData: FormData): Promise<any> {
     path: filePath,
     message: `Add a new blog post: ${title}`,
     content: Buffer.from(fileContent).toString("base64"),
+    branch: "cs/dev",
   });
   return data;
 }
@@ -174,6 +176,7 @@ export async function updatePost(formData: FormData): Promise<any> {
     path: filePath,
     message: `Update blog post: ${title}`,
     content: Buffer.from(fileContent).toString("base64"),
+    branch: "cs/dev",
     sha: existingFileContent.data.sha,
   });
   return data;
@@ -200,6 +203,7 @@ export async function deletePost(fileSlug: FormDataEntryValue): Promise<any> {
       owner,
       repo,
       path: `${contentPath}/${fileSlug}.mdx`,
+      branch: "cs/dev",
       message: `Delete blog post: ${fileSlug}`,
       sha: fileToDelete.sha,
     });
@@ -220,9 +224,10 @@ async function fetchAllPosts() {
     .filter((file) => file?.endsWith(".mdx"))
     .map(async (file) => {
       const filePath = path.join(mdxDirectory, file);
-      const content = fs.readFileSync(filePath, "utf-8");
-      const { code, frontmatter } = await mdxBundle({ source: content });
-      return { file, frontmatter, code };
+      const mdxContent = fs.readFileSync(filePath, "utf-8");
+      // const { code, data } = await mdxBundle({ source: content });
+      const { data, content } = matter(mdxContent);
+      return { file, data, content };
     });
 
   if (!posts) {

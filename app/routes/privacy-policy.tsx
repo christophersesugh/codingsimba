@@ -2,15 +2,15 @@ import { Section } from "~/components/section";
 import { Markdown } from "~/components/markdown";
 import { metaFn } from "~/utils/meta";
 import { useLoaderData } from "@remix-run/react";
-import { mdxBundle } from "~/utils/bundler.server";
+// import { mdxBundle } from "~/utils/bundler.server";
 import { json } from "@remix-run/node";
 import { pPolicyContent } from "~/constants/page-content.server";
 
 export const meta = metaFn;
 
 export async function loader() {
-  const { code: content } = await mdxBundle({ source: pPolicyContent });
-  return json({ content });
+  // const { code: content } = await mdxBundle({ source: pPolicyContent });
+  return json({ content: pPolicyContent });
 }
 
 export default function PrivacyPolicy() {
