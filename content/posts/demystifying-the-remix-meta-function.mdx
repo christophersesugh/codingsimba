@@ -5,11 +5,9 @@
   photo: https://res.cloudinary.com/christo/image/upload/v1700228783/remix-seo_aykobs.jpg
   description: A comprehensive guide to optimizing SEO and enhancing user experience in your Remix applications.
   video: 
-  createdAt: 1700582551331
+  createdAt: 1700582605525
   published: false 
 ---
-
-
 
 ## Learning objectives
 
@@ -138,7 +136,7 @@ Produces this HTML:
 By default, meta descriptors will render a `<meta>` tag in most cases. The two exceptions are:
 
 1. `{ title }` renders a title `<title>` tag
-2. `{  "script:ld+json" }` renders a `<script type = "application/ld+json">` tag, and its value should be a serializable object that is stringified and injected into the tag.
+2. `{ "script:ld+json" }` renders a `<script type = "application/ld+json">` tag, and its value should be a serializable object that is stringified and injected into the tag.
 
 #### More about `application/ld+json` type
 
@@ -154,7 +152,7 @@ The key features of JSON-LD include its simplicity, ease of integration with exi
 
 1\. **Understand JSON-LD:**
 
-   JSON-LD is a way to structure data in a format that is easy for machines to understand. It's often used to provide additional context about the content on a web page. For example, if you have information about a person, you can represent it in JSON-LD format.
+JSON-LD is a way to structure data in a format that is easy for machines to understand. It's often used to provide additional context about the content on a web page. For example, if you have information about a person, you can represent it in JSON-LD format.
 
 ```json
  {
@@ -167,7 +165,7 @@ The key features of JSON-LD include its simplicity, ease of integration with exi
 
 2\. **Create a JavaScript Object:**
 
-   In your JavaScript code (can be within a script tag in your HTML file or in a separate JavaScript file), create an object representing your data.
+In your JavaScript code (can be within a script tag in your HTML file or in a separate JavaScript file), create an object representing your data.
 
 ```javascript
 const personData = {
@@ -180,7 +178,7 @@ const personData = {
 
 3\. **Stringify the Object:**
 
-   To inject this data into the HTML page, you need to convert the JavaScript object into a string. You can use `JSON.stringify` for this.
+To inject this data into the HTML page, you need to convert the JavaScript object into a string. You can use `JSON.stringify` for this.
 
 ```javascript
 const jsonString = JSON.stringify(personData);
@@ -188,7 +186,7 @@ const jsonString = JSON.stringify(personData);
 
 4\. **Inject into HTML:**
 
-   Now, you can create a `<script>` tag with the `type` attribute set to "application/ld+json" and insert your stringified JSON-LD data.
+Now, you can create a `<script>` tag with the `type` attribute set to "application/ld+json" and insert your stringified JSON-LD data.
 
 ```javascript
 const scriptTag = <script type="application/ld+json">${jsonString}</script>;
@@ -198,7 +196,7 @@ const scriptTag = <script type="application/ld+json">${jsonString}</script>;
 
 Finally, you need to insert the `scriptTag` into your HTML document. You can do this dynamically using JavaScript or directly in your HTML file.
 
-```
+```xml
  <!DOCTYPE html>
  <html lang="en">
    <head>
@@ -218,7 +216,7 @@ This way, when the page loads, the JSON-LD data will be included in the HTML, pr
 
 In Remix, this can simply be done as shown:
 
-```
+```typescript
 export const meta: MetaFunction = () => {
   return [
     {
@@ -235,7 +233,7 @@ export const meta: MetaFunction = () => {
 
 1. A meta descriptor can also render a `<link>` tag by setting the `tagName` property to `"link"` . This is useful for `<link>` link tags associated with SEO like `canonical` URLs. For asset links like stylesheet and favicons, you should use the \[links\](<https://remix.run/docs/en/main/route/links>) export instead.
 
-```
+```typescript
 export const meta: MetaFunction = () => {
   return [
     {
@@ -246,5 +244,3 @@ export const meta: MetaFunction = () => {
   ];
 };
 ```
-
-
