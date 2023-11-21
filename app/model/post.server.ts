@@ -176,7 +176,6 @@ export async function updatePost(formData: FormData): Promise<any> {
     path: filePath,
     message: `Update blog post: ${title}`,
     content: Buffer.from(fileContent).toString("base64"),
-    branch: "cs/dev",
     sha: existingFileContent.data.sha,
   });
   return data;
