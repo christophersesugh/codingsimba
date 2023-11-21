@@ -156,7 +156,6 @@ export async function createPost(formData: FormData): Promise<any> {
     path: filePath,
     message: `Add a new blog post: ${title}`,
     content: Buffer.from(fileContent).toString("base64"),
-    branch: "cs/dev",
   });
   return data;
 }
@@ -176,7 +175,6 @@ export async function updatePost(formData: FormData): Promise<any> {
     path: filePath,
     message: `Update blog post: ${title}`,
     content: Buffer.from(fileContent).toString("base64"),
-    branch: "cs/dev",
     sha: existingFileContent.data.sha,
   });
   return data;
@@ -203,7 +201,6 @@ export async function deletePost(fileSlug: FormDataEntryValue): Promise<any> {
       owner,
       repo,
       path: `${contentPath}/${fileSlug}.mdx`,
-      branch: "cs/dev",
       message: `Delete blog post: ${fileSlug}`,
       sha: fileToDelete.sha,
     });
