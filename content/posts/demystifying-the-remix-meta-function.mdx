@@ -5,7 +5,7 @@
   photo: https://res.cloudinary.com/christo/image/upload/v1700228783/remix-seo_aykobs.jpg
   description: A comprehensive guide to optimizing SEO and enhancing user experience in your Remix applications.
   video: 
-  createdAt: 1700235188923
+  createdAt: 1700577169903
   published: false 
 ---
 
@@ -17,6 +17,230 @@
 - Open graph (og) meta tags
 - Twitter cards (optional)
 
-The `meta` export allows you to add metadata HTML tags for every route in your app. These tags are important for things like search engine optimization (SEO) and browser directives for determining certain behaviors. They can also be used by social media sites to display rich previews of your app.
+### Introduction to search engine optimization (SEO)
 
-In this article we will explore all the uses of the `meta` function in a Remix application, not only that, we will also implement a custom meta function that we can use in the whole of our application.
+Search Engine Optimization is a set of practices aimed at improving a website's visibility and ranking on search engine results pages (SERPs). The primary goal is to increase organic (non-paid) traffic to the website. SEO involves optimizing various elements, including keywords, content, meta tags, and backlinks, to align with search engine algorithms. By enhancing these aspects, websites can achieve higher rankings, making them more likely to be found by users searching for relevant information or services. In essence, SEO is crucial for ensuring that a website is easily discoverable by search engines, ultimately driving more traffic and potential customers.
+
+### SEO key concepts
+
+1\. **Keywords:** These are the words or phrases users type into search engines when looking for information. Incorporating relevant keywords into your website's content can improve its chances of appearing in search results.
+
+2\. **On-Page SEO:** This involves optimizing individual pages on your website. It includes optimizing content, meta titles, meta descriptions, and headers to make them more search engine-friendly.
+
+3\. **Off-Page SEO:** This refers to activities done outside your website to improve its visibility. Backlinks (links from other websites to yours) play a significant role. Quality backlinks from reputable sites can positively impact your site's authority.
+
+4\. **Quality Content:** Search engines prioritize content that is valuable and relevant to users. Creating high-quality, informative, and engaging content can boost your site's SEO.
+
+5\. **User Experience:** Search engines consider how easy it is for users to navigate and interact with your site. A well-designed and user-friendly website can positively impact SEO.
+
+6\. **Mobile Optimization:** With the increasing use of mobile devices, search engines favor websites that are optimized for mobile. Ensure your site is responsive and provides a good experience on smartphones and tablets.
+
+7\. **Analytics:** Use tools like Google Analytics to track your website's performance. Analyzing data can help you understand what's working well and what areas need improvement.
+
+### HTML `meta` tag
+
+The HTML meta tag is a crucial element used to provide metadata about a document, such as a web page. Metadata doesn't appear on the page itself but plays a crucial role in how browsers and search engines interpret and display the content. Here are some common attributes used in the meta tag:
+
+1\. **Charset:**
+
+```
+<meta charset="UTF-8"/>
+```
+
+This tag defines the character set used in the document. UTF-8 is widely used and supports a vast range of characters.
+
+2\. **Viewport:**
+
+```
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+```
+
+This is important for responsive web design. It ensures that the width of the page is set to the device width and that the initial zoom level is 1.0.
+
+3\. **Description:**
+
+```
+<meta name="description" content="A brief description of the page"/>
+```
+
+This tag provides a concise summary of the page's content. Search engines often use this description in search results.
+
+4\. **Keywords (Deprecated):**
+
+```
+<meta name="keywords" content="keyword1, keyword2, keyword3"/>
+```
+
+Historically used to specify keywords relevant to the page. However, major search engines don't give it much weight today but it is a good practice to always include keywords in your website.
+
+5\. **Author:**
+
+```
+<meta name="author" content="Author Name"/>
+```
+
+Indicates the author of the page.
+
+6\. **Robots:**
+
+```
+<meta name="robots" content="index, follow"/>
+```
+
+Directs search engine crawlers on whether to index the content and follow the links on the page.
+
+8\. **Open Graph (for social media):**
+
+```
+ <meta property="og:title" content="Title">
+
+ <meta property="og:description" content="Description">
+
+ <meta property="og:image" content="URL to an image">
+```
+
+These tags are used for social media sharing, providing information like title, description, and an image when a page is shared.
+
+Including relevant and accurate meta tags can improve how your page is displayed in search engine results and when shared on social media, ultimately impacting the user experience and visibility of your website.
+
+### Remix meta function
+
+The meta export allows you to add metadata HTML tags for every route in your app. These tags are important for things like search engine optimization (SEO) and browser directives for determining certain behaviors. They can also be used by social media sites to display rich previews of your app.
+
+The meta function should return an array of MetaDescriptor objects. These objects map one-to-one with HTML tags. So this meta function:
+
+```typescript
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Remix" },
+    {
+      property: "og:title",
+      content: "Remix",
+    },
+    {
+      name: "description",
+      content: "This is a Remix App.",
+    },
+  ];
+};
+```
+
+Produces this HTML:
+
+```
+<title>Remix</title>
+<meta property="og:title" content="Remix" />;
+<meta name="description" content="This is a Remix App." />
+```
+
+By default, meta descriptors will render a `<meta>` tag in most cases. The two exceptions are:
+
+1. `{ title }` renders a title `<title>` tag
+2. `{  "script:ld+json" }` renders a `<script type = "application/ld+json">` tag, and its value should be a serializable object that is stringified and injected into the tag.
+
+#### More about `application/ld+json` type
+
+The full meaning of JSON-LD is "JavaScript Object Notation for Linked Data." JSON-LD is a lightweight data-interchange format that is easy for humans to read and write and easy for machines to parse and generate. It is also part of the larger family of JSON formats and shares many of the same characteristics.
+
+JSON-LD is designed to be a syntax for expressing structured data that can be used in a Linked Data context. Linked Data is a method of structuring and connecting data on the web, enabling the creation of a web of data where different datasets can be linked together in a meaningful way.
+
+In the context of the web, JSON-LD is often used to embed structured data within web pages. This structured data provides additional context and information about the content on the page, making it more accessible and understandable to search engines and other applications.
+
+The key features of JSON-LD include its simplicity, ease of integration with existing JSON data, and its ability to express linked data in a way that is both human-readable and machine-readable.
+
+##### Assuming you're building a simple web page and want to include JSON-LD data for search engines.
+
+1\. **Understand JSON-LD:**
+
+   JSON-LD is a way to structure data in a format that is easy for machines to understand. It's often used to provide additional context about the content on a web page. For example, if you have information about a person, you can represent it in JSON-LD format.
+
+```json
+ {
+     "@context": "http://schema.org",
+     "@type": "Person",
+     "name": "John Doe",
+     "jobTitle": "Web Developer"
+ }
+```
+
+2\. **Create a JavaScript Object:**
+
+   In your JavaScript code (can be within a script tag in your HTML file or in a separate JavaScript file), create an object representing your data.
+
+```javascript
+const personData = {
+  "@context":  "http://schema.org",
+  "@type": "Person",
+  "name": "John Doe",
+  "jobTitle": "Web Developer"
+};
+```
+
+3\. **Stringify the Object:**
+
+   To inject this data into the HTML page, you need to convert the JavaScript object into a string. You can use `JSON.stringify` for this.
+
+```javascript
+const jsonString = JSON.stringify(personData);
+```
+
+4\. **Inject into HTML:**
+
+   Now, you can create a `<script>` tag with the `type` attribute set to "application/ld+json" and insert your stringified JSON-LD data.
+
+```javascript
+const scriptTag = <script type="application/ld+json">${jsonString}</script>;
+```
+
+5\. **Insert into HTML Document:**
+
+Finally, you need to insert the `scriptTag` into your HTML document. You can do this dynamically using JavaScript or directly in your HTML file.
+
+```
+ <!DOCTYPE html>
+ <html lang="en">
+   <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>My Web Page</title>
+     <!-- Insert your JSON-LD script tag here -->
+     ${scriptTag}
+   </head>
+   <body>
+     <!-- Your page content goes here -->
+   </body>
+ </html>
+```
+
+This way, when the page loads, the JSON-LD data will be included in the HTML, providing additional information about the person (in this case, John Doe) to search engines. This helps improve the search engine's understanding of your content.
+
+In Remix, this can simply be done as shown:
+
+```
+export const meta: MetaFunction = () => {
+  return [
+    {
+      "script:ld+json": {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        name: "John Doe",
+        jobTitle: "Web developer",
+      },
+    },
+  ];
+};
+```
+
+1. A meta descriptor can also render a `<link>` tag by setting the `tagName` property to `"link"` . This is useful for `<link>` link tags associated with SEO like `canonical` URLs. For asset links like stylesheet and favicons, you should use the \[links\](<https://remix.run/docs/en/main/route/links>) export instead.
+
+```
+export const meta: MetaFunction = () => {
+  return [
+    {
+      tagName: "link",
+      rel: "canonical",
+      href: "https://codingsimba.com",
+    },
+  ];
+};
+```
