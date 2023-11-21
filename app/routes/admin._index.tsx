@@ -122,23 +122,23 @@ export default function AdminIndexRoute() {
         {posts?.length
           ? posts.map((post) => (
               <li
-                key={post.frontmatter.slug}
+                key={post.data.slug}
                 className="flex flex-wrap list-disc list-outside items-center justify-between border-b-2"
               >
                 <Button type="button">
-                  {post.frontmatter.published ? (
+                  {post.data.published ? (
                     <MdPublishedWithChanges className="text-green-500" />
                   ) : (
                     <MdUnpublished className="text-yellow-500" />
                   )}
                 </Button>
-                <Link to={`/blog/${post.frontmatter.slug}`}>
+                <Link to={`/blog/${post.data.slug}`}>
                   <h1 className="self-start capitalize text-blue-500">
-                    {post.frontmatter.title}
+                    {post.data.title}
                   </h1>
                 </Link>
                 <div className="flex gap-4">
-                  <Link to={`/admin/edit/${post.frontmatter.slug}`}>
+                  <Link to={`/admin/edit/${post.data.slug}`}>
                     <Button>
                       {isLoading || isSubmitting ? (
                         <FaSpinner className="animate-spin" />
@@ -148,11 +148,7 @@ export default function AdminIndexRoute() {
                     </Button>
                   </Link>
                   <fetcher.Form method="POST" action="/admin?index">
-                    <Button
-                      type="submit"
-                      name="delete"
-                      value={post.frontmatter.slug}
-                    >
+                    <Button type="submit" name="delete" value={post.data.slug}>
                       {isLoading || isSubmitting ? (
                         <FaSpinner className="animate-spin" />
                       ) : (

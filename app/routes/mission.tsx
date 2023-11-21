@@ -5,14 +5,14 @@ import { Section } from "~/components/section";
 import { Markdown } from "~/components/markdown";
 import { metaFn } from "~/utils/meta";
 import { json } from "@remix-run/node";
-import { mdxBundle } from "~/utils/bundler.server";
+// import { mdxBundle } from "~/utils/bundler.server";
 import { missionContent } from "~/constants/page-content.server";
 
 export const meta = metaFn;
 
 export async function loader() {
-  const { code: content } = await mdxBundle({ source: missionContent });
-  return json({ content });
+  // const { code: content } = await mdxBundle({ source: missionContent });
+  return json({ content: missionContent });
 }
 
 export default function Mission() {

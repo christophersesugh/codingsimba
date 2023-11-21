@@ -1,7 +1,6 @@
 import React from "react";
-import { getMDXComponent } from "mdx-bundler/client/index.js";
+import ReactMarkdown from "react-markdown";
 import {
-  B,
   BlockQuote,
   CodeBlock,
   H1,
@@ -13,34 +12,29 @@ import {
   Img,
   MdLink,
   OL,
-  P,
-  Strong,
   UL,
 } from "./mdx-components";
 
 export function Markdown({ source }: { source: string }) {
-  const Component = React.useMemo(() => getMDXComponent(source), [source]);
   return (
-    <>
-      <Component
+    <div className="markdown">
+      <ReactMarkdown
+        children={source}
         components={{
-          p: P,
           h1: H1,
           h2: H2,
           h3: H3,
           h4: H4,
           h5: H5,
           h6: H6,
-          ol: OL,
           ul: UL,
+          ol: OL,
           a: MdLink,
-          b: B,
-          blockquote: BlockQuote,
-          strong: Strong,
           img: Img,
           code: CodeBlock,
+          blockquote: BlockQuote,
         }}
       />
-    </>
+    </div>
   );
 }

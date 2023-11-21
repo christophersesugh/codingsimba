@@ -1,7 +1,7 @@
 import type { MetaFunction } from "@remix-run/node";
 import homeImage from "~/assets/home.webp";
 
-interface PostFrontmatter {
+interface Postdata {
   title: string;
   description: string;
   page?: string;
@@ -47,7 +47,7 @@ export const metaFn: MetaFunction = ({ matches, data }) => {
   if (postPage) {
     const mData = data as any;
     const { post } = mData?.data;
-    return getPostMeta(post?.frontmatter);
+    return getPostMeta(post?.data);
   }
 
   return getPostMeta({
@@ -58,7 +58,7 @@ export const metaFn: MetaFunction = ({ matches, data }) => {
   });
 };
 
-function getPostMeta(post: PostFrontmatter) {
+function getPostMeta(post: Postdata) {
   const title = capitalizeFirstLetter(post?.title);
 
   return [
