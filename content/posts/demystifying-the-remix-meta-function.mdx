@@ -14,8 +14,7 @@
 - Introduction to search engine optimization (SEO)
 - HTML`meta` tag
 - Remix meta function
-- Open graph (og) meta tags
-- Twitter cards (optional)
+- A simple remix app demonstrating the use of the meta function
 
 ## Introduction to search engine optimization (SEO)
 
@@ -245,7 +244,7 @@ export const meta: MetaFunction = () => {
 
 ### `meta` function parameters
 
-#### location
+### location
 
 This is the current router Location object. This is useful for generating tags for routes at specific paths or query parameters.
 
@@ -282,7 +281,7 @@ We will see how to use this parameter in just a couple of minutes.
 
 ### data
 
-<span>This is the data from your route's </span>`loader`<span>.</span>
+This is the data from your route's loader`.
 
 ```typescript
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -298,8 +297,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 [**Loader**](https://remix.run/docs/en/main/route/loader)\*\*:A loader is a function or mechanism that is responsible for fetching or preparing data before a route is rendered. It's commonly used to ensure that the necessary data is available before displaying the content of a particular page.
 
-Checkout the [remix loader
-](https://remix.run/docs/en/main/route/loader) function for more information.
+Checkout the [remix loader function](https://remix.run/docs/en/main/route/loader) function for more information.
 
 ### params
 
