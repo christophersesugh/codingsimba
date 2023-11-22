@@ -5,16 +5,16 @@
   photo: https://res.cloudinary.com/christo/image/upload/v1700228783/remix-seo_aykobs.jpg
   description: A comprehensive guide to optimizing SEO and enhancing user experience in your Remix applications.
   video: 
-  createdAt: 1700585656195
+  createdAt: 1700651096231
   published: false 
 ---
 
 ## Learning objectives
 
 - Introduction to search engine optimization (SEO)
-- HTML`meta` tag
+- HTML` meta` tag
 - Remix meta function
-- A simple remix app demonstrating the use of the meta function
+- A simple Remix App. demonstrating the use of the meta function.
 
 ## Introduction to search engine optimization (SEO)
 
@@ -64,7 +64,7 @@ This is important for responsive web design. It ensures that the width of the pa
 
 This tag provides a concise summary of the page's content. Search engines often use this description in search results.
 
-4\. **Keywords (Deprecated):**
+4\. **Keywords:**
 
 ```xml
 <meta name="keywords" content="keyword1, keyword2, keyword3"/>
@@ -153,10 +153,10 @@ JSON-LD is a way to structure data in a format that is easy for machines to unde
 
 ```json
 {
-  "@context": "http://schema.org",
-  "@type": "Person",
-  "name": "John Doe",
-  "jobTitle": "Web Developer"
+   "@context": "http://schema.org",
+   "@type": "Person",
+   "name": "John Doe",
+   "jobTitle": "Web Developer"
 }
 ```
 
@@ -166,10 +166,10 @@ In your JavaScript code (can be within a script tag in your HTML file or in a se
 
 ```javascript
 const personData = {
-  "@context": "http://schema.org",
+  "@context":  "http://schema.org",
   "@type": "Person",
-  name: "John Doe",
-  jobTitle: "Web Developer",
+  "name": "John Doe",
+  "jobTitle": "Web Developer"
 };
 ```
 
@@ -228,6 +228,8 @@ export const meta: MetaFunction = () => {
 };
 ```
 
+You can see how simple and amazing it is with Remix, one of the reasons why I love Remix!
+
 1. A meta descriptor can also render a `<link>` tag by setting the `tagName` property to `"link"` . This is useful for `<link>` link tags associated with SEO like `canonical` URLs. For asset links like stylesheet and favicons, you should use the [links](https://remix.run/docs/en/main/route/links) export instead.
 
 ```typescript
@@ -244,20 +246,22 @@ export const meta: MetaFunction = () => {
 
 ### `meta` function parameters
 
-### location
+#### location
 
 This is the current router Location object. This is useful for generating tags for routes at specific paths or query parameters.
 
 ```typescript
 export const meta: MetaFunction = ({ location }) => {
-  const searchQuery = new URLSearchParams(location.search).get("q");
+  const searchQuery = new URLSearchParams(
+    location.search
+  ).get("q");
   return [{ title: `Search results for "${searchQuery}"` }];
 };
 ```
 
 Let's break down the code step by step to understand the `location` parameter better:
 
-1.  `location`:
+1. `location`:
 
 - `location` is an object that typically represents the current URL or routing information in a web application.
 
@@ -281,23 +285,29 @@ We will see how to use this parameter in just a couple of minutes.
 
 ### data
 
-This is the data from your route's loader`.
+This is the data from your route's `loader`.
 
 ```typescript
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({
+  params,
+}: LoaderFunctionArgs) {
   return json({
     task: await getTask(params.projectId, params.taskId),
   });
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
+export const meta: MetaFunction<typeof loader> = ({
+  data,
+}) => {
   return [{ title: data.task.name }];
 };
 ```
 
-[**Loader**](https://remix.run/docs/en/main/route/loader)\*\*:A loader is a function or mechanism that is responsible for fetching or preparing data before a route is rendered. It's commonly used to ensure that the necessary data is available before displaying the content of a particular page.
+[**Loader**](https://remix.run/docs/en/main/route/loader)**:** A loader is a function or mechanism that is responsible for fetching or preparing data before a route is rendered. It's commonly used to ensure that the necessary data is available before displaying the content of a particular page.
 
-Checkout the [remix loader function](https://remix.run/docs/en/main/route/loader) for more information.
+Remix employs the loader function exclusively on the server side to retrieve data from the server. This function plays a crucial role in fetching necessary information and subsequently making it accessible to the specific route from which it is exported.
+
+See [remix loader function](https://remix.run/docs/en/main/route/loader)
 
 ### params
 
@@ -306,3 +316,36 @@ The route's URL params. See [Dynamic Segments in the Routing Guide](https://remi
 The `params` refer to the URL parameters associated with a route in a web application. When a user navigates to a specific URL, it may contain dynamic segments or placeholders denoted by a colon (`:`) in the route definition. For example, in the route `/users/:userId`, `userId` is a dynamic segment.
 
 The `params` object provides access to the values of these dynamic segments for the current route. For instance, if the user visits the URL `/users/123`, the `params` object would contain `{ userId: '123' }`.
+
+### error
+
+<span>Thrown errors that trigger error boundaries will be passed to the </span>`meta`<span> function. This is useful for generating metadata for error pages.</span>
+
+```typescript
+export const meta: MetaFunction = ({ error }) => {
+  return [{ title: error ? "oops! an error occured" : "Actual title" }];
+};
+```
+
+Visit [accessing data from parent route loaders](https://remix.run/docs/en/main/route/meta#accessing-data-from-parent-route-loaders) to learn more about the following:
+
+- Accessing data from parent route loaders
+- **Gotchas with** `meta` and nested routes
+- Global meta
+- How to avoid `meta` in parent routes
+- How to merge with parent `meta`
+- `meta` merging helper function created by the remix team
+
+The embedded youtube video demonstrates how to effectively wire up the meta function in your Remix app.
+
+## Conclusion
+
+In conclusion, this comprehensive exploration of Search Engine Optimization (SEO) and the utilization of HTML meta tags, particularly in the context of Remix, provides a solid foundation for enhancing the visibility and performance of web applications. The key concepts of SEO, such as the importance of keywords, on-page and off-page optimization, quality content, user experience, and mobile optimization, underscore the significance of a holistic approach to website development.
+
+The detailed examination of HTML meta tags, including essential attributes like charset, viewport, description, keywords (deprecated but still relevant), author, and robots, elucidates their role in conveying crucial information to search engines and browsers. Moreover, the incorporation of Open Graph (og) meta tags for social media sharing reinforces the idea that well-crafted meta tags contribute not only to search engine visibility but also to an enhanced user experience when shared on various platforms.
+
+The discussion then delves into the Remix meta function, showcasing its capacity to seamlessly integrate metadata HTML tags for every route in an app. The code examples illustrate how the meta export, in conjunction with the meta function, can efficiently generate meta descriptors, ensuring effective SEO and facilitating browser directives.
+
+Furthermore, the exploration of JSON-LD and its integration into web pages for search engine optimization provides a valuable insight into structuring data in a way that is both machine-readable and human-readable. The step-by-step guide on creating a JavaScript object, stringifying it, and injecting it into HTML using a script tag emphasizes its relevance in providing additional context to search engines.
+
+Finally, the discussion of meta function parameters, such as location, matches, data, params, and error, offers a nuanced understanding of how Remix empowers developers to tailor metadata dynamically based on route-specific information, loader functions, and error handling.
