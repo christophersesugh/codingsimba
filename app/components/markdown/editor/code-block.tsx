@@ -1,4 +1,3 @@
-import React from "react";
 import { NodeViewContent, NodeViewWrapper } from "@tiptap/react";
 
 export function CodeBlock({

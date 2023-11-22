@@ -96,11 +96,13 @@ export function BlockQuote(props: ElemProps): React.ReactElement {
 }
 
 export function Strong(props: ElemProps): React.ReactElement {
-  return <strong className="font-black" {...props} />;
+  return (
+    <strong className="font-black text-black dark:text-white" {...props} />
+  );
 }
 
 export function B(props: ElemProps): React.ReactElement {
-  return <b className="font-black" {...props} />;
+  return <b className="font-bold text-black dark:text-white" {...props} />;
 }
 
 export function Img(props: React.ImgHTMLAttributes<HTMLImageElement>) {
