@@ -1,5 +1,5 @@
-import React from "react";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 import {
   BlockQuote,
   CodeBlock,
@@ -20,6 +20,7 @@ export function Markdown({ source }: { source: string }) {
     <div className="markdown">
       <ReactMarkdown
         children={source}
+        rehypePlugins={[rehypeRaw]}
         components={{
           h1: H1,
           h2: H2,
