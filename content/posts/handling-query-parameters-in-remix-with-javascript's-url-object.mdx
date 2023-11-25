@@ -1,0 +1,59 @@
+---
+  title: Handling Query Parameters in Remix with JavaScript's URL Object
+  slug: handling-query-parameters-in-remix-with-java-script-s-url-object
+  tags: react,remix,javascript,typescript,url
+  photo: https://res.cloudinary.com/christo/image/upload/v1675503724/education_uoesny.jpg
+  description: Embark on a journey into the powerful alliance of JavaScript's URL Object. Uncover the art of seamless navigation, dynamic routing, and adept handling of query parameters in Remix
+  video: 
+  createdAt: 1700932211129
+  published: false 
+---
+
+## What really is the URL object constructor?
+
+The `URL` object constructor in javascript is used to work with URLs (unified resource locators). It provides a convenient way to parse, construct, and manipulate URLs within your code.
+
+### Compatibility
+
+Visit [https://developer.mozilla.org/en-US/docs/Web/API/URL/URL ](https://developer.mozilla.org/en-US/docs/Web/API/URL/URL)to see the browser compatibility for the URL object constructor.
+
+### Signature
+
+`new URL(url: string | URL, base: string | URL | undefined)`
+
+The URL object constructor accepts a url which is a string or URL, and/or a base which is the base url which can be a string, URL, or undefined.
+
+### More about the URL object constructor
+
+Let's assume we are working with the following url; `https://example.com` , let's explore the different parts of the URL object constructor.
+
+Declare a variable `myUrl` and assign `new URL("https://example.com")` to it as follows:
+
+```javascript
+const myUrl = new URL("https://example.com")
+console.log(myUrl)
+```
+
+We will get the following output
+
+```shell
+URL {
+  href: 'https://example.com/',
+  origin: 'https://example.com',
+  protocol: 'https:',
+  username: '',
+  password: '',
+  host: 'example.com',
+  hostname: 'example.com',
+  port: '',
+  pathname: '/',
+  search: '',
+  searchParams: URLSearchParams {},
+  hash: ''
+}
+```
+
+Let's try to breakdown each of these properties
+
+1. **href: This is the complete URL string, including the protocol, host, pathname, search parameters, and hash.**
+2. **origin:** <span>The origin is the combination of the protocol, host, and port (if specified).</span>
