@@ -70,6 +70,7 @@ export async function getPosts(request: Request) {
   if (url.pathname === "/blog" || url.pathname === "/") {
     return sortedPosts.filter((post) => post.data.published).slice(0, limit);
   }
+  console.log(sortedPosts);
 
   return sortedPosts.slice(0, limit);
 }
@@ -185,12 +186,12 @@ export async function updatePost(formData: FormData): Promise<any> {
  * @param {String} fileSlug
  * @returns {String}
  */
-export async function deletePost(fileSlug: FormDataEntryValue): Promise<any> {
+export async function deletePost(fileName: FormDataEntryValue): Promise<any> {
   try {
     const response = await fetchAllFilesProps();
 
     const fileToDelete = response.data.find(
-      (file: any) => file.type === "file" && file.name === fileSlug + ".mdx",
+      (file: any) => file.type === "file" && file.name === fileName,
     );
 
     if (!fileToDelete) {
@@ -200,8 +201,8 @@ export async function deletePost(fileSlug: FormDataEntryValue): Promise<any> {
     const deleteResponse = await octokit.rest.repos.deleteFile({
       owner,
       repo,
-      path: `${contentPath}/${fileSlug}.mdx`,
-      message: `Delete blog post: ${fileSlug}`,
+      path: `${contentPath}/${fileName}`,
+      message: `Delete blog post: ${fileName}`,
       sha: fileToDelete.sha,
     });
 

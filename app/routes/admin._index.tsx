@@ -38,8 +38,6 @@ export async function action({ request }: ActionFunctionArgs) {
   const postDelete = formData.get("delete");
   try {
     if (postDelete) {
-      console.log("deleting");
-      console.log(postDelete);
       const response = await deletePost(postDelete);
       return json({ data: { response }, ok: true });
     }
@@ -132,13 +130,13 @@ export default function AdminIndexRoute() {
                     <MdUnpublished className="text-yellow-500" />
                   )}
                 </Button>
-                <Link to={`/blog/${post.data.slug}`}>
+                <Link to={`/blog/${post.file.split(".")[0]}`}>
                   <h1 className="self-start capitalize text-blue-500">
                     {post.data.title}
                   </h1>
                 </Link>
                 <div className="flex gap-4">
-                  <Link to={`/admin/edit/${post.data.slug}`}>
+                  <Link to={`/admin/edit/${post.file.split(".")[0]}`}>
                     <Button>
                       {isLoading || isSubmitting ? (
                         <FaSpinner className="animate-spin" />
@@ -148,7 +146,7 @@ export default function AdminIndexRoute() {
                     </Button>
                   </Link>
                   <fetcher.Form method="POST" action="/admin?index">
-                    <Button type="submit" name="delete" value={post.data.slug}>
+                    <Button type="submit" name="delete" value={post.file}>
                       {isLoading || isSubmitting ? (
                         <FaSpinner className="animate-spin" />
                       ) : (

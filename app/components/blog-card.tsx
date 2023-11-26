@@ -4,10 +4,10 @@ import moment from "moment";
 import readingTime from "reading-time";
 
 function Card({ post }: any) {
-  const { data, content } = post;
+  const { data, content, file } = post;
   const stats = readingTime(content);
   return (
-    <Link to={`/blog/${data.slug}`}>
+    <Link to={`/blog/${file.split(".")[0]}`}>
       <article className="flex flex-col gap-2 drop-shadow-xl max-w-[20rem] mx-auto">
         <div className="min-h-[50%] w-full rounded-md p-1 hover:border-4 duration-300 hover:border-blue-500">
           <img
