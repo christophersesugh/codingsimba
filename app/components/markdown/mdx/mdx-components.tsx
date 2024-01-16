@@ -4,6 +4,9 @@ import { Link } from "@remix-run/react";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { nightOwl } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import clsx from "clsx";
+import { MdOutlineContentCopy } from "react-icons/md";
+import { IoCheckmarkDone } from "react-icons/io5";
+import { Button } from "~/components/ui/button";
 
 type ElemProps = {
   children?: React.ReactNode;
@@ -139,18 +142,52 @@ export function MdLink(props: any): React.ReactElement {
 // };
 
 export function CodeBlock(props: any): React.ReactElement {
+  const [copied, setCopied] = React.useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { node, inline, className, children } = props;
   const match = /language-(\w+)/.exec(className || "");
+
+  const customStyle = {
+    fontSize: "1.2rem",
+    lineHeight: "1.5",
+    borderRadius: "5px",
+    padding: "20px",
+  };
+
+  function handleCopied() {
+    window.navigator.clipboard.writeText(children);
+    setCopied(true);
+    window.setTimeout(() => {
+      setCopied(false);
+    }, 3000);
+  }
+
   return !inline && match ? (
-    <SyntaxHighlighter
-      {...props}
-      children={String(children).replace(/\n$/, "")}
-      style={nightOwl}
-      showLineNumbers
-      language={match[1]}
-      PreTag="div"
-    />
+    <div className="bg-grey-700 relative">
+      <div className="absolute right-2 top-2">
+        <Button variant="ghost" onClick={handleCopied}>
+          {copied ? (
+            <>
+              <IoCheckmarkDone className="mr-2 h-4 w-4" /> Copied!
+            </>
+          ) : (
+            <>
+              <MdOutlineContentCopy className="mr-2 h-4 w-4" /> Copy
+            </>
+          )}
+        </Button>
+      </div>
+      <SyntaxHighlighter
+        {...props}
+        children={String(children).replace(/\n$/, "")}
+        customStyle={customStyle}
+        style={nightOwl}
+        showLineNumbers
+        wrapLongLines
+        language={match[1]}
+        PreTag="div"
+      />
+    </div>
   ) : (
     <code
       {...props}
