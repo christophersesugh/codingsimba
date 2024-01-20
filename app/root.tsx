@@ -17,7 +17,6 @@ import {
 } from "@remix-run/react";
 import clsx from "clsx";
 import tailwind from "~/tailwind.css";
-import markdown from "~/markdown.css";
 import markdownEditor from "~/markdown-editor.css";
 import {
   useTheme,
@@ -59,7 +58,6 @@ export const links: LinksFunction = () => [
     href: "https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400&family=Mulish&family=Roboto&display=swap",
   },
   { rel: "stylesheet", href: tailwind },
-  { rel: "stylesheet", href: markdown },
   { rel: "stylesheet", href: markdownEditor },
 ];
 

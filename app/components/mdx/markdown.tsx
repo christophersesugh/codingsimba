@@ -18,25 +18,26 @@ import {
 
 export function Markdown({ source }: { source: string }) {
   return (
-    <div className="markdown">
-      <ReactMarkdown
-        children={source}
-        remarkPlugins={[remarkGfm]}
-        components={{
-          h1: H1,
-          h2: H2,
-          h3: H3,
-          h4: H4,
-          h5: H5,
-          h6: H6,
-          ul: UL,
-          ol: OL,
-          a: MdLink,
-          img: Img,
-          code: CodeBlock,
-          blockquote: BlockQuote,
-        }}
-      />
-    </div>
+    // <div className="markdown">
+    <ReactMarkdown
+      children={source}
+      remarkPlugins={[remarkGfm]}
+      className="markdown"
+      components={{
+        h1: H1,
+        h2: H2,
+        h3: H3,
+        h4: H4,
+        h5: H5,
+        h6: H6,
+        ul: UL,
+        ol: OL,
+        a: MdLink,
+        img: Img,
+        code: CodeBlock,
+        blockquote: BlockQuote,
+      }}
+    />
+    // </div>
   );
 }

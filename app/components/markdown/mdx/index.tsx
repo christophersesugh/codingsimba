@@ -1,3 +1,4 @@
+import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
@@ -19,8 +20,8 @@ import {
 } from "./mdx-components";
 
 export function Markdown({ source }: { source: string }) {
-  return (
-    <div className="markdown">
+  const Component = React.useMemo(
+    () => (
       <ReactMarkdown
         children={source}
         remarkPlugins={[remarkGfm]}
@@ -42,6 +43,8 @@ export function Markdown({ source }: { source: string }) {
           blockquote: BlockQuote,
         }}
       />
-    </div>
+    ),
+    [source],
   );
+  return <div className="markdown">{Component}</div>;
 }

@@ -150,7 +150,7 @@ export function CodeBlock(props: any): React.ReactElement {
   const customStyle = {
     fontSize: "1.2rem",
     lineHeight: "1.5",
-    borderRadius: "5px",
+    borderRadius: "8px",
     padding: "20px",
   };
 
@@ -163,7 +163,7 @@ export function CodeBlock(props: any): React.ReactElement {
   }
 
   return !inline && match ? (
-    <div className="bg-grey-700 relative">
+    <div className="bg-grey-700 relative my-4">
       <div className="absolute right-2 top-2">
         <Button variant="ghost" onClick={handleCopied}>
           {copied ? (
