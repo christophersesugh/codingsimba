@@ -82,7 +82,9 @@ function Document({
       <body
         className={clsx(
           "bg-[#fff] text-[#1f2028] dark:bg-[#1f2028] dark:text-[#fff] transition-all duration-300 min-w-[100vw] min-h-[100vh]",
-          isLoading && "opacity-40",
+          {
+            "opacity-40": isLoading,
+          },
         )}
       >
         {children}
