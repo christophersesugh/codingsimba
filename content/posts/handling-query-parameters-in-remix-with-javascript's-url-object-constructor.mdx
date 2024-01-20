@@ -5,9 +5,10 @@
   photo: https://res.cloudinary.com/christo/image/upload/v1675503724/education_uoesny.jpg
   description: Embark on a journey into the powerful alliance of JavaScript's URL Object. Uncover the art of seamless navigation, dynamic routing, and adept handling of query parameters in Remix
   video: 
-  createdAt: 1700983223923
-  published: false 
+  createdAt: 1702057809920
+  published: true 
 ---
+
 
 ## What really is the URL object constructor?
 
@@ -25,20 +26,20 @@ The URL object constructor accepts a url which is a string or URL, and/or a base
 
 ### More about the URL object constructor
 
-Let's assume we are working with the following url; `https://example.com` , let's explore the different parts of the URL object constructor.
+Let's assume we are working with the following url; `https://example.com/test/foo?query=medallion` , let's explore the different parts of the URL object constructor.
 
-Declare a variable `myUrl` and assign `new URL("https://example.com")` to it as follows:
+Declare a variable `myUrl` and assign `new URL("https://example.com/test/foo?query=medallion")` to it as follows:
 
 ```javascript
-const myUrl = new URL("https://example.com");
-console.log(myUrl);
+const myUrl = new URL("https://example.com/test/foo?query=medallion")
+console.log(myUrl)
 ```
 
 We will get the following output
 
 ```shell
 URL {
-  href: 'https://example.com/',
+  href: 'https://example.com/test/foo?query=medallion',
   origin: 'https://example.com',
   protocol: 'https:',
   username: '',
@@ -46,14 +47,118 @@ URL {
   host: 'example.com',
   hostname: 'example.com',
   port: '',
-  pathname: '/',
-  search: '',
-  searchParams: URLSearchParams {},
+  pathname: '/test/foo',
+  search: '?query=medallion',
+  searchParams: URLSearchParams { 'query' => 'medallion' },
   hash: ''
 }
 ```
 
 Let's try to breakdown each of these properties
 
-1. **href:** This is the complete URL string, including the protocol, host, pathname, search parameters, and hash.
-2. **origin:** The origin is the combination of the protocol, host, and port (if specified).
+ 1. **href: This is the complete URL string, including the protocol, host, pathname, search parameters, and hash.**
+
+    Example: `https://example.com/test/foo?query=medallion`
+ 2. **origin:** The origin is the combination of the protocol, host, and port (if specified).
+
+    Example: `https://example.com`
+ 3. **protocol:** This is the protocol used for the URL, such `https:` . It includes the colon at the end.
+
+    Example: `https:`
+ 4. **username** and **password**: These properties are empty in our example, They would be populated if the URL include a username and password (e.g.: (`https:username:password@example.com`) .
+ 5. **host:** represent the host name, and if applicable, the port number.\
+    Example: `example.com`
+ 6. **hostname:** represent the hostname without the port number.\
+    Example: `example.com`
+ 7. **port:** represent the port number if specified in the URL. <span>It's empty if the URL uses the default port for the protocol.</span>
+ 8. <span>**pathname**: Represents the path of the URL, which comes after the host.</span>\
+    <span>Example: </span>`/test/foo`
+ 9. **search:** <span>Represents the query parameters of the URL, starting with a question mark.</span>\
+    <span>Example: </span>`?query=medallion`
+10. **searchParams**: <span>Represents a URLSearchParams object, which allows easy manipulation of query parameters.</span>\
+    <span>Example: </span>`URLSearchParams { 'query' => 'medallion' }`
+11. **hash**: <span>Represents the fragment identifier of the URL, starting with a hash (#). (empty in our case).</span>
+
+### How to access the search parameters
+
+You can directly access the value of the search parameter by referencing its key as follows
+
+```javascript
+const myUrl = new URL("https://example.com/test/foo?query=medallion");
+const searchQuery = myUrl.searchParams.get("query");
+console.log(searchQuery);
+```
+
+Output:
+
+```shell
+medallion
+```
+
+Or you can make use of the `UrlSearchParams` object constructor as follows
+
+```javascript
+const myUrl = new URL("https://example.com/test/foo?query=medallion");
+const search = new URLSearchParams(myUrl.search);
+const query = search.get("query");
+console.log(query);
+```
+
+Output:
+
+```shell
+medallion
+```
+
+We can even go ahead and add more search parameters and see how we can be able to access them.
+
+```javascript
+const myUrl = new URL("https://example.com/test/foo?query=medallion&year=2019");
+console.log(myUrl);
+const search = new URLSearchParams(myUrl.search);
+const query = search.get("query");
+const year = search.get("year");
+console.log("Query:", query);
+console.log("Year:", year);
+```
+
+Output:
+
+```shell
+URL {
+  href: 'https://example.com/test/foo?query=medallion&year=2019',
+  origin: 'https://example.com',
+  protocol: 'https:',
+  username: '',
+  password: '',
+  host: 'example.com',
+  hostname: 'example.com',
+  port: '',
+  pathname: '/test/foo',
+  search: '?query=medallion&year=2019',
+  searchParams: URLSearchParams { 'query' => 'medallion', 'year' => '2019' },
+  hash: ''
+}
+Query: medallion
+Year: 2019
+```
+
+### How to implement a simple search form in Remix
+
+We will first of all build a simple search form and make use of the `useSubmit` hook to programmatically submit a search.\
+**The embedded youtube video at the beginning of the article explains it all.**
+
+### Conclusion
+
+In conclusion, the URL object constructor in JavaScript serves as a valuable tool for handling and manipulating URLs within code. It allows developers to parse, construct, and modify URLs with ease. When working with this constructor, understanding its various properties such as `href`, `origin`, `protocol`, and others becomes crucial in effectively managing different components of a URL.
+
+Additionally, the constructor's compatibility across browsers is an important consideration, and developers can refer to the official Mozilla Developer Network (MDN) documentation for detailed information.
+
+In the practical demonstration using a sample URL, we explored the URL object's properties like `pathname`, `search`, and `searchParams`, providing insights into their meanings and how to access them programmatically. Understanding the structure of a URL and its components is fundamental for efficient web development.
+
+Furthermore, the article demonstrated how to access search parameters using the URLSearchParams object and showcased examples of adding and retrieving search parameters dynamically.
+
+The content also extended into implementing a simple search form in Remix, a practical application of the URL object constructor. Developers were introduced to using the `useSubmit` hook to facilitate programmatic form submission.
+
+For a comprehensive understanding, viewers are encouraged to watch the embedded YouTube video at the beginning of the article, which provides a visual guide to working with the URL object constructor in Remix.
+
