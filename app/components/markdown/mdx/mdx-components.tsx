@@ -165,7 +165,11 @@ export function CodeBlock(props: any): React.ReactElement {
   return !inline && match ? (
     <div className="bg-grey-700 relative my-4">
       <div className="absolute right-2 top-2">
-        <Button variant="ghost" onClick={handleCopied}>
+        <Button
+          className="text-slate-300"
+          variant="ghost"
+          onClick={handleCopied}
+        >
           {copied ? (
             <>
               <IoCheckmarkDone className="mr-2 h-4 w-4" /> Copied!
