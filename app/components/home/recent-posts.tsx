@@ -1,18 +1,13 @@
-import React from "react";
-import { Section } from "../section";
 import { EmptyContentUI } from "../empty-content-ui";
 import { ContentErrorUI } from "~/components/content-error-ui";
 import { BlogCard } from "../blog-card";
+import { Container } from "../container";
 
 export function RecentPosts({ loaderData }: { loaderData: any }) {
-  const {
-    data: { posts },
-    error,
-    ok,
-  } = loaderData;
+  const { posts, error, ok } = loaderData;
 
   return (
-    <Section className="md:max-w-4xl">
+    <Container className="md:max-w-4xl">
       <div className="flex flex-col gap-6 mt-12">
         <h2 className="text-2xl font-bold">Recent posts</h2>
         {!ok ? (
@@ -31,6 +26,6 @@ export function RecentPosts({ loaderData }: { loaderData: any }) {
           />
         ) : null}
       </div>
-    </Section>
+    </Container>
   );
 }

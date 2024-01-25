@@ -1,3 +1,3 @@
-# Coding Simba
+# [The Coding Simba](https://codingsimba.com)
 
-Built with Remix
+> Crafting exceptional software for tomorrow's challenges.

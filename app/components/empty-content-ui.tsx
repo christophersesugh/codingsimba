@@ -1,6 +1,5 @@
-import React from "react";
-import clsx from "clsx";
 import { FiAlertCircle } from "react-icons/fi";
+import { cn } from "~/utils/shadcn";
 
 interface ECUIProps {
   message: string;
@@ -10,16 +9,13 @@ interface ECUIProps {
 export function EmptyContentUI({ message, className }: ECUIProps) {
   return (
     <h2
-      className={clsx(
+      className={cn(
         "text-4xl capitalize text-slate-400 font-black py-8 flex flex-col items-center justify-center",
         className,
       )}
     >
       <FiAlertCircle
-        className={clsx(
-          "inline mr-2 text-[7rem] text-slate-300 mb-4",
-          className,
-        )}
+        className={cn("inline mr-2 text-[7rem] text-slate-300 mb-4", className)}
       />{" "}
       <span>{message}</span>
     </h2>

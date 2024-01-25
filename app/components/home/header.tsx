@@ -1,13 +1,12 @@
-import React from "react";
 import { Link } from "@remix-run/react";
 import { PageHeader } from "./page-header";
-import { HeaderButton } from "../header-button";
 import home from "~/assets/home.webp";
+import { HeaderButton } from "../header-button";
 
 export function HomeHeader() {
   return (
     <PageHeader
-      title="Helping change the world through quality software."
+      title="Crafting exceptional software solutions for tomorrow's challenges."
       headerImage={
         <img
           src={home}

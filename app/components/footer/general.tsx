@@ -1,4 +1,3 @@
-import React from "react";
 import { Title } from "./title";
 import { List } from "./list";
 

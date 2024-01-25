@@ -1,4 +1,3 @@
-import React from "react";
 import { Outlet } from "@remix-run/react";
 // import * as mathjax from "better-react-mathjax";
 import { Navbar } from "./nav-bar";

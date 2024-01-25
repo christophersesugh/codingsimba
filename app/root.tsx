@@ -1,42 +1,24 @@
-import type { PropsWithChildren } from "react";
-import type {
-  LinksFunction,
-  LoaderFunctionArgs,
-  MetaFunction,
-} from "@remix-run/node";
-import type { Theme } from "~/context/theme-context";
 import {
   Links,
   LiveReload,
   Meta,
   Scripts,
   ScrollRestoration,
-  useRouteError,
-  useNavigation,
   useLoaderData,
+  useNavigation,
 } from "@remix-run/react";
-import clsx from "clsx";
-import tailwind from "~/tailwind.css";
-import markdownEditor from "~/markdown-editor.css";
+import "./tailwind.css";
+import { LinksFunction, LoaderFunctionArgs } from "@remix-run/server-runtime";
 import {
-  useTheme,
+  PreventFlashOnWrongTheme,
   ThemeProvider,
-  RemoveThemeFlashes,
-} from "~/context/theme-context";
-import { RootLayout } from "~/components/layout";
-import { ErrorUI } from "~/components/error-ui";
-import { getThemeSession } from "~/model/theme.server";
-import { metaFn } from "./utils/meta";
+  useTheme,
+} from "remix-themes";
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const themeSession = await getThemeSession(request);
-  const data = {
-    theme: themeSession.getTheme(),
-  };
-  return data;
-}
-
-export const meta: MetaFunction = metaFn;
+import { themeSessionResolver } from "./utils/session.server";
+import { cn } from "./utils/shadcn";
+import { RootLayout } from "./components/layout";
+import { log } from "console";
 
 export const links: LinksFunction = () => [
   {
@@ -57,72 +39,52 @@ export const links: LinksFunction = () => [
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap",
   },
-  { rel: "stylesheet", href: tailwind },
-  { rel: "stylesheet", href: markdownEditor },
 ];
 
-function Document({
-  children,
-  theme,
-  headData,
-}: PropsWithChildren<{ headData?: any; theme?: Theme | null }>) {
+export async function loader({ request }: LoaderFunctionArgs) {
+  const { getTheme } = await themeSessionResolver(request);
+  return {
+    theme: getTheme(),
+  };
+}
+
+export default function AppWithTheme() {
+  console.log("testing");
+  const data = useLoaderData<typeof loader>();
+  return (
+    <ThemeProvider specifiedTheme={data.theme} themeAction="/action/set-theme">
+      <App />
+    </ThemeProvider>
+  );
+}
+
+function App() {
+  const data = useLoaderData<typeof loader>();
+  const [theme] = useTheme();
   const navigation = useNavigation();
   const isLoading = navigation.state === "loading";
   return (
-    <html lang="en" className={clsx(theme)}>
+    <html lang="en" className={cn(theme)}>
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
+        <PreventFlashOnWrongTheme ssrTheme={Boolean(data.theme)} />
         <Links />
-        {headData}
       </head>
       <body
-        className={clsx(
+        className={cn(
           "bg-[#fff] text-[#1f2028] dark:bg-[#1f2028] dark:text-[#fff] transition-all duration-300 min-w-[100vw] min-h-[100vh]",
           {
             "opacity-40": isLoading,
           },
         )}
       >
-        {children}
+        <RootLayout />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
       </body>
     </html>
-  );
-}
-
-export function ThemeApp({ children }: PropsWithChildren) {
-  const data = useLoaderData<typeof loader>();
-  const [theme] = useTheme();
-  return (
-    <Document
-      headData={<RemoveThemeFlashes ssrTheme={Boolean(data.theme)} />}
-      theme={theme}
-    >
-      {children}
-    </Document>
-  );
-}
-
-export default function App() {
-  const data = useLoaderData<typeof loader>();
-  return (
-    <ThemeProvider sTheme={data.theme}>
-      <ThemeApp>
-        <RootLayout />
-      </ThemeApp>
-    </ThemeProvider>
-  );
-}
-
-export function ErrorBoundary() {
-  const error = useRouteError();
-  return (
-    <Document>
-      <ErrorUI error={error} />
-    </Document>
   );
 }

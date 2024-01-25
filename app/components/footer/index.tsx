@@ -1,5 +1,3 @@
-import React from "react";
-import { Fade } from "react-awesome-reveal";
 import { Contact } from "./contact";
 import { General } from "./general";
 import { Sitemap } from "./_sitemap";
@@ -11,7 +9,6 @@ export function Footer() {
     <>
       <hr />
       <footer id="footer" className="max-w-6xl mx-auto px-6  pb-12 pt-28">
-        {/* <Fade cascade> */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  gap-12 justify-center">
           <Social />
           <Contact />
@@ -19,7 +16,6 @@ export function Footer() {
           <Sitemap />
         </section>
         <p className="mt-12">All rights reserved &copy; Coding Simba {year}.</p>
-        {/* </Fade> */}
       </footer>
     </>
   );

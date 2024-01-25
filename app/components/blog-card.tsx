@@ -5,7 +5,7 @@ import readingTime from "reading-time";
 
 function Card({ post }: any) {
   const { data, content, file } = post;
-  const stats = readingTime(content);
+  // const stats = readingTime(content);
   return (
     <Link to={`/blog/${file.split(".")[0]}`}>
       <article className="flex flex-col gap-2 drop-shadow-xl max-w-[20rem] mx-auto">
@@ -19,7 +19,7 @@ function Card({ post }: any) {
 
         <div className="flex flex-col gap-2 p-2">
           <p className="text-slate-500 text-lg dark:text-slate-400">
-            {moment(data.createdAt).format("MMM DD, YYYY")} -- {stats.text}
+            {/* {moment(data.createdAt).format("MMM DD, YYYY")} -- {stats.text} */}
           </p>
 
           <div className="flex flex-wrap gap-2">

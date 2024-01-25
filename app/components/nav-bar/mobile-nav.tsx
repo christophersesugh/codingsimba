@@ -1,10 +1,9 @@
 import React from "react";
 import clsx from "clsx";
-import { BsSun, BsMoon } from "react-icons/bs";
 import { navItems } from ".";
-import { NavButton } from "./nav-button";
-import { Button } from "../button";
-import { Theme, useTheme } from "~/context/theme-context";
+import { ThemeButton } from "./theme-button";
+import { Link } from "react-router-dom";
+import { Button } from "../ui/button";
 
 export function MobileNav({
   isOpen,
@@ -13,10 +12,7 @@ export function MobileNav({
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const [theme, , toggleTheme] = useTheme();
-
   function handleButtonClick() {
-    toggleTheme();
     setIsOpen(false);
   }
 
@@ -34,33 +30,16 @@ export function MobileNav({
             aria-label={item.name}
             className="border-t-2 py-8 px-4 w-full"
           >
-            <NavButton
-              to={item.link}
-              onClick={() => setIsOpen(false)}
-              className="capitalize w-full"
-              aria-label={item.name}
-            >
-              {item.name}
-            </NavButton>
+            <Button variant="link" asChild>
+              <Link to={item.link} className="capitalize">
+                {item.name}
+              </Link>
+            </Button>
           </li>
         ))}
         <li className="border-t-2 py-8 px-4 flex justify-center">
           {/* toggle theme mode */}
-          <Button
-            onClick={handleButtonClick}
-            className="rounded-3xl border-2 p-2"
-            aria-label="toggle theme mode"
-          >
-            {theme === Theme.LIGHT ? (
-              <>
-                <BsMoon className="text-3xl inline mr-4" /> dark mode
-              </>
-            ) : (
-              <>
-                <BsSun className="text-3xl inline mr-4" /> light mode
-              </>
-            )}
-          </Button>
+          <ThemeButton />
         </li>
       </ul>
     </nav>

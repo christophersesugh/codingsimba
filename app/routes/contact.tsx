@@ -1,14 +1,14 @@
 import type { MetaFunction } from "@remix-run/node";
 import { HiOutlineMailOpen } from "react-icons/hi";
 import { MdShareLocation } from "react-icons/md";
-import { Section } from "~/components/section";
+import { Container } from "~/components/container";
 import { metaFn } from "~/utils/meta";
 
 export const meta: MetaFunction = metaFn;
 
 export default function Contact() {
   return (
-    <Section>
+    <Container>
       <h2 className="text-2xl text-slate-800 dark:text-slate-100 my-6">
         Contact CS.
       </h2>
@@ -39,6 +39,6 @@ export default function Contact() {
           Christopher A. Sesugh
         </p>
       </div>
-    </Section>
+    </Container>
   );
 }

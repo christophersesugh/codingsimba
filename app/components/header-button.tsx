@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "@remix-run/react";
 import { BsArrowDown } from "react-icons/bs";
-import { Button } from "./button";
+import { Button } from "./ui/button";
 
 interface HeaderButtonProps {
   to: string;
@@ -23,8 +23,9 @@ export function HeaderButton({
       <div className="flex items-center gap-6 mt-12">
         <Link to={to}>
           <Button
+            variant="ghost"
             {...props}
-            className="!rounded-full  text-xl p-4  border-2 border-slate-400 hover:border-slate-800 dark:hover:border-[#fff]"
+            className="!rounded-md  text-xl p-4  border-2"
           >
             {icon ? icon : <BsArrowDown className="text-lg animate-bounce" />}
           </Button>

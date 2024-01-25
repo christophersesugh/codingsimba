@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "~/utils/shadcn";
 
 export function PageTitle({
   title = "",
@@ -8,7 +8,7 @@ export function PageTitle({
   className?: string;
 }) {
   return (
-    <h1 className={clsx("my-8 capitalize text-2xl font-extrabold", className)}>
+    <h1 className={cn("my-8 capitalize text-2xl font-extrabold", className)}>
       {title}
     </h1>
   );

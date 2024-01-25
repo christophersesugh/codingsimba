@@ -1,6 +1,6 @@
-import React from "react";
 import { Link } from "@remix-run/react";
 import { BsGithub, BsLinkedin, BsTwitter } from "react-icons/bs";
+import { Button } from "../ui/button";
 const handles = [
   {
     icon: <BsGithub />,
@@ -29,15 +29,16 @@ export function Social() {
       </p>
       <div className="flex gap-6 justify-center items-center mt-4">
         {handles.map((handle, index) => (
-          <Link
-            to={handle.link}
+          <Button
+            variant="ghost"
+            className="text-2xl m-0 p-0"
+            aria-label={handle.name}
             key={`${handle.link}-${index}`}
-            target="_blank"
           >
-            <button className="text-2xl" aria-label={handle.name}>
+            <Link to={handle.link} target="_blank" rel="noopener noreferrer">
               {handle.icon}
-            </button>
-          </Link>
+            </Link>
+          </Button>
         ))}
       </div>
     </div>

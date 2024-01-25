@@ -45,9 +45,13 @@ export const metaFn: MetaFunction = ({ matches, data }) => {
   }
 
   if (postPage) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mData = data as any;
-    const { post } = mData?.data;
-    return getPostMeta(post?.data);
+    let post;
+    if (mData.data) {
+      post = mData.data.post;
+      return getPostMeta(post.data);
+    }
   }
 
   return getPostMeta({

@@ -1,6 +1,6 @@
 import React from "react";
 import { useSubmit } from "@remix-run/react";
-import { Button } from "./button";
+import { Button } from "./ui/button";
 
 function TagsC({ tags }: { tags: string[] | undefined }) {
   const submit = useSubmit();
@@ -18,7 +18,7 @@ function TagsC({ tags }: { tags: string[] | undefined }) {
                 submit({ tag: tag || null }, { preventScrollReset: true });
               }}
               key={`${tag}-${index}`}
-              className="bg-zinc-500 p-2 !rounded-3xl text-white hover:border-2 focus:border-2 border-blue-500 duration-200"
+              className="bg-zinc-500 px-2 py-1 rounded-xl text-white hover:border-2 focus:border-2 border-blue-500 duration-200"
             >
               {tag}
             </Button>

@@ -1,6 +1,5 @@
-import React from "react";
-import clsx from "clsx";
 import { FiAlertCircle } from "react-icons/fi";
+import { cn } from "~/utils/shadcn";
 
 interface CEUIProps {
   error: any;
@@ -11,13 +10,13 @@ export function ContentErrorUI({ error, className }: CEUIProps) {
   return (
     <div className="max-w-3xl bg-red-100 rounded-md mx-auto p-6 my-6">
       <h2
-        className={clsx(
+        className={cn(
           "text-4xl capitalize font-black py-8 flex flex-col gap-6 items-center justify-center",
           className,
         )}
       >
         <FiAlertCircle
-          className={clsx("inline mr-2 text-[7rem] text-red-400", className)}
+          className={cn("inline mr-2 text-[7rem] text-red-400", className)}
         />{" "}
         <span className="text-red-500">Error!</span>
         <span className="text-red-500 text-lg">{error?.message}</span>

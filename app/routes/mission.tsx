@@ -1,24 +1,22 @@
-import React from "react";
 import { Link, useLoaderData } from "@remix-run/react";
 import { BsArrowRight } from "react-icons/bs";
-import { Section } from "~/components/section";
-import { Markdown } from "~/components/markdown";
 import { metaFn } from "~/utils/meta";
 import { json } from "@remix-run/node";
-// import { mdxBundle } from "~/utils/bundler.server";
-import { missionContent } from "~/constants/page-content.server";
+import { getPage } from "~/utils/page.server";
+import { Container } from "~/components/container";
+import { Markdown } from "~/components/mdx";
 
 export const meta = metaFn;
 
 export async function loader() {
-  // const { code: content } = await mdxBundle({ source: missionContent });
-  return json({ content: missionContent });
+  const content = getPage("mission");
+  return json({ content });
 }
 
 export default function Mission() {
   const { content } = useLoaderData<typeof loader>();
   return (
-    <Section className="flex flex-col items-center">
+    <Container className="flex flex-col items-center">
       <h1 className="text-2xl text-slate-800 dark:text-slate-100 mb-8 underline underline-offset-4">
         My Mission
       </h1>
@@ -34,6 +32,6 @@ export default function Mission() {
           <span>Learn more about Me.</span>
         </button>
       </Link>
-    </Section>
+    </Container>
   );
 }

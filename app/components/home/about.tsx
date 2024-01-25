@@ -1,4 +1,3 @@
-import React from "react";
 import { BsArrowRight } from "react-icons/bs";
 import avatar from "~/assets/avatar.jpeg";
 import { HeaderButton } from "../header-button";

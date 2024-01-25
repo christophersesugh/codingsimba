@@ -1,21 +1,20 @@
 import type { MetaFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { BsDiscord } from "react-icons/bs";
 import { PageHeader } from "~/components/home/page-header";
 import { HeaderButton } from "~/components/header-button";
-import { Section } from "~/components/section";
-import { Markdown } from "~/components/markdown";
 import { DiscordButton } from "~/components/discord-button";
-// import { mdxBundle } from "~/utils/bundler.server";
-import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { metaFn } from "~/utils/meta";
-import { discordContent } from "~/constants/page-content.server";
+import { getPage } from "~/utils/page.server";
+import { Container } from "~/components/container";
+import { Markdown } from "~/components/mdx";
 
 export const meta: MetaFunction = metaFn;
 
 export async function loader() {
-  // const { code: content } = await mdxBundle({ source: discordContent });
-  return json({ content: discordContent });
+  const content = getPage("discord");
+  return json({ content });
 }
 
 export default function Discord() {
@@ -34,12 +33,12 @@ export default function Discord() {
           otherProps={<DiscordButton />}
         />
       </PageHeader>
-      <Section className="max-w-3xl flex flex-col items-center mx-8">
+      <Container className="max-w-3xl flex flex-col items-center mx-8">
         <div className="dark:text-slate-300 text-slate-600" id="reasons">
           <Markdown source={content} />
         </div>{" "}
         <DiscordButton />
-      </Section>
+      </Container>
     </>
   );
 }

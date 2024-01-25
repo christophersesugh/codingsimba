@@ -1,22 +1,23 @@
 import type { MetaFunction } from "@remix-run/node";
-import { Section } from "~/components/section";
 import { DiscordButton } from "~/components/discord-button";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { Markdown } from "~/components/markdown";
 import { metaFn } from "~/utils/meta";
-import { aboutContent } from "~/constants/page-content.server";
+import { getPage } from "~/utils/page.server";
+import { Container } from "~/components/container";
+import { Markdown } from "~/components/mdx";
 
 export const meta: MetaFunction = metaFn;
 
 export async function loader() {
-  return json({ content: aboutContent });
+  const content = getPage("about");
+  return json({ content });
 }
 
 export default function About() {
   const { content } = useLoaderData<typeof loader>();
   return (
-    <Section className="flex flex-col">
+    <Container className="flex flex-col">
       <h1 className="text-2xl mb-4">About CS</h1>
       <p className="text-lg">
         Hi, I&apos;m Christopher A. Sesugh, I&apos;m a software engineer and an
@@ -30,6 +31,6 @@ export default function About() {
         <Markdown source={content} />
       </div>{" "}
       <DiscordButton />
-    </Section>
+    </Container>
   );
 }
