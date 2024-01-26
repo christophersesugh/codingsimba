@@ -15,7 +15,7 @@ export default function NotFoundRoute() {
         <p className="text-lg">
           The page you requested for could not be found.
         </p>
-        <Button className="rounded-md border-2 p-2 mt-4 uppercase" asChild>
+        <Button className="mt-4 uppercase" asChild>
           <Link to="/">back home</Link>
         </Button>
       </div>
