@@ -8,9 +8,9 @@ import { FaSpinner } from "react-icons/fa";
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const posts = await getPosts(request);
-    return json({ posts });
+    return json({ posts }, 200);
   } catch (error) {
-    return json({ error });
+    return json({ error }, 500);
   }
 }
 
