@@ -8,7 +8,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const posts = await getPosts(request);
     return json({ posts });
   } catch (error) {
-    return json({ error, ok: false });
+    return json({ error });
   }
 }
 

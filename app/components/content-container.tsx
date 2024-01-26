@@ -1,5 +1,6 @@
 import moment from "moment";
-// import readingTime from "reading-time";
+import { readingTime } from "reading-time-estimator";
+
 import { BackButton } from "./back-button";
 import { Iframe } from "./iframe";
 import { Container } from "./container";
@@ -15,14 +16,15 @@ export function ContentContainer({
   post: any;
 }) {
   const { data, content } = post as any;
-  // const stats = readingTime(content);
+
+  const stats = readingTime(content);
   return (
     <Container className="max-w-3xl md:px-0 flex flex-col gap-8">
       <BackButton to={to} text={text} className="pl-0 mb-4" />
       <div>
         <h1 className="text-3xl capitalize mb-4">{data.title}</h1>
         <p className="text-slate-500 dark:text-slate-400 text-lg">
-          {/* {moment(data.createdAt).format("MMM DD, YYYY")} -- {stats.text} */}
+          {moment(data.createdAt).format("MMM DD, YYYY")} -- {stats.text}
         </p>
       </div>
       {data.photo ? (

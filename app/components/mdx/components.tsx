@@ -170,6 +170,7 @@ export function CodeBlock({ className, children, ...props }: any) {
       className={`hljs rouned-md text-md p-4 my-5 overflow-x-auto ${className}`}
       {...props}
     >
+      <div></div>
       <code
         className={language}
         dangerouslySetInnerHTML={{

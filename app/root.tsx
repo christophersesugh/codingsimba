@@ -18,7 +18,6 @@ import {
 import { themeSessionResolver } from "./utils/session.server";
 import { cn } from "./utils/shadcn";
 import { RootLayout } from "./components/layout";
-import { log } from "console";
 
 export const links: LinksFunction = () => [
   {
@@ -49,7 +48,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function AppWithTheme() {
-  console.log("testing");
   const data = useLoaderData<typeof loader>();
   return (
     <ThemeProvider specifiedTheme={data.theme} themeAction="/action/set-theme">

@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "codingsimba",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -33,7 +33,9 @@
     "react-dom": "^18.2.0",
     "react-icons": "^5.0.1",
     "react-markdown": "^9.0.1",
+    "reading-duration": "^1.1.2",
     "reading-time": "^1.5.0",
+    "reading-time-estimator": "^1.9.4",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.0",
     "remix-themes": "^1.2.2",
