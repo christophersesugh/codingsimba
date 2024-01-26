@@ -24,7 +24,7 @@ export function ContentContainer({
       <div>
         <h1 className="text-3xl capitalize mb-4">{data.title}</h1>
         <p className="text-slate-500 dark:text-slate-400 text-lg">
-          {moment(data.createdAt).format("MMM DD, YYYY")} -- {stats.text}
+          {moment(data.createdAt).format("MMM DD, YYYY")} ~ {stats.text}
         </p>
       </div>
       {data.photo ? (
