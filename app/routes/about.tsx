@@ -1,7 +1,7 @@
 import type { MetaFunction } from "@remix-run/node";
 import { DiscordButton } from "~/components/discord-button";
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { metaFn } from "~/utils/meta";
 import { getPage } from "~/utils/page.server";
 import { Container } from "~/components/container";
@@ -21,8 +21,10 @@ export default function About() {
       <h1 className="text-2xl mb-4">About CS</h1>
       <p className="text-lg">
         Hi, I&apos;m Christopher A. Sesugh, I&apos;m a software engineer and an
-        educator. I help change the world by building better software and
-        sharing my existing knowledge with others by teaching.
+        educator. I help craft exceptional software solutions for
+        tomorrow&apos;s challenges. I am also the founder of{" "}
+        <Link to="https://casbytes.com">casbytes.com</Link>, an online school
+        for software engineers.
       </p>
       <p className="py-4 self-start">
         You can find my social media handles in the footer of my website.

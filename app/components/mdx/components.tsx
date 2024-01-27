@@ -1,11 +1,12 @@
 import React from "react";
 import { BsInfoCircle } from "react-icons/bs";
 import { Link } from "@remix-run/react";
-import highlightjs from "highlight.js";
-import "highlight.js/styles/night-owl.css";
 import { MdOutlineContentCopy } from "react-icons/md";
 import { IoCheckmarkDone } from "react-icons/io5";
 import { Button } from "~/components/ui/button";
+import { Badge } from "../ui/badge";
+import highlightjs from "highlight.js";
+import "highlight.js/styles/night-owl.css";
 
 type ElemProps = {
   children?: React.ReactNode;
@@ -160,26 +161,65 @@ export function MdLink(props: any): React.ReactElement {
   );
 }
 
-export function CodeBlock({ className, children, ...props }: any) {
+type CodeBlockProps = {
+  className?: string;
+  children: string;
+};
+
+export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
+  const [copied, setCopied] = React.useState(false);
+
+  function handleCopied() {
+    window.navigator.clipboard.writeText(children);
+    setCopied(true);
+    window.setTimeout(() => {
+      setCopied(false);
+    }, 3000);
+  }
+
   let language = null;
   if (className) {
     language = className.replace(/language-/, "");
   }
   return language ? (
-    <pre
-      className={`hljs rouned-md text-md p-4 my-5 overflow-x-auto ${className}`}
-      {...props}
-    >
-      <div></div>
-      <code
-        className={language}
-        dangerouslySetInnerHTML={{
-          __html: highlightjs.highlight(children.trim(), {
-            language,
-          }).value,
-        }}
-      />
-    </pre>
+    <div className="relative">
+      <pre
+        className={`hljs rouned-md text-md p-4 my-5 overflow-x-auto ${className}`}
+        {...props}
+      >
+        {language ? (
+          <Badge className="capitalize bg-blue-700 dark:bg-blue-700 text-slate-200 dark:text-slate-200 p-0 px-1 rounded-tr-none rounded-bl-none absolute top-0 left-0">
+            {language}
+          </Badge>
+        ) : null}
+
+        <Button
+          className="text-slate-300 text-xs absolute right-0 top-0 rounded-tl-none rounded-br-none"
+          variant="ghost"
+          size="sm"
+          onClick={handleCopied}
+        >
+          {copied ? (
+            <>
+              <IoCheckmarkDone className="mr-2 h-3 w-3" /> Copied!
+            </>
+          ) : (
+            <>
+              <MdOutlineContentCopy className="mr-2 h-3 w-3" /> Copy
+            </>
+          )}
+        </Button>
+
+        <code
+          className={language}
+          dangerouslySetInnerHTML={{
+            __html: highlightjs.highlight(children.trim(), {
+              language,
+            }).value,
+          }}
+        />
+      </pre>
+    </div>
   ) : (
     <code className="text-sm px-1 rounded-md bg-slate-300 dark:bg-slate-600">
       {children}

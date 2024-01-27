@@ -56,7 +56,8 @@ export const metaFn: MetaFunction = ({ matches, data }) => {
 
   return getPostMeta({
     title: `${pageTitle}`,
-    description: "Helping change the world through building quality software.",
+    description:
+      "Crafting exceptional software solutions for tomorrow's challenges.",
     photo: `https://codingsimba.com/${homeImage}`,
     tags: "coding, programming, web development, software development, remix-run, remix, reactjs, html, css, javascript, typescript",
   });

@@ -15,7 +15,7 @@ export default function Contact() {
       <div className="">
         <div className="mb-4">
           Thank you for visiting my website. If you have any questions or would
-          like to get in touch, please feel free to send me an email.
+          like to get in touch, please feel free to send me a mail.
           <div className="my-8 text-lg bg-slate-100 rounded-md p-8 text-blue-900">
             <div className="mb-4">
               <MdShareLocation className="text-2xl inline mr-4" />
