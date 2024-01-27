@@ -2,6 +2,7 @@ import { FiAlertCircle } from "react-icons/fi";
 import { cn } from "~/utils/shadcn";
 
 interface CEUIProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error: any;
   className?: string;
 }
@@ -19,7 +20,9 @@ export function ContentErrorUI({ error, className }: CEUIProps) {
           className={cn("inline mr-2 text-[7rem] text-red-400", className)}
         />{" "}
         <span className="text-red-500">Error!</span>
-        <span className="text-red-500 text-lg">{error?.message}</span>
+        <span className="text-red-500 text-lg">
+          {error && error.message ? error.message : "Unknown error."}
+        </span>
       </h2>
     </div>
   );

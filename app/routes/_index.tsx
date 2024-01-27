@@ -15,7 +15,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function Index() {
-  const loaderData = useLoaderData();
+  const loaderData = useLoaderData<typeof loader>();
   return (
     <>
       <HomeHeader />

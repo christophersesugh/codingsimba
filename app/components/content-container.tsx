@@ -6,6 +6,11 @@ import { Iframe } from "./iframe";
 import { Container } from "./container";
 import { Markdown } from "./mdx";
 
+type PostProps = {
+  data: { [key: string]: string };
+  content: string;
+};
+
 export function ContentContainer({
   to,
   text,
@@ -13,9 +18,9 @@ export function ContentContainer({
 }: {
   to: string;
   text: string;
-  post: any;
+  post: PostProps;
 }) {
-  const { data, content } = post as any;
+  const { data, content } = post as PostProps;
 
   const stats = readingTime(content);
   return (

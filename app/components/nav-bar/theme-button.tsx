@@ -9,7 +9,11 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 
-export function ThemeButton() {
+export function ThemeButton({
+  handleButtonClick,
+}: {
+  handleButtonClick?: () => void;
+}) {
   const [, setTheme] = useTheme();
 
   return (
@@ -21,7 +25,10 @@ export function ThemeButton() {
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent
+        align="end"
+        onClick={handleButtonClick ? handleButtonClick : undefined}
+      >
         <DropdownMenuItem onClick={() => setTheme(Theme.LIGHT)}>
           Light
         </DropdownMenuItem>

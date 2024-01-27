@@ -3,7 +3,18 @@ import { ContentErrorUI } from "~/components/content-error-ui";
 import { BlogCard } from "../blog-card";
 import { Container } from "../container";
 
-export function RecentPosts({ loaderData }: { loaderData: any }) {
+type PostProps = {
+  data: { [key: string]: string };
+  content: string;
+  file: string;
+};
+
+type RecentPostsProps = {
+  posts?: PostProps[] | null;
+  error?: unknown;
+};
+
+export function RecentPosts({ loaderData }: { loaderData: RecentPostsProps }) {
   const { posts, error } = loaderData;
 
   return (
@@ -15,7 +26,7 @@ export function RecentPosts({ loaderData }: { loaderData: any }) {
         ) : posts?.length ? (
           <div className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-20 justify-evenly mb-12">
             {posts.length &&
-              posts.map((post: any, index: number) => (
+              posts.map((post: PostProps, index: number) => (
                 <BlogCard post={post} key={`${post.data.slug}-${index}`} />
               ))}
           </div>

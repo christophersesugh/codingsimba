@@ -3,8 +3,13 @@ import { Link } from "@remix-run/react";
 import moment from "moment";
 import { readingTime } from "reading-time-estimator";
 
-function Card({ post }: any) {
-  const { data, content, file } = post;
+type PostProps = {
+  data: { [key: string]: string };
+  content: string;
+};
+
+function Card({ post }: { post: PostProps }) {
+  const { data, content } = post;
   const { text } = readingTime(content);
 
   return (

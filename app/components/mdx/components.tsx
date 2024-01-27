@@ -5,6 +5,7 @@ import { MdOutlineContentCopy } from "react-icons/md";
 import { IoCheckmarkDone } from "react-icons/io5";
 import { Button } from "~/components/ui/button";
 import { Badge } from "../ui/badge";
+import { useToast } from "../ui/use-toast";
 import highlightjs from "highlight.js";
 import "highlight.js/styles/night-owl.css";
 
@@ -107,11 +108,11 @@ export function OL(props: ElemProps): React.ReactElement {
 export function BlockQuote(props: ElemProps): React.ReactElement {
   return (
     <blockquote
-      className=" bg-blue-200  border-l-8 border-blue-500 text-black p-4 my-6 rounded-md flex items-center"
+      className=" bg-blue-100 dark:bg-blue-200  border-l-8 border-blue-500 text-black p-4 my-6 rounded-md relative"
       {...props}
     >
-      <BsInfoCircle title="Info" className="w-6 h-6 inline mb-2" />
-      <div className="p-2">{props.children}</div>
+      <BsInfoCircle title="Info" className="w-6 h-6 absolute top-2 right-2" />
+      {props.children}
     </blockquote>
   );
 }
@@ -163,15 +164,20 @@ export function MdLink(props: any): React.ReactElement {
 
 type CodeBlockProps = {
   className?: string;
-  children: string;
+  children?: React.ReactNode;
 };
 
 export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
   const [copied, setCopied] = React.useState(false);
+  const { toast } = useToast();
 
   function handleCopied() {
-    window.navigator.clipboard.writeText(children);
+    window.navigator.clipboard.writeText(children as string);
     setCopied(true);
+    toast({
+      title: "Copied to clipboard",
+      description: "The code has been copied to your clipboard.",
+    });
     window.setTimeout(() => {
       setCopied(false);
     }, 3000);
@@ -213,9 +219,12 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
         <code
           className={language}
           dangerouslySetInnerHTML={{
-            __html: highlightjs.highlight(children.trim(), {
-              language,
-            }).value,
+            __html:
+              typeof children === "string"
+                ? highlightjs.highlight(children.trim(), {
+                    language,
+                  }).value
+                : "",
           }}
         />
       </pre>

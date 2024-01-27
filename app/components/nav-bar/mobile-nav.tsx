@@ -30,7 +30,7 @@ export function MobileNav({
             aria-label={item.name}
             className="border-t-2 py-8 px-4 w-full"
           >
-            <Button variant="link" asChild>
+            <Button variant="link" onClick={handleButtonClick} asChild>
               <Link to={item.link} className="capitalize">
                 {item.name}
               </Link>
@@ -39,7 +39,7 @@ export function MobileNav({
         ))}
         <li className="border-t-2 py-8 px-4 flex justify-center">
           {/* toggle theme mode */}
-          <ThemeButton />
+          <ThemeButton handleButtonClick={handleButtonClick} />
         </li>
       </ul>
     </nav>

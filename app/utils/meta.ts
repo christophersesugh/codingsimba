@@ -44,13 +44,18 @@ export const metaFn: MetaFunction = ({ matches, data }) => {
     });
   }
 
+  type DataProps = {
+    post: {
+      data: Postdata;
+    };
+  };
+
   if (postPage) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mData = data as any;
-    let post;
-    if (mData.data) {
-      post = mData.data.post;
-      return getPostMeta(post.data);
+    if (data) {
+      const post = (data as DataProps).post?.data;
+      if (post) {
+        return getPostMeta(post);
+      }
     }
   }
 

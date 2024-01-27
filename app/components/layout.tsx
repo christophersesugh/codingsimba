@@ -2,6 +2,7 @@ import { Outlet } from "@remix-run/react";
 // import * as mathjax from "better-react-mathjax";
 import { Navbar } from "./nav-bar";
 import { Footer } from "./footer";
+import { Toaster } from "./ui/toaster";
 // import { config } from "~/libs/mathjax";
 
 // const { MathJax } = mathjax;
@@ -16,6 +17,7 @@ export function RootLayout() {
       {/* </MathJax> */}
       {/* </MathJaxContext> */}
       <Footer />
+      <Toaster />
     </>
   );
 }
