@@ -78,7 +78,7 @@ export async function getTags() {
  * @param {String} slug
  * @returns content or error if any
  */
-export async function getPost(slug: any) {
+export async function getPost(slug: unknown) {
   const filePath = path.join(mdxDirectory, slug + ".mdx");
   const mdxContent = fs.readFileSync(filePath, "utf-8");
   if (!mdxContent) {
