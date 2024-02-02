@@ -194,13 +194,13 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
         {...props}
       >
         {language ? (
-          <Badge className="capitalize bg-blue-700 dark:bg-blue-700 text-slate-200 dark:text-slate-200 p-0 px-1 rounded-tr-none rounded-bl-none absolute top-0 left-0">
+          <Badge className="capitalize font-normal bg-cyan-700 dark:bg-cyan-700 text-slate-200 dark:text-slate-200 p-0 px-1 rounded-tr-none rounded-bl-none absolute top-0 left-0">
             {language}
           </Badge>
         ) : null}
 
         <Button
-          className="text-slate-300 text-xs absolute right-0 top-0 rounded-tl-none rounded-br-none"
+          className="text-slate-300 text-xs absolute bg- right-0 top-0 rounded-tl-none rounded-br-none"
           variant="ghost"
           size="sm"
           onClick={handleCopied}
