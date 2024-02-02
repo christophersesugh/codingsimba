@@ -2,7 +2,7 @@ name: Main Blog Build and Deploy
 
 on:
   repository_dispatch:
-    types: [main-blog-build]
+    types: [content-build]
 
 jobs:
   build-and-deploy:
