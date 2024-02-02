@@ -169,7 +169,12 @@ type CodeBlockProps = {
 
 export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
   const [copied, setCopied] = React.useState(false);
+  const [isServer, setIsServer] = React.useState(true);
   const { toast } = useToast();
+
+  React.useEffect(() => {
+    setIsServer(false);
+  }, []);
 
   function handleCopied() {
     window.navigator.clipboard.writeText(children as string);
@@ -187,6 +192,7 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
   if (className) {
     language = className.replace(/language-/, "");
   }
+  if (isServer) return <p>Loading...</p>;
   return language ? (
     <div className="relative">
       <pre

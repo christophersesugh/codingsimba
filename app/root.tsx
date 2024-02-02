@@ -7,7 +7,7 @@ import {
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
-import "./tailwind.css";
+import tailwind from "./tailwind.css";
 import { LinksFunction, LoaderFunctionArgs } from "@remix-run/server-runtime";
 import {
   PreventFlashOnWrongTheme,
@@ -37,6 +37,10 @@ export const links: LinksFunction = () => [
   {
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap",
+  },
+  {
+    rel: "stylesheet",
+    href: tailwind,
   },
 ];
 

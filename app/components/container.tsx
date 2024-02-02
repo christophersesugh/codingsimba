@@ -1,5 +1,5 @@
 import React from "react";
-import clsx from "clsx";
+import { cn } from "~/utils/shadcn";
 
 type ContainerProps = {
   children: React.ReactNode;
@@ -8,7 +8,7 @@ type ContainerProps = {
 
 export function Container({ children, className }: ContainerProps) {
   return (
-    <section className={clsx("max-w-2xl mx-auto px-4 mb-4", className)}>
+    <section className={cn("max-w-2xl mx-auto px-4 mb-4", className)}>
       {children}
     </section>
   );

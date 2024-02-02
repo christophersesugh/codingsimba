@@ -1,0 +1,85 @@
+import {
+  home_default
+} from "/build/_shared/chunk-2DLHY7YA.js";
+import {
+  createHotContext
+} from "/build/_shared/chunk-6IOYNRT4.js";
+
+// app/utils/meta.ts
+if (import.meta) {
+  import.meta.hot = createHotContext(
+    //@ts-expect-error
+    "app/utils/meta.ts"
+  );
+  import.meta.hot.lastModified = "1706338926758.539";
+}
+var capitalizeFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+var metaFn = ({ matches, data }) => {
+  const postPage = matches?.find((match) => match.id === "routes/blog.$slug");
+  let pageTitle;
+  if (matches) {
+    matches.forEach((match) => {
+      if (match.id !== "root" && match.pathname !== "/") {
+        if (match.id !== "routes/blog.$slug") {
+          pageTitle = `${match.pathname.replace(/\//g, "").replace(/-/g, " ")} | Coding Simba`;
+          if (match.id === "routes/blog._index") {
+            pageTitle = "The Coding Simba's Blog";
+          }
+          if (match.id === "routes/about") {
+            pageTitle = "About The Coding Simba";
+          }
+          if (match.id === "routes/contact") {
+            pageTitle = "Get in touch with The Coding Simba";
+          }
+          if (match.id === "routes/discord") {
+            pageTitle = "The Coding Simba Community on Discord";
+          }
+        }
+      } else {
+        pageTitle = "The Coding Simba";
+      }
+    });
+  }
+  if (postPage) {
+    if (data) {
+      const post = data.post?.data;
+      if (post) {
+        return getPostMeta(post);
+      }
+    }
+  }
+  return getPostMeta({
+    title: `${pageTitle}`,
+    description: "Crafting exceptional software solutions for tomorrow's challenges.",
+    photo: `https://codingsimba.com/${home_default}`,
+    tags: "coding, programming, web development, software development, remix-run, remix, reactjs, html, css, javascript, typescript"
+  });
+};
+function getPostMeta(post) {
+  const title = capitalizeFirstLetter(post?.title);
+  return [
+    { title },
+    { name: "description", content: post?.description },
+    { name: "keywords", content: post?.tags },
+    { property: "og:title", content: title },
+    { property: "og:description", content: post?.description },
+    { property: "og:keywords", content: post?.tags },
+    { property: "og:image", content: post?.photo },
+    { property: "og:image:alt", content: post?.title },
+    {
+      property: "og:url",
+      content: `https://codingsimba.com/blog/${post?.slug}`
+    },
+    { name: "twitter:title", content: title },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:site", content: "@codingsimba" },
+    { name: "twitter:creator", content: "@codingsimba_" },
+    { name: "twitter:description", content: post?.description },
+    { name: "twitter:image", content: post?.photo }
+  ];
+}
+
+export {
+  metaFn
+};
+//# sourceMappingURL=/build/_shared/chunk-IQWGNDUA.js.map

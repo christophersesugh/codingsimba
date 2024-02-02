@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "~/utils/shadcn";
 
 type IframeProps = {
   src: string;
@@ -9,7 +9,7 @@ type IframeProps = {
 export function Iframe({ src, title, className }: IframeProps) {
   return (
     <iframe
-      className={clsx(
+      className={cn(
         "mx-auto w-full h-64 md:h-[28rem] lg:h-128 max-h-[32rem] rounded-md my-12",
         className,
       )}
