@@ -7,7 +7,6 @@ import { Button } from "~/components/ui/button";
 import { Badge } from "../ui/badge";
 import { useToast } from "../ui/use-toast";
 import highlightjs from "highlight.js";
-import "highlight.js/styles/night-owl.css";
 
 type ElemProps = {
   children?: React.ReactNode;

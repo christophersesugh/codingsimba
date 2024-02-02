@@ -27,7 +27,6 @@
     "highlight.js": "^11.9.0",
     "isbot": "^4.1.0",
     "lucide-react": "^0.315.0",
-    "miniflare": "^3.20231030.4",
     "moment": "^2.30.1",
     "next-themes": "^0.2.1",
     "react": "^18.2.0",
