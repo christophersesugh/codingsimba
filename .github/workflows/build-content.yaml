@@ -19,6 +19,18 @@ jobs:
       - name: List Files in Content Repository
         run: ls -R content-repo
 
+      - name: Identify Changed Files
+        run: |
+          git diff --name-only HEAD ${{ github.sha }} content-repo/content/posts/ > changed-files.txt
+          cat changed-files.txt
+
+      - name: Create Target Directory
+        run: mkdir -p ./content/posts/
+
+      - name: Copy Changed Content
+        run: |
+          xargs -I {} cp content-repo/content/posts/{} ./content/posts/ < changed-files.txt
+
       - name: Copy Content from Content Repository
         run: cp -R content-repo/content/posts/* ./content/posts/
 
