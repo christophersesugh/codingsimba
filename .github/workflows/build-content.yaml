@@ -1,46 +1,23 @@
 name: Build and Deploy Blog Content
 
 on:
-  repository_dispatch:
-    types: [content-build]
+  push:
+    paths:
+      - "contents/posts/**"
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Main Blog Repository
+      - name: Checkout Repository
         uses: actions/checkout@v2
-        with:
-          repository: christophersesugh/codingsimba # Replace with your main blog repository
-          ref: main
-
-      - name: Checkout Content Repository
-        uses: actions/checkout@v2
-        with:
-          repository: christophersesugh/codingsimba-content # Replace with your content repository
-          ref: main
-          path: content-repo # The directory to checkout the content repository
-
-      - name: List Files in Content Repository
-        run: ls -R content-repo
-
-      #   - name: Create Target Directory if Not Exist
-      #     run: |
-      #       if [ ! -d "./content/posts/" ]; then
-      #         mkdir -p ./content/posts/
-      #       fi
-
-      - name: Copy Content from Content Repository to Blog Repository
-        run: cp -R content-repo/content/posts/* ./codingsimba/content/posts/
 
       - name: Set Up Node and Install Dependencies
         uses: actions/setup-node@v2
         with:
-          node-version: "18.x" # Adjust as needed
-      - run: |
-          cd codingsimba
-          npm install
+          node-version: "18.x"
+      - run: npm install
 
       - name: Debug Environment Variables
         run: |
@@ -49,9 +26,7 @@ jobs:
           echo "VERCEL_PROJECT_ID: $VERCEL_PROJECT_ID"
 
       - name: "Deploy application"
-        run: |
-          cd codingsimba
-          npm vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }} --yes
+        run: npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --yes --scope ${{ secrets.VERCEL_ORG_ID }}
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
