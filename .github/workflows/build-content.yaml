@@ -14,7 +14,7 @@ jobs:
         with:
           repository: christophersesugh/codingsimba-content # Replace with your content repository
           ref: main
-          path: /content/posts/ # The directory to checkout the content repository
+          path: content/posts/ # The directory to checkout the content repository
 
       - name: List Files in Content Repository
         run: ls -R codingsimba-content/content/posts/
