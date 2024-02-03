@@ -1,4 +1,4 @@
-name: Main Blog Build and Deploy
+name: Build and Deploy Content
 
 on:
   repository_dispatch:
@@ -9,11 +9,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Content Repository
         uses: actions/checkout@v2
+        with:
+          repository: christophersesugh/codingsimba-content # Replace with your content repository
+          ref: main
+          path: /content/posts/ # The directory to checkout the content repository
+
+      - name: List Files in Content Repository
+        run: ls -R codingsimba-content/content/posts/
 
       - name: Copy Content from Content Repository
-        run: cp -R ../codingsimba-content/content/posts/* ./content/posts/
+        run: cp -R codingsimba-content/content/posts/* ./content/posts/
 
       - name: Set Up Node
         uses: actions/setup-node@v2
