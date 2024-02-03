@@ -38,9 +38,6 @@ jobs:
 
       - name: Build and Deploy Blog Content
         run: |
-          cd ./content/posts
-          npm install
-          npm run build
           vercel --prod
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
