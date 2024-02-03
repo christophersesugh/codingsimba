@@ -33,7 +33,7 @@ export default function Discord() {
           otherProps={<DiscordButton />}
         />
       </PageHeader>
-      <Container className="max-w-3xl flex flex-col items-center mx-8">
+      <Container className="max-w-3xl flex flex-col items-center mx-auto">
         <div className="dark:text-slate-300 text-slate-600" id="reasons">
           <Markdown source={content} />
         </div>{" "}

@@ -199,7 +199,7 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
         {...props}
       >
         {language ? (
-          <Badge className="capitalize font-normal bg-cyan-700 dark:bg-cyan-700 text-slate-200 dark:text-slate-200 p-0 px-1 rounded-tr-none rounded-bl-none absolute top-0 left-0">
+          <Badge className="font-normal bg-cyan-700 dark:bg-cyan-700 text-slate-200 dark:text-slate-200 p-0 px-1 rounded-tr-none rounded-bl-none absolute top-0 left-0">
             {language}
           </Badge>
         ) : null}
