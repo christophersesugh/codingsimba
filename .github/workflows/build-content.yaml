@@ -1,4 +1,4 @@
-name: Build and Deploy Content
+name: Build and Deploy Blog Content
 
 on:
   repository_dispatch:
@@ -14,13 +14,13 @@ jobs:
         with:
           repository: christophersesugh/codingsimba-content # Replace with your content repository
           ref: main
-          path: content/posts/ # The directory to checkout the content repository
+          path: content-repo # The directory to checkout the content repository
 
       - name: List Files in Content Repository
-        run: ls -R content/posts/
+        run: ls -R content-repo
 
       - name: Copy Content from Content Repository
-        run: cp -R content/posts/* ./content/posts/
+        run: cp -R content-repo/content/posts/* ./content/posts/
 
       - name: Set Up Node
         uses: actions/setup-node@v2
