@@ -17,10 +17,10 @@ jobs:
           path: content/posts/ # The directory to checkout the content repository
 
       - name: List Files in Content Repository
-        run: ls -R codingsimba-content/content/posts/
+        run: ls -R content/posts/
 
       - name: Copy Content from Content Repository
-        run: cp -R codingsimba-content/content/posts/* ./content/posts/
+        run: cp -R content/posts/* ./content/posts/
 
       - name: Set Up Node
         uses: actions/setup-node@v2
