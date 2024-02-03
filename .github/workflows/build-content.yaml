@@ -27,16 +27,3 @@ jobs:
 
       - name: Copy Content from Content Repository
         run: cp -R content-repo/content/posts/* ./content/posts/
-
-      - name: Set Up Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: "18.x"
-
-      - name: "Deploy application"
-
-        run: npx vercel --prod
-        env:
-          vercel_token: ${{ secrets.VERCEL_TOKEN }}
-          vercel_project_id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel_org_id: ${{ secrets.VERCEL_ORG_ID }}
