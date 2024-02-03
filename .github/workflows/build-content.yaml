@@ -19,6 +19,12 @@ jobs:
       - name: List Files in Content Repository
         run: ls -R content-repo
 
+      - name: Create Target Directory if Not Exist
+        run: |
+          if [ ! -d "./content/posts/" ]; then
+            mkdir -p ./content/posts/
+          fi
+
       - name: Copy Content from Content Repository
         run: cp -R content-repo/content/posts/* ./content/posts/
 
