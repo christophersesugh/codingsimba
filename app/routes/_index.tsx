@@ -1,9 +1,7 @@
-import React from "react";
 import { useLoaderData } from "@remix-run/react";
 import { LoaderFunctionArgs, json } from "@remix-run/server-runtime";
 import { About, HomeHeader, RecentPosts } from "~/components/home";
 import { getPosts } from "~/utils/blog.server";
-import { FaSpinner } from "react-icons/fa";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
@@ -20,15 +18,7 @@ export default function Index() {
     <>
       <HomeHeader />
       <About />
-      <React.Suspense
-        fallback={
-          <div className="w-full max-3xl">
-            <FaSpinner className="animate-spin text-3xl mx-auto" />
-          </div>
-        }
-      >
-        <RecentPosts loaderData={loaderData} />
-      </React.Suspense>
+      <RecentPosts loaderData={loaderData} />
     </>
   );
 }

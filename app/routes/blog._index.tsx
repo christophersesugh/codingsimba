@@ -1,7 +1,7 @@
 import React from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData, useSubmit } from "@remix-run/react";
+import { useLoaderData, useSubmit, useSearchParams } from "@remix-run/react";
 import { BlogCard } from "~/components/blog-card";
 import { Tags } from "~/components/tags";
 import { EmptyContentUI } from "~/components/empty-content-ui";
@@ -17,41 +17,48 @@ export const meta: MetaFunction = metaFn;
 export async function loader({ request }: LoaderFunctionArgs) {
   const tags = await getTags();
   const posts = await getPosts(request);
-  return json({ posts, tags });
+  const searchParams = new URL(request.url).searchParams;
+  const q = searchParams.get("q");
+  return json({ posts, tags, q });
 }
 
-type SubmitOptions = {
-  method: "GET" | "POST";
-  preventScrollReset: boolean;
+type PostProps = {
+  data: { [key: string]: string };
+  content: string;
 };
 
 function Blog() {
+  const { posts, tags, q } = useLoaderData<typeof loader>();
+  const [search, setSearch] = React.useState(q ?? "");
   const [postLimit, setPostLimit] = React.useState(6);
-  const { posts, tags } = useLoaderData<typeof loader>();
+  const [, setSearchParams] = useSearchParams();
   const submit = useSubmit();
 
-  const submitOptions: SubmitOptions = React.useMemo(
-    () => ({
-      method: "GET",
-      preventScrollReset: true,
-    }),
-    [],
-  );
+  function handleFormChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = event.currentTarget;
+    setSearchParamsValue(name, value);
+    setSearch(value);
+  }
 
-  function handleFormChange(event: {
-    target: { name: string; value: string };
-  }) {
-    const { name, value } = event.target;
-    submit({ [name]: value }, submitOptions);
+  function handleButtonClick(event: React.MouseEvent<HTMLButtonElement>) {
+    const { name, value } = event.currentTarget;
+    setSearchParamsValue(name, value);
+    setSearch(value);
+  }
+
+  function setSearchParamsValue(name: string, value: string) {
+    if (value !== "" || value !== null) {
+      setSearchParams({ [name]: value });
+    }
   }
 
   const increasePostLimit = React.useCallback(() => {
     setPostLimit((prevLimit) => {
       const newLimit = prevLimit + 6;
-      return newLimit; // Return the new postLimit to update the state
+      return newLimit;
     });
-    submit({ postLimit }, submitOptions);
-  }, [postLimit, submit, submitOptions]);
+    submit({ postLimit }, { preventScrollReset: true });
+  }, [postLimit, submit]);
 
   return (
     <Container className="!max-w-4xl flex flex-col justify-center my-20">
@@ -67,15 +74,16 @@ function Blog() {
           </Label>
           <Input
             type="search"
-            name="search"
-            id="search"
+            name="q"
+            id="q"
+            value={search}
             placeholder="search posts"
             onChange={handleFormChange}
-            className="bg-slate-300 text-black md:w-[50%]"
+            className="bg-slate-300 text-lg text-black md:w-[50%] p-8 rounded-xl"
           />
         </div>
         {/* post tags */}
-        <Tags tags={tags} />
+        <Tags tags={tags} q={q} handleClick={handleButtonClick} />
       </div>
 
       <div>
@@ -88,7 +96,7 @@ function Blog() {
       {/* success UI */}
       <div className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-20 justify-evenly my-12">
         {posts && posts?.length
-          ? posts.map((post: any, index: number) => (
+          ? posts.map((post: PostProps, index: number) => (
               <BlogCard post={post} key={`${post.data.slug}-${index}`} />
             ))
           : null}

@@ -1,10 +1,14 @@
 import React from "react";
-import { useSubmit } from "@remix-run/react";
+import { cn } from "~/utils/shadcn";
 import { Button } from "./ui/button";
 
-function TagsC({ tags }: { tags: string[] | undefined }) {
-  const submit = useSubmit();
+type TagsProps = {
+  tags: string[];
+  q: string | null;
+  handleClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+};
 
+function TagsC({ tags, q, handleClick }: TagsProps) {
   return (
     <div>
       <h2 className="font-bold mb-4">Search blog by topics:</h2>
@@ -13,12 +17,15 @@ function TagsC({ tags }: { tags: string[] | undefined }) {
           tags?.map((tag: string | undefined, index: number) => (
             <Button
               value={tag}
-              name="tag"
-              onClick={() => {
-                submit({ tag: tag ?? null }, { preventScrollReset: true });
-              }}
+              name="q"
+              onClick={handleClick}
               key={`${tag}-${index}`}
-              className="bg-zinc-500 px-2 py-1 rounded-xl text-white hover:border-2 focus:border-2 border-blue-500 duration-200"
+              className={cn(
+                "bg-zinc-500 px-4 py-2 rounded-xl text-white hover:border-2 focus:border-3 border-4 border-blue-500 duration-300",
+                {
+                  "opacity-70 border-0": !q?.includes(tag ?? ""),
+                }
+              )}
             >
               {tag}
             </Button>

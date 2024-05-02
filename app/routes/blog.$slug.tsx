@@ -10,9 +10,9 @@ import { metaFn } from "~/utils/meta";
 
 export const meta = metaFn;
 
-export async function loader(request: LoaderFunctionArgs) {
-  const post = await getPost(request.params.slug);
-  const relatedPosts = await getRelatedPosts(post.data.tags, post.data.slug);
+export async function loader({ params }: LoaderFunctionArgs) {
+  const post = await getPost(params);
+  const relatedPosts = await getRelatedPosts(post);
   return json({ relatedPosts, post }, 200);
 }
 
@@ -23,9 +23,9 @@ export default function BlogPostRoute() {
     <div className="max-w-3xl md:px-0 mx-auto">
       {post ? (
         <ContentContainer to="/blog" text="back to overview" post={post} />
-      ) : !post ? (
+      ) : (
         <EmptyContentUI message="no post found with given slug." />
-      ) : null}
+      )}
 
       <hr />
       <div className="flex flex-col gap-6 mt-6">

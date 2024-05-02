@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import { Params } from "@remix-run/react";
 
 const contentPath = "content/posts";
 const mdxDirectory = path.join(process.cwd(), contentPath);
@@ -15,8 +16,7 @@ export async function getPosts(request: Request) {
   const searchParams = new URLSearchParams(url.search);
 
   let limit = 9;
-  const searchTerm = searchParams.get("search");
-  const tag = searchParams.get("tag");
+  const q = searchParams.get("q");
   const postLimit = searchParams.get("postLimit");
 
   if (url.pathname === "/") {
@@ -31,21 +31,16 @@ export async function getPosts(request: Request) {
   }
   const posts = await fetchAllPosts();
   const allPosts = await Promise.all(posts);
-  const filterByTitle = searchTerm
+  const filterByTitleOrTag = q
     ? allPosts?.filter(
         (post) =>
-          post.data.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          post.data.description
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()),
+          post.data.title.toLowerCase().includes(q.toLowerCase()) ||
+          post.data.tags.toLowerCase().includes(q.toLowerCase()) ||
+          post.data.description.toLowerCase().includes(q.toLowerCase())
       )
     : allPosts;
 
-  const filterByTag = tag
-    ? filterByTitle.filter((post) => post.data.tags.includes(tag.toLowerCase()))
-    : filterByTitle;
-
-  const sortedPosts = filterByTag.sort((a, b) => {
+  const sortedPosts = filterByTitleOrTag.sort((a, b) => {
     const dateA = new Date(a.data.date);
     const dateB = new Date(b.data.date);
     return dateB.getTime() - dateA.getTime();
@@ -67,7 +62,7 @@ export async function getTags() {
   const allTags = allPosts
     .filter((post) => post.data.tags && post.data.published)
     .flatMap((post) =>
-      post.data.tags.split(",").map((tag: string) => tag.trim()),
+      post.data.tags.split(",").map((tag: string) => tag.trim())
     );
   const uniqueTags = [...new Set(allTags)];
   return uniqueTags;
@@ -78,7 +73,8 @@ export async function getTags() {
  * @param {String} slug
  * @returns content or error if any
  */
-export async function getPost(slug: unknown) {
+export async function getPost(params: Params<string>) {
+  const slug = params?.slug;
   const filePath = path.join(mdxDirectory, slug + ".mdx");
   const mdxContent = fs.readFileSync(filePath, "utf-8");
   if (!mdxContent) {
@@ -88,20 +84,27 @@ export async function getPost(slug: unknown) {
   return { data, content };
 }
 
+interface IPost {
+  data: { [key: string]: string };
+}
+
 /**
  * getRelatedPosts - fetch related posts to a given post from content/post directory
  * @param {String} tags
  * @param {String} currentSlug
  * @returns
  */
-export async function getRelatedPosts(tags: string[], currentSlug: string) {
+export async function getRelatedPosts(post: IPost) {
+  const {
+    data: { tags, slug: currentSlug },
+  } = post;
   const files = fs.readdirSync(mdxDirectory, "utf-8");
   const relatedPosts = [];
   for (const file of files) {
     if (file.endsWith(".mdx")) {
       const mdxContent = fs.readFileSync(
         path.join(mdxDirectory, file),
-        "utf-8",
+        "utf-8"
       );
       const { data, content } = matter(mdxContent);
 
