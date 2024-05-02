@@ -44,7 +44,7 @@ export function ContentContainer({
         {data.description}
       </h2>
 
-      {data.video ? <Iframe src={data.video} title={data.title} /> : null}
+      {data?.video ? <Iframe src={data.video} title={data.title} /> : null}
       <div className="dark:text-slate-300 text-slate-800 markdown">
         <Markdown source={content} />
       </div>

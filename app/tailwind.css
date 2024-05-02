@@ -2,14 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-.hljs {
-  border-radius: 8px;
-  padding: 1.5em;
-  font-size: small;
+@layer base {
+  html,
+  body {
+    box-sizing: border-box;
+    font-family: "Mulish", sans-serif;
+    font-weight: 400;
+    scroll-behavior: smooth;
+  }
+
+  p {
+    font-size: large;
+    line-height: 2rem;
+  }
+
+  code {
+    font-family: "Roboto Mono", monospace;
+    font-size: small;
+  }
 }
 
-.hljs-inline {
+@layer components {
+  .remark-container {
+    @apply my-8 p-2 pl-11 relative border-l-4;
+  }
+
+  .remark-container > .icon {
+    @apply absolute left-2 top-7;
+  }
+
+  .hljs {
+    @apply rounded-md p-6 text-sm;
+  }
+
+  .hljs-inline {
+    @apply bg-slate-200 py-[1px] px-[2px] rounded-sm;
+  }
+}
+
+/* .hljs-inline {
   background: #f0f0f0;
   padding: 1px 2px;
   border-radius: 5px;
-}
+} */

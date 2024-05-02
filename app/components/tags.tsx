@@ -15,7 +15,7 @@ function TagsC({ tags }: { tags: string[] | undefined }) {
               value={tag}
               name="tag"
               onClick={() => {
-                submit({ tag: tag || null }, { preventScrollReset: true });
+                submit({ tag: tag ?? null }, { preventScrollReset: true });
               }}
               key={`${tag}-${index}`}
               className="bg-zinc-500 px-2 py-1 rounded-xl text-white hover:border-2 focus:border-2 border-blue-500 duration-200"
