@@ -31,16 +31,9 @@ export async function getPosts(request: Request) {
   }
   const posts = await fetchAllPosts();
   const allPosts = await Promise.all(posts);
-  const filterByTitleOrTag = q
-    ? allPosts?.filter(
-        (post) =>
-          post.data.title.toLowerCase().includes(q.toLowerCase()) ||
-          post.data.tags.toLowerCase().includes(q.toLowerCase()) ||
-          post.data.description.toLowerCase().includes(q.toLowerCase())
-      )
-    : allPosts;
+  const filterByQuery = q ? searchPosts(allPosts, q) : allPosts;
 
-  const sortedPosts = filterByTitleOrTag.sort((a, b) => {
+  const sortedPosts = filterByQuery.sort((a, b) => {
     const dateA = new Date(a.data.date);
     const dateB = new Date(b.data.date);
     return dateB.getTime() - dateA.getTime();
@@ -86,6 +79,7 @@ export async function getPost(params: Params<string>) {
 
 interface IPost {
   data: { [key: string]: string };
+  content: string;
 }
 
 /**
@@ -143,4 +137,25 @@ async function fetchAllPosts() {
     throw new Error("No posts found");
   }
   return posts;
+}
+
+function searchPosts(posts: IPost[], q: string) {
+  return posts.filter(
+    (post) =>
+      post.data.title.toLowerCase().includes(q.toLowerCase()) ||
+      q
+        .toLowerCase()
+        .split(" ")
+        .some((word) => post.data.title.toLowerCase().includes(word)) ||
+      post.data.tags.toLowerCase().includes(q.toLowerCase()) ||
+      q
+        .toLowerCase()
+        .split(" ")
+        .some((word) => post.data.tags.toLowerCase().includes(word)) ||
+      post.data.description.toLowerCase().includes(q.toLowerCase()) ||
+      q
+        .toLowerCase()
+        .split(" ")
+        .some((word) => post.data.description.toLowerCase().includes(word))
+  );
 }

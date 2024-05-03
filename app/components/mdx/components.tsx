@@ -316,7 +316,7 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
       </pre>
     </div>
   ) : (
-    <code className="text-sm px-1 rounded-md bg-slate-300 dark:bg-slate-600">
+    <code className="text-sm px-1 rounded-md bg-slate-200 dark:bg-slate-700">
       {children}
     </code>
   );

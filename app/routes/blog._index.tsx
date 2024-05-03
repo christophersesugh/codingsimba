@@ -48,7 +48,7 @@ function Blog() {
 
   function setSearchParamsValue(name: string, value: string) {
     if (value !== "" || value !== null) {
-      setSearchParams({ [name]: value });
+      setSearchParams({ [name]: value }, { preventScrollReset: true });
     }
   }
 
@@ -77,7 +77,7 @@ function Blog() {
             name="q"
             id="q"
             value={search}
-            placeholder="search posts"
+            placeholder="search blog"
             onChange={handleFormChange}
             className="bg-slate-300 text-lg text-black md:w-[50%] p-8 rounded-xl"
           />
