@@ -1,18 +1,28 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import { BsInfoCircle } from "react-icons/bs";
 import { Link } from "@remix-run/react";
 import { MdOutlineContentCopy } from "react-icons/md";
-import { IoCheckmarkDone } from "react-icons/io5";
+import { IoCheckmarkDone, IoWarning } from "react-icons/io5";
 import { Button } from "~/components/ui/button";
-import { Badge } from "../ui/badge";
 import { useToast } from "../ui/use-toast";
 import highlightjs from "highlight.js";
+import { FaLightbulb } from "react-icons/fa";
+import { RiErrorWarningFill } from "react-icons/ri";
+import { cn } from "~/utils/shadcn";
 
 type ElemProps = {
   children?: React.ReactNode;
 };
 
-export function P(props: ElemProps): React.ReactElement {
+/**
+ *
+ * @param {React.HTMLAttributes<HTMLParagraphElement | HTMLImageElement>} props
+ * @returns {JSX.Element}
+ */
+export function P(
+  props: React.HTMLAttributes<HTMLParagraphElement | HTMLImageElement>
+): JSX.Element {
   if (
     React.isValidElement(props.children) &&
     typeof props.children.type === "string" &&
@@ -20,13 +30,74 @@ export function P(props: ElemProps): React.ReactElement {
   ) {
     return <>{props.children}</>;
   }
-  return <p {...props} />;
+  return <p className="my-4" {...props} />;
+}
+
+/**
+ * Div component
+ * @param {React.HTMLAttributes<HTMLDivElement>} props
+ * @returns {JSX.Element}
+ */
+export function Div(props: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
+  const { className, children, ...rest } = props;
+
+  if (className) {
+    if (className.includes("remark-container info")) {
+      return (
+        <div
+          className={cn(
+            "border-green-600 text-green-900 bg-green-100/30",
+            className
+          )}
+          {...rest}
+        >
+          <span className="icon text-green-800">
+            <FaLightbulb size={25} />
+          </span>
+          {children}
+        </div>
+      );
+    } else if (className.includes("remark-container warning")) {
+      return (
+        <div
+          className={cn(
+            className,
+            "border-yellow-600 text-yellow-800 bg-yellow-100/30"
+          )}
+          {...rest}
+        >
+          <span className="icon text-yellow-700">
+            <IoWarning size={25} />
+          </span>
+          {children}
+        </div>
+      );
+    } else if (className.includes("remark-container caution")) {
+      return (
+        <div
+          className={cn(className, "border-red-500 text-red-700 bg-red-100/50")}
+          {...rest}
+        >
+          <span className="icon text-red-600">
+            <RiErrorWarningFill size={25} />
+          </span>
+          {children}
+        </div>
+      );
+    }
+  }
+
+  return (
+    <div {...rest} className={className}>
+      {children}
+    </div>
+  );
 }
 
 export function H1(props: ElemProps): React.ReactElement {
   return (
     <h1
-      className="text-3xl mt-5 mb-4 capitalize dark:text-amber-600 text-amber-700"
+      className="text-3xl my-6 capitalize dark:text-amber-600 text-amber-700"
       {...props}
     >
       {props.children}
@@ -37,7 +108,7 @@ export function H1(props: ElemProps): React.ReactElement {
 export function H2(props: ElemProps): React.ReactElement {
   return (
     <h2
-      className="text-2xl mt-4 mb-3 capitalize dark:text-amber-600 text-amber-700"
+      className="text-2xl my-6 capitalize dark:text-amber-600 text-amber-700"
       {...props}
     >
       {props.children}
@@ -47,7 +118,7 @@ export function H2(props: ElemProps): React.ReactElement {
 export function H3(props: ElemProps): React.ReactElement {
   return (
     <h3
-      className="text-xl mt-3 mb-2 capitalize dark:text-amber-600 text-amber-700"
+      className="text-xl my-6 capitalize dark:text-amber-600 text-amber-700"
       {...props}
     >
       {props.children}
@@ -58,7 +129,7 @@ export function H3(props: ElemProps): React.ReactElement {
 export function H4(props: ElemProps): React.ReactElement {
   return (
     <h4
-      className="text-lg mt-3 mb-2 capitalize dark:text-amber-600 text-amber-700"
+      className="text-lg my-6 capitalize dark:text-amber-600 text-amber-700"
       {...props}
     >
       {props.children}
@@ -69,7 +140,7 @@ export function H4(props: ElemProps): React.ReactElement {
 export function H5(props: ElemProps): React.ReactElement {
   return (
     <h4
-      className="text-lg mt-3 mb-2 capitalize dark:text-amber-600 text-amber-700"
+      className="text-lg my-6 capitalize dark:text-amber-600 text-amber-700"
       {...props}
     >
       {props.children}
@@ -80,7 +151,7 @@ export function H5(props: ElemProps): React.ReactElement {
 export function H6(props: ElemProps): React.ReactElement {
   return (
     <h4
-      className="text-lg mt-3 mb-2 capitalize dark:text-amber-600 text-amber-700"
+      className="text-lgmy-6 capitalize dark:text-amber-600 text-amber-700"
       {...props}
     >
       {props.children}
@@ -101,6 +172,14 @@ export function OL(props: ElemProps): React.ReactElement {
     <ol className="list-decimal list-inside space-y-3 text-lg" {...props}>
       {props.children}
     </ol>
+  );
+}
+
+export function LI(props: ElemProps): React.ReactElement {
+  return (
+    <li className="my-4" {...props}>
+      {props.children}
+    </li>
   );
 }
 
@@ -180,7 +259,6 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
     setCopied(true);
     toast({
       title: "Copied to clipboard",
-      description: "The code has been copied to your clipboard.",
     });
     window.setTimeout(() => {
       setCopied(false);
@@ -195,17 +273,20 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
   return language ? (
     <div className="relative">
       <pre
-        className={`hljs rouned-md text-md p-4 my-5 overflow-x-auto ${className}`}
+        className={cn(
+          "hljs light:bg-gray-200 rouned-md text-md p-4 my-5 pb-6 overflow-x-auto",
+          className
+        )}
         {...props}
       >
         {language ? (
-          <Badge className="font-normal bg-cyan-700 dark:bg-cyan-700 text-slate-200 dark:text-slate-200 p-0 px-1 rounded-tr-none rounded-bl-none absolute top-0 left-0">
+          <span className="text-black/50 dark:text-slate-400 text-xs absolute bottom-2 right-2">
             {language}
-          </Badge>
+          </span>
         ) : null}
 
         <Button
-          className="text-slate-300 text-xs absolute bg- right-0 top-0 rounded-tl-none rounded-br-none"
+          className="text-slate-500 text-xs absolute bg- right-0 top-0 rounded-tl-none rounded-br-none"
           variant="ghost"
           size="sm"
           onClick={handleCopied}
@@ -222,7 +303,7 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
         </Button>
 
         <code
-          className={language}
+          className={className}
           dangerouslySetInnerHTML={{
             __html:
               typeof children === "string"

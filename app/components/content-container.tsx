@@ -40,9 +40,7 @@ export function ContentContainer({
           className="w-full rounded-md h-[16rem] md:h-[28rem]"
         />
       ) : null}
-      <h2 className="text-lg text-slate-600 dark:text-slate-300 p-4 mt-8 border-l-8 rounded-md border-blue-500 dark:bg-slate-700 bg-slate-200 ">
-        {data.description}
-      </h2>
+      <div className="text-lg remark-container info">{data.description}</div>
 
       {data?.video ? <Iframe src={data.video} title={data.title} /> : null}
       <div className="dark:text-slate-300 text-slate-800 markdown">

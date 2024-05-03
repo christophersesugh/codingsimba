@@ -1,6 +1,8 @@
 import React from "react";
+
 import ReactMarkdown from "react-markdown";
 // import codeTitles from "remark-code-titles";
+import remarkFlexibleContainers from "remark-flexible-containers";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import {
@@ -14,6 +16,7 @@ import {
   H5,
   H6,
   Img,
+  LI,
   MdLink,
   OL,
   Strong,
@@ -24,7 +27,7 @@ export function Markdown({ source }: { source: string }) {
   const Component = React.useMemo(
     () => (
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, remarkFlexibleContainers as never]}
         rehypePlugins={[rehypeRaw]}
         components={{
           h1: H1,
@@ -35,6 +38,7 @@ export function Markdown({ source }: { source: string }) {
           h6: H6,
           ul: UL,
           ol: OL,
+          li: LI,
           b: B,
           strong: Strong,
           a: MdLink,
@@ -46,7 +50,7 @@ export function Markdown({ source }: { source: string }) {
         {source}
       </ReactMarkdown>
     ),
-    [source],
+    [source]
   );
   return <div className="markdown">{Component}</div>;
 }

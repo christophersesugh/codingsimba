@@ -35,6 +35,7 @@
     "react-markdown": "^9.0.1",
     "reading-time-estimator": "^1.9.4",
     "rehype-raw": "^7.0.0",
+    "remark-flexible-containers": "^1.2.1",
     "remark-gfm": "^4.0.0",
     "remix-themes": "^1.2.2",
     "tailwind-merge": "^2.2.1",

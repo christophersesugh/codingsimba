@@ -9,6 +9,7 @@ import {
 } from "@remix-run/react";
 import tailwind from "./tailwind.css";
 import dark from "highlight.js/styles/night-owl.css";
+import light from "highlight.js/styles/atom-one-light.css";
 import { LinksFunction, LoaderFunctionArgs } from "@remix-run/server-runtime";
 import {
   PreventFlashOnWrongTheme,
@@ -19,6 +20,13 @@ import {
 import { themeSessionResolver } from "./utils/session.server";
 import { cn } from "./utils/shadcn";
 import { RootLayout } from "./components/layout";
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const { getTheme } = await themeSessionResolver(request);
+  return {
+    theme: getTheme(),
+  };
+}
 
 export const links: LinksFunction = () => [
   {
@@ -43,19 +51,7 @@ export const links: LinksFunction = () => [
     rel: "stylesheet",
     href: tailwind,
   },
-  {
-    rel: "stylesheet",
-    href: dark,
-  },
 ];
-
-export async function loader({ request }: LoaderFunctionArgs) {
-  const { getTheme } = await themeSessionResolver(request);
-  return {
-    theme: getTheme(),
-  };
-}
-
 export default function AppWithTheme() {
   const data = useLoaderData<typeof loader>();
   return (
@@ -70,6 +66,8 @@ function App() {
   const [theme] = useTheme();
   const navigation = useNavigation();
   const isLoading = navigation.state === "loading";
+
+  const hljsTheme = data.theme === "dark" ? dark : light;
   return (
     <html lang="en" className={cn(theme)}>
       <head>
@@ -77,6 +75,7 @@ function App() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <PreventFlashOnWrongTheme ssrTheme={Boolean(data.theme)} />
+        <link rel="stylesheet" href={hljsTheme} />
         <Links />
       </head>
       <body
@@ -84,7 +83,7 @@ function App() {
           "bg-[#fff] text-[#1f2028] dark:bg-[#1f2028] dark:text-[#fff] transition-all duration-300 min-w-[100vw] min-h-[100vh]",
           {
             "opacity-40": isLoading,
-          },
+          }
         )}
       >
         <RootLayout />
