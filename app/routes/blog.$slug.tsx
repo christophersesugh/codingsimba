@@ -13,11 +13,7 @@ import { Container } from "~/components/container";
 import { EmptyContentUI } from "~/components/empty-content-ui";
 import { Iframe } from "~/components/iframe";
 import { Markdown } from "~/components/mdx";
-import {
-  containerVariants,
-  imageLoadAnimationProps,
-  textVariants,
-} from "~/animation-config";
+import { containerVariants, textVariants } from "~/animation-config";
 
 export const meta = metaFn;
 
@@ -63,10 +59,7 @@ export default function BlogPostRoute() {
               {moment(data.createdAt).format("MMM DD, YYYY")} ~ {stats.text}
             </motion.p>
           </div>
-          <motion.div
-            {...imageLoadAnimationProps}
-            className="w-full h-[500px] min-h-[500px]"
-          >
+          <div className="w-full h-[500px] min-h-[500px]">
             {data.photo ? (
               <img
                 src={data.photo}
@@ -77,7 +70,7 @@ export default function BlogPostRoute() {
                 className="h-full min-h-full w-full min-w-full rounded-md shadow-md"
               />
             ) : null}
-          </motion.div>
+          </div>
           {/* <motion.div
             variants={textVariants}
             className="text-lg remark-container info"
