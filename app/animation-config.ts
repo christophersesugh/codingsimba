@@ -15,7 +15,7 @@ export const containerVariants = {
 };
 
 export const imageLoadAnimationProps = {
-  initial: { scale: 0.5 },
+  initial: { scale: 0 },
   animate: { scale: 1 },
   transition: {
     type: "spring",
