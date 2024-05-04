@@ -29,13 +29,13 @@ function Card({ post }: { post: PostProps }) {
         variants={textVariants}
         className="flex flex-col gap-2 drop-shadow-xl max-w-[20rem] mx-auto"
       >
-        <div className="min-h-[50%] w-full rounded-md p-1 hover:border-4 duration-300 hover:border-blue-500">
+        <div className="min-h-full h-full w-full rounded-md p-1 hover:border-4 duration-300 hover:border-blue-500">
           <img
             src={data.photo}
             alt={data.title}
-            height={350}
-            width={500}
-            className="rounded-md object-cover"
+            // height={350}
+            // width={500}
+            className="rounded-md min-w-full min-h-[300px] h-[300px] object-cover"
           />
         </div>
 

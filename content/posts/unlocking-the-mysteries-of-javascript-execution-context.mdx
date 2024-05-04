@@ -1,0 +1,163 @@
+---
+  title: unlocking the mysteries of javascript execution context
+  slug: unlocking-the-mysteries-of-javascript-execution-context
+  tags: "javascript, context"
+  photo: https://res.cloudinary.com/christo/image/upload/v1714818992/execution-context_zxud1q.jpg
+  description: "Understanding the JavaScript execution context is crucial to understanding how JavaScript works. In this article, we will explore the JavaScript execution context and how it works."
+  video: 
+  createdAt: 2024-04-04
+  published: true 
+---
+
+:::info
+Understanding the JavaScript execution context is crucial to understanding how JavaScript works. In this article, we will explore the JavaScript execution context and how it works.
+:::
+
+## Understanding Execution Context
+
+JavaScript execution context is the environment or scope in which a JavaScript function runs. It's where variables, objects, and functions live, and how the JavaScript engine keeps track of all the operations during the execution of the script.
+
+### Essesnce of Execution Context
+
+Execution context is the fundamental concept behind the JavaScript engine's ability to execute code accurately. It ensures the correct tracking and order of execution, providing a systematic environment for the code.
+
+### Types of Execution Context
+
+Three types of execution contexts exist in JavaScript: Global Execution Context, Function Execution Context, and Eval Execution Context, each serving a unique purpose in the execution of code.
+
+### Global Execution Context
+
+- Created when the JavaScript engine starts running a script.
+
+- Represents the global scope, which is accessible to all parts of the script unless explicitly hidden.
+
+- Contains:Global variables: Variables declared outside of any function.
+  Built-in functions: Functions provided by the JavaScript engine itself (e.g., console.log, Math.random).
+
+### Function Execution Context
+
+- Created whenever a function is called.
+
+- Represents the local scope of the function, which is specific to that function call.
+- Function arguments: Variables passed to the function during its call.
+- Local variables: Variables declared within the function body.
+- Scope chain: A mechanism that allows the function to access variables from its own scope, the global scope, and any outer enclosing functions' scopes.
+- `this` keyword: A special variable that refers to the object the function is currently associated with.
+
+### Eval Execution Context
+
+- Created when the eval() function is used to execute a string as JavaScript code.
+
+- This essentially creates a new execution context within the current context.
+- Variables and functions defined within the eval() string have their own scope, separate from the current execution context.
+
+## Phases of Execution Context
+
+### Creation Phase
+
+During the creation phase, JavaScript variables, functions, and arguments are identified and stored in the execution context before any code is executed. This is where the memory space for variables (hoisting) and functions is created.
+
+### Execution Phase
+
+In the activation or execution phase, the code gets executed line by line. Variables are assigned values and the functions get invoked. This is where all operations and command execution appropriate to the context take place.
+
+## When Functions Come to Life
+
+Known also as the call stack, the execution context stack is a LIFO (Last In, First Out) stack that manages the order in which contexts are executed and removed as functions in a script are called and completed.
+
+::: info
+Watch the youtube video to understand the JavaScript execution context better.
+:::
+
+## Variable Environment in Action
+
+### Hoisting in the Wild
+
+Hoisting in JavaScript is when variables and function declarations are moved to the top of their containing context before code execution. This provides safeguarding against errors that would occur if declarations were only executed linearly.
+
+## Vars, Lets, and Consts
+
+### Variable Declarations
+
+Different types of variable declarations behave differently in the execution context. The "var" keyword can be hoisted, while "let" and "const" provide block-level scoping and are not hoisted.
+
+```javascript
+console.log(myVar); // undefined
+var myVar = 10;
+console.log(myVar); // 10
+```
+
+### Temporal Dead Zone
+
+The Temporal Dead Zone (TDZ) is the term for the period where and variables are not accessible before they're declared, preventing errors and unexpected behaviours.
+
+::: warning
+Do not access variables before they are declared. This can lead to ReferenceError.
+:::
+
+```javascript
+console.log(myVar); // ReferenceError: myVar is not defined
+let myVar = 10;
+```
+
+## The Scope Chain
+
+JavaScript functions create a scope chain during the creation phase. This chain ensures that functions have access to variables and functions from its parent execution context, providing a link to external scopes.
+
+```javascript
+function outerFunction() {
+  const outerVar = "I am from outer function";
+  function innerFunction() {
+    console.log(outerVar); // I am from outer function
+  }
+  innerFunction();
+}
+outerFunction();
+```
+
+### Lexical Scoping in Practice
+
+Lexical scoping is a paradigm in JavaScript where the accessibility of variables is determined statically through the layout of the code. Inner functions can access outer function variables, but not the other way around.
+
+```javascript
+function outerFunction() {
+  // Begin of outerFunction scope
+  const outerVar = "I am from outer function";
+  function innerFunction() {
+    console.log(outerVar); // I am from outer function
+  }
+  innerFunction();
+  // End of outerFunction scope
+}
+outerFunction();
+```
+
+::: info
+Inbetween the outerFunction scope, the innerFunction can access the outerVar variable. It is called lexical scoping.
+:::
+
+## The 'this' Keyword Explained
+
+The `this` keyword in JavaScript is a complex and dynamic feature that refers to the object it belongs to. It acts differently depending on the execution context, function, and syntax at play.
+
+### Dynamic Nature of `this`
+
+The dynamic aspect of 'this' becomes evident especially when dealing with function invocations (normal call, method call, constructor call), affecting the value of 'this' based on how and where a function is called.
+
+## Execution Context in Asynchronous JS
+
+**This topic will have its own article. Stay tuned!**
+
+Meanwhile, let me briefly explain how execution context works in asynchronous JavaScript.
+
+### Event Loop & Callback Queue
+
+JavaScript runtime uses an event loop and callback queue to handle asynchronous operations. This mechanism coordinates the execution context with the event loop, ensuring a smooth asynchronous processing.
+
+### Promises and Async Functions
+
+JavaScript ES6 introduced Promises and async functions to deal with asynchronous code execution. These constructs interface with the execution context and the event loop to manage asynchronous execution flows logically and intuitively.
+
+## Conclusion
+
+Understanding the JavaScript execution context is crucial to understanding how JavaScript works. It's the backbone of the JavaScript engine's ability to execute code accurately and efficiently. By grasping the concept of execution context, you'll be better equipped to write clean, efficient, and bug-free JavaScript code.

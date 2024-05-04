@@ -46,7 +46,7 @@ export function Div(props: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
       return (
         <div
           className={cn(
-            "border-green-600 text-green-900 bg-green-100/30",
+            "border-green-600 text-green-900 bg-green-100/40 dark:bg-green-100",
             className
           )}
           {...rest}
@@ -62,7 +62,7 @@ export function Div(props: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
         <div
           className={cn(
             className,
-            "border-yellow-600 text-yellow-800 bg-yellow-100/30"
+            "border-yellow-600 text-yellow-800 bg-yellow-100/40 dark:bg-yellow-100"
           )}
           {...rest}
         >
@@ -75,7 +75,10 @@ export function Div(props: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
     } else if (className.includes("remark-container caution")) {
       return (
         <div
-          className={cn(className, "border-red-500 text-red-700 bg-red-100/50")}
+          className={cn(
+            className,
+            "border-red-500 text-red-700 bg-red-100/50 dark:bg-red-100"
+          )}
           {...rest}
         >
           <span className="icon text-red-600">
@@ -143,7 +146,7 @@ export function H6(props: ElemProps): React.ReactElement {
 
 export function UL(props: ElemProps): React.ReactElement {
   return (
-    <ul className="list-disc list-inside space-y-3 text-lg" {...props}>
+    <ul className="list-disc space-y-3 text-lg" {...props}>
       {props.children}
     </ul>
   );
@@ -151,7 +154,7 @@ export function UL(props: ElemProps): React.ReactElement {
 
 export function OL(props: ElemProps): React.ReactElement {
   return (
-    <ol className="list-decimal list-inside space-y-3 text-lg" {...props}>
+    <ol className="list-decimal space-y-3 text-lg" {...props}>
       {props.children}
     </ol>
   );

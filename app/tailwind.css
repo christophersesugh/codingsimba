@@ -24,11 +24,11 @@
 
 @layer components {
   .remark-container {
-    @apply my-8 p-2 pl-11 relative border-l-4;
+    @apply my-8 p-2 pl-11 relative border-l-8;
   }
 
   .remark-container > .icon {
-    @apply absolute left-2 top-7;
+    @apply absolute left-2 top-3;
   }
 
   .hljs {

@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import moment from "moment";
-import localForage from "localforage";
 import { motion } from "framer-motion";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { getPost, getRelatedPosts } from "~/utils/blog.server";
-import { ClientLoaderFunctionArgs, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { readingTime } from "reading-time-estimator";
 import { metaFn } from "~/utils/meta";
 import { BackButton } from "~/components/back-button";
@@ -30,26 +29,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
     { headers: { "Cache-Control": "max-age=604800, must-revalidate, public" } }
   );
 }
-
-export async function clientLoader({
-  serverLoader,
-  params,
-}: ClientLoaderFunctionArgs) {
-  const cacheKey = `blog-post-${params.slug}`;
-  try {
-    const cached = await localForage.getItem(cacheKey);
-    if (cached) {
-      const { post, relatedPosts } = cached as any;
-      return { post, relatedPosts };
-    }
-    const { post, relatedPosts } = (await serverLoader()) as any;
-    localForage.setItem(cacheKey, { post, relatedPosts });
-    return { post, relatedPosts };
-  } catch (error) {
-    throw new Error("Error fetching data from server.");
-  }
-}
-clientLoader.hydrate = true;
 
 export default function BlogPostRoute() {
   const { relatedPosts, post } = useLoaderData<typeof loader>();
@@ -84,29 +63,32 @@ export default function BlogPostRoute() {
               {moment(data.createdAt).format("MMM DD, YYYY")} ~ {stats.text}
             </motion.p>
           </div>
-          <motion.div {...imageLoadAnimationProps} className="w-full">
+          <motion.div
+            {...imageLoadAnimationProps}
+            className="w-full h-[500px] min-h-[500px]"
+          >
             {data.photo ? (
               <img
                 src={data.photo}
                 alt={data.title}
                 title={data.title}
-                height={256}
-                width={512}
-                className="w-auto rounded-md shadow-md"
+                // height={256}
+                // width={512}
+                className="h-full min-h-full w-full min-w-full rounded-md shadow-md"
               />
             ) : null}
           </motion.div>
-          <motion.div
+          {/* <motion.div
             variants={textVariants}
             className="text-lg remark-container info"
           >
             {data.description}
-          </motion.div>
+          </motion.div> */}
 
           {data?.video ? <Iframe src={data.video} title={data.title} /> : null}
           <motion.div
             variants={textVariants}
-            className="dark:text-slate-300 text-slate-800 markdown"
+            className="dark:text-slate-300 text-slate-800 mb-6 markdown"
           >
             <Markdown source={content} />
           </motion.div>

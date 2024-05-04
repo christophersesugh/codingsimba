@@ -2,12 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import {
-  useLoaderData,
-  useSubmit,
-  useSearchParams,
-  ClientLoaderFunctionArgs,
-} from "@remix-run/react";
+import { useLoaderData, useSubmit, useSearchParams } from "@remix-run/react";
 import { BlogCard } from "~/components/blog-card";
 import { Tags } from "~/components/tags";
 import { EmptyContentUI } from "~/components/empty-content-ui";
@@ -18,7 +13,6 @@ import { getPosts, getTags } from "~/utils/blog.server";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { textVariants } from "~/animation-config";
-import localforage from "localforage";
 
 export const meta: MetaFunction = metaFn;
 
@@ -27,31 +21,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const posts = await getPosts(request);
   const searchParams = new URL(request.url).searchParams;
   const q = searchParams.get("q");
-  return json({ posts, tags, q });
-}
+  return json(
+    { posts, tags, q },
 
-type CacheData = {
-  posts: { [key: string]: string }[];
-  tags: string[];
-  q: string;
-};
-
-export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
-  const cacheKey = "blog-posts";
-  try {
-    const cached = await localforage.getItem(cacheKey);
-    if (cached) {
-      const { posts, tags, q } = cached as CacheData;
-      return { posts, tags, q };
-    }
-    const { posts, tags, q } = (await serverLoader()) as CacheData;
-    localforage.setItem(cacheKey, { posts, tags, q });
-    return { posts, tags, q };
-  } catch (error) {
-    throw new Error("Error fetching data from server.");
-  }
+    { headers: { "Cache-Control": "max-age=604800, must-revalidate, public" } }
+  );
 }
-clientLoader.hydrate = true;
 
 type PostProps = {
   data: { [key: string]: string };
