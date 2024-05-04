@@ -1,7 +1,13 @@
 import React from "react";
+import { motion } from "framer-motion";
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData, useSubmit, useSearchParams } from "@remix-run/react";
+import {
+  useLoaderData,
+  useSubmit,
+  useSearchParams,
+  ClientLoaderFunctionArgs,
+} from "@remix-run/react";
 import { BlogCard } from "~/components/blog-card";
 import { Tags } from "~/components/tags";
 import { EmptyContentUI } from "~/components/empty-content-ui";
@@ -11,6 +17,8 @@ import { Button } from "~/components/ui/button";
 import { getPosts, getTags } from "~/utils/blog.server";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { textVariants } from "~/animation-config";
+import localforage from "localforage";
 
 export const meta: MetaFunction = metaFn;
 
@@ -21,6 +29,29 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const q = searchParams.get("q");
   return json({ posts, tags, q });
 }
+
+type CacheData = {
+  posts: { [key: string]: string }[];
+  tags: string[];
+  q: string;
+};
+
+export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
+  const cacheKey = "blog-posts";
+  try {
+    const cached = await localforage.getItem(cacheKey);
+    if (cached) {
+      const { posts, tags, q } = cached as CacheData;
+      return { posts, tags, q };
+    }
+    const { posts, tags, q } = (await serverLoader()) as CacheData;
+    localforage.setItem(cacheKey, { posts, tags, q });
+    return { posts, tags, q };
+  } catch (error) {
+    throw new Error("Error fetching data from server.");
+  }
+}
+clientLoader.hydrate = true;
 
 type PostProps = {
   data: { [key: string]: string };
@@ -61,17 +92,22 @@ function Blog() {
   }, [postLimit, submit]);
 
   return (
-    <Container className="!max-w-4xl flex flex-col justify-center my-20">
-      <h1 className="mb-12 text-3xl font-bol max-w-md">
+    <Container className="!max-w-4xl mx-auto flex flex-col justify-center my-20">
+      <motion.h1
+        variants={textVariants}
+        className="mb-12 text-3xl font-bol max-w-md"
+      >
         Exploring the World of Development:
         <span className="text-slate-400"> Dive into My Latest Articles</span>
-      </h1>
+      </motion.h1>
       <div className="mb-16 flex flex-col gap-12">
         {/* search input */}
-        <div>
-          <Label htmlFor="search" className="text-lg">
-            Search the blog:
-          </Label>
+        <motion.div variants={textVariants}>
+          <motion.div variants={textVariants}>
+            <Label htmlFor="search" className="text-lg">
+              Search the blog:
+            </Label>
+          </motion.div>
           <Input
             type="search"
             name="q"
@@ -81,20 +117,19 @@ function Blog() {
             onChange={handleFormChange}
             className="bg-slate-300 text-lg text-black md:w-[50%] p-8 rounded-xl"
           />
-        </div>
+        </motion.div>
         {/* post tags */}
         <Tags tags={tags} q={q} handleClick={handleButtonClick} />
       </div>
 
       <div>
-        {/* no posts UI */}
         {!posts?.length ? (
           <EmptyContentUI message="no posts found with given query." />
         ) : null}
       </div>
 
       {/* success UI */}
-      <div className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-20 justify-evenly my-12">
+      <div className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-20 justify-evenly mb-12 mt-8">
         {posts && posts?.length
           ? posts.map((post: PostProps, index: number) => (
               <BlogCard post={post} key={`${post.data.slug}-${index}`} />

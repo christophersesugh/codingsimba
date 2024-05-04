@@ -1,10 +1,11 @@
 import React from "react";
-import { Fade } from "react-awesome-reveal";
+import { motion } from "framer-motion";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { navItems } from ".";
 import { Link } from "@remix-run/react";
 import { ThemeButton } from "./theme-button";
 import { Button } from "../ui/button";
+import { charVariants, logoTextVariants } from "~/animation-config";
 
 export function MainNav({
   isOpen,
@@ -13,15 +14,22 @@ export function MainNav({
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const logoText = "Coding Simba";
   return (
     <nav className="max-w-7xl mx-auto transition ease-in duration-300 flex justify-between px-8 py-12 items-center">
       <Link to="/">
-        <span className="text-3xl font-bold hover:underline underline-offset-8 mr-4 md:mr-0">
-          <span className="text-blue-500">Coding </span>
-          <Fade cascade duration={200}>
-            Simba
-          </Fade>
-        </span>
+        <motion.div
+          variants={logoTextVariants}
+          initial="hidden"
+          animate="visible"
+          className="text-3xl font-bold hover:underline underline-offset-8 mr-4 md:mr-0"
+        >
+          {logoText.split("").map((char, index) => (
+            <motion.span key={index} variants={charVariants}>
+              {index > 6 ? <span className="text-blue-600">{char}</span> : char}
+            </motion.span>
+          ))}
+        </motion.div>
       </Link>
       <ul className="hidden md:flex justify-between gap-6 items-center">
         {navItems.map((item) => (

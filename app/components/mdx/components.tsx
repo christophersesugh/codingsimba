@@ -96,10 +96,7 @@ export function Div(props: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
 
 export function H1(props: ElemProps): React.ReactElement {
   return (
-    <h1
-      className="text-3xl my-6 capitalize dark:text-amber-600 text-amber-700"
-      {...props}
-    >
+    <h1 className="text-3xl my-6 dark:text-amber-600 text-amber-700" {...props}>
       {props.children}
     </h1>
   );
@@ -107,20 +104,14 @@ export function H1(props: ElemProps): React.ReactElement {
 
 export function H2(props: ElemProps): React.ReactElement {
   return (
-    <h2
-      className="text-2xl my-6 capitalize dark:text-amber-600 text-amber-700"
-      {...props}
-    >
+    <h2 className="text-2xl my-6 dark:text-amber-600 text-amber-700" {...props}>
       {props.children}
     </h2>
   );
 }
 export function H3(props: ElemProps): React.ReactElement {
   return (
-    <h3
-      className="text-xl my-6 capitalize dark:text-amber-600 text-amber-700"
-      {...props}
-    >
+    <h3 className="text-xl my-6 dark:text-amber-600 text-amber-700" {...props}>
       {props.children}
     </h3>
   );
@@ -128,10 +119,7 @@ export function H3(props: ElemProps): React.ReactElement {
 
 export function H4(props: ElemProps): React.ReactElement {
   return (
-    <h4
-      className="text-lg my-6 capitalize dark:text-amber-600 text-amber-700"
-      {...props}
-    >
+    <h4 className="text-lg my-6 dark:text-amber-600 text-amber-700" {...props}>
       {props.children}
     </h4>
   );
@@ -139,10 +127,7 @@ export function H4(props: ElemProps): React.ReactElement {
 
 export function H5(props: ElemProps): React.ReactElement {
   return (
-    <h4
-      className="text-lg my-6 capitalize dark:text-amber-600 text-amber-700"
-      {...props}
-    >
+    <h4 className="text-lg my-6 dark:text-amber-600 text-amber-700" {...props}>
       {props.children}
     </h4>
   );
@@ -150,10 +135,7 @@ export function H5(props: ElemProps): React.ReactElement {
 
 export function H6(props: ElemProps): React.ReactElement {
   return (
-    <h4
-      className="text-lgmy-6 capitalize dark:text-amber-600 text-amber-700"
-      {...props}
-    >
+    <h4 className="text-lgmy-6 dark:text-amber-600 text-amber-700" {...props}>
       {props.children}
     </h4>
   );
@@ -269,7 +251,7 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
   if (className) {
     language = className.replace(/language-/, "");
   }
-  if (isServer) return <p>Loading...</p>;
+  if (isServer) return null;
   return language ? (
     <div className="relative">
       <pre
@@ -280,7 +262,7 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
         {...props}
       >
         {language ? (
-          <span className="text-black/50 dark:text-slate-400 text-xs absolute bottom-2 right-2">
+          <span className="text-slate-400 text-xs absolute bottom-2 right-2">
             {language}
           </span>
         ) : null}

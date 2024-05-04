@@ -1,24 +1,26 @@
 import { useLoaderData } from "@remix-run/react";
+import { motion } from "framer-motion";
 import { LoaderFunctionArgs, json } from "@remix-run/server-runtime";
 import { About, HomeHeader, RecentPosts } from "~/components/home";
 import { getPosts } from "~/utils/blog.server";
+import { containerVariants } from "~/animation-config";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const posts = await getPosts(request);
     return json({ posts }, 200);
   } catch (error) {
-    return json({ error }, 500);
+    throw new Error("Failed to load posts");
   }
 }
 
 export default function Index() {
-  const loaderData = useLoaderData<typeof loader>();
+  const { posts } = useLoaderData<typeof loader>();
   return (
-    <>
+    <motion.div variants={containerVariants} initial="hidden" animate="visible">
       <HomeHeader />
       <About />
-      <RecentPosts loaderData={loaderData} />
-    </>
+      <RecentPosts posts={posts} />
+    </motion.div>
   );
 }

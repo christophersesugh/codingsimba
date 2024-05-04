@@ -1,36 +1,42 @@
-import { BsArrowRight } from "react-icons/bs";
 import avatar from "~/assets/avatar.jpeg";
+import { motion } from "framer-motion";
+import { BsArrowRight } from "react-icons/bs";
 import { HeaderButton } from "../header-button";
+import { imageLoadAnimationProps, textVariants } from "~/animation-config";
 
 export function About() {
   return (
-    <section
+    <motion.section
       id="about"
       className="px-6 flex flex-col justify-center items-center gap-12 md:flex-row max-w-5xl mx-auto mt-32 md:my-20 mb-12 pt-12"
     >
-      <img
+      <motion.img
+        {...imageLoadAnimationProps}
         src={avatar}
         width={200}
         height={200}
         alt="Coding Simba"
         className="md:self-start rounded-full md:mx-14 h-[200px] w-[200px]"
       />
-      <div className="max-w-xl">
-        <h2 className="text-3xl">
+      <motion.div variants={textVariants} className="max-w-xl">
+        <motion.h2 variants={textVariants} className="text-3xl">
           Hi, I am Christopher Aondona Sesugh [Coding Simba]. I am a software
           engineer and a teacher. I love building quality software and sharing
           my existing knowledge across the globe.
-        </h2>
-        <h3 className="text-2xl text-slate-400 mt-8">
+        </motion.h2>
+        <motion.h3
+          variants={textVariants}
+          className="text-2xl text-slate-400 mt-8"
+        >
           I am also an athlete and love exercising in the gym or working out at
           home.
-        </h3>
+        </motion.h3>
         <HeaderButton
           to="/about"
           icon={<BsArrowRight className="text-lg animate-pulse" />}
           buttonText="Learn more about Me."
         />
-      </div>
-    </section>
+      </motion.div>
+    </motion.section>
   );
 }

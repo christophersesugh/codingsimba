@@ -1,7 +1,9 @@
 import React from "react";
-import { Link } from "@remix-run/react";
 import moment from "moment";
+import { motion } from "framer-motion";
+import { Link } from "@remix-run/react";
 import { readingTime } from "reading-time-estimator";
+import { textVariants } from "~/animation-config";
 
 type PostProps = {
   data: { [key: string]: string };
@@ -12,14 +14,28 @@ function Card({ post }: { post: PostProps }) {
   const { data, content } = post;
   const { text } = readingTime(content);
 
+  function prefetchImage() {
+    const image = new Image();
+    image.src = data.photo;
+  }
   return (
-    <Link to={`/blog/${data.slug}`}>
-      <article className="flex flex-col gap-2 drop-shadow-xl max-w-[20rem] mx-auto">
+    <Link
+      prefetch="intent"
+      onMouseEnter={prefetchImage}
+      onFocus={prefetchImage}
+      to={`/blog/${data.slug}`}
+    >
+      <motion.article
+        variants={textVariants}
+        className="flex flex-col gap-2 drop-shadow-xl max-w-[20rem] mx-auto"
+      >
         <div className="min-h-[50%] w-full rounded-md p-1 hover:border-4 duration-300 hover:border-blue-500">
           <img
             src={data.photo}
             alt={data.title}
-            className="w-full min-h-full rounded-md object-cover"
+            height={350}
+            width={500}
+            className="rounded-md object-cover"
           />
         </div>
 
@@ -40,7 +56,7 @@ function Card({ post }: { post: PostProps }) {
           </div>
         </div>
         <h1 className="text-lg p-2 capitalize my-auto">{data.title}</h1>
-      </article>
+      </motion.article>
     </Link>
   );
 }

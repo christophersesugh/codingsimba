@@ -1,7 +1,10 @@
+import home from "~/assets/home.webp";
+import { motion } from "framer-motion";
 import { Link } from "@remix-run/react";
 import { PageHeader } from "./page-header";
-import home from "~/assets/home.webp";
 import { HeaderButton } from "../header-button";
+import { Button } from "../ui/button";
+import { textVariants } from "~/animation-config";
 
 export function HomeHeader() {
   return (
@@ -17,16 +20,21 @@ export function HomeHeader() {
         />
       }
     >
-      <div className="flex flex-col">
-        <div className="flex gap-6">
+      <motion.div
+        variants={textVariants}
+        initial="hidden"
+        animate="visible"
+        className="flex flex-col"
+      >
+        <motion.div variants={textVariants} className="flex gap-6">
           <Link to="/blog">
-            <button className="capitalize rounded-md bg-[#1f2028] text-[#fff] dark:bg-[#fff] dark:text-[#1f2028] text-lg p-2 mt-6">
+            <Button size="lg" className="capitalize rounded-md text-lg mt-6">
               read the blog
-            </button>
+            </Button>
           </Link>
-        </div>
+        </motion.div>
         <HeaderButton to="/#about" buttonText="Learn more about CS." />
-      </div>
+      </motion.div>
     </PageHeader>
   );
 }

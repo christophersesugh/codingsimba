@@ -9,7 +9,6 @@ import {
 } from "@remix-run/react";
 import tailwind from "./tailwind.css";
 import dark from "highlight.js/styles/night-owl.css";
-import light from "highlight.js/styles/atom-one-light.css";
 import { LinksFunction, LoaderFunctionArgs } from "@remix-run/server-runtime";
 import {
   PreventFlashOnWrongTheme,
@@ -51,6 +50,10 @@ export const links: LinksFunction = () => [
     rel: "stylesheet",
     href: tailwind,
   },
+  {
+    rel: "stylesheet",
+    href: dark,
+  },
 ];
 export default function AppWithTheme() {
   const data = useLoaderData<typeof loader>();
@@ -67,7 +70,6 @@ function App() {
   const navigation = useNavigation();
   const isLoading = navigation.state === "loading";
 
-  const hljsTheme = data.theme === "dark" ? dark : light;
   return (
     <html lang="en" className={cn(theme)}>
       <head>
@@ -75,7 +77,6 @@ function App() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <PreventFlashOnWrongTheme ssrTheme={Boolean(data.theme)} />
-        <link rel="stylesheet" href={hljsTheme} />
         <Links />
       </head>
       <body

@@ -1,28 +1,116 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import moment from "moment";
+import localForage from "localforage";
+import { motion } from "framer-motion";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import { BlogCard } from "~/components/blog-card";
-import { ContentContainer } from "~/components/content-container";
-import { EmptyContentUI } from "~/components/empty-content-ui";
 import { getPost, getRelatedPosts } from "~/utils/blog.server";
+import { ClientLoaderFunctionArgs, useLoaderData } from "@remix-run/react";
+import { readingTime } from "reading-time-estimator";
 import { metaFn } from "~/utils/meta";
+import { BackButton } from "~/components/back-button";
+import { BlogCard } from "~/components/blog-card";
+import { Container } from "~/components/container";
+import { EmptyContentUI } from "~/components/empty-content-ui";
+import { Iframe } from "~/components/iframe";
+import { Markdown } from "~/components/mdx";
+import {
+  containerVariants,
+  imageLoadAnimationProps,
+  textVariants,
+} from "~/animation-config";
 
 export const meta = metaFn;
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const post = await getPost(params);
   const relatedPosts = await getRelatedPosts(post);
-  return json({ relatedPosts, post }, 200);
+  return json(
+    { relatedPosts, post },
+    { headers: { "Cache-Control": "max-age=604800, must-revalidate, public" } }
+  );
 }
+
+export async function clientLoader({
+  serverLoader,
+  params,
+}: ClientLoaderFunctionArgs) {
+  const cacheKey = `blog-post-${params.slug}`;
+  try {
+    const cached = await localForage.getItem(cacheKey);
+    if (cached) {
+      const { post, relatedPosts } = cached as any;
+      return { post, relatedPosts };
+    }
+    const { post, relatedPosts } = (await serverLoader()) as any;
+    localForage.setItem(cacheKey, { post, relatedPosts });
+    return { post, relatedPosts };
+  } catch (error) {
+    throw new Error("Error fetching data from server.");
+  }
+}
+clientLoader.hydrate = true;
 
 export default function BlogPostRoute() {
   const { relatedPosts, post } = useLoaderData<typeof loader>();
+  const { data, content } = post;
+  const stats = readingTime(content);
 
   return (
-    <div className="max-w-3xl md:px-0 mx-auto">
+    <Container className="max-w-3xl md:px-0">
       {post ? (
-        <ContentContainer to="/blog" text="back to overview" post={post} />
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          key="some-key"
+        >
+          <BackButton
+            to="/blog"
+            text="back to overview"
+            className="pl-0 mb-4"
+          />
+          <div>
+            <motion.h1
+              variants={textVariants}
+              className="text-3xl capitalize mb-4"
+            >
+              {data.title}
+            </motion.h1>
+            <motion.p
+              variants={textVariants}
+              className="text-slate-500 dark:text-slate-400 text-lg mb-6"
+            >
+              {moment(data.createdAt).format("MMM DD, YYYY")} ~ {stats.text}
+            </motion.p>
+          </div>
+          <motion.div {...imageLoadAnimationProps} className="w-full">
+            {data.photo ? (
+              <img
+                src={data.photo}
+                alt={data.title}
+                title={data.title}
+                height={256}
+                width={512}
+                className="w-auto rounded-md shadow-md"
+              />
+            ) : null}
+          </motion.div>
+          <motion.div
+            variants={textVariants}
+            className="text-lg remark-container info"
+          >
+            {data.description}
+          </motion.div>
+
+          {data?.video ? <Iframe src={data.video} title={data.title} /> : null}
+          <motion.div
+            variants={textVariants}
+            className="dark:text-slate-300 text-slate-800 markdown"
+          >
+            <Markdown source={content} />
+          </motion.div>
+        </motion.div>
       ) : (
         <EmptyContentUI message="no post found with given slug." />
       )}
@@ -43,6 +131,6 @@ export default function BlogPostRoute() {
           />
         )}
       </div>
-    </div>
+    </Container>
   );
 }
