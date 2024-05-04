@@ -95,3 +95,5 @@ function App() {
     </html>
   );
 }
+
+export function ErrorBoundary() {}
