@@ -8,6 +8,7 @@ import {
   useNavigation,
 } from "@remix-run/react";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/remix";
 import tailwind from "./tailwind.css";
 import dark from "highlight.js/styles/night-owl.css";
 import { LinksFunction, LoaderFunctionArgs } from "@remix-run/server-runtime";
@@ -89,6 +90,7 @@ function App() {
         )}
       >
         <RootLayout />
+        <SpeedInsights />
         <Analytics />
         <ScrollRestoration />
         <Scripts />

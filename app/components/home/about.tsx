@@ -16,7 +16,7 @@ export function About() {
         width={250}
         height={300}
         alt="Coding Simba"
-        className="md:self-start rounded-3xl md:mx-14 h-[300px] w-[250px]"
+        className="md:self-start rounded-full md:mx-14 h-[300px] w-[250px]"
       />
       <motion.div variants={textVariants} className="max-w-xl">
         <motion.h2 variants={textVariants} className="text-3xl">
