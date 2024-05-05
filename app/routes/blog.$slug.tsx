@@ -59,7 +59,7 @@ export default function BlogPostRoute() {
               {moment(data.createdAt).format("MMM DD, YYYY")} ~ {stats.text}
             </motion.p>
           </div>
-          <div className="w-full h-[500px] min-h-[500px]">
+          <div className="w-full h-[250px] min-h-[250px] sm:h-[500px] sm:min-h-[500px]">
             {data.photo ? (
               <img
                 src={data.photo}
