@@ -3,14 +3,14 @@ import { DiscordButton } from "~/components/discord-button";
 import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { metaFn } from "~/utils/meta";
-import { getPage } from "~/utils/page.server";
+import { getPageContent } from "~/utils/page.server";
 import { Container } from "~/components/container";
 import { Markdown } from "~/components/mdx";
 
 export const meta: MetaFunction = metaFn;
 
 export async function loader() {
-  const content = getPage("about");
+  const content = getPageContent("about");
   return json({ content });
 }
 

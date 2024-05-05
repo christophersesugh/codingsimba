@@ -2,14 +2,14 @@ import { Link, useLoaderData } from "@remix-run/react";
 import { BsArrowRight } from "react-icons/bs";
 import { metaFn } from "~/utils/meta";
 import { json } from "@remix-run/node";
-import { getPage } from "~/utils/page.server";
+import { getPageContent } from "~/utils/page.server";
 import { Container } from "~/components/container";
 import { Markdown } from "~/components/mdx";
 
 export const meta = metaFn;
 
 export async function loader() {
-  const content = getPage("mission");
+  const content = getPageContent("mission");
   return json({ content });
 }
 

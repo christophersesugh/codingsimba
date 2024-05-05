@@ -23,7 +23,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const q = searchParams.get("q");
   return json(
     { posts, tags, q },
-
     { headers: { "Cache-Control": "max-age=604800, must-revalidate, public" } }
   );
 }

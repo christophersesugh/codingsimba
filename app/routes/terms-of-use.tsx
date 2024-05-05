@@ -3,12 +3,12 @@ import { metaFn } from "~/utils/meta";
 import { useLoaderData } from "@remix-run/react";
 import { Markdown } from "~/components/mdx";
 import { Container } from "~/components/container";
-import { getPage } from "~/utils/page.server";
+import { getPageContent } from "~/utils/page.server";
 
 export const meta = metaFn;
 
 export async function loader() {
-  const content = getPage("terms-of-use");
+  const content = getPageContent("terms-of-use");
   return json({ content });
 }
 

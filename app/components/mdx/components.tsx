@@ -46,12 +46,12 @@ export function Div(props: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
       return (
         <div
           className={cn(
-            "border-green-600 text-green-900 bg-green-100/40 dark:bg-green-100",
+            "border-blue-600 text-blue-900 bg-blue-100/40 dark:bg-blue-100",
             className
           )}
           {...rest}
         >
-          <span className="icon text-green-800">
+          <span className="icon text-blue-800">
             <FaLightbulb size={25} />
           </span>
           {children}
@@ -99,7 +99,7 @@ export function Div(props: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
 
 export function H1(props: ElemProps): React.ReactElement {
   return (
-    <h1 className="text-3xl my-6 dark:text-amber-600 text-amber-700" {...props}>
+    <h1 className="text-3xl my-6 dark:text-blue-400 text-blue-800" {...props}>
       {props.children}
     </h1>
   );
@@ -107,14 +107,14 @@ export function H1(props: ElemProps): React.ReactElement {
 
 export function H2(props: ElemProps): React.ReactElement {
   return (
-    <h2 className="text-2xl my-6 dark:text-amber-600 text-amber-700" {...props}>
+    <h2 className="text-2xl my-6 dark:text-blue-400 text-blue-800" {...props}>
       {props.children}
     </h2>
   );
 }
 export function H3(props: ElemProps): React.ReactElement {
   return (
-    <h3 className="text-xl my-6 dark:text-amber-600 text-amber-700" {...props}>
+    <h3 className="text-xl my-6 dark:text-blue-400 text-blue-800" {...props}>
       {props.children}
     </h3>
   );
@@ -122,7 +122,7 @@ export function H3(props: ElemProps): React.ReactElement {
 
 export function H4(props: ElemProps): React.ReactElement {
   return (
-    <h4 className="text-lg my-6 dark:text-amber-600 text-amber-700" {...props}>
+    <h4 className="text-lg my-6 dark:text-blue-400 text-blue-800" {...props}>
       {props.children}
     </h4>
   );
@@ -130,7 +130,7 @@ export function H4(props: ElemProps): React.ReactElement {
 
 export function H5(props: ElemProps): React.ReactElement {
   return (
-    <h4 className="text-lg my-6 dark:text-amber-600 text-amber-700" {...props}>
+    <h4 className="text-lg my-6 dark:text-blue-400 text-blue-800" {...props}>
       {props.children}
     </h4>
   );
@@ -138,7 +138,7 @@ export function H5(props: ElemProps): React.ReactElement {
 
 export function H6(props: ElemProps): React.ReactElement {
   return (
-    <h4 className="text-lgmy-6 dark:text-amber-600 text-amber-700" {...props}>
+    <h4 className="text-lgmy-6 dark:text-blue-400 text-blue-800" {...props}>
       {props.children}
     </h4>
   );
@@ -217,7 +217,7 @@ export function MdLink(props: any): React.ReactElement {
       target="_blank"
       rel="noreferrer"
       prefetch="intent"
-      className="text-blue-700"
+      className="text-blue-800"
       {...props}
     >
       {props.children}
