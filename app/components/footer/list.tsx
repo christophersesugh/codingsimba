@@ -11,7 +11,11 @@ export function List({ items }: { items: { name: string; link: string }[] }) {
           key={`${item.link}-${index}`}
           className="p-0 capitalize"
         >
-          <Link prefetch="intent" to={item.link}>
+          <Link
+            to={item.link}
+            rel="noopener noreferrer"
+            target={item.link === "/sitemap.xml" ? "_blank" : "_self"}
+          >
             {item.name}
           </Link>
         </Button>
