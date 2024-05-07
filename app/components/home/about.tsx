@@ -1,4 +1,4 @@
-import avatar2 from "~/assets/avatar2.jpeg";
+import avatar from "~/assets/avatar.jpeg";
 import { motion } from "framer-motion";
 import { BsArrowRight } from "react-icons/bs";
 import { HeaderButton } from "../header-button";
@@ -12,11 +12,11 @@ export function About() {
     >
       <motion.img
         {...imageLoadAnimationProps}
-        src={avatar2}
+        src={avatar}
         width={250}
         height={300}
         alt="Coding Simba"
-        className="md:self-start rounded-full md:mx-14 h-[300px] w-[250px]"
+        className="md:self-start rounded-full md:mx-14 h-[200px] w-[200px]"
       />
       <motion.div variants={textVariants} className="max-w-xl">
         <motion.h2 variants={textVariants} className="text-3xl">

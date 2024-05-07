@@ -34,8 +34,9 @@ export async function getPosts(request: Request) {
   const filterByQuery = q ? searchPosts(allPosts, q) : allPosts;
 
   const sortedPosts = filterByQuery.sort((a, b) => {
-    const dateA = new Date(a.data.date);
-    const dateB = new Date(b.data.date);
+    const dateA = new Date(a.data.createdAt);
+    const dateB = new Date(b.data.createdAt);
+
     return dateB.getTime() - dateA.getTime();
   });
   if (url.pathname === "/blog" || url.pathname === "/") {
@@ -122,7 +123,7 @@ export async function getRelatedPosts(post: IPost) {
  * UTILITY FUNCTIONS
  =====================*/
 
-async function fetchAllPosts() {
+export async function fetchAllPosts() {
   const posts = fs
     .readdirSync(mdxDirectory, "utf-8")
     .filter((file) => file?.endsWith(".mdx"))
@@ -140,22 +141,17 @@ async function fetchAllPosts() {
 }
 
 function searchPosts(posts: IPost[], q: string) {
+  function includesAnyWord(text: string, words: string[]) {
+    return words.some((word) =>
+      text.toLowerCase().includes(word.toLowerCase())
+    );
+  }
+
+  const queryWords = q.toLowerCase().split(" ");
   return posts.filter(
     (post) =>
-      post.data.title.toLowerCase().includes(q.toLowerCase()) ||
-      q
-        .toLowerCase()
-        .split(" ")
-        .some((word) => post.data.title.toLowerCase().includes(word)) ||
-      post.data.tags.toLowerCase().includes(q.toLowerCase()) ||
-      q
-        .toLowerCase()
-        .split(" ")
-        .some((word) => post.data.tags.toLowerCase().includes(word)) ||
-      post.data.description.toLowerCase().includes(q.toLowerCase()) ||
-      q
-        .toLowerCase()
-        .split(" ")
-        .some((word) => post.data.description.toLowerCase().includes(word))
+      includesAnyWord(post.data.title, queryWords) ||
+      includesAnyWord(post.data.tags, queryWords) ||
+      includesAnyWord(post.data.description, queryWords)
   );
 }

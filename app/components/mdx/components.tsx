@@ -46,7 +46,7 @@ export function Div(props: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
       return (
         <div
           className={cn(
-            "border-blue-600 text-blue-900 bg-blue-100/40 dark:bg-blue-100",
+            "border-blue-600 text-blue-800 bg-blue-100/40 dark:bg-blue-100",
             className
           )}
           {...rest}

@@ -15,6 +15,11 @@ import { Iframe } from "~/components/iframe";
 import { Markdown } from "~/components/mdx";
 import { containerVariants, textVariants } from "~/animation-config";
 
+type PostProps = {
+  data: { [key: string]: string };
+  content: string;
+};
+
 export const meta = metaFn;
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -97,7 +102,7 @@ export default function BlogPostRoute() {
         <h2 className="text-2xl font-bold px-4">Related articles:</h2>
         {relatedPosts?.length ? (
           <div className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-20 justify-between mb-12">
-            {relatedPosts.map((post: any, index: number) => (
+            {relatedPosts.map((post: PostProps, index: number) => (
               <BlogCard post={post} key={`${post.data.slug}-${index}`} />
             ))}
           </div>
