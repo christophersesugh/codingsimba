@@ -16,4 +16,5 @@ const items = [
   { name: "discord", link: "/discord" },
   { name: "about", link: "/about" },
   { name: "contact", link: "/contact" },
+  { name: "sitemap.xml", link: "/sitemap" },
 ];
