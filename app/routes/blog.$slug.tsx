@@ -62,7 +62,7 @@ export default function BlogPostRoute() {
           <div className="w-full h-[250px] min-h-[250px] sm:h-[500px] sm:min-h-[500px]">
             {data.photo ? (
               <img
-                src={data.photo}
+                src={data.thumbnail}
                 alt={data.title}
                 title={data.title}
                 // height={256}
@@ -71,14 +71,16 @@ export default function BlogPostRoute() {
               />
             ) : null}
           </div>
-          {/* <motion.div
+          <motion.div
             variants={textVariants}
-            className="text-lg remark-container info"
+            className="text-lg remark-container info border-slate-400 dark:bg-slate-600 bg-slate-200"
           >
             {data.description}
-          </motion.div> */}
+          </motion.div>
 
-          {data?.video ? <Iframe src={data.video} title={data.title} /> : null}
+          {data?.videoId ? (
+            <Iframe src={data.videoId} title={data.title} />
+          ) : null}
           <motion.div
             variants={textVariants}
             className="dark:text-slate-300 text-slate-800 mb-6 markdown"

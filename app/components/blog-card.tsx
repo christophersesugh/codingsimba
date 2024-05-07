@@ -16,7 +16,7 @@ function Card({ post }: { post: PostProps }) {
 
   function prefetchImage() {
     const image = new Image();
-    image.src = data.photo;
+    image.src = data.thumbnail;
   }
   return (
     <Link
@@ -31,7 +31,7 @@ function Card({ post }: { post: PostProps }) {
       >
         <div className="min-h-full h-full w-full rounded-md p-1 hover:border-4 duration-300 hover:border-blue-500">
           <img
-            src={data.photo}
+            src={data.thumbnail}
             alt={data.title}
             // height={350}
             // width={500}
