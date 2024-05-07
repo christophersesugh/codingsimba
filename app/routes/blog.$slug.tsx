@@ -65,7 +65,7 @@ export default function BlogPostRoute() {
             </motion.p>
           </div>
           <div className="w-full h-[250px] min-h-[250px] sm:h-[500px] sm:min-h-[500px]">
-            {data.photo ? (
+            {data.thumbnail ? (
               <img
                 src={data.thumbnail}
                 alt={data.title}
