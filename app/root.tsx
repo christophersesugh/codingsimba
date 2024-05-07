@@ -1,6 +1,5 @@
 import {
   Links,
-  LiveReload,
   Meta,
   Scripts,
   ScrollRestoration,
@@ -9,8 +8,8 @@ import {
 } from "@remix-run/react";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/remix";
-import tailwind from "./tailwind.css";
-import dark from "highlight.js/styles/night-owl.css";
+import tailwind from "./tailwind.css?url";
+import dark from "highlight.js/styles/night-owl.css?url";
 import { LinksFunction, LoaderFunctionArgs } from "@remix-run/server-runtime";
 import {
   PreventFlashOnWrongTheme,
@@ -95,7 +94,7 @@ function App() {
         <Analytics />
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
+        {/* <LiveReload /> */}
       </body>
     </html>
   );
