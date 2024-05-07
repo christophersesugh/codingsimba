@@ -8,6 +8,7 @@ export const meta: MetaFunction = metaFn;
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const BASE_URL = new URL(request.url).origin;
+
     const posts = await getPostsSlug();
 
     const sitemap = toXmlSitemap([
