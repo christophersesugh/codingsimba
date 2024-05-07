@@ -7,7 +7,7 @@ export function toXmlSitemap(urls: string[]) {
         return `
       <url>
         <loc>${url}</loc>
-        <lastmod>${new Date().toUTCString()}</lastmod>
+        <lastmod>${new Date().toISOString()}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.7</priority>
       </url>`;
