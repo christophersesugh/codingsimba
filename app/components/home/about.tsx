@@ -1,4 +1,4 @@
-import avatar from "~/assets/avatar.jpeg";
+import cas from "~/assets/cas.png";
 import { motion } from "framer-motion";
 import { BsArrowRight } from "react-icons/bs";
 import { HeaderButton } from "../header-button";
@@ -12,11 +12,11 @@ export function About() {
     >
       <motion.img
         {...imageLoadAnimationProps}
-        src={avatar}
-        width={250}
-        height={300}
-        alt="Coding Simba"
-        className="md:self-start rounded-full md:mx-14 h-[200px] w-[200px]"
+        src={cas}
+        width={200}
+        height={250}
+        alt="Christopher Aondona Sesugh [Coding Simba]"
+        className="md:self-start rounded-full md:mx-14 h-[250px] w-[200px]"
       />
       <motion.div variants={textVariants} className="max-w-xl">
         <motion.h2 variants={textVariants} className="text-3xl">

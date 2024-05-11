@@ -7,11 +7,6 @@ import { containerVariants } from "~/animation-config";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
-    const port1 = request.headers.get("x-forwarded-port");
-    const port2 = new URL(request.url).port;
-
-    console.log(port1, port2);
-
     const posts = await getPosts(request);
     return json({ posts }, 200);
   } catch (error) {

@@ -94,7 +94,6 @@ function App() {
         <Analytics />
         <ScrollRestoration />
         <Scripts />
-        {/* <LiveReload /> */}
       </body>
     </html>
   );
