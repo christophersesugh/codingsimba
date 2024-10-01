@@ -1,8 +1,3 @@
-# fly.toml app configuration file generated for codingsimba on 2024-09-17T14:56:34+01:00
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
-
 app = 'codingsimba'
 primary_region = 'ams'
 
