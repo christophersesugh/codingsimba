@@ -1,5 +1,5 @@
-import React from 'react'
+import React from "react";
 
 export function HeroSection() {
-	return <div>Home route</div>
+  return <div>Home route</div>;
 }

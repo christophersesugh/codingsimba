@@ -1,0 +1,11 @@
+# Ignore artifacts:
+build
+coverage
+node_modules
+.react-router/
+
+# Ignore files:
+README.md
+.DS_Store
+# Ignore hidden files:
+.*

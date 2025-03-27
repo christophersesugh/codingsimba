@@ -1,5 +1,5 @@
-import React from 'react'
+import React from "react";
 
 export default function HomeRoute() {
-	return <div>Home route</div>
+  return <div className="font-sans font-bold">Home route</div>;
 }
