@@ -1,5 +1,9 @@
 import React from "react";
 
-export default function HomeRoute() {
-  return <div className="font-sans font-bold">Home route</div>;
+type HomeRouteProps = {
+  title: string;
+};
+
+export default function HomeRoute({ title }: HomeRouteProps) {
+  return <div>{title}</div>;
 }
