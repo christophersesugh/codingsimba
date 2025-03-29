@@ -7,7 +7,7 @@ import {
   SheetTitle,
 } from "./ui/sheet";
 import { Logo } from "./logo";
-import { useSidebar } from "~/contexts/sidebar";
+import { useMobileNav } from "~/contexts/mobile-nav";
 import { navLinks } from "~/constants/navlinks";
 import { NavLink } from "./nav-link";
 import { Separator } from "./ui/separator";
@@ -17,14 +17,14 @@ import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { useAuthDialog } from "~/contexts/auth-dialog";
 
-export function Sidebar() {
+export function MobileNav() {
   const { openDialog } = useAuthDialog();
-  const { open, closeSidebar } = useSidebar();
+  const { open, closeMobileNav } = useMobileNav();
 
   const user = false;
   return (
     <aside>
-      <Sheet open={open} onOpenChange={closeSidebar}>
+      <Sheet open={open} onOpenChange={closeMobileNav}>
         <SheetContent side="top" className="border-slate-500">
           <SheetHeader>
             <SheetTitle>
@@ -42,7 +42,7 @@ export function Sidebar() {
                 key={link.name}
                 name={link.name}
                 path={link.path}
-                onClick={closeSidebar}
+                onClick={closeMobileNav}
               />
             ))}
           </nav>
@@ -56,7 +56,7 @@ export function Sidebar() {
             ) : null}
 
             {user ? (
-              <Link to={"/profile"} prefetch="intent" onClick={closeSidebar}>
+              <Link to={"/profile"} prefetch="intent" onClick={closeMobileNav}>
                 <Avatar className="size-9">
                   <AvatarImage
                     src="https://github.com/shadcn.png"

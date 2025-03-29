@@ -8,7 +8,6 @@ import {
   CardContent,
   CardFooter,
 } from "~/components/ui/card";
-import { Badge } from "~/components/ui/badge";
 import { CardBadge } from "./card-badge";
 import { Button } from "./ui/button";
 import { Link } from "react-router";

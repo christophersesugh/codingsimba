@@ -9,12 +9,12 @@ import { cn } from "~/lib/utils";
 import { Logo } from "./logo";
 import { useAuthDialog } from "~/contexts/auth-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { useSidebar } from "~/contexts/sidebar";
+import { useMobileNav } from "~/contexts/mobile-nav";
 
 export function Navbar() {
   const location = useLocation();
   const { openDialog } = useAuthDialog();
-  const { openSidebar } = useSidebar();
+  const { openMobileNav } = useMobileNav();
   const isHomePage = location.pathname === "/";
   const user = false;
 
@@ -28,7 +28,7 @@ export function Navbar() {
     >
       <div className="container mx-auto flex items-center justify-between px-4 py-2">
         <Logo />
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-6 md:flex">
           {navLinks.map((link) => (
             <NavLink
               type="navbar"
@@ -65,7 +65,7 @@ export function Navbar() {
             size={"icon"}
             variant={"ghost"}
             className="block md:hidden"
-            onClick={openSidebar}
+            onClick={openMobileNav}
           >
             <Menu />
           </Button>

@@ -1,4 +1,3 @@
-import { Link } from "react-router";
 import { content, legal, platform, social } from "~/constants/navlinks";
 import { NavLink } from "./nav-link";
 import { Logo } from "./logo";

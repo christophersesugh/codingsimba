@@ -24,8 +24,8 @@ import { themeSessionResolver } from "./session.server";
 import { GeneralErrorBoundary } from "./components/error-boundary";
 import { AuthDialogProvider } from "./contexts/auth-dialog";
 import { AuthDialog } from "./components/auth-dialog";
-import { SidebarProvider } from "./contexts/sidebar";
-import { Sidebar } from "./components/sidebar";
+import { MobileNavProvider } from "./contexts/mobile-nav";
+import { MobileNav } from "./components/mobile-nav";
 
 export const links: Route.LinksFunction = () => [
   { rel: "stylesheet", href: fontStyles },
@@ -64,18 +64,13 @@ function Document({ children, theme, data }: DocumentProps) {
 
 function App() {
   const [currentTheme] = useTheme();
-  const location = useLocation();
   const { theme } = useLoaderData() as Route.ComponentProps["loaderData"];
-
-  const isHomePage = location.pathname === "/";
 
   return (
     <Document theme={currentTheme} data={{ theme }}>
-      <div className={isHomePage ? "hidden" : ""}>
-        <Navbar />
-      </div>
+      <OptionalNavbar />
       <Outlet />
-      <Sidebar />
+      <MobileNav />
       <AuthDialog />
       <Footer />
     </Document>
@@ -85,24 +80,46 @@ function App() {
 export default function AppWithProviders() {
   const { theme } = useLoaderData() as Route.ComponentProps["loaderData"];
   return (
+    <ThemedApp theme={theme}>
+      <AuthDialogProvider>
+        <MobileNavProvider>
+          <App />
+        </MobileNavProvider>
+      </AuthDialogProvider>
+    </ThemedApp>
+  );
+}
+
+function ThemedApp({
+  children,
+  theme,
+}: {
+  children: React.ReactNode;
+  theme: Theme | null;
+}) {
+  return (
     <ThemeProvider
       specifiedTheme={theme}
       themeAction="/set-theme"
       disableTransitionOnThemeChange={true}
     >
-      <AuthDialogProvider>
-        <SidebarProvider>
-          <App />
-        </SidebarProvider>
-      </AuthDialogProvider>
+      {children}
     </ThemeProvider>
   );
 }
 
+function OptionalNavbar() {
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
+  return isHomePage ? null : <Navbar />;
+}
+
 export function ErrorBoundary() {
   return (
-    <Document>
-      <GeneralErrorBoundary />
-    </Document>
+    <ThemedApp theme={null}>
+      <Document>
+        <GeneralErrorBoundary />
+      </Document>
+    </ThemedApp>
   );
 }

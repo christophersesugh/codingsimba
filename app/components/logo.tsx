@@ -1,10 +1,10 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router";
-import { useSidebar } from "~/contexts/sidebar";
+import { useMobileNav } from "~/contexts/mobile-nav";
 
 export function Logo() {
-  const { closeSidebar } = useSidebar();
+  const { closeMobileNav } = useMobileNav();
   const [isHovered, setIsHovered] = React.useState(false);
 
   return (
@@ -12,7 +12,7 @@ export function Logo() {
       className="relative inline-block"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={closeSidebar}
+      onClick={closeMobileNav}
     >
       <Link
         to="/"

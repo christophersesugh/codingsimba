@@ -1,6 +1,7 @@
 export const content = [
   { name: "courses", path: "courses" },
   { name: "articles", path: "articles" },
+  { name: "tutorials", path: "tutorials" },
 ];
 
 export const platform = [
@@ -15,7 +16,7 @@ export const legal = [
 
 export const social = [
   { name: "twitter", path: "https://twitter.com/" },
-  { name: "linked in", path: "https://www.linkedin.com/in/" },
+  { name: "linkedIn", path: "https://www.linkedin.com/in/" },
   { name: "github", path: "https://github.com" },
   { name: "youTube", path: "https://www.youtube.com/" },
 ];

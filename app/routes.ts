@@ -22,7 +22,16 @@ export default [
 
   ...prefix("courses", [
     index("routes/courses/index.tsx"),
-    route(":courseId", "routes/courses/course.tsx"),
+    route(":courseId", "routes/courses/course.tsx", [
+      route("lessons/:lessonId", "routes/courses/lesson.tsx"),
+    ]),
+  ]),
+
+  ...prefix("tutorials", [
+    index("routes/tutorials/index.tsx"),
+    route(":tutorialId", "routes/tutorials/tutorial.tsx", [
+      route("lessons/:lessonId", "routes/tutorials/lesson.tsx"),
+    ]),
   ]),
 
   layout("routes/profile/layout.tsx", [

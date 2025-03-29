@@ -14,7 +14,7 @@ export function AboutText() {
         About Coding Simba
       </h2>
       <p className="mb-6 text-lg text-gray-600 dark:text-gray-300">
-        I'm a passionate software engineer with over 10 years of experience
+        I&apos;m a passionate software engineer with over 10 years of experience
         building web applications and teaching others to do the same.
       </p>
       <p className="mb-6 text-lg text-gray-600 dark:text-gray-300">
@@ -22,8 +22,8 @@ export function AboutText() {
         everyone, regardless of their background or experience level.
       </p>
       <p className="mb-8 text-lg text-gray-600 dark:text-gray-300">
-        Through my courses and articles, I've helped thousands of developers
-        level up their skills and build amazing projects.
+        Through my courses and articles, I&apos;ve helped thousands of
+        developers level up their skills and build amazing projects.
       </p>
 
       <div className="mb-8 grid grid-cols-2 gap-6">
