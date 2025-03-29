@@ -12,6 +12,7 @@ export default [
   route("about", "routes/about.tsx"),
   route("contact", "routes/contact.tsx"),
   route("privacy", "routes/privacy.tsx"),
+  route("set-theme", "routes/actions/set-theme.ts"),
   route("*", "routes/not-found.tsx"),
 
   ...prefix("articles", [

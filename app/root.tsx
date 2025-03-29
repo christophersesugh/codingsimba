@@ -1,31 +1,59 @@
 import {
-  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
+  useLocation,
 } from "react-router";
 
+import {
+  PreventFlashOnWrongTheme,
+  Theme,
+  ThemeProvider,
+  useTheme,
+} from "remix-themes";
+
 import type { Route } from "./+types/root";
-import fontStyles from "./styles/fonts.css?url";
-import tailwindStyles from "./styles/tailwind.css?url";
+import fontStyles from "~/styles/fonts.css?url";
+import tailwindStyles from "~/styles/tailwind.css?url";
+import { Navbar } from "./components/navbar";
+import { Footer } from "./components/footer";
+import { themeSessionResolver } from "./session.server";
+import { GeneralErrorBoundary } from "./components/error-boundary";
+import { AuthDialogProvider } from "./contexts/auth-dialog";
+import { AuthDialog } from "./components/auth-dialog";
+import { SidebarProvider } from "./contexts/sidebar";
+import { Sidebar } from "./components/sidebar";
 
 export const links: Route.LinksFunction = () => [
   { rel: "stylesheet", href: fontStyles },
   { rel: "stylesheet", href: tailwindStyles },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export async function loader({ request }: Route.LoaderArgs) {
+  const { getTheme } = await themeSessionResolver(request);
+  return { theme: getTheme() };
+}
+
+type DocumentProps = {
+  children: React.ReactNode;
+  theme?: Theme | null;
+  data?: Route.ComponentProps["loaderData"];
+};
+
+function Document({ children, theme, data }: DocumentProps) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme={theme ?? ""}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
+        <PreventFlashOnWrongTheme ssrTheme={Boolean(data?.theme)} />
         <Links />
       </head>
-      <body className="antialiased">
+      <body className="min-h-screen">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -34,35 +62,47 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
-  return <Outlet />;
-}
+function App() {
+  const [currentTheme] = useTheme();
+  const location = useLocation();
+  const { theme } = useLoaderData() as Route.ComponentProps["loaderData"];
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
-  let stack: string | undefined;
-
-  if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
-    details =
-      error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
-    details = error.message;
-    stack = error.stack;
-  }
+  const isHomePage = location.pathname === "/";
 
   return (
-    <main className="container mx-auto p-4 pt-16">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre className="w-full overflow-x-auto p-4">
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
+    <Document theme={currentTheme} data={{ theme }}>
+      <div className={isHomePage ? "hidden" : ""}>
+        <Navbar />
+      </div>
+      <Outlet />
+      <Sidebar />
+      <AuthDialog />
+      <Footer />
+    </Document>
+  );
+}
+
+export default function AppWithProviders() {
+  const { theme } = useLoaderData() as Route.ComponentProps["loaderData"];
+  return (
+    <ThemeProvider
+      specifiedTheme={theme}
+      themeAction="/set-theme"
+      disableTransitionOnThemeChange={true}
+    >
+      <AuthDialogProvider>
+        <SidebarProvider>
+          <App />
+        </SidebarProvider>
+      </AuthDialogProvider>
+    </ThemeProvider>
+  );
+}
+
+export function ErrorBoundary() {
+  return (
+    <Document>
+      <GeneralErrorBoundary />
+    </Document>
   );
 }
