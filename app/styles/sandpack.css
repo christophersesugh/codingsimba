@@ -1,0 +1,65 @@
+.sandpack-wrapper {
+  border-radius: 0.5rem;
+  /* overflow: hidden; */
+  margin: 0.5rem 0;
+}
+
+.sandpack-preview {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: auto;
+}
+
+.sandpack-console {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: auto;
+}
+
+.sandpack-editor {
+  height: 100% !important;
+}
+.sandpack-file-explorer {
+  /* background-color: white !important; */
+  height: 100% !important;
+  min-height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: auto !important;
+}
+
+:fullscreen .sandpack-wrapper {
+  border-radius: 0;
+  margin: 0;
+}
+
+:fullscreen .sandpack-preview,
+:fullscreen .sandpack-editor,
+:fullscreen .sandpack-console,
+:fullscreen .sandpack-file-explorer {
+  max-height: none !important;
+}
+
+::-webkit-full-screen .sandpack-wrapper {
+  border-radius: 0;
+  margin: 0;
+}
+
+::-webkit-full-screen .sandpack-preview,
+::-webkit-full-screen .sandpack-editor,
+::-webkit-full-screen .sandpack-console,
+::-webkit-full-screen .sandpack-file-explorer {
+  max-height: none !important;
+}
+
+::-moz-full-screen .sandpack-wrapper {
+  border-radius: 0;
+  margin: 0;
+}
+
+::-moz-full-screen .sandpack-preview,
+::-moz-full-screen .sandpack-editor,
+::-moz-full-screen .sandpack-console,
+::-moz-full-screen .sandpack-file-explorer {
+  max-height: none !important;
+}

@@ -1,6 +1,6 @@
 import { NavLink as NLink } from "react-router";
 import { Button } from "./ui/button";
-import { cn } from "~/lib/utils";
+import { cn } from "~/lib/shadcn";
 
 type NavLinkProps = {
   name: string;

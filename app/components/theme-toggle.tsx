@@ -7,7 +7,7 @@ import {
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import { Monitor, Moon, Sun } from "lucide-react";
-import { cn } from "~/lib/utils";
+import { cn } from "~/lib/shadcn";
 
 export function ThemeToggle() {
   const [theme, setTheme, { definedBy }] = useTheme();

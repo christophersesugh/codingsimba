@@ -1,0 +1,9 @@
+@layer components {
+  .milkdown {
+    @apply rounded-md;
+  }
+
+  .milkdown .editor {
+    @apply rounded-md border border-slate-200 !py-8;
+  }
+}

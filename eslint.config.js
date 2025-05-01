@@ -1,4 +1,4 @@
-import { defineConfig } from "eslint/config";
+import { defineConfig, globalIgnores } from "eslint/config";
 import globals from "globals";
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
@@ -7,6 +7,18 @@ import hooksPlugin from "eslint-plugin-react-hooks";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 
 export default defineConfig([
+  globalIgnores([
+    "node_modules/*",
+    "dist/*",
+    "build/*",
+    "coverage/*",
+    "public/*",
+    ".react-router/*",
+    "eslint.config.js",
+    "test-results/*",
+    "playwright-report/*",
+    "app/generated/*",
+  ]),
   { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
   {
     files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
@@ -17,17 +29,7 @@ export default defineConfig([
     plugins: { js },
     extends: ["js/recommended"],
   },
-  {
-    ignores: [
-      "node_modules",
-      "dist",
-      "build",
-      "coverage",
-      "public",
-      ".react-router",
-      "eslint.config.js",
-    ],
-  },
+
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   eslintPluginPrettierRecommended,

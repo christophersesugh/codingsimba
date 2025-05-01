@@ -1,10 +1,11 @@
+import type { Article } from "~/services.server/sanity/articles";
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "~/components/ui/button";
 import { ArticleCard } from "~/components/article-card";
 import { Link } from "react-router";
 
-export function ArticlesSection() {
+export function ArticlesSection({ articles }: { articles: Article[] }) {
   return (
     <section
       id="articles"
@@ -29,13 +30,13 @@ export function ArticlesSection() {
 
         <div className="grid gap-8 md:grid-cols-2">
           {articles.map((article, index) => (
-            <ArticleCard key={index} article={article} index={index} />
+            <ArticleCard key={article.id} article={article} index={index} />
           ))}
         </div>
 
         <div className="mt-12 text-center">
           <Button variant="outline" className="rounded-full px-8">
-            <Link to={"/articles"} prefetch="intent">
+            <Link to={"articles"} prefetch="intent">
               View All Articles
             </Link>
           </Button>
@@ -44,58 +45,3 @@ export function ArticlesSection() {
     </section>
   );
 }
-
-const articles = [
-  {
-    title: "Understanding React Server Components",
-    excerpt:
-      "Dive deep into React Server Components and learn how they can improve your application's performance.",
-    image: "/placeholder.svg?height=300&width=600&text=Server+Components",
-    date: "August 3, 2023",
-    readTime: "8 min read",
-    category: "React",
-    author: {
-      name: "Coding Simba",
-      avatar: "/placeholder.svg?height=40&width=40&text=CS",
-    },
-  },
-  {
-    title: "Building a Design System with React and Tailwind",
-    excerpt:
-      "A comprehensive guide to creating a consistent and maintainable design system for your applications.",
-    image: "/placeholder.svg?height=300&width=600&text=Design+System",
-    date: "June 15, 2023",
-    readTime: "12 min read",
-    category: "Design",
-    author: {
-      name: "Coding Simba",
-      avatar: "/placeholder.svg?height=40&width=40&text=CS",
-    },
-  },
-  {
-    title: "Advanced TypeScript Patterns for React Developers",
-    excerpt:
-      "Level up your TypeScript skills with these advanced patterns specifically for React applications.",
-    image: "/placeholder.svg?height=300&width=600&text=TypeScript",
-    date: "September 21, 2023",
-    readTime: "15 min read",
-    category: "TypeScript",
-    author: {
-      name: "Coding Simba",
-      avatar: "/placeholder.svg?height=40&width=40&text=CS",
-    },
-  },
-  {
-    title: "Optimizing Next.js Applications for Performance",
-    excerpt:
-      "Learn how to make your Next.js applications blazing fast with these optimization techniques.",
-    image: "/placeholder.svg?height=300&width=600&text=Performance",
-    date: "October 5, 2023",
-    readTime: "10 min read",
-    category: "Next.js",
-    author: {
-      name: "Coding Simba",
-      avatar: "/placeholder.svg?height=40&width=40&text=CS",
-    },
-  },
-];

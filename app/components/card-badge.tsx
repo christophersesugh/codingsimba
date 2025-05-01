@@ -1,6 +1,6 @@
 import React from "react";
 import { Badge } from "./ui/badge";
-import { cn } from "~/lib/utils";
+import { cn } from "~/lib/shadcn";
 
 export function CardBadge({
   children,

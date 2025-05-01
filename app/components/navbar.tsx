@@ -1,22 +1,23 @@
-import React from "react";
 import { Link, useLocation } from "react-router";
 import { Button } from "./ui/button";
 import { navLinks } from "~/constants/navlinks";
 import { Menu } from "lucide-react";
 import { NavLink } from "./nav-link";
 import { ThemeToggle } from "./theme-toggle";
-import { cn } from "~/lib/utils";
+import { cn } from "~/lib/shadcn";
 import { Logo } from "./logo";
 import { useAuthDialog } from "~/contexts/auth-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useMobileNav } from "~/contexts/mobile-nav";
+import { useOptionalUser } from "~/hooks/user";
 
 export function Navbar() {
   const location = useLocation();
   const { openDialog } = useAuthDialog();
   const { openMobileNav } = useMobileNav();
   const isHomePage = location.pathname === "/";
-  const user = false;
+  const user = useOptionalUser();
+  const profile = user?.profile;
 
   return (
     <nav
@@ -46,13 +47,10 @@ export function Navbar() {
             </Button>
           ) : null}
 
-          {user ? (
+          {profile ? (
             <Link to={"/profile"} prefetch="intent" className="hidden md:block">
               <Avatar className="size-9">
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
+                <AvatarImage src={profile.image!} alt={profile.name!} />
                 <AvatarFallback className="border border-slate-300 dark:border-gray-800">
                   CS
                 </AvatarFallback>

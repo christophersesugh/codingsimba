@@ -16,12 +16,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { useAuthDialog } from "~/contexts/auth-dialog";
+import { useOptionalUser } from "~/hooks/user";
 
 export function MobileNav() {
   const { openDialog } = useAuthDialog();
   const { open, closeMobileNav } = useMobileNav();
 
-  const user = false;
+  const user = useOptionalUser();
+  const profile = user?.profile;
   return (
     <aside>
       <Sheet open={open} onOpenChange={closeMobileNav}>
@@ -55,13 +57,10 @@ export function MobileNav() {
               </Button>
             ) : null}
 
-            {user ? (
+            {profile ? (
               <Link to={"/profile"} prefetch="intent" onClick={closeMobileNav}>
                 <Avatar className="size-9">
-                  <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
-                  />
+                  <AvatarImage src={profile.image!} alt={profile.name!} />
                   <AvatarFallback>CS</AvatarFallback>
                 </Avatar>
               </Link>

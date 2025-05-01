@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import cs from "~/assets/images/cs.png";
 
 export function AboutCard() {
   return (
@@ -14,7 +15,7 @@ export function AboutCard() {
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/20 to-white blur-3xl dark:to-gray-950" />
         <div className="relative h-full w-full overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800">
           <img
-            src="https://placehold.co/400"
+            src={cs}
             alt="Coding Simba"
             width={500}
             height={500}

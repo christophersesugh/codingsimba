@@ -78,7 +78,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 border-t border-gray-200 pt-8 text-center text-sm text-gray-500 dark:border-gray-800 dark:text-gray-400">
-          © {new Date().getFullYear()} Coding Simba. All rights reserved.
+          © 2025 - present Coding Simba. All rights reserved.
         </div>
       </div>
     </footer>

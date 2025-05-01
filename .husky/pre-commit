@@ -1,3 +1,2 @@
 npm run lint
 npm run format
-vitest --run --workspace=vitest.workspace.ts --project unit

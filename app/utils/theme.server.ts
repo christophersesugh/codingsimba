@@ -4,12 +4,16 @@ import { createCookieSessionStorage } from "react-router";
 const sessionStorage = createCookieSessionStorage({
   cookie: {
     name: "__cs_themes",
-    // domain: 'codingsimba.com',
     path: "/",
     httpOnly: true,
     sameSite: "lax",
     secrets: ["s3cr3t"],
-    // secure: true,
+    ...(process.env.NODE_ENV === "production"
+      ? {
+          domain: "codingsimba.com",
+          secure: true,
+        }
+      : {}),
   },
 });
 

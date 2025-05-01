@@ -12,12 +12,15 @@ export default [
   route("about", "routes/about.tsx"),
   route("contact", "routes/contact.tsx"),
   route("privacy", "routes/privacy.tsx"),
+  route("verify", "routes/verify.tsx"),
+  route("onboarding", "routes/onboarding.tsx"),
+  route("logout", "routes/logout.ts"),
   route("set-theme", "routes/actions/set-theme.ts"),
   route("*", "routes/not-found.tsx"),
 
   ...prefix("articles", [
     index("routes/articles/index.tsx"),
-    route(":articleId", "routes/articles/article.tsx"),
+    route(":articleSlug", "routes/articles/article.tsx"),
   ]),
 
   ...prefix("courses", [
@@ -35,11 +38,13 @@ export default [
   ]),
 
   layout("routes/profile/layout.tsx", [
-    route("account", "routes/profile/account.tsx"),
-    route("courses", "routes/profile/courses.tsx"),
-    route("certificates", "routes/profile/certificates.tsx"),
-    route("subscription", "routes/profile/subscription.tsx"),
-    route("notifications", "routes/profile/notifications.tsx"),
-    route("billing-history", "routes/profile/billing-history.tsx"),
+    ...prefix("profile", [
+      index("routes/profile/account.tsx"),
+      route("courses", "routes/profile/courses.tsx"),
+      route("certificates", "routes/profile/certificates.tsx"),
+      route("subscription", "routes/profile/subscription.tsx"),
+      route("notifications", "routes/profile/notifications.tsx"),
+      route("billing-history", "routes/profile/billing-history.tsx"),
+    ]),
   ]),
 ] satisfies RouteConfig;

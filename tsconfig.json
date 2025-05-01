@@ -11,7 +11,8 @@
       "node",
       "react",
       "vite/client",
-      "@vitest/browser/providers/playwright"
+      "@vitest/browser/providers/playwright",
+      "@prisma/client"
     ],
     "target": "ES2022",
     "module": "ES2022",
