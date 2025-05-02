@@ -13,8 +13,8 @@ import {
   getArticleDetails,
   getPopularTags,
 } from "~/services.server/sanity/articles";
-// import { EngagementMetrics } from "~/components/engagement-metrics";
-import { invariantResponse } from "~/utils/misc";
+import { EngagementMetrics } from "~/components/engagement-metrics";
+import { invariant, invariantResponse } from "~/utils/misc";
 import { EmptyState } from "~/components/empty-state";
 import { BookX } from "lucide-react";
 import { Skeleton } from "~/components/ui/skeleton";
@@ -23,36 +23,43 @@ import { Comments } from "~/components/comment";
 import { Separator } from "~/components/ui/separator";
 import { StatusCodes } from "http-status-codes";
 import { getArticleMetadata } from "~/utils/articles.server";
+// import { prisma } from "~/utils/db.server";
+import { UpdateSchema, type ContentIntent } from "~/hooks/content";
 import { z } from "zod";
-import { prisma } from "~/utils/db.server";
 
-const CommentSchema = z.object({
-  comment: z.string(),
-  articleId: z.string(),
-  parentId: z.string().optional(),
-  authorId: z.string(),
-  intent: z.enum(["submit-comment", "submit-reply"]),
+const SearchParamsSchema = z.object({
+  commentTake: z.coerce.number().default(5),
+  replyTake: z.coerce.number().default(3),
 });
 
-export async function loader({ params }: Route.LoaderArgs) {
-  invariantResponse(params.articleSlug, "Article slug is required", {
+export async function loader({ request, params }: Route.LoaderArgs) {
+  const searchParams = Object.fromEntries(
+    new URL(request.url).searchParams.entries(),
+  );
+  const parsedParams = SearchParamsSchema.safeParse(searchParams);
+
+  invariant(params.articleSlug, "Article slug is required");
+
+  invariantResponse(parsedParams.success, "Invalid comment search params", {
     status: StatusCodes.BAD_REQUEST,
   });
+
   const popularTags = getPopularTags();
   const article = await getArticleDetails(params.articleSlug);
-  const articleMetadata = await getArticleMetadata({
-    articleId: article.id,
-    commentTake: 5,
-    replyTake: 3,
-  });
-  invariantResponse(article, "Article not found", {
+  invariantResponse(article, `Article with slug: '${article.slug}' not found`, {
     status: StatusCodes.NOT_FOUND,
   });
+
+  const articleMetadata = await getArticleMetadata({
+    articleId: article.id,
+    ...parsedParams.data,
+  });
+
   return { popularTags, article, articleMetadata };
 }
 
 export async function action({ request }: Route.ActionArgs) {
-  const result = await CommentSchema.safeParseAsync(
+  const result = await UpdateSchema.safeParseAsync(
     Object.fromEntries(await request.formData()),
   );
   invariantResponse(result.success, "Invalid form data", {
@@ -61,48 +68,22 @@ export async function action({ request }: Route.ActionArgs) {
 
   const data = result.data;
 
-  switch (data.intent) {
-    case "submit-comment":
-      {
-        const { comment, articleId, authorId } = data;
-        await prisma.comment.create({
-          data: {
-            body: comment,
-            author: {
-              connect: { id: authorId },
-            },
-            content: {
-              connectOrCreate: {
-                where: {
-                  sanityId: articleId,
-                  type: "ARTICLE",
-                },
-                create: {
-                  sanityId: articleId,
-                  type: "ARTICLE",
-                },
-              },
-            },
-          },
-        });
-      }
+  switch (data.intent as ContentIntent) {
+    case "add-comment":
       break;
-    case "submit-reply":
-      {
-        const { comment, articleId, authorId, parentId } = data;
-        await prisma.comment.create({
-          data: {
-            author: {
-              connect: {
-                id: authorId,
-              },
-            },
-            parentId,
-            body: comment,
-            contentId: articleId,
-          },
-        });
-      }
+    case "update-comment":
+      break;
+    case "delete-comment":
+      break;
+    case "upvote-comment":
+      break;
+    case "add-reply":
+      break;
+    case "update-reply":
+      break;
+    case "delete-reply":
+      break;
+    case "upvote-reply":
       break;
     default:
       throw new Error("Invalid intent");
@@ -169,11 +150,7 @@ export default function ArticleDetailsRoute({
           <aside className="lg:col-span-4">
             <div className="sticky top-20">
               <TableOfContent className="hidden lg:block" />
-              {/* {articleMetadata?.content ? (
-                <EngagementMetrics metrics={articleMetadata.content} />
-              ) : (
-                <Skeleton className="mb-6 h-10" />
-              )} */}
+              <EngagementMetrics metrics={articleMetadata?.metrics} />
               <SubscriptionForm />
               <React.Suspense
                 fallback={Array.from({ length: 3 }).map((_, index) => (

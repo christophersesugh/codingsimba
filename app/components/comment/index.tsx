@@ -8,6 +8,7 @@ import { Comment } from "./comment";
 import { useOptionalUser } from "~/hooks/user";
 import { useAuthDialog } from "~/contexts/auth-dialog";
 import { Badge } from "../ui/badge";
+import { useSubmitComment } from "~/hooks/content";
 // import { MDXEditor } from "../mdx/editor";
 
 interface ICommentAuthorProfile {
@@ -22,6 +23,7 @@ interface ICommentAuthor {
 
 export interface IComment {
   id: string;
+  raw: string;
   body: string;
   likes: number;
   createdAt: Date;
@@ -34,39 +36,22 @@ export interface IComment {
 
 export function Comments({
   comments,
-  // articleId,
+  articleId,
 }: {
   comments: IComment[];
   articleId: string;
 }) {
   const [comment, setComment] = React.useState("");
   const user = useOptionalUser();
-  // const fetcher = useFetcher({ key: "article-comment" });
   const { openDialog } = useAuthDialog();
 
-  // function handleCommentSubmit({
-  //   content,
-  //   articleId,
-  //   parentId,
-  //   authorId,
-  //   intent,
-  //   toastMessage,
-  // }: {
-  //   content: string;
-  //   articleId: string;
-  //   parentId: string | null;
-  //   authorId: string;
-  //   intent: "submit-comment" | "reply-comment";
-  //   toastMessage: string;
-  // }) {
-  //   fetcher
-  //     .submit({ content, articleId, parentId, authorId, intent } as const, {
-  //       method: "post",
-  //     })
-  //     .then(() => {
-  //       toast(toastMessage);
-  //     });
-  // }
+  const { submit } = useSubmitComment({
+    itemId: articleId,
+    parentId: null,
+    userId: user?.id as string,
+    intent: "add-comment",
+    content: comment,
+  });
 
   return (
     <section className="mb-8" id="comments">
@@ -75,7 +60,7 @@ export function Comments({
         <CommentForm
           comment={comment}
           setComment={setComment}
-          // handleFormSubmit={handleCommentSubmit}
+          handleFormSubmit={submit}
         />
       ) : (
         <Badge className="-mt-2 mb-4" onClick={() => openDialog()}>

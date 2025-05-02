@@ -3,7 +3,6 @@ import {
   index,
   route,
   prefix,
-  layout,
 } from "@react-router/dev/routes";
 
 export default [
@@ -14,6 +13,7 @@ export default [
   route("privacy", "routes/privacy.tsx"),
   route("verify", "routes/verify.tsx"),
   route("onboarding", "routes/onboarding.tsx"),
+  route("profile", "routes/profile/index.tsx"),
   route("logout", "routes/logout.ts"),
   route("set-theme", "routes/actions/set-theme.ts"),
   route("*", "routes/not-found.tsx"),
@@ -34,17 +34,6 @@ export default [
     index("routes/tutorials/index.tsx"),
     route(":tutorialId", "routes/tutorials/tutorial.tsx", [
       route("lessons/:lessonId", "routes/tutorials/lesson.tsx"),
-    ]),
-  ]),
-
-  layout("routes/profile/layout.tsx", [
-    ...prefix("profile", [
-      index("routes/profile/account.tsx"),
-      route("courses", "routes/profile/courses.tsx"),
-      route("certificates", "routes/profile/certificates.tsx"),
-      route("subscription", "routes/profile/subscription.tsx"),
-      route("notifications", "routes/profile/notifications.tsx"),
-      route("billing-history", "routes/profile/billing-history.tsx"),
     ]),
   ]),
 ] satisfies RouteConfig;

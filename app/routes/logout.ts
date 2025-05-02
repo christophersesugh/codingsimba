@@ -7,5 +7,6 @@ export async function loader() {
 }
 
 export async function action({ request }: Route.ActionArgs) {
-  return await logout({ request });
+  await logout({ request });
+  return {};
 }

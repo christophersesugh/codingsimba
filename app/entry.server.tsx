@@ -9,9 +9,11 @@ import { renderToPipeableStream } from "react-dom/server";
 
 export const streamTimeout = 5_000;
 
-if (process.env.MOCKS === "true") {
-  await import("../tests/mocks/index");
-}
+(async () => {
+  if (process.env.MOCKS === "true") {
+    await import("../tests/mocks/index");
+  }
+})();
 
 export default function handleRequest(
   request: Request,

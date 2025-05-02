@@ -78,6 +78,10 @@ export async function loader({ request }: Route.LoaderArgs) {
             select: {
               name: true,
               image: true,
+              bio: true,
+              location: true,
+              website: true,
+              github: true,
             },
           },
           roles: {

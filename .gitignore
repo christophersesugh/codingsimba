@@ -1,14 +1,13 @@
 .DS_Store
 .env
 /node_modules/
-/app/generated/prisma/
+/app/generated/
 
 # React Router
 /.react-router/
 /build/
 
 # Playwright
-node_modules/
 /test-results/
 /playwright-report/
 /blob-report/

@@ -3,6 +3,7 @@ import "@milkdown/crepe/theme/common/style.css";
 import "@milkdown/crepe/theme/frame.css";
 import { Crepe } from "@milkdown/crepe";
 import { Milkdown, MilkdownProvider, useEditor } from "@milkdown/react";
+import { Skeleton } from "../ui/skeleton";
 
 type MarkdownProps = {
   value?: string;
@@ -11,7 +12,12 @@ type MarkdownProps = {
 
 function MilkdownEditor(props: MarkdownProps) {
   const { value = "", setValue } = props;
+  const [mounted, setMounted] = React.useState(false);
   const lastValueRef = React.useRef(value);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleChange = React.useCallback(
     (markdown: string) => {
@@ -35,7 +41,7 @@ function MilkdownEditor(props: MarkdownProps) {
       },
       featureConfigs: {
         [Crepe.Feature.Placeholder]: {
-          text: "Write something...",
+          text: "Press '/' for commands...",
           mode: "block",
         },
       },
@@ -43,7 +49,6 @@ function MilkdownEditor(props: MarkdownProps) {
 
     crepe.on((view) => {
       view.markdownUpdated((_, markdown) => {
-        console.log("Markdown updated:", markdown);
         handleChange(markdown);
       });
     });
@@ -51,6 +56,7 @@ function MilkdownEditor(props: MarkdownProps) {
     return crepe;
   });
 
+  if (!mounted) return <Skeleton className="h-26" />;
   return <Milkdown />;
 }
 

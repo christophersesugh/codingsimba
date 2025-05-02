@@ -1,5 +1,5 @@
 import React from "react";
 
-export default function BillingHistoryRoute() {
+export function BillingHistory() {
   return <div>billing-history</div>;
 }

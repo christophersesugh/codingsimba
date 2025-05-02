@@ -21,7 +21,7 @@ export function Author() {
           </h3>
           <p className="text-gray-600 dark:text-gray-300">
             Software Developer (TypeScript/Rust). Building open-source tools for
-            the modern web and teach through code. Passionate about robust
+            the modern web and teaching through code. Passionate about robust
             systems, community-driven development, and sharing knowledge. Always
             learning, always shipping.
           </p>

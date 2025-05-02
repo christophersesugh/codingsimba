@@ -7,40 +7,52 @@ import { FilePenLine, Heart, MessageSquareQuote, Trash2 } from "lucide-react";
 import { Reply } from "./reply";
 import { CommentForm } from "./comment-form";
 import { Markdown } from "../mdx";
-// import { useFetcher } from "react-router";
 import { useAuthDialog } from "~/contexts/auth-dialog";
 import { useOptionalUser } from "~/hooks/user";
-// import { toast } from "sonner";
+import {
+  useContentUpvote,
+  useDeleteComment,
+  useSubmitComment,
+  useUpdateComment,
+} from "~/hooks/content";
 
 export function Comment({ comment }: { comment: IComment }) {
+  const [editComment, setEditComment] = React.useState(false);
+  const [commentBody, setCommentBody] = React.useState(comment.raw);
   const [reply, setReply] = React.useState("");
   const [showReplyForm, setShowReplyForm] = React.useState(false);
-  // const fetcher = useFetcher({ key: "article-comment-reply" });
-  const user = useOptionalUser();
   const { openDialog } = useAuthDialog();
+  const user = useOptionalUser();
 
+  const userId = user?.id;
   const author = comment!.author!.profile;
 
-  // const handleCommentReply = React.useCallback(() => {
-  //   fetcher
-  //     .submit(
-  //       {
-  //         comment: reply,
-  //         articleId: comment.contentId,
-  //         parentId: comment.id,
-  //         authorId: user!.id,
-  //         intent: "reply-comment",
-  //       },
-  //       { method: "post" },
-  //     )
-  //     .then(() => {
-  //       toast("Reply posted");
-  //     });
-  // }, [comment.contentId, comment.id, fetcher, reply, user]);
+  const { submit: submitReply } = useSubmitComment({
+    itemId: null,
+    parentId: comment.id,
+    userId: userId!,
+    intent: "add-reply",
+    content: reply,
+  });
 
-  function handleCommentDelete() {}
-  // function handleCommentEdit(commentId: string, content: string) {}
-  function handleCommentLike() {}
+  const { submit: deleteComment } = useDeleteComment({
+    itemId: comment.id,
+    userId: userId!,
+    intent: "delete-comment",
+  });
+
+  const { submit: upvoteComment } = useContentUpvote({
+    itemId: comment.id,
+    userId: userId!,
+    intent: "upvote-comment",
+  });
+
+  const { submit: updateComment } = useUpdateComment({
+    itemId: comment.id,
+    userId: userId!,
+    content: "",
+    intent: "update-comment",
+  });
 
   const basicButtonClasses =
     "flex items-center space-x-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300";
@@ -63,11 +75,23 @@ export function Comment({ comment }: { comment: IComment }) {
               })}
             </span>
           </div>
-          <Markdown source={comment.body} className="py-0" />
+          {editComment ? (
+            <CommentForm
+              isForUpdate
+              comment={commentBody}
+              setComment={setCommentBody}
+              handleFormSubmit={() => {
+                updateComment();
+                setEditComment(false);
+              }}
+            />
+          ) : (
+            <Markdown source={comment.body} className="py-0" />
+          )}
           <div className="mt-2 flex items-center space-x-4">
             <button
               className={basicButtonClasses}
-              onClick={() => (user ? handleCommentLike() : openDialog())}
+              onClick={() => (user ? upvoteComment() : openDialog())}
             >
               <Heart className="size-4" />
               <span>{comment.likes}</span>
@@ -77,14 +101,16 @@ export function Comment({ comment }: { comment: IComment }) {
                 user ? setShowReplyForm(!showReplyForm) : openDialog()
               }
               className={basicButtonClasses}
+              aria-label="reply comment"
             >
               <MessageSquareQuote className="mr-1 size-4" />
               reply
             </button>
             {user ? (
               <button
-                // onClick={() => handleCommentEdit(comment.id)}
+                onClick={() => setEditComment(true)}
                 className={basicButtonClasses}
+                aria-label="update comment"
               >
                 <FilePenLine className="mr-1 size-4 text-blue-600 dark:text-blue-500" />
                 edit
@@ -92,8 +118,9 @@ export function Comment({ comment }: { comment: IComment }) {
             ) : null}
             {user ? (
               <button
-                onClick={() => handleCommentDelete()}
+                onClick={deleteComment}
                 className={basicButtonClasses}
+                aria-label="delete commment"
               >
                 <Trash2 className="mr-1 size-4 text-red-600 dark:text-red-500" />
                 delete
@@ -106,7 +133,7 @@ export function Comment({ comment }: { comment: IComment }) {
             <CommentForm
               comment={reply}
               setComment={setReply}
-              // handleFormSubmit={handleCommentReply}
+              handleFormSubmit={submitReply}
             />
           ) : null}
 

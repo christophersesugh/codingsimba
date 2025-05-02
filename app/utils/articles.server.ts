@@ -1,8 +1,8 @@
 import { prisma } from "./db.server";
 import { bundleMDX } from "./mdx.server";
 
-async function getArticle(articleId: string) {
-  return prisma.content.findUnique({
+async function getArticleMetrics({ articleId }: { articleId: string }) {
+  const contentMetrics = await prisma.content.findUnique({
     where: {
       sanityId: articleId,
       type: "ARTICLE",
@@ -18,8 +18,18 @@ async function getArticle(articleId: string) {
       },
     },
   });
+  if (!contentMetrics) return;
+  //WE DON'T WANNA PASS THE USER ID, WE WANNA GET CURRENT USER LIKES ON THE CLIENT
+  const likes = await prisma.like.findMany({
+    where: { contentId: contentMetrics.id },
+    select: { count: true, userId: true },
+  });
+  return { ...contentMetrics, likes };
 }
 
+/**
+ * Get article comments
+ */
 async function getArticleComments({
   articleId,
   commentTake,
@@ -96,7 +106,7 @@ export async function getArticleMetadata({
   commentTake: number;
   replyTake: number;
 }) {
-  const metrics = await getArticle(articleId);
+  const metrics = await getArticleMetrics({ articleId });
   if (!metrics) {
     return null;
   }
@@ -109,10 +119,12 @@ export async function getArticleMetadata({
       })
     ).map(async (comment) => ({
       ...comment,
+      raw: comment.body,
       body: (await bundleMDX({ source: comment.body })).code,
       replies: await Promise.all(
         (comment.replies || []).map(async (reply) => ({
           ...reply,
+          raw: reply.body,
           body: (await bundleMDX({ source: reply.body })).code,
         })),
       ),

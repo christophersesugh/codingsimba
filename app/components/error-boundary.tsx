@@ -18,7 +18,7 @@ type StatusHandler = (info: {
 export function GeneralErrorBoundary({
   defaultStatusHandler = ({ error }) => (
     <>
-      <div className="text-3xl">{error.status}</div>
+      <div className="mx-auto w-full text-3xl">{error.status}</div>
       <p>{error.data}</p>
     </>
   ),
@@ -47,9 +47,7 @@ export function GeneralErrorBoundary({
         </div>
       </div>
       <h1 className="mb-4 text-3xl font-bold md:text-3xl">Error!</h1>
-      <p className="mb-8 text-gray-600 dark:text-gray-600">
-        We&apos;re sorry, but an error has occurred in the application.
-      </p>
+      <p className="mb-8 text-gray-600 dark:text-gray-600">An error occured.</p>
       <div className="flex flex-col justify-center gap-4 sm:flex-row">
         <Button className="flex items-center gap-2" onClick={() => navigate(0)}>
           <RefreshCcw className="size-4" />
