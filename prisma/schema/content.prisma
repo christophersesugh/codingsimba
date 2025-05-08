@@ -27,7 +27,7 @@ enum ContentType {
 model CourseProgress {
   id String @id @default(ulid())
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
   content   Content @relation(fields: [contentId], references: [id])
@@ -67,7 +67,7 @@ model ModuleProgress {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  courseProgress   CourseProgress @relation(fields: [courseProgressId], references: [id])
+  courseProgress   CourseProgress @relation(fields: [courseProgressId], references: [id], onDelete: Cascade)
   courseProgressId String
 
   @@index([userId])
@@ -87,8 +87,7 @@ model Like {
   contentId String
   content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  @@unique([userId])
-  @@unique([contentId])
+  @@unique([userId, contentId])
 }
 
 model Comment {
@@ -128,8 +127,9 @@ model Review {
   contentId String
   content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
 
+  @@unique([authorId, contentId])
   @@index([authorId])
-  @@index([contentId, authorId])
+  @@index([contentId])
 }
 
 enum ReviewStatus {
@@ -142,7 +142,7 @@ model Enrollment {
   id String @id @default(ulid())
 
   userId String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   contentId String
   content   Content @relation(fields: [contentId], references: [id])

@@ -3,7 +3,7 @@ import { navLinks, legal } from "./app/constants/navlinks";
 
 const prerenderedRoutes = [
   "/",
-  "/not-found,",
+  "/not-found",
   "*",
   ...[...navLinks, ...legal].map((link) => `/${link.path}`),
 ];

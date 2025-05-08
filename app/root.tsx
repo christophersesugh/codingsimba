@@ -170,7 +170,7 @@ export async function action({ request }: Route.ActionArgs) {
 
   if (!submission.value.session) {
     return data({ status: "error", ...submission.reply() } as const, {
-      status: StatusCodes.NOT_FOUND,
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
     });
   }
 
@@ -269,6 +269,12 @@ function App() {
   );
 }
 
+function OptionalNavbar() {
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
+  return isHomePage ? null : <Navbar />;
+}
+
 export default function AppWithProviders({ loaderData }: Route.ComponentProps) {
   const { theme } = loaderData;
 
@@ -299,12 +305,6 @@ function ThemedApp({
       {children}
     </ThemeProvider>
   );
-}
-
-function OptionalNavbar() {
-  const location = useLocation();
-  const isHomePage = location.pathname === "/";
-  return isHomePage ? null : <Navbar />;
 }
 
 export function ErrorBoundary() {
