@@ -4,6 +4,7 @@ import {
   Links,
   Meta,
   Outlet,
+  // redirect,
   Scripts,
   ScrollRestoration,
   useLoaderData,
@@ -17,8 +18,6 @@ import {
   useTheme,
 } from "remix-themes";
 
-import { parseWithZod } from "@conform-to/zod";
-
 import type { Route } from "./+types/root";
 import fontStyles from "~/styles/fonts.css?url";
 import tailwindStyles from "~/styles/tailwind.css?url";
@@ -27,20 +26,17 @@ import { Footer } from "./components/footer";
 import { themeSessionResolver } from "~/utils/theme.server";
 import { GeneralErrorBoundary } from "./components/error-boundary";
 import { AuthDialogProvider } from "./contexts/auth-dialog";
-import { AuthDialog, authSchema } from "./components/auth-dialog";
+import { AuthDialog, AuthSchema } from "./components/auth-dialog";
 import { MobileNavProvider } from "./contexts/mobile-nav";
 import { MobileNav } from "./components/mobile-nav";
 import { prisma } from "./utils/db.server";
 import { authSessionStorage } from "./utils/session.server";
-import { StatusCodes } from "http-status-codes";
-import { verifySessionStorage } from "./utils/verification.server";
-import { sendEmail } from "./services.server/email";
-import { getDomainUrl } from "./utils/misc";
-import { SigninEmail } from "./email-templates/signin";
-import { onboardingSessionKey } from "./routes/verify";
-import { sessionKey } from "./utils/auth.server";
-import { toast } from "sonner";
+import { sessionKey, signin, signup } from "./utils/auth.server";
 import { Toaster } from "./components/ui/sonner";
+import { parseWithZod } from "@conform-to/zod";
+import { z } from "zod";
+import { StatusCodes } from "http-status-codes";
+// import { onboardingSessionKey } from "./routes/verify";
 
 export const meta: Route.MetaFunction = () => [];
 
@@ -53,10 +49,6 @@ export const links: Route.LinksFunction = () => [
 export async function loader({ request }: Route.LoaderArgs) {
   const { getTheme } = await themeSessionResolver(request);
 
-  const status = new URL(request.url).searchParams.get("status") as
-    | "success"
-    | "error"
-    | null;
   const authSession = await authSessionStorage.getSession(
     request.headers.get("cookie"),
   );
@@ -96,7 +88,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       })
     : null;
 
-  const dataObj = { status, user, theme: getTheme() } as const;
+  const dataObj = { user, theme: getTheme() } as const;
   /**
    * 😜 Maybe a user is deleted in DB 🤷🏽‍♂️
    * If we can't find the user in DB, we need to remove the userId from the cookie
@@ -116,49 +108,124 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
-  const submission = parseWithZod(formData, { schema: authSchema });
 
-  if (submission.status !== "success") {
-    return {
-      ...submission.reply(),
-      user: null,
-    };
-  }
+  const submission = await parseWithZod(formData, {
+    schema: AuthSchema.transform(async (data, ctx) => {
+      const { authType, email, password, intent } = data;
+      if (intent !== "submit" || !authType) return { ...data, session: null };
 
-  if (!submission.value || submission.value.intent !== "submit") {
-    throw data(
-      { status: "error", submission },
-      { status: StatusCodes.BAD_REQUEST, statusText: "Bad Request" },
-    );
-  }
+      switch (authType) {
+        case "signup": {
+          const existingUser = await prisma.user.findUnique({
+            where: { email },
+            select: { id: true },
+          });
 
-  const { email, redirectTo } = submission.value;
+          if (existingUser) {
+            ctx.addIssue({
+              path: ["email"],
+              code: z.ZodIssueCode.custom,
+              message: "Email already in use.",
+            });
+            return z.NEVER;
+          }
 
-  const signinUrl = `${getDomainUrl(request)}/verify${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ""}`;
+          const session = await signup({
+            email,
+            name: name ?? null,
+            password,
+          });
 
-  const emailResponse = await sendEmail({
-    to: email,
-    subject: "Sign in to Coding Simba",
-    react: <SigninEmail signinUrl={signinUrl} />,
+          return { ...data, session };
+        }
+
+        case "signin": {
+          const session = await signin({ email, password });
+          if (!session) {
+            ctx.addIssue({
+              path: ["root"],
+              code: z.ZodIssueCode.custom,
+              message: "Invalid credentials.",
+            });
+            return z.NEVER;
+          }
+          return { ...data, session };
+        }
+
+        default:
+          throw new Error("Invalid authType");
+      }
+    }),
+    async: true,
   });
 
-  if (emailResponse.status === "error") {
-    return data({ status: "error", submission } as const, {
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
-      statusText: emailResponse.error,
+  if (submission.status !== "success") {
+    return data({ status: "error", ...submission.reply() } as const, {
+      status:
+        submission.status === "error"
+          ? StatusCodes.BAD_REQUEST
+          : StatusCodes.OK,
     });
   }
 
-  const verifySession = await verifySessionStorage.getSession(
-    request.headers.get("cookie"),
-  );
-  verifySession.set(onboardingSessionKey, email);
+  if (!submission.value.session) {
+    return data({ status: "error", ...submission.reply() } as const, {
+      status: StatusCodes.NOT_FOUND,
+    });
+  }
 
-  return data({ status: "success", submission } as const, {
-    headers: {
-      "Set-Cookie": await verifySessionStorage.commitSession(verifySession),
-    },
-  });
+  const { rememberMe, session, authType } = submission.value;
+
+  if (authType === "signin") {
+    const authSession = await authSessionStorage.getSession(
+      request.headers.get("cookie"),
+    );
+
+    authSession.set(sessionKey, session.id);
+
+    return data({ status: "success", ...submission.reply() } as const, {
+      headers: {
+        "Set-Cookie": await authSessionStorage.commitSession(authSession, {
+          expires: rememberMe ? session.expirationDate : undefined,
+        }),
+      },
+    });
+  } else {
+    // const verifySession = await verifySessionStorage.getSession(
+    //   request.headers.get("cookie"),
+    // );
+
+    // verifySession.set(onboardingSessionKey, email);
+
+    // const { verifyUrl, redirectTo, otp } = await prepareVerification({
+    //   period: 10 * 60,
+    //   request,
+    //   type: "onboarding",
+    //   target: email,
+    // });
+
+    // const response = await sendEmail({
+    //   to: email,
+    //   subject: `Welcome to Epic Notes!`,
+    //   react: <SignupEmail onboardingUrl={verifyUrl.toString()} otp={otp} />,
+    // });
+
+    // const emailResponse = await sendEmail({
+    //   to: email,
+    //   subject: "Sign in to Coding Simba",
+    //   react: <SigninEmail signinUrl={`${getDomainUrl(request)}/verify`} />,
+    // });
+
+    // if (response.status === "success") {
+    //   return redirect(redirectTo.toString());
+    // } else {
+    //   return data(
+    //     { ...submission.reply({ formErrors: [response.error] }) },
+    //     { status: StatusCodes.INTERNAL_SERVER_ERROR },
+    //   );
+    // }
+    return {};
+  }
 }
 
 type DocumentProps = {
@@ -203,15 +270,7 @@ function App() {
 }
 
 export default function AppWithProviders({ loaderData }: Route.ComponentProps) {
-  const { status, user, theme } = loaderData;
-
-  React.useEffect(() => {
-    if (status === "success") {
-      toast("You're signed in!");
-    } else if (status === "error") {
-      toast("Expired sign-in link, try again");
-    }
-  }, [status, user?.email]);
+  const { theme } = loaderData;
 
   return (
     <ThemedApp theme={theme}>

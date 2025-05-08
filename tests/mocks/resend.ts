@@ -2,7 +2,7 @@ import React from "react";
 import { http, HttpResponse, type HttpHandler } from "msw";
 import { faker } from "@faker-js/faker";
 import { z } from "zod";
-import { RESEND_URL } from "~/services.server/email";
+import { RESEND_URL } from "~/services.server/resend";
 
 const EmailSchema = z.object({
   from: z.string(),

@@ -15,6 +15,7 @@ import {
   useSubmitComment,
   useUpdateComment,
 } from "~/hooks/content";
+import { getInitials } from "~/utils/user";
 
 export function Comment({ comment }: { comment: IComment }) {
   const [editComment, setEditComment] = React.useState(false);
@@ -63,7 +64,7 @@ export function Comment({ comment }: { comment: IComment }) {
           {author?.image ? (
             <AvatarImage src={author.image} alt={author!.name as string} />
           ) : null}
-          <AvatarFallback>{author!.name!.charAt(0)}</AvatarFallback>
+          <AvatarFallback>{getInitials(author!.name!)}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <div className="mb-1 flex items-center justify-between">

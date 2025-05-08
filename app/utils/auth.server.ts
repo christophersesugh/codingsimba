@@ -1,5 +1,7 @@
 // import crypto from "node:crypto";
 import {
+  type Password,
+  type Profile,
   // type Connection,
   type User,
 } from "~/generated/prisma";
@@ -10,11 +12,12 @@ import { safeRedirect } from "remix-utils/safe-redirect";
 import { prisma } from "./db.server";
 import { combineHeaders } from "./misc";
 import { authSessionStorage } from "./session.server";
+import bcrypt from "bcryptjs";
 // import { type ProviderUser } from "./providers/provider";
 // import { authSessionStorage } from "./session.server.ts";
 // import { uploadProfileImage } from "./storage.server.ts";
 
-export const SESSION_EXPIRATION_TIME = 7 * 24 * 60 * 60 * 1000; // 7 days
+export const SESSION_EXPIRATION_TIME = 14 * 24 * 60 * 60 * 1000; // 14 days
 export const getSessionExpirationDate = () =>
   new Date(Date.now() + SESSION_EXPIRATION_TIME);
 
@@ -91,56 +94,89 @@ export async function requireAnonymous(request: Request) {
   }
 }
 
-export async function signinNewUser({ email }: { email: User["email"] }) {
+export async function signin({
+  email,
+  password,
+}: {
+  email: User["email"];
+  password: string;
+}) {
+  const user = await verifyUserPassword({ email }, password);
+  if (!user) return null;
   const session = await prisma.session.create({
-    select: {
-      id: true,
-      expirationDate: true,
-      user: {
-        select: { id: true, email: true, onboarded: true },
-      },
-    },
+    select: { id: true, expirationDate: true, userId: true },
     data: {
+      expirationDate: getSessionExpirationDate(),
+      userId: user.id,
+    },
+  });
+  return session;
+}
+
+export async function signup({
+  email,
+  password,
+  name,
+}: {
+  email: User["email"];
+  name: Profile["name"];
+  password: string;
+}) {
+  const hashedPassword = await getPasswordHash(password);
+
+  const session = await prisma.session.create({
+    data: {
+      expirationDate: getSessionExpirationDate(),
       user: {
         create: {
           email: email.toLowerCase(),
+          profile: {
+            create: {
+              name,
+            },
+          },
           roles: { connect: { name: "USER" } },
+          password: {
+            create: {
+              hash: hashedPassword,
+            },
+          },
         },
       },
-      expirationDate: getSessionExpirationDate(),
     },
+    select: { id: true, expirationDate: true },
   });
   return session;
 }
 
-export async function signinExistingUser({ email }: { email: User["email"] }) {
-  const session = await prisma.session.create({
-    data: {
-      expirationDate: getSessionExpirationDate(),
-      user: {
-        connect: { email: email.toLowerCase() },
-      },
-    },
-    select: {
-      id: true,
-      expirationDate: true,
-      user: {
-        select: { id: true, email: true, onboarded: true },
-      },
-    },
-  });
-  return session;
+export async function getPasswordHash(password: string) {
+  const hash = await bcrypt.hash(password, 10);
+  return hash;
 }
 
-export async function signin({ email }: { email: User["email"] }) {
-  const existingUser = await prisma.user.findUnique({
-    where: { email: email.toLowerCase() },
-    select: { id: true },
+export async function verifyUserPassword(
+  where: Pick<User, "email"> | Pick<User, "id">,
+  password: Password["hash"],
+) {
+  const userWithPassword = await prisma.user.findUnique({
+    where,
+    select: { id: true, password: { select: { hash: true } } },
   });
-  if (existingUser) {
-    return signinExistingUser({ email });
+
+  if (!userWithPassword || !userWithPassword.password) {
+    return null;
   }
-  return signinNewUser({ email });
+
+  const isValid = await bcrypt.compare(
+    password,
+    userWithPassword.password.hash,
+  );
+
+  if (!isValid) {
+    return null;
+  }
+
+  return { id: userWithPassword.id };
 }
 
 // export async function signinWithConnection({

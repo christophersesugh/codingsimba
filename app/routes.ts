@@ -14,8 +14,14 @@ export default [
   route("verify", "routes/verify.tsx"),
   route("onboarding", "routes/onboarding.tsx"),
   route("profile", "routes/profile/index.tsx"),
-  route("logout", "routes/logout.ts"),
+
+  // Action routes
+  route("logout", "routes/actions/logout.ts"),
   route("set-theme", "routes/actions/set-theme.ts"),
+
+  // Resource routes
+  route("download-user-data", "routes/resources/download-user-data.ts"),
+
   route("*", "routes/not-found.tsx"),
 
   ...prefix("articles", [

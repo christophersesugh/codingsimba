@@ -10,6 +10,7 @@ import { useAuthDialog } from "~/contexts/auth-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useMobileNav } from "~/contexts/mobile-nav";
 import { useOptionalUser } from "~/hooks/user";
+import { getInitials } from "~/utils/user";
 
 export function Navbar() {
   const location = useLocation();
@@ -52,7 +53,7 @@ export function Navbar() {
               <Avatar className="size-9">
                 <AvatarImage src={profile.image!} alt={profile.name!} />
                 <AvatarFallback className="border border-slate-300 dark:border-gray-800">
-                  CS
+                  {getInitials(profile.name!)}
                 </AvatarFallback>
               </Avatar>
             </Link>

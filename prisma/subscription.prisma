@@ -1,0 +1,25 @@
+model Subscription {
+  id String @id @default(ulid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  // Polar-specific fields
+  polarId      String    @unique // ID from Polar
+  planName     String
+  billingCycle String // "monthly", "quarterly", "annually" from Polar
+  status       String // "active", "canceled", "paused", etc.
+  endsAt       DateTime?
+  isActive     Boolean   @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// enum BillingCycle {
+//   MONTHLY
+//   QUARTERLY
+//   ANNUALLY
+// }

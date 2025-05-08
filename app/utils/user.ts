@@ -77,3 +77,31 @@ export function userHasRole(
   if (!user) return false;
   return user.roles.some((r) => r.name === role);
 }
+
+export function getInitials(name: string): string {
+  if (!name || typeof name !== "string") return "";
+
+  const words = name
+    .split(/\s+/)
+    .filter(
+      (word) => word.length > 0 && !(word.length === 2 && word.endsWith(".")),
+    );
+
+  if (words.length === 1) {
+    return words[0].charAt(0).toUpperCase();
+  }
+
+  const firstInitial = words[0].charAt(0).toUpperCase();
+  const lastInitial = words[words.length - 1].charAt(0).toUpperCase();
+
+  return `${firstInitial}${lastInitial}`;
+}
+
+export function capitalizeName(name: string) {
+  return name
+    .trim()
+    .replace(
+      /\b\w+/g,
+      (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+    );
+}

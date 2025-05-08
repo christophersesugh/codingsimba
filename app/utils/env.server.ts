@@ -4,6 +4,7 @@ export const schema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"] as const),
   SESSION_SECRET: z.string(),
   ADMIN_EMAIL: z.string(),
+  ADMIN_PASSWORD: z.string(),
   BUNNY_STORAGE_ZONE: z.string(),
   BUNNY_ACCESS_KEY: z.string(),
   // GITHUB_CLIENT_ID: z.string(),

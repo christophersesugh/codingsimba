@@ -1,5 +1,4 @@
 import { ArrowDownAZ } from "lucide-react";
-import React from "react";
 import { EmptyState } from "~/components/empty-state";
 
 export default function CoursesRoute() {

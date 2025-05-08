@@ -17,6 +17,7 @@ import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { useAuthDialog } from "~/contexts/auth-dialog";
 import { useOptionalUser } from "~/hooks/user";
+import { getInitials } from "~/utils/user";
 
 export function MobileNav() {
   const { openDialog } = useAuthDialog();
@@ -61,7 +62,7 @@ export function MobileNav() {
               <Link to={"/profile"} prefetch="intent" onClick={closeMobileNav}>
                 <Avatar className="size-9">
                   <AvatarImage src={profile.image!} alt={profile.name!} />
-                  <AvatarFallback>CS</AvatarFallback>
+                  <AvatarFallback>{getInitials(profile.image!)}</AvatarFallback>
                 </Avatar>
               </Link>
             ) : null}

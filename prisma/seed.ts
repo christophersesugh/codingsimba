@@ -1,5 +1,6 @@
 import { PrismaClient } from "../app/generated/prisma/client";
 import { type Entity, type Action } from "../app/generated/prisma/client";
+import { createPassword } from "tests/db-utils";
 
 const prisma = new PrismaClient();
 
@@ -8,7 +9,7 @@ async function seed() {
   await prisma.role.deleteMany();
   await prisma.user.deleteMany();
 
-  const entities: Entity[] = ["USER", "ARTICLE_COMMENT", "TUTORIAL_COMMENT"];
+  const entities: Entity[] = ["USER", "COMMENT", "REVIEW", "SETTINGS", "USER"];
   const actions: Action[] = ["CREATE", "READ", "UPDATE", "DELETE"];
   const accesses: string[] = ["OWN", "ANY"] as const;
 
@@ -48,6 +49,13 @@ async function seed() {
     data: {
       email: process.env.ADMIN_EMAIL,
       roles: { connect: [{ name: "ADMIN" }, { name: "USER" }] },
+      profile: {
+        create: {
+          name: "Christopher S. Aondona",
+          image: "https://loremflickr.com/1540/994?lock=4824176450717785",
+        },
+      },
+      password: { create: createPassword(process.env.ADMIN_PASSWORD) },
     },
   });
 }

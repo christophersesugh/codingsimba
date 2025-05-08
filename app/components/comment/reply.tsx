@@ -4,6 +4,7 @@ import { cn } from "~/lib/shadcn";
 import type { IComment } from ".";
 import { formatDistanceToNow } from "date-fns";
 import { Markdown } from "../mdx";
+import { getInitials } from "~/utils/user";
 
 export function Reply({ reply }: { reply: IComment }) {
   const author = reply?.author?.profile;
@@ -14,7 +15,7 @@ export function Reply({ reply }: { reply: IComment }) {
     <li className="flex items-start space-x-4">
       <Avatar className="h-8 w-8">
         <AvatarImage src={author?.image ?? ""} alt={author?.name ?? ""} />
-        <AvatarFallback>{author!.name!.charAt(0)}</AvatarFallback>
+        <AvatarFallback>{getInitials(author!.name!)}</AvatarFallback>
       </Avatar>
       <div className="flex-1">
         <div className="mb-1 flex items-center justify-between">
