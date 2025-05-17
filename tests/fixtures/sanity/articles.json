@@ -1,0 +1,278 @@
+[
+  {
+    "id": "a1b2c3d4-e5f6-7890",
+    "title": "Getting Started with Next.js",
+    "slug": "getting-started-with-nextjs",
+    "createdAt": "2023-10-15T09:30:00Z",
+    "category": {
+      "id": "cat-123",
+      "title": "Web Development",
+      "slug": "web-dev"
+    },
+    "featured": true,
+    "published": true,
+    "tags": [
+      {
+        "id": "tag-001",
+        "title": "JavaScript",
+        "slug": "javascript"
+      },
+      {
+        "id": "tag-002",
+        "title": "React",
+        "slug": "react"
+      }
+    ],
+    "image": "https://img.freepik.com/free-photo/group-elephants-big-green-tree-wilderness_181624-16897.jpg?semt=ais_hybrid&w=740",
+    "excerpt": "Learn how to set up a Next.js project from scratch with this comprehensive guide covering installation, routing, and deployment.",
+    "content": "Next.js has become one of the most popular React frameworks... [full content here]",
+    "raw": "Next.js has become one of the most popular React frameworks...",
+    "videoId": "dQw4w9WgXcQ",
+    "relatedArticles": [
+      {
+        "id": "b2c3d4e5-f6g7-8901",
+        "title": "React Server Components Explained",
+        "slug": "react-server-components",
+        "createdAt": "2023-09-20T14:15:00Z",
+        "image": "../images/article2.avif",
+        "excerpt": "Understanding the new paradigm of server components in React 18"
+      }
+    ]
+  },
+  {
+    "id": "b2c3d4e5-f6g7-8901",
+    "title": "Advanced TypeScript Patterns",
+    "slug": "advanced-typescript",
+    "createdAt": "2023-11-05T11:20:00Z",
+    "category": {
+      "id": "cat-456",
+      "title": "Programming",
+      "slug": "programming"
+    },
+    "featured": false,
+    "published": true,
+
+    "tags": [
+      {
+        "id": "tag-003",
+        "title": "TypeScript",
+        "slug": "typescript"
+      }
+    ],
+    "image": "https://img.freepik.com/free-photo/group-elephants-big-green-tree-wilderness_181624-16897.jpg?semt=ais_hybrid&w=740",
+    "excerpt": "some added djdjksdjdfhjdfdfj sdjksdjkdsjkdsjk sdjkdsjsdjjksd dsjkdsjk Explore advanced TypeScript patterns including utility types, conditional types, and type guards with practical examples.",
+    "content": "TypeScript's type system is powerful... [full content here]",
+    "raw": "TypeScript's type system is powerful...",
+    "relatedArticles": []
+  },
+  {
+    "id": "c3d4e5f6-g7h8-9012",
+    "title": "CSS Grid Layout Mastery",
+    "slug": "css-grid-mastery",
+    "createdAt": "2023-08-22T16:45:00Z",
+    "category": {
+      "id": "cat-123",
+      "title": "Web Development",
+      "slug": "web-dev"
+    },
+    "featured": false,
+    "published": true,
+
+    "tags": [
+      {
+        "id": "tag-004",
+        "title": "CSS",
+        "slug": "css"
+      },
+      {
+        "id": "tag-005",
+        "title": "Layout",
+        "slug": "layout"
+      }
+    ],
+    "image": "https://img.freepik.com/premium-photo/chicken-logo-playful-bird-design_1077802-36433.jpg?semt=ais_hybrid&w=740",
+    "excerpt": "Master CSS Grid Layout with this complete guide covering all properties and real-world use cases for modern web layouts.",
+    "content": "CSS Grid has revolutionized web layout... [full content here]",
+    "raw": "CSS Grid has revolutionized web layout...",
+    "videoId": "hSMh2W5ko5s"
+  },
+  {
+    "id": "d4e5f6g7-h8i9-0123",
+    "title": "Node.js Performance Optimization",
+    "slug": "nodejs-performance",
+    "createdAt": "2023-12-10T10:10:00Z",
+    "category": {
+      "id": "cat-789",
+      "title": "Backend",
+      "slug": "backend"
+    },
+    "featured": false,
+    "published": true,
+    "tags": [
+      {
+        "id": "tag-001",
+        "title": "JavaScript",
+        "slug": "javascript"
+      },
+      {
+        "id": "tag-006",
+        "title": "Node.js",
+        "slug": "nodejs"
+      }
+    ],
+    "image": "https://img.freepik.com/free-photo/mesmerizing-view-silhouette-tree-savanna-plains-sunset_181624-28022.jpg?semt=ais_hybrid&w=740",
+    "excerpt": "Practical techniques to optimize your Node.js applications including clustering, caching, and async best practices.",
+    "content": "Node.js applications can face performance bottlenecks... [full content here]",
+    "raw": "Node.js applications can face performance bottlenecks..."
+  },
+  {
+    "id": "e5f6g7h8-i9j0-1234",
+    "title": "React Native State Management",
+    "slug": "react-native-state",
+    "createdAt": "2024-01-05T13:25:00Z",
+    "category": {
+      "id": "cat-101",
+      "title": "Mobile",
+      "slug": "mobile"
+    },
+    "featured": false,
+    "published": true,
+
+    "tags": [
+      {
+        "id": "tag-002",
+        "title": "React",
+        "slug": "react"
+      },
+      {
+        "id": "tag-007",
+        "title": "React Native",
+        "slug": "react-native"
+      }
+    ],
+    "image": "https://img.freepik.com/free-photo/field-covered-greenery-surrounded-by-zebras-sunlight-blue-sky_181624-18150.jpg?semt=ais_hybrid&w=740",
+    "excerpt": "Comparing state management solutions for React Native applications including Context API, Redux, and MobX.",
+    "content": "State management is crucial for React Native apps... [full content here]",
+    "raw": "State management is crucial for React Native apps...",
+    "relatedArticles": [
+      {
+        "id": "f6g7h8i9-j0k1-2345",
+        "title": "React Hooks Deep Dive",
+        "slug": "react-hooks",
+        "createdAt": "2023-11-30T08:40:00Z",
+        "image": "https://img.freepik.com/free-photo/field-covered-greenery-surrounded-by-zebras-sunlight-blue-sky_181624-18150.jpg?semt=ais_hybrid&w=740",
+        "excerpt": "Understanding React Hooks through practical examples and common patterns"
+      }
+    ]
+  },
+  {
+    "id": "f6g7h8i9-j0k1-2345",
+    "title": "Modern Python Asynchronous Programming",
+    "slug": "python-async",
+    "createdAt": "2024-02-15T09:15:00Z",
+    "category": {
+      "id": "cat-202",
+      "title": "Python",
+      "slug": "python"
+    },
+    "featured": false,
+    "published": true,
+    "tags": [
+      {
+        "id": "tag-008",
+        "title": "Python",
+        "slug": "python"
+      },
+      {
+        "id": "tag-009",
+        "title": "Async",
+        "slug": "async"
+      }
+    ],
+    "image": "https://img.freepik.com/free-photo/beautiful-shot-green-mountains-covered-fog_181624-20707.jpg?semt=ais_hybrid&w=740",
+    "excerpt": "Master Python's async/await syntax and learn how to build high-performance asynchronous applications with asyncio.",
+    "content": "Python's async/await syntax has revolutionized... [full content here]",
+    "raw": "Python's async/await syntax has revolutionized...",
+    "videoId": "F19R_M4Nay4",
+    "relatedArticles": [
+      {
+        "id": "d4e5f6g7-h8i9-0123",
+        "title": "Node.js Performance Optimization",
+        "slug": "nodejs-performance",
+        "createdAt": "2023-12-10T10:10:00Z",
+        "image": "https://img.freepik.com/free-photo/mesmerizing-view-silhouette-tree-savanna-plains-sunset_181624-28022.jpg?semt=ais_hybrid&w=740",
+        "excerpt": "Practical techniques to optimize your Node.js applications"
+      }
+    ]
+  },
+  {
+    "id": "g7h8i9j0-k1l2-3456",
+    "title": "Machine Learning Fundamentals",
+    "slug": "ml-fundamentals",
+    "createdAt": "2024-03-10T14:30:00Z",
+    "category": {
+      "id": "cat-303",
+      "title": "Data Science",
+      "slug": "data-science"
+    },
+    "featured": false,
+    "published": true,
+    "tags": [
+      {
+        "id": "tag-010",
+        "title": "ML",
+        "slug": "machine-learning"
+      },
+      {
+        "id": "tag-011",
+        "title": "AI",
+        "slug": "artificial-intelligence"
+      }
+    ],
+    "image": "https://img.freepik.com/free-photo/beautiful-shot-clear-lake-surrounded-by-mountains-cloudy-sky_181624-20875.jpg?semt=ais_hybrid&w=740",
+    "excerpt": "A beginner-friendly introduction to machine learning concepts, algorithms, and real-world applications.",
+    "content": "Machine learning is transforming industries... [full content here]",
+    "raw": "Machine learning is transforming industries...",
+    "relatedArticles": []
+  },
+  {
+    "id": "h8i9j0k1-l2m3-4567",
+    "title": "DevOps CI/CD Pipelines with GitHub Actions",
+    "slug": "github-actions",
+    "createdAt": "2024-04-05T11:45:00Z",
+    "category": {
+      "id": "cat-123",
+      "title": "Web Development",
+      "slug": "web-dev"
+    },
+    "featured": false,
+    "published": true,
+    "tags": [
+      {
+        "id": "tag-001",
+        "title": "JavaScript",
+        "slug": "javascript"
+      },
+      {
+        "id": "tag-002",
+        "title": "React",
+        "slug": "react"
+      }
+    ],
+    "image": "https://img.freepik.com/free-photo/beautiful-shot-snowy-mountain-peak-sunset_181624-21554.jpg?semt=ais_hybrid&w=740",
+    "excerpt": "Learn how to automate your development workflow with GitHub Actions, from simple tests to complex deployment pipelines.",
+    "content": "Continuous Integration and Deployment... [full content here]",
+    "raw": "Continuous Integration and Deployment...",
+    "videoId": "cP0I9w2coGU",
+    "relatedArticles": [
+      {
+        "id": "a1b2c3d4-e5f6-7890",
+        "title": "Getting Started with Next.js",
+        "slug": "getting-started-with-nextjs",
+        "createdAt": "2023-10-15T09:30:00Z",
+        "image": "https://img.freepik.com/free-photo/group-elephants-big-green-tree-wilderness_181624-16897.jpg?semt=ais_hybrid&w=740",
+        "excerpt": "Comprehensive guide covering installation, routing, and deployment"
+      }
+    ]
+  }
+]

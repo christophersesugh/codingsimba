@@ -10,8 +10,8 @@ import {
   CardContent,
   CardFooter,
 } from "~/components/ui/card";
-import { CardBadge } from "./card-badge";
-import { Button } from "./ui/button";
+import { CardBadge } from "../../../components/card-badge";
+import { Button } from "../../../components/ui/button";
 import { format } from "date-fns";
 
 type ArticleCardProps = {
@@ -21,6 +21,8 @@ type ArticleCardProps = {
 
 export function ArticleCard({ article, index }: ArticleCardProps) {
   const stats = readingTime(article.raw);
+  const MAX_EXCERPT_LENGTH = 150;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -43,22 +45,24 @@ export function ArticleCard({ article, index }: ArticleCardProps) {
           <CardBadge className="capitalize">{article.category.title}</CardBadge>
         </CardHeader>
 
-        <CardContent className="">
+        <CardContent className="-mb-2">
           <div className="mb-3 flex items-center justify-between gap-2 text-sm text-gray-500 dark:text-gray-400">
             <span>{format(article.createdAt, "MMMM dd, yyyy")}</span>
             <span>{stats.text}</span>
           </div>
 
           {/* Article title and excerpt */}
-          <CardTitle className="group-hover:text-primary mb-2 transition-colors">
+          <CardTitle className="group-hover:text-primary mb-2 text-lg transition-colors">
             {article.title}
           </CardTitle>
           <CardDescription className="line-clamp-3">
-            {article.excerpt}
+            {article.excerpt.length > MAX_EXCERPT_LENGTH
+              ? `${article.excerpt.slice(0, MAX_EXCERPT_LENGTH)}...`
+              : article.excerpt}
           </CardDescription>
         </CardContent>
 
-        <CardFooter className="flex justify-between pt-0">
+        <CardFooter className="-mb-4 mt-auto flex justify-between pl-3 pt-0">
           <Button
             variant={"link"}
             className="flex w-full items-center justify-start font-medium text-blue-600 dark:text-blue-600"

@@ -4,8 +4,8 @@ import { ContentFilter } from "~/components/content-filter";
 import { Header } from "~/components/content-page-header";
 import { FeaturedArticle } from "./components/featured-article";
 import { Link, useSearchParams } from "react-router";
-import { ArticleCard } from "~/components/article-card";
-import { ArticlePagination } from "./components/pagination";
+import { ArticleCard } from "~/routes/articles/components/article-card";
+import { ContentPagination } from "../../components/content-pagination";
 import {
   getAllCategories,
   getArticles,
@@ -27,9 +27,12 @@ export async function loader({ request }: Route.LoaderArgs) {
   });
 
   const { search, tag, order, category, page } = parsedParams.data;
+
   const PAGE_SIZE = 6;
-  const start = (page - 1) * PAGE_SIZE;
-  const end = start + PAGE_SIZE;
+
+  const safePage = Math.max(0, page);
+  const safeStart = (safePage - 1) * PAGE_SIZE;
+  const safeEnd = safeStart + PAGE_SIZE;
 
   const { data: categories } = await getAllCategories();
   const articlesData = await getArticles({
@@ -37,8 +40,8 @@ export async function loader({ request }: Route.LoaderArgs) {
     tag,
     order,
     category,
-    start,
-    end,
+    start: safeStart,
+    end: safeEnd,
   });
 
   invariantResponse(articlesData, "No articles found", {
@@ -68,6 +71,7 @@ export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
   );
 
   const PAGE = "page";
+  const isIndexPage = currentPage === 1;
 
   const resetFilters = React.useCallback(() => {
     setSearchParams((prevParams) => {
@@ -89,7 +93,9 @@ export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
       />
       <div className="container mx-auto px-4 pb-12 pt-6">
         <ContentFilter categories={categories} />
-        {featuredArticle ? <FeaturedArticle article={featuredArticle} /> : null}
+        {featuredArticle && isIndexPage ? (
+          <FeaturedArticle article={featuredArticle} />
+        ) : null}
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {filteredArticles?.length
             ? filteredArticles.map((article, index) => (
@@ -115,7 +121,7 @@ export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
           />
         ) : null}
         {!filteredArticles?.length ? null : (
-          <ArticlePagination
+          <ContentPagination
             totalPages={totalPages}
             currentPage={currentPage}
           />

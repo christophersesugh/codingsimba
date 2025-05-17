@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "~/components/ui/button";
-import { CourseCard } from "~/components/course-card";
+import { CourseCard } from "~/routes/courses/components/course-card";
 import { Link } from "react-router";
 
 export function CoursesSection() {

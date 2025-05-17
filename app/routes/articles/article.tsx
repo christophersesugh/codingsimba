@@ -3,7 +3,7 @@ import type { Route } from "./+types/article";
 import { DetailsHeader } from "./components/article-details-header";
 import { Tags } from "./components/tags";
 import { Share } from "./components/share";
-import { Author } from "./components/author";
+import { Author } from "../../components/author";
 import { RelatedArticleCard } from "./components/related-article";
 import { TableOfContent } from "./components/table-of-content";
 import { SubscriptionForm } from "./components/subscription-form";

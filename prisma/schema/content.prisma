@@ -139,27 +139,20 @@ enum ReviewStatus {
 }
 
 model Enrollment {
-  id String @id @default(ulid())
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id        String  @id @default(ulid())
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
   contentId String
-  content   Content @relation(fields: [contentId], references: [id])
 
-  enrolledAt  DateTime         @default(now())
-  completedAt DateTime?
-  progress    Int              @default(0) // percentage 0-100
-  status      EnrollmentStatus @default(ACTIVE)
+  // Subscription linkage
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [subscriptionId])
+  subscriptionId String?
+
+  enrolledAt DateTime  @default(now())
+  expiresAt  DateTime? // Null = access follows subscription
 
   @@unique([userId, contentId])
-  @@index([userId])
-  @@index([contentId])
-  @@index([status])
-}
-
-enum EnrollmentStatus {
-  ACTIVE
-  COMPLETED
-  CANCELLED
+  @@index([subscriptionId])
+  @@index([expiresAt])
 }

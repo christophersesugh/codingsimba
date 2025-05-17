@@ -35,7 +35,7 @@ export function Header({ title, description, placeholder }: HeaderProps) {
   }, [searchParams, setSearch]);
 
   return (
-    <div className="border-b border-gray-200 bg-blue-50 pb-16 pt-24 dark:border-gray-800 dark:bg-blue-950/30">
+    <div className="border-b border-gray-200 bg-blue-50 pb-12 pt-20 dark:border-gray-800 dark:bg-blue-950/30">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-4xl text-center">
           <h1 className="mb-4 text-4xl font-bold capitalize md:text-5xl">

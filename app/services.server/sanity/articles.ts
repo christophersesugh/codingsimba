@@ -45,10 +45,6 @@ export const ArticleSchema = z.object({
   excerpt: z.string().min(50, "Excerpt too short").max(200, "Excerpt too long"),
   content: z.string().min(100, "Content too short"),
   raw: z.string(),
-  videoId: z
-    .string()
-    .regex(/^[a-zA-Z0-9_-]{11}$/, "Invalid YouTube ID")
-    .optional(),
   relatedArticles: RelatedArticlesSchema,
 });
 
@@ -63,7 +59,7 @@ export const UrlSchema = z.object({
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ArgsSchema = UrlSchema.extend({
   start: z.number().min(0).default(0),
-  end: z.number().min(6).max(6).default(6),
+  end: z.number().min(1).default(6),
 }).omit({ page: true });
 
 export type Article = z.infer<typeof ArticleSchema>;
@@ -71,7 +67,7 @@ export type Tag = z.infer<typeof TagsSchema>[number];
 export type Category = z.infer<typeof CategorySchema>;
 type ArticlesArgs = z.infer<typeof ArgsSchema>;
 
-function articlesQuery({
+export function articlesQuery({
   search,
   filters,
   order,
@@ -161,11 +157,11 @@ export async function getArticles(args: ArticlesArgs) {
 
   return {
     articles: transformedData,
-    total: data.total,
+    total: data?.total ?? 0,
   };
 }
 
-const articleDetailsQuery = groq`*[_type == "article" && slug.current == $slug][0] {
+export const articleDetailsQuery = groq`*[_type == "article" && slug.current == $slug][0] {
   "id": _id,
   title,
     "slug": slug.current,
@@ -186,7 +182,7 @@ const articleDetailsQuery = groq`*[_type == "article" && slug.current == $slug][
     content
   }`;
 
-const relatedQuery = groq`*[
+export const relatedQuery = groq`*[
     _type == "article" &&
     published == true &&
     slug.current != $slug &&
@@ -228,6 +224,14 @@ export async function getArticleDetails(slug: string) {
     relatedArticles: relatedArticles.data || [],
   };
 }
+
+export const tagQuery = groq`*[_type == "tag"] {
+    "id": _id,
+    title,
+    "slug": slug.current,
+    "count": count(*[_type == "article" && references(^._id)]) 
+  } | order(count desc) [0...$limit]`;
+
 /**
  * Fetch popular tags from the database.
  * @param {number} limit - The number of tags to fetch.
@@ -238,26 +242,11 @@ export async function getArticleDetails(slug: string) {
  * ```
  */
 export async function getPopularTags(limit = 10) {
-  const query = groq`*[_type == "tag"] {
-    "id": _id,
-    title,
-    "slug": slug.current,
-    "count": count(*[_type == "article" && references(^._id)])
-  } | order(count desc) [0...$limit]`;
-  return loadQuery<Tag[]>(query, { limit });
+  return loadQuery<Tag[]>(tagQuery, { limit });
 }
 
-/**
- * Fetch recent articles from the database.
- * @param {number} limit - The number of recent articles to fetch.
- * @returns {Promise<Article[]>} - The recent articles.
- * @example
- * ```ts
- * const recentArticles = await getRecentArticles();
- * ```
- */
-export async function getRecentArticles(limit = 4) {
-  const query = groq`*[_type == "article" && published == true] | order(createdAt desc) [0...$limit] {
+export function recentArticlesQuery() {
+  return groq`*[_type == "article" && published == true] | order(createdAt desc) [0...$limit] {
     "id": _id,
     title,
     "slug": slug.current,
@@ -270,9 +259,26 @@ export async function getRecentArticles(limit = 4) {
     "image": image.asset->url,
     excerpt
   }`;
-
-  return loadQuery<Article[]>(query, { limit });
 }
+
+/**
+ * Fetch recent articles from the database.
+ * @param {number} limit - The number of recent articles to fetch.
+ * @returns {Promise<Article[]>} - The recent articles.
+ * @example
+ * ```ts
+ * const recentArticles = await getRecentArticles();
+ * ```
+ */
+export async function getRecentArticles(limit = 4) {
+  return loadQuery<Article[]>(recentArticlesQuery(), { limit }) ?? [];
+}
+
+export const categoryQuery = groq`*[_type == "category"] {
+    "id": _id,
+    title,
+    "slug": slug.current
+  }`;
 
 /**
  * Fetch all categories from sanity.
@@ -283,11 +289,5 @@ export async function getRecentArticles(limit = 4) {
  * ```
  */
 export async function getAllCategories() {
-  const query = groq`*[_type == "category"] {
-    "id": _id,
-    title,
-    "slug": slug.current
-  }`;
-
-  return loadQuery<Category[]>(query);
+  return loadQuery<Category[]>(categoryQuery) ?? [];
 }

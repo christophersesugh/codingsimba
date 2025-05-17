@@ -1,0 +1,92 @@
+[
+  {
+    "id": "tag-001",
+    "title": "JavaScript",
+    "slug": "javascript",
+    "description": "Articles about JavaScript programming language"
+  },
+  {
+    "id": "tag-002",
+    "title": "React",
+    "slug": "react",
+    "description": "Content about React library and ecosystem"
+  },
+  {
+    "id": "tag-003",
+    "title": "TypeScript",
+    "slug": "typescript",
+    "description": "TypeScript tips and best practices"
+  },
+  {
+    "id": "tag-004",
+    "title": "CSS",
+    "slug": "css",
+    "description": "Styling and CSS techniques"
+  },
+  {
+    "id": "tag-005",
+    "title": "Layout",
+    "slug": "layout",
+    "description": "Web layout and design patterns"
+  },
+  {
+    "id": "tag-006",
+    "title": "Node.js",
+    "slug": "nodejs",
+    "description": "Server-side JavaScript with Node.js"
+  },
+  {
+    "id": "tag-007",
+    "title": "React Native",
+    "slug": "react-native",
+    "description": "Cross-platform mobile development"
+  },
+  {
+    "id": "tag-008",
+    "title": "Python",
+    "slug": "python",
+    "description": "Python programming articles"
+  },
+  {
+    "id": "tag-009",
+    "title": "Async",
+    "slug": "async",
+    "description": "Asynchronous programming patterns"
+  },
+  {
+    "id": "tag-010",
+    "title": "ML",
+    "slug": "machine-learning",
+    "description": "Machine learning fundamentals"
+  },
+  {
+    "id": "tag-011",
+    "title": "AI",
+    "slug": "artificial-intelligence",
+    "description": "Artificial intelligence concepts"
+  },
+  {
+    "id": "tag-012",
+    "title": "DevOps",
+    "slug": "devops",
+    "description": "Development operations practices"
+  },
+  {
+    "id": "tag-013",
+    "title": "CI/CD",
+    "slug": "ci-cd",
+    "description": "Continuous integration and deployment"
+  },
+  {
+    "id": "tag-014",
+    "title": "Performance",
+    "slug": "performance",
+    "description": "Performance optimization techniques"
+  },
+  {
+    "id": "tag-015",
+    "title": "Security",
+    "slug": "security",
+    "description": "Web security best practices"
+  }
+]

@@ -10,7 +10,7 @@ import {
 } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { CardBadge } from "./card-badge";
+import { CardBadge } from "../../../components/card-badge";
 import { Link } from "react-router";
 
 interface CourseCardProps {

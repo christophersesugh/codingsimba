@@ -2,7 +2,7 @@ import type { Article } from "~/services.server/sanity/articles";
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "~/components/ui/button";
-import { ArticleCard } from "~/components/article-card";
+import { ArticleCard } from "~/routes/articles/components/article-card";
 import { Link } from "react-router";
 
 export function ArticlesSection({ articles }: { articles: Article[] }) {

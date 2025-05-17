@@ -1,8 +1,8 @@
-import { Button } from "./ui/button";
+import { Button } from "./button";
 import { Link } from "react-router";
 import { Coffee } from "lucide-react";
 
-export function BuyMeACoffeeButton() {
+export function SupportMeButton() {
   const BUY_ME_A_COFFEE_URL =
     "https://buymeacoffee.com/christophersesugh" as const;
   return (

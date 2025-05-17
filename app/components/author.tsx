@@ -1,6 +1,6 @@
 import { ArrowBigRight } from "lucide-react";
 import { Link } from "react-router";
-import { BuyMeACoffeeButton } from "~/components/buy-me-a-coffee-button";
+import { SupportMeButton } from "~/components/ui/support-me-button";
 import { Button } from "~/components/ui/button";
 
 export function Author() {
@@ -26,7 +26,7 @@ export function Author() {
             learning, always shipping.
           </p>
           <div className="mt-4 flex items-center gap-2">
-            <BuyMeACoffeeButton />
+            <SupportMeButton />
             <Button aria-label="Learn more about me" asChild>
               <Link to="/about" prefetch="intent">
                 Learn more

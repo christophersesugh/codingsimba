@@ -10,18 +10,19 @@ datasource db {
 }
 
 model User {
-  id                   String                @id @default(ulid())
-  email                String                @unique
-  isVerified           Boolean               @default(false)
-  isSubscribed         Boolean               @default(false)
-  createdAt            DateTime              @default(now())
-  updatedAt            DateTime              @updatedAt
+  id                   String               @id @default(ulid())
+  email                String               @unique
+  polarCustomerId      String?              @unique
+  isVerified           Boolean              @default(false)
+  isSubscribed         Boolean              @default(false)
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
   profile              Profile?
   password             Password?
   roles                Role[]
   sessions             Session[]
   connections          Connection[]
-  notificationSettings NotificationSetting[]
+  notificationSettings NotificationSetting?
   likes                Like[]
   comments             Comment[]
   reviews              Review[]
@@ -165,10 +166,7 @@ model NotificationSetting {
   communityEvents  Boolean @default(true)
   allNotifications Boolean @default(false)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  userId String
+  userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([userId])
