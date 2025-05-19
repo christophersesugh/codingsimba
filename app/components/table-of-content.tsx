@@ -17,10 +17,10 @@ function TOC({ className }: { className?: string }) {
       )}
     >
       <h3 className="mb-4 text-lg font-bold">Table of Contents</h3>
-      <nav className="space-y-2">
+      <nav className="space-y-3">
         <ul>
           {headings?.length ? (
-            headings.map((heading) => {
+            headings.map((heading, i) => {
               const { id, text } = heading;
               const activeItem = activeId === id;
               return (
@@ -34,6 +34,7 @@ function TOC({ className }: { className?: string }) {
                       },
                     )}
                   >
+                    <span className="mr-2 font-bold">{`${i + 1}`}.</span>
                     {text}
                   </Link>
                 </li>

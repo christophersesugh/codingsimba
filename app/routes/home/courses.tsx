@@ -1,8 +1,10 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Button } from "~/components/ui/button";
-import { CourseCard } from "~/routes/courses/components/course-card";
-import { Link } from "react-router";
+// import { Button } from "~/components/ui/button";
+// import { CourseCard } from "~/routes/courses/components/course-card";
+// import { Link } from "react-router";
+import { EmptyState } from "~/components/empty-state";
+import { BookOpenText } from "lucide-react";
 
 export function CoursesSection() {
   return (
@@ -28,52 +30,58 @@ export function CoursesSection() {
         </motion.div>
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {courses.map((course, index) => (
+          {/* {courses.map((course, index) => (
             <CourseCard key={index} course={course} index={index} />
-          ))}
+          ))} */}
+          <EmptyState
+            icon={<BookOpenText className="size-8" />}
+            title="No Courses Available"
+            description="We are working hard to create new content. Stay tuned!"
+            className="col-span-2 w-full md:col-span-3"
+          />
         </div>
 
-        <div className="mt-12 text-center">
+        {/* <div className="mt-12 text-center">
           <Button className="rounded-full px-8">
-            <Link to={"/courses"} prefetch="intent">
+            <Link to={"courses"} prefetch="intent">
               View All Courses
             </Link>
           </Button>
-        </div>
+        </div> */}
       </div>
     </section>
   );
 }
 
-const courses = [
-  {
-    title: "Modern React Development",
-    description: "Master React with hooks, context, and modern patterns",
-    image: "/placeholder.svg?height=200&width=400&text=React",
-    level: "Intermediate",
-    lessons: 42,
-    duration: "8 hours",
-    price: "$79",
-    tag: "Bestseller",
-  },
-  {
-    title: "Advanced TypeScript",
-    description: "Take your TypeScript skills to the next level",
-    image: "/placeholder.svg?height=200&width=400&text=TypeScript",
-    level: "Advanced",
-    lessons: 36,
-    duration: "6.5 hours",
-    price: "$89",
-    tag: "New",
-  },
-  {
-    title: "Full-Stack Next.js",
-    description: "Build complete applications with Next.js and modern tools",
-    image: "/placeholder.svg?height=200&width=400&text=Next.js",
-    level: "Intermediate",
-    lessons: 54,
-    duration: "10 hours",
-    price: "$99",
-    tag: "Popular",
-  },
-];
+// const courses = [
+//   {
+//     title: "Modern React Development",
+//     description: "Master React with hooks, context, and modern patterns",
+//     image: "/placeholder.svg?height=200&width=400&text=React",
+//     level: "Intermediate",
+//     lessons: 42,
+//     duration: "8 hours",
+//     price: "$79",
+//     tag: "Bestseller",
+//   },
+//   {
+//     title: "Advanced TypeScript",
+//     description: "Take your TypeScript skills to the next level",
+//     image: "/placeholder.svg?height=200&width=400&text=TypeScript",
+//     level: "Advanced",
+//     lessons: 36,
+//     duration: "6.5 hours",
+//     price: "$89",
+//     tag: "New",
+//   },
+//   {
+//     title: "Full-Stack Next.js",
+//     description: "Build complete applications with Next.js and modern tools",
+//     image: "/placeholder.svg?height=200&width=400&text=Next.js",
+//     level: "Intermediate",
+//     lessons: 54,
+//     duration: "10 hours",
+//     price: "$99",
+//     tag: "Popular",
+//   },
+// ];

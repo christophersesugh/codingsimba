@@ -20,27 +20,33 @@ export function ContentFilter({ categories }: { categories: Category[] }) {
   const CATEGORY = "category";
 
   function handleCategorySelect(category: string) {
-    setSearchParams((prevParams) => {
-      const params = new URLSearchParams(prevParams);
-      params.delete(CATEGORY);
-      if (category) {
-        params.set(CATEGORY, encodeURIComponent(category));
-      } else {
+    setSearchParams(
+      (prevParams) => {
+        const params = new URLSearchParams(prevParams);
         params.delete(CATEGORY);
-      }
-      return params;
-    });
+        if (category) {
+          params.set(CATEGORY, encodeURIComponent(category));
+        } else {
+          params.delete(CATEGORY);
+        }
+        return params;
+      },
+      { preventScrollReset: true },
+    );
   }
 
   type OrderValue = "createdAt asc" | "createdAt desc";
   const ORDER = "order" as OrderValue;
 
   function handleOrderSelect(order: OrderValue) {
-    setSearchParams((prevParams) => {
-      const params = new URLSearchParams(prevParams);
-      params.set(ORDER, order);
-      return params;
-    });
+    setSearchParams(
+      (prevParams) => {
+        const params = new URLSearchParams(prevParams);
+        params.set(ORDER, order);
+        return params;
+      },
+      { preventScrollReset: true },
+    );
   }
 
   function handleSelectOnchange(

@@ -27,7 +27,7 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { useAuthDialog } from "~/contexts/auth-dialog";
 import { VisuallyHidden } from "./ui/visually-hidden";
-import { FormError } from "./form-error";
+import { FormError } from "./form-errors";
 import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
 import { capitalizeName } from "~/utils/user";
 

@@ -21,7 +21,7 @@ import { parseWithZod } from "@conform-to/zod";
 import { createUploadHandler } from "~/utils/storage.server";
 import { prisma } from "~/utils/db.server";
 import { invariant } from "~/utils/misc";
-import { FormError } from "~/components/form-error";
+import { FormError } from "~/components/form-errors";
 import { ImageSchema } from "~/utils/storage";
 
 const ProfileSchema = z.object({
@@ -91,7 +91,7 @@ export async function action({ request }: Route.ActionArgs) {
   const updatedUser = await prisma.user.update({
     where: { id: user.id },
     data: {
-      onboarded: true,
+      isVerified: true,
       profile: {
         upsert: {
           where: { userId: user.id },

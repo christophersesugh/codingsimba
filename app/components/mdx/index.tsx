@@ -1,6 +1,15 @@
 import * as React from "react";
 import { getMDXComponent } from "mdx-bundler/client";
-import { A, Blockquote, H1, H2, H3, P, Subtle } from "./components/typography";
+import {
+  A,
+  Blockquote,
+  H1,
+  H2,
+  H3,
+  Hr,
+  P,
+  Subtle,
+} from "./components/typography";
 import { Img } from "./components/media";
 import { Ol, Ul } from "./components/lists";
 import { Code } from "./components/code";
@@ -35,6 +44,7 @@ export function Markdown({
           ol: Ol,
           ul: Ul,
           img: Img,
+          hr: Hr,
         }}
       />
     </div>

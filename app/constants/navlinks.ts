@@ -15,10 +15,13 @@ export const legal = [
 ];
 
 export const social = [
-  { name: "twitter", path: "https://twitter.com/codingsimba_" },
-  { name: "linkedIn", path: "https://www.linkedin.com/in/" },
-  { name: "github", path: "https://github.com/christophersesugh" },
-  { name: "youTube", path: "https://www.youtube.com/@codingsimba" },
+  { name: "X (formerly twitter)", path: "https://twitter.com/codingsimba_" },
+  {
+    name: "LinkedIn",
+    path: "https://www.linkedin.com/in/christopher-sesugh-265332176/",
+  },
+  { name: "Github", path: "https://github.com/christophersesugh" },
+  { name: "YouTube", path: "https://www.youtube.com/@codingsimba" },
 ];
 
 export const navLinks = [...content, ...platform];

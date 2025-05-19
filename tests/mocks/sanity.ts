@@ -4,6 +4,7 @@ import { SANITY_API_URL } from "~/services.server/sanity/loader";
 import {
   articleDetailsQuery,
   categoryQuery,
+  countQuery,
   recentArticlesQuery,
   relatedQuery,
   tagQuery,
@@ -26,6 +27,15 @@ export const handlers: HttpHandler[] = [
       query.includes('"articles": *[_type == "article" && published == true')
     ) {
       return retrieveArticles(url, query);
+    }
+
+    if (query === countQuery) {
+      const count = articles.filter((a) => a.published).length;
+      return HttpResponse.json({
+        result: {
+          count,
+        },
+      });
     }
 
     if (query === articleDetailsQuery) {

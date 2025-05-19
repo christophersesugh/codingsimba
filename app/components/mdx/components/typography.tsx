@@ -1,6 +1,7 @@
-import { Quote } from "lucide-react";
 import React from "react";
+import { Quote } from "lucide-react";
 import { Link, type LinkProps } from "react-router";
+import { Separator } from "~/components/ui/separator";
 import { cn } from "~/lib/shadcn";
 
 export function H1({
@@ -26,7 +27,7 @@ export function H2({
     <h2
       className={cn(
         "scroll-m-20 text-3xl font-semibold tracking-tight text-gray-800 dark:text-gray-200",
-        "mb-4 mt-8 border-b border-gray-200 pb-2 dark:border-gray-800",
+        "mb-4 mt-8 dark:border-gray-800",
         className,
       )}
       {...props}
@@ -41,7 +42,7 @@ export const H3 = ({
   <h3
     className={cn(
       "scroll-m-20 text-2xl font-semibold tracking-tight text-gray-800 dark:text-gray-200",
-      "mb-4 mt-8 border-b border-gray-200 pb-2 dark:border-gray-800",
+      "mb-4 mt-8 dark:border-gray-800",
       className,
     )}
     {...props}
@@ -186,4 +187,8 @@ export function A({ className, to: href, ...props }: AProps) {
       {...props}
     />
   );
+}
+
+export function Hr({ className, ...props }: { className?: string }) {
+  return <Separator className={cn("my-2", className)} {...props} />;
 }

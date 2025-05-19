@@ -25,19 +25,7 @@
     ],
     "image": "https://img.freepik.com/free-photo/group-elephants-big-green-tree-wilderness_181624-16897.jpg?semt=ais_hybrid&w=740",
     "excerpt": "Learn how to set up a Next.js project from scratch with this comprehensive guide covering installation, routing, and deployment.",
-    "content": "Next.js has become one of the most popular React frameworks... [full content here]",
-    "raw": "Next.js has become one of the most popular React frameworks...",
-    "videoId": "dQw4w9WgXcQ",
-    "relatedArticles": [
-      {
-        "id": "b2c3d4e5-f6g7-8901",
-        "title": "React Server Components Explained",
-        "slug": "react-server-components",
-        "createdAt": "2023-09-20T14:15:00Z",
-        "image": "../images/article2.avif",
-        "excerpt": "Understanding the new paradigm of server components in React 18"
-      }
-    ]
+    "content": "Next.js has become one of the most popular React frameworks... [full content here]"
   },
   {
     "id": "b2c3d4e5-f6g7-8901",
@@ -61,9 +49,7 @@
     ],
     "image": "https://img.freepik.com/free-photo/group-elephants-big-green-tree-wilderness_181624-16897.jpg?semt=ais_hybrid&w=740",
     "excerpt": "some added djdjksdjdfhjdfdfj sdjksdjkdsjkdsjk sdjkdsjsdjjksd dsjkdsjk Explore advanced TypeScript patterns including utility types, conditional types, and type guards with practical examples.",
-    "content": "TypeScript's type system is powerful... [full content here]",
-    "raw": "TypeScript's type system is powerful...",
-    "relatedArticles": []
+    "content": "TypeScript's type system is powerful... [full content here]"
   },
   {
     "id": "c3d4e5f6-g7h8-9012",
@@ -92,9 +78,7 @@
     ],
     "image": "https://img.freepik.com/premium-photo/chicken-logo-playful-bird-design_1077802-36433.jpg?semt=ais_hybrid&w=740",
     "excerpt": "Master CSS Grid Layout with this complete guide covering all properties and real-world use cases for modern web layouts.",
-    "content": "CSS Grid has revolutionized web layout... [full content here]",
-    "raw": "CSS Grid has revolutionized web layout...",
-    "videoId": "hSMh2W5ko5s"
+    "content": "CSS Grid has revolutionized web layout... [full content here]"
   },
   {
     "id": "d4e5f6g7-h8i9-0123",
@@ -122,8 +106,7 @@
     ],
     "image": "https://img.freepik.com/free-photo/mesmerizing-view-silhouette-tree-savanna-plains-sunset_181624-28022.jpg?semt=ais_hybrid&w=740",
     "excerpt": "Practical techniques to optimize your Node.js applications including clustering, caching, and async best practices.",
-    "content": "Node.js applications can face performance bottlenecks... [full content here]",
-    "raw": "Node.js applications can face performance bottlenecks..."
+    "content": "Node.js applications can face performance bottlenecks... [full content here]"
   },
   {
     "id": "e5f6g7h8-i9j0-1234",
@@ -152,18 +135,7 @@
     ],
     "image": "https://img.freepik.com/free-photo/field-covered-greenery-surrounded-by-zebras-sunlight-blue-sky_181624-18150.jpg?semt=ais_hybrid&w=740",
     "excerpt": "Comparing state management solutions for React Native applications including Context API, Redux, and MobX.",
-    "content": "State management is crucial for React Native apps... [full content here]",
-    "raw": "State management is crucial for React Native apps...",
-    "relatedArticles": [
-      {
-        "id": "f6g7h8i9-j0k1-2345",
-        "title": "React Hooks Deep Dive",
-        "slug": "react-hooks",
-        "createdAt": "2023-11-30T08:40:00Z",
-        "image": "https://img.freepik.com/free-photo/field-covered-greenery-surrounded-by-zebras-sunlight-blue-sky_181624-18150.jpg?semt=ais_hybrid&w=740",
-        "excerpt": "Understanding React Hooks through practical examples and common patterns"
-      }
-    ]
+    "content": "State management is crucial for React Native apps... [full content here]"
   },
   {
     "id": "f6g7h8i9-j0k1-2345",
@@ -191,19 +163,7 @@
     ],
     "image": "https://img.freepik.com/free-photo/beautiful-shot-green-mountains-covered-fog_181624-20707.jpg?semt=ais_hybrid&w=740",
     "excerpt": "Master Python's async/await syntax and learn how to build high-performance asynchronous applications with asyncio.",
-    "content": "Python's async/await syntax has revolutionized... [full content here]",
-    "raw": "Python's async/await syntax has revolutionized...",
-    "videoId": "F19R_M4Nay4",
-    "relatedArticles": [
-      {
-        "id": "d4e5f6g7-h8i9-0123",
-        "title": "Node.js Performance Optimization",
-        "slug": "nodejs-performance",
-        "createdAt": "2023-12-10T10:10:00Z",
-        "image": "https://img.freepik.com/free-photo/mesmerizing-view-silhouette-tree-savanna-plains-sunset_181624-28022.jpg?semt=ais_hybrid&w=740",
-        "excerpt": "Practical techniques to optimize your Node.js applications"
-      }
-    ]
+    "content": "Python's async/await syntax has revolutionized... [full content here]"
   },
   {
     "id": "g7h8i9j0-k1l2-3456",
@@ -231,9 +191,7 @@
     ],
     "image": "https://img.freepik.com/free-photo/beautiful-shot-clear-lake-surrounded-by-mountains-cloudy-sky_181624-20875.jpg?semt=ais_hybrid&w=740",
     "excerpt": "A beginner-friendly introduction to machine learning concepts, algorithms, and real-world applications.",
-    "content": "Machine learning is transforming industries... [full content here]",
-    "raw": "Machine learning is transforming industries...",
-    "relatedArticles": []
+    "content": "Machine learning is transforming industries... [full content here]"
   },
   {
     "id": "h8i9j0k1-l2m3-4567",
@@ -261,18 +219,6 @@
     ],
     "image": "https://img.freepik.com/free-photo/beautiful-shot-snowy-mountain-peak-sunset_181624-21554.jpg?semt=ais_hybrid&w=740",
     "excerpt": "Learn how to automate your development workflow with GitHub Actions, from simple tests to complex deployment pipelines.",
-    "content": "Continuous Integration and Deployment... [full content here]",
-    "raw": "Continuous Integration and Deployment...",
-    "videoId": "cP0I9w2coGU",
-    "relatedArticles": [
-      {
-        "id": "a1b2c3d4-e5f6-7890",
-        "title": "Getting Started with Next.js",
-        "slug": "getting-started-with-nextjs",
-        "createdAt": "2023-10-15T09:30:00Z",
-        "image": "https://img.freepik.com/free-photo/group-elephants-big-green-tree-wilderness_181624-16897.jpg?semt=ais_hybrid&w=740",
-        "excerpt": "Comprehensive guide covering installation, routing, and deployment"
-      }
-    ]
+    "content": "## Introduction\n\n```youtube\ndQw4w9WgXcQ\n```\n*Watch: \"The Future of Web Development\" (Keynote 2024)*\n\n---\n\n## Section 1: React Server Components\n\n```sandpack_vite_react\n{\n  \"files\": {\n    \"/App.js\": \"import { useState } from 'react';\\n\\nexport default function App() {\\n  const [count, setCount] = useState(0);\\n\\n  return (\\n    <div>\\n      <h1>React 2024</h1>\\n      <button onClick={() => setCount(c => c + 1)}>\\n        Count: {count}\\n      </button>\\n    </div>\\n  );\\n}\"\n    ,\n    \"/styles.css\": \"body {\\n  font-family: sans-serif;\\n  padding: 2rem;\\n}\\n\\nbutton {\\n  padding: 0.5rem 1rem;\\n  background: #2563eb;\\n  color: white;\\n  border: none;\\n  border-radius: 4px;\\n}\"\n    ,\n    \"/package.json\": \"{\\n  \\\"dependencies\\\": {\\n    \\\"react\\\": \\\"^18.2.0\\\",\\n    \\\"react-dom\\\": \\\"^18.2.0\\\",\\n    \\\"react-scripts\\\": \\\"^5.0.1\\\"\\n  }\\n}\"\n  },\n  \"main\": \"/App.js\",\n  \"environment\": \"create-react-app\"\n}\n```\n\n---\n\n## Section 2: Modern Backend Development\n\n```sandpack_node\n{\n  \"files\": {\n    \"/index.js\": \"import express from 'express';\\nconst app = express();\\n\\n// AI-powered API endpoint\\napp.get('/ai-completion', async (req, res) => {\\n  const { prompt } = req.query;\\n\\n  // Simulate AI processing\\n  const completion = `AI response to: ${prompt}`;\\n\\n  res.json({ completion });\\n});\\n\\napp.listen(3000, () => {\\n  console.log('Server running on port 3000');\\n});\"\n    ,\n    \"/package.json\": \"{\\n  \\\"type\\\": \\\"module\\\",\\n  \\\"dependencies\\\": {\\n    \\\"express\\\": \\\"^4.18.2\\\",\\n    \\\"cors\\\": \\\"^2.8.5\\\"\\n  }\\n}\"\n  },\n  \"main\": \"/index.js\",\n  \"environment\": \"node\"\n}\n```"
   }
 ]

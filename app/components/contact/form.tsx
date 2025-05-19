@@ -60,43 +60,52 @@ export function ContactForm() {
   }
 
   return (
-    <Form
-      onSubmit={handleSubmit}
-      className="rounded-xl border border-slate-300 bg-white p-6 shadow-sm dark:border-slate-600 dark:bg-gray-900"
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5 }}
+      viewport={{ once: true }}
     >
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" placeholder="John Doe" required />
+      <h2 className="mb-6 text-2xl font-bold">Leave a message</h2>
+
+      <Form
+        onSubmit={handleSubmit}
+        className="rounded-xl border border-slate-300 bg-white p-6 shadow-sm dark:border-slate-600 dark:bg-gray-900"
+      >
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input id="name" placeholder="John Doe" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="john@doe.com"
+                required
+              />
+            </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="john@doe.com"
+            <Label htmlFor="subject">Subject</Label>
+            <Input id="subject" placeholder="How can I help you?" required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="message">Message</Label>
+            <Textarea
+              id="message"
+              placeholder="Your message here..."
+              rows={5}
               required
             />
           </div>
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? "Sending..." : "Send Message"}
+          </Button>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="subject">Subject</Label>
-          <Input id="subject" placeholder="How can I help you?" required />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="message">Message</Label>
-          <Textarea
-            id="message"
-            placeholder="Your message here..."
-            rows={5}
-            required
-          />
-        </div>
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? "Sending..." : "Send Message"}
-        </Button>
-      </div>
-    </Form>
+      </Form>
+    </motion.div>
   );
 }

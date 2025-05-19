@@ -1,7 +1,7 @@
 import React from "react";
 import type { Route } from "./+types";
 import { ContentFilter } from "~/components/content-filter";
-import { Header } from "~/components/content-page-header";
+import { Header } from "~/components/page-header";
 import { FeaturedArticle } from "./components/featured-article";
 import { Link, useSearchParams } from "react-router";
 import { ArticleCard } from "~/routes/articles/components/article-card";
@@ -88,8 +88,9 @@ export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
     <div>
       <Header
         title="articles"
-        description="In-depth articles to help you stay ahead in web development."
-        placeholder="search articles..."
+        description="In-depth articles to help you stay ahead in software development."
+        placeholder="search for articles..."
+        enableSearch
       />
       <div className="container mx-auto px-4 pb-12 pt-6">
         <ContentFilter categories={categories} />

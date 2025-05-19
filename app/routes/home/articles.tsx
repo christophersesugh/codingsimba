@@ -3,9 +3,14 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "~/components/ui/button";
 import { ArticleCard } from "~/routes/articles/components/article-card";
-import { Link } from "react-router";
+import { Await, Link } from "react-router";
+import { Skeleton } from "~/components/ui/skeleton";
 
-export function ArticlesSection({ articles }: { articles: Article[] }) {
+export function ArticlesSection({
+  articles,
+}: {
+  articles: Promise<Article[]>;
+}) {
   return (
     <section
       id="articles"
@@ -29,9 +34,25 @@ export function ArticlesSection({ articles }: { articles: Article[] }) {
         </motion.div>
 
         <div className="grid gap-8 md:grid-cols-2">
-          {articles.map((article, index) => (
-            <ArticleCard key={article.id} article={article} index={index} />
-          ))}
+          <React.Suspense
+            fallback={Array.from({ length: 3 }).map((_, index) => (
+              <Skeleton key={index} className="h-24" />
+            ))}
+          >
+            <Await resolve={articles}>
+              {(articles) =>
+                articles.map((article, index) => (
+                  <Link
+                    key={article.id}
+                    to={`/articles/${article.slug}`}
+                    prefetch="intent"
+                  >
+                    <ArticleCard article={article} index={index} />
+                  </Link>
+                ))
+              }
+            </Await>
+          </React.Suspense>
         </div>
 
         <div className="mt-12 text-center">

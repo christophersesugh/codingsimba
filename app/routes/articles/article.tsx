@@ -1,11 +1,11 @@
 import React from "react";
 import type { Route } from "./+types/article";
-import { DetailsHeader } from "./components/article-details-header";
+import { DetailsHeader } from "../../components/details-header";
 import { Tags } from "./components/tags";
 import { Share } from "./components/share";
 import { Author } from "../../components/author";
 import { RelatedArticleCard } from "./components/related-article";
-import { TableOfContent } from "./components/table-of-content";
+import { TableOfContent } from "../../components/table-of-content";
 import { SubscriptionForm } from "./components/subscription-form";
 import { PopularTags } from "./components/popular-tags";
 import { Markdown } from "~/components/mdx";
@@ -97,7 +97,7 @@ export default function ArticleDetailsRoute({
   const { article, popularTags, articleMetadata } = loaderData;
   return (
     <>
-      <DetailsHeader article={article} />
+      <DetailsHeader item={article} />
       {/* Article content */}
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">

@@ -12,7 +12,7 @@ export function FeaturedArticle({ article }: { article: Article }) {
       className="group mb-12 block"
       prefetch="intent"
     >
-      <div className="grid h-[300px] max-h-[300px] gap-8 overflow-hidden rounded-2xl bg-gray-100 md:grid-cols-2 dark:bg-gray-900">
+      <div className="grid gap-8 overflow-hidden rounded-2xl bg-gray-100 md:h-[300px] md:max-h-[300px] md:grid-cols-2 dark:bg-gray-900">
         <div className="relative aspect-video md:aspect-auto md:h-[300px] md:max-h-[300px]">
           <img
             src={article.image}

@@ -161,6 +161,19 @@ export async function getArticles(args: ArticlesArgs) {
   };
 }
 
+export const countQuery = `count(*[_type == "article" && published == true])`;
+/**
+ * Fetches the total count of published articles.
+ * @returns {Promise<number>} - The total count of published articles.
+ * @example
+ * ```ts
+ * const totalArticles = await countArticles();
+ * ```
+ */
+export async function countArticles() {
+  return (await loadQuery<{ count: number }>(countQuery)).data;
+}
+
 export const articleDetailsQuery = groq`*[_type == "article" && slug.current == $slug][0] {
   "id": _id,
   title,
@@ -271,7 +284,9 @@ export function recentArticlesQuery() {
  * ```
  */
 export async function getRecentArticles(limit = 4) {
-  return loadQuery<Article[]>(recentArticlesQuery(), { limit }) ?? [];
+  return (
+    (await loadQuery<Article[]>(recentArticlesQuery(), { limit }))?.data ?? []
+  );
 }
 
 export const categoryQuery = groq`*[_type == "category"] {
