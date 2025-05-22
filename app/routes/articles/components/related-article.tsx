@@ -1,17 +1,11 @@
 import type { Article } from "~/services.server/sanity/articles";
-import {
-  Card,
-  CardTitle,
-  // CardDescription,
-  CardContent,
-} from "~/components/ui/card";
+import { Card, CardTitle, CardContent } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Link } from "react-router";
 import { readingTime } from "reading-time-estimator";
 
 export function RelatedArticleCard({ article }: { article: Article }) {
   const stats = readingTime(article.raw);
-  // const MAX_EXCERPT_LENGTH = 100;
   return (
     <Link
       prefetch="intent"
@@ -41,11 +35,6 @@ export function RelatedArticleCard({ article }: { article: Article }) {
           <CardTitle className="group-hover:text-primary mb-2 line-clamp-2">
             {article.title}
           </CardTitle>
-          {/* <CardDescription className="line-clamp-2">
-            {article.excerpt.length > MAX_EXCERPT_LENGTH
-              ? `${article.excerpt.slice(0, MAX_EXCERPT_LENGTH)}...`
-              : article.excerpt}
-          </CardDescription> */}
         </CardContent>
       </Card>
     </Link>

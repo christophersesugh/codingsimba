@@ -1,7 +1,7 @@
 import React from "react";
 import type { Route } from "./+types";
 import { ContentFilter } from "~/components/content-filter";
-import { Header } from "~/components/page-header";
+import { Header } from "~/components/page-header.client";
 import { FeaturedArticle } from "./components/featured-article";
 import { Link, useSearchParams } from "react-router";
 import { ArticleCard } from "~/routes/articles/components/article-card";

@@ -102,8 +102,8 @@ export default function ArticleDetailsRoute({
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
           {/* Main content */}
-          <div className="lg:col-span-8">
-            <div className="mb-8">
+          <main className="lg:col-span-8">
+            <article className="mb-8">
               <div className="relative mb-8 aspect-video overflow-hidden rounded-xl">
                 <img
                   src={article.image}
@@ -113,7 +113,7 @@ export default function ArticleDetailsRoute({
               </div>
               <TableOfContent className="block lg:hidden" />
               <Markdown source={article.content} />
-            </div>
+            </article>
             <Separator className="mb-4 mt-2" />
             <Comments
               articleId={article.id}
@@ -144,7 +144,7 @@ export default function ArticleDetailsRoute({
                   : null}
               </div>
             </div>
-          </div>
+          </main>
 
           {/* Sidebar */}
           <aside className="lg:col-span-4">

@@ -2,13 +2,16 @@ import React from "react";
 import { Link } from "react-router";
 import { Skeleton } from "~/components/ui/skeleton";
 import { useToc } from "~/hooks/use-toc";
+// import { useMarkdownToc } from "use-markdown-toc";
 import { cn } from "~/lib/shadcn";
 
 /**
  * Memoized Table of Contents component.
  */
 function TOC({ className }: { className?: string }) {
-  const [headings, activeId] = useToc();
+  const [headings, activeId] = useToc({
+    containerId: "markdown-content",
+  });
   return (
     <div
       className={cn(

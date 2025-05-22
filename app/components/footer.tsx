@@ -7,14 +7,14 @@ export function Footer() {
     <footer className="border-t border-gray-200 py-12 dark:border-gray-800">
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-between md:flex-row">
-          <div className="mb-6 md:mb-0">
+          <section className="mb-6 md:mb-0">
             <Logo />
             <p className="mt-2 text-gray-500 dark:text-gray-400">
               Helping developers build better software.
             </p>
-          </div>
+          </section>
 
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-12">
+          <section className="grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-12">
             <div>
               <h3 className="mb-3 font-medium">Content</h3>
               <ul className="-space-y-2">
@@ -74,7 +74,7 @@ export function Footer() {
                 ))}
               </ul>
             </div>
-          </div>
+          </section>
         </div>
 
         <div className="mt-12 border-t border-gray-200 pt-8 text-center text-sm text-gray-500 dark:border-gray-800 dark:text-gray-400">

@@ -171,8 +171,8 @@ interface AProps extends LinkProps {
 }
 
 export function A({ className, to: href, ...props }: AProps) {
-  const target = href.startsWith("http") ? "_blank" : undefined;
-  const rel = href.startsWith("http") ? "noopener noreferrer" : undefined;
+  const target = href?.startsWith("http") ? "_blank" : undefined;
+  const rel = href?.startsWith("http") ? "noopener noreferrer" : undefined;
 
   return (
     <Link

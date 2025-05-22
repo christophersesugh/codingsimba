@@ -1,6 +1,6 @@
 import { ArrowDownAZ } from "lucide-react";
 import { EmptyState } from "~/components/empty-state";
-import { Header } from "~/components/page-header";
+import { Header } from "~/components/page-header.client";
 
 export default function TutorialsRoute() {
   return (

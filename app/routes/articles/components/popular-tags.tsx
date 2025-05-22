@@ -4,7 +4,7 @@ import type { Tag } from "~/services.server/sanity/articles";
 
 export function PopularTags({ popularTags }: { popularTags: Tag[] }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+    <section className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
       <h3 className="mb-4 text-lg font-bold">Popular Tags</h3>
       <div className="flex flex-wrap gap-2">
         {popularTags.map((tag) => (
@@ -21,6 +21,6 @@ export function PopularTags({ popularTags }: { popularTags: Tag[] }) {
           </Link>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "~/components/ui/button";
 import person from "~/assets/images/person.jpeg";
 import { Link } from "react-router";
+import { slogan } from "~/constants/navlinks";
 
 export function HeroText() {
   return (
@@ -18,7 +19,7 @@ export function HeroText() {
         transition={{ delay: 0.1, duration: 0.5 }}
         className="mb-4 inline-block rounded-full bg-blue-100 px-4 py-1 text-sm font-medium text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
       >
-        Helping developers build better software
+        {slogan}
       </motion.div>
 
       <motion.h1

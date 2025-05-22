@@ -1,3 +1,5 @@
+export const slogan = "Elevate Your Code from Functional to Exceptional";
+
 export const content = [
   { name: "courses", path: "courses" },
   { name: "articles", path: "articles" },
@@ -7,6 +9,7 @@ export const content = [
 export const platform = [
   { name: "about", path: "about" },
   { name: "contact", path: "contact" },
+  { name: "FAQs", path: "contact#faqs" },
 ];
 
 export const legal = [
@@ -24,4 +27,7 @@ export const social = [
   { name: "YouTube", path: "https://www.youtube.com/@codingsimba" },
 ];
 
-export const navLinks = [...content, ...platform];
+export const navLinks = [
+  ...content,
+  ...platform.filter((link) => link.path !== "contact#faqs"),
+];

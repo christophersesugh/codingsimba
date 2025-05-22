@@ -40,7 +40,7 @@ export function Share({ article }: { article: Article }) {
   }
 
   return (
-    <div className="mb-8 border-b border-t border-gray-200 py-6 dark:border-gray-800">
+    <section className="mb-8 border-b border-t border-gray-200 py-6 dark:border-gray-800">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="font-medium">Share this article</div>
         <div className="flex gap-2">
@@ -81,6 +81,6 @@ export function Share({ article }: { article: Article }) {
           </Button>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

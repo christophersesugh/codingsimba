@@ -119,8 +119,6 @@ function retrieveArticles(url: URL, query: string) {
     query,
   );
 
-  console.log({ search, category, order });
-
   let filteredArticles = articles.filter((a) => a.published);
 
   if (search) {
