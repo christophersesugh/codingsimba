@@ -9,7 +9,7 @@ import { NewsLetterSection } from "./news-letter";
 import {
   countArticles,
   getRecentArticles,
-} from "~/services.server/sanity/articles";
+} from "~/services.server/sanity/articles/utils";
 
 export async function loader() {
   const articles = getRecentArticles();

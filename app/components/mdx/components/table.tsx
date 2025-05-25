@@ -1,17 +1,20 @@
 import { cn } from "~/lib/shadcn";
 
-// Table Container (handles overflow)
 export function Table({
   className,
   ...props
 }: React.HTMLAttributes<HTMLTableElement>) {
   return (
-    <div className="my-6 w-full overflow-auto rounded-lg border border-gray-200 shadow-sm dark:border-gray-800">
-      <table
-        className={cn("w-full caption-bottom text-sm", className)}
-        {...props}
-      />
-    </div>
+    <table
+      className={cn(
+        "w-full caption-bottom text-sm",
+        "border border-gray-200 dark:border-gray-800",
+        "border-separate border-spacing-0",
+        "overflow-hidden rounded-lg",
+        className,
+      )}
+      {...props}
+    />
   );
 }
 

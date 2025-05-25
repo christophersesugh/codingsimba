@@ -1,5 +1,5 @@
 import React from "react";
-import { Header } from "~/components/page-header.client";
+import { Header } from "~/components/page-header";
 import { Mission } from "./components/mission";
 import { Impact } from "./components/impact";
 import { Values } from "./components/values";

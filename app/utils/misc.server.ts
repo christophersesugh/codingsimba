@@ -10,9 +10,21 @@ export async function readPageContent(
       path.join(process.cwd(), "content/pages", `${pageName}.mdx`),
       "utf-8",
     );
-    return (await bundleMDX({ source: data })).code;
+    if (!data) return null;
+    return data;
   } catch (err) {
     console.error(err);
+    return null;
+  }
+}
+
+export async function readMdxPageContent(pageName: string) {
+  try {
+    const data = await readPageContent(pageName);
+    if (!data) return null;
+    return (await bundleMDX({ source: data })).code;
+  } catch (error) {
+    console.error(error);
     return null;
   }
 }

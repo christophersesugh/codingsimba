@@ -23,7 +23,8 @@ interface MDXIframeProps {
 
 export function Iframe({ videoId, type = "youtube" }: MDXIframeProps) {
   const srcUrls = {
-    youtube: `https://www.youtube.com/embed/${videoId}` as const,
+    youtube:
+      `https://www.youtube.com/embed/${videoId}?rel=0&showinfo=0&modestbranding=1&iv_load_policy=3` as const,
     bunny: `https://video.bunnycdn.com/embed/${videoId}` as const,
   };
 
@@ -38,16 +39,8 @@ export function Iframe({ videoId, type = "youtube" }: MDXIframeProps) {
       title={srcTitle[type]}
       allowFullScreen
       loading="lazy"
-      sandbox="allow-same-origin allow-scripts allow-popups"
-      referrerPolicy="strict-origin-when-cross-origin"
       className="aspect-video w-full border-0"
-      allow="
-          accelerometer; 
-          clipboard-write; 
-          encrypted-media; 
-          gyroscope; 
-          picture-in-picture
-        "
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
     />
   );
 }

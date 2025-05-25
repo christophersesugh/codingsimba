@@ -12,9 +12,9 @@ const miscHandlers: HttpHandler[] = process.env.REACTR_ROUTER_DEV_ORIGIN
 
 export const server = setupServer(
   ...miscHandlers,
-  ...sanityHandlers,
   ...resendHandlers,
   ...bunnyHandlers,
+  ...sanityHandlers,
   // ...githubHandlers,
 );
 

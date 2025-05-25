@@ -1,12 +1,12 @@
 import { StatusCodes } from "http-status-codes";
 import type { Route } from "./+types/terms";
 import { Markdown } from "~/components/mdx";
-import { Header } from "~/components/page-header.client";
+import { Header } from "~/components/page-header";
 import { invariantResponse } from "~/utils/misc";
-import { readPageContent } from "~/utils/misc.server";
+import { readMdxPageContent } from "~/utils/misc.server";
 
 export async function loader() {
-  const pageContent = await readPageContent("terms");
+  const pageContent = await readMdxPageContent("terms");
   invariantResponse(pageContent, "Page content not found", {
     status: StatusCodes.NOT_FOUND,
   });
@@ -15,7 +15,7 @@ export async function loader() {
 
 export default function TermsRoute({ loaderData }: Route.ComponentProps) {
   return (
-    <div>
+    <>
       <Header
         title="Terms of Service"
         description="These Terms of Service govern your use of our website and services."
@@ -23,6 +23,6 @@ export default function TermsRoute({ loaderData }: Route.ComponentProps) {
       <section>
         <Markdown source={loaderData.pageContent} />
       </section>
-    </div>
+    </>
   );
 }

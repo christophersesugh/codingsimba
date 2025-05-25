@@ -1,10 +1,10 @@
 import { ContactForm } from "~/components/contact/form";
 import { ContactInformation } from "~/components/contact/information";
-import { Header } from "~/components/page-header.client";
+import { Header } from "~/components/page-header";
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen">
+    <>
       <Header
         title="Get in Touch"
         description="Have a question or want to work together? I'd love to hear from you."
@@ -38,7 +38,7 @@ export default function ContactPage() {
           </div>
         </section>
       </div>
-    </div>
+    </>
   );
 }
 

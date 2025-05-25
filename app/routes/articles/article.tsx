@@ -12,7 +12,7 @@ import { Markdown } from "~/components/mdx";
 import {
   getArticleDetails,
   getPopularTags,
-} from "~/services.server/sanity/articles";
+} from "~/services.server/sanity/articles/utils";
 import { EngagementMetrics } from "~/components/engagement-metrics";
 import { invariant, invariantResponse } from "~/utils/misc";
 import { EmptyState } from "~/components/empty-state";
@@ -30,6 +30,7 @@ import { z } from "zod";
 const SearchParamsSchema = z.object({
   commentTake: z.coerce.number().default(5),
   replyTake: z.coerce.number().default(3),
+  intent: z.string().optional(),
 });
 
 export async function loader({ request, params }: Route.LoaderArgs) {
@@ -95,6 +96,7 @@ export default function ArticleDetailsRoute({
   loaderData,
 }: Route.ComponentProps) {
   const { article, popularTags, articleMetadata } = loaderData;
+
   return (
     <>
       <DetailsHeader item={article} />
@@ -112,7 +114,10 @@ export default function ArticleDetailsRoute({
                 />
               </div>
               <TableOfContent className="block lg:hidden" />
-              <Markdown source={article.content} />
+              <Markdown
+                source={article.content}
+                sandpackTemplates={article.sandpackTemplates}
+              />
             </article>
             <Separator className="mb-4 mt-2" />
             <Comments

@@ -9,7 +9,7 @@ import { cn } from "~/lib/shadcn";
  * Memoized Table of Contents component.
  */
 function TOC({ className }: { className?: string }) {
-  const [headings, activeId] = useToc({
+  const { headings, activeId } = useToc({
     containerId: "markdown-content",
   });
   return (
@@ -23,9 +23,10 @@ function TOC({ className }: { className?: string }) {
       <nav className="space-y-3">
         <ul>
           {headings?.length ? (
-            headings.map((heading, i) => {
+            headings.map((heading) => {
               const { id, text } = heading;
               const activeItem = activeId === id;
+
               return (
                 <li key={id}>
                   <Link
@@ -37,7 +38,7 @@ function TOC({ className }: { className?: string }) {
                       },
                     )}
                   >
-                    <span className="mr-2 font-bold">{`${i + 1}`}.</span>
+                    <span className="mr-2 font-bold">{"👉🏽"}</span>
                     {text}
                   </Link>
                 </li>
@@ -46,6 +47,7 @@ function TOC({ className }: { className?: string }) {
           ) : (
             <>
               <Skeleton className="h-2 w-full" />
+              <Skeleton className="mt-2 h-2 w-full" />
               <Skeleton className="mt-2 h-2 w-full" />
             </>
           )}

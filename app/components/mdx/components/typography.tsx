@@ -49,6 +49,48 @@ export const H3 = ({
   />
 );
 
+export const H4 = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLHeadingElement>) => (
+  <h4
+    className={cn(
+      "scroll-m-20 text-xl font-semibold tracking-tight text-gray-800 dark:text-gray-200",
+      "mb-4 mt-8 dark:border-gray-800",
+      className,
+    )}
+    {...props}
+  />
+);
+
+export const H5 = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLHeadingElement>) => (
+  <h5
+    className={cn(
+      "scroll-m-20 text-lg font-semibold tracking-tight text-gray-800 dark:text-gray-200",
+      "mb-4 mt-8 dark:border-gray-800",
+      className,
+    )}
+    {...props}
+  />
+);
+
+export const H6 = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLHeadingElement>) => (
+  <h6
+    className={cn(
+      "scroll-m-20 text-lg font-semibold tracking-tight text-gray-800 dark:text-gray-200",
+      "mb-4 mt-8 dark:border-gray-800",
+      className,
+    )}
+    {...props}
+  />
+);
+
 export function P({
   className,
   children,

@@ -1,12 +1,12 @@
 import type { Route } from "./+types/privacy";
 import { StatusCodes } from "http-status-codes";
 import { Markdown } from "~/components/mdx";
-import { Header } from "~/components/page-header.client";
+import { Header } from "~/components/page-header";
 import { invariantResponse } from "~/utils/misc";
-import { readPageContent } from "~/utils/misc.server";
+import { readMdxPageContent } from "~/utils/misc.server";
 
 export async function loader() {
-  const pageContent = await readPageContent("privacy");
+  const pageContent = await readMdxPageContent("privacy");
   invariantResponse(pageContent, "Page content not found", {
     status: StatusCodes.NOT_FOUND,
   });
@@ -15,7 +15,7 @@ export async function loader() {
 
 export default function PrivacyRoute({ loaderData }: Route.ComponentProps) {
   return (
-    <div>
+    <>
       <Header
         title="Privacy Policy"
         description="Your privacy is important to us. This policy outlines how we handle your data."
@@ -23,6 +23,6 @@ export default function PrivacyRoute({ loaderData }: Route.ComponentProps) {
       <section>
         <Markdown source={loaderData.pageContent} />
       </section>
-    </div>
+    </>
   );
 }

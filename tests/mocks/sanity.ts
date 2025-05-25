@@ -1,4 +1,5 @@
-import { http, HttpResponse, type HttpHandler } from "msw";
+import { http, HttpResponse, passthrough, type HttpHandler } from "msw";
+import { StatusCodes } from "http-status-codes";
 import articles from "../fixtures/sanity/articles.json";
 import { SANITY_API_URL } from "~/services.server/sanity/loader";
 import {
@@ -8,8 +9,8 @@ import {
   recentArticlesQuery,
   relatedQuery,
   tagQuery,
-} from "~/services.server/sanity/articles";
-import { StatusCodes } from "http-status-codes";
+} from "~/services.server/sanity/articles/queries";
+import { readPageContent } from "~/utils/misc.server";
 
 export const handlers: HttpHandler[] = [
   http.get(SANITY_API_URL, async ({ request }) => {
@@ -39,7 +40,8 @@ export const handlers: HttpHandler[] = [
     }
 
     if (query === articleDetailsQuery) {
-      return retrieveArticleBySlug(url);
+      return passthrough();
+      // return retrieveArticleBySlug(url);
     }
 
     if (query === relatedQuery) {
@@ -56,6 +58,15 @@ export const handlers: HttpHandler[] = [
 
     if (query === categoryQuery) {
       return retrieveCategories();
+    }
+    /**
+     * SANDPACK
+     */
+    if (
+      query.includes('_type == "sandpack"') &&
+      query.includes("slug.current == $slug")
+    ) {
+      return passthrough();
     }
 
     return new HttpResponse(
@@ -160,7 +171,8 @@ function retrieveArticles(url: URL, query: string) {
 /**
  * Retrieve a single article by slug from the mock data
  */
-function retrieveArticleBySlug(url: URL) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function retrieveArticleBySlug(url: URL) {
   const slug = url.searchParams.get("$slug");
 
   if (!slug) {
@@ -179,6 +191,7 @@ function retrieveArticleBySlug(url: URL) {
   return HttpResponse.json({
     result: {
       ...article,
+      content: (await readPageContent("test-article")) as string,
       category: article?.category ?? null,
       tags: article?.tags ?? [],
     },

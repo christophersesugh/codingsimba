@@ -24,15 +24,22 @@ export function Header({
   const [search, setSearch] = React.useState("");
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const shapes = Array.from({ length: 15 }, (_, i) => ({
-    id: i,
-    size: Math.random() * 60 + 20,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    duration: Math.random() * 20 + 10,
-    delay: Math.random() * 5,
-    opacity: Math.random() * 0.12 + 0.03,
-  }));
+  const shapes = Array.from({ length: 15 }, (_, i) => {
+    const seededRandom = (seed: number) => {
+      const x = Math.sin(seed) * 10000;
+      return Number((x - Math.floor(x)).toFixed(4));
+    };
+
+    return {
+      id: i,
+      size: Number((seededRandom(i) * 60 + 20).toFixed(2)),
+      x: Number((seededRandom(i + 1) * 100).toFixed(2)),
+      y: Number((seededRandom(i + 2) * 100).toFixed(2)),
+      duration: Number((seededRandom(i + 3) * 20 + 10).toFixed(2)),
+      delay: Number((seededRandom(i + 4) * 5).toFixed(2)),
+      opacity: Number((seededRandom(i + 5) * 0.12 + 0.03).toFixed(4)),
+    };
+  });
 
   const handleSearchChange = useDebounce((value: string) => {
     setSearchParams(

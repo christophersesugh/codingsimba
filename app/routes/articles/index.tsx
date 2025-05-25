@@ -1,20 +1,20 @@
 import React from "react";
 import type { Route } from "./+types";
-import { ContentFilter } from "~/components/content-filter";
-import { Header } from "~/components/page-header.client";
-import { FeaturedArticle } from "./components/featured-article";
+import { UrlSchema } from "~/services.server/sanity/articles/types";
 import { Link, useSearchParams } from "react-router";
+import { Search } from "lucide-react";
+import { StatusCodes } from "http-status-codes";
+import { ContentFilter } from "~/components/content-filter";
+import { Header } from "~/components/page-header";
+import { FeaturedArticle } from "./components/featured-article";
 import { ArticleCard } from "~/routes/articles/components/article-card";
-import { ContentPagination } from "../../components/content-pagination";
+import { ContentPagination } from "~/components/content-pagination";
 import {
   getAllCategories,
   getArticles,
-  UrlSchema,
-} from "~/services.server/sanity/articles";
+} from "~/services.server/sanity/articles/utils";
 import { invariantResponse } from "~/utils/misc";
 import { EmptyState } from "~/components/empty-state";
-import { Search } from "lucide-react";
-import { StatusCodes } from "http-status-codes";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const searchParams = Object.fromEntries(
@@ -85,19 +85,19 @@ export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
   }, [setSearchParams]);
 
   return (
-    <div>
+    <>
       <Header
         title="articles"
         description="In-depth articles to help you stay ahead in software development."
         placeholder="search for articles..."
         enableSearch
       />
-      <div className="container mx-auto px-4 pb-12 pt-6">
+      <section className="container mx-auto px-4 pb-12 pt-6">
         <ContentFilter categories={categories} />
         {featuredArticle && isIndexPage ? (
           <FeaturedArticle article={featuredArticle} />
         ) : null}
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <section className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {filteredArticles?.length
             ? filteredArticles.map((article, index) => (
                 <Link
@@ -109,7 +109,7 @@ export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
                 </Link>
               ))
             : null}
-        </div>
+        </section>
         {!filteredArticles?.length ? (
           <EmptyState
             icon={<Search className="size-8" />}
@@ -127,7 +127,7 @@ export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
             currentPage={currentPage}
           />
         )}
-      </div>
-    </div>
+      </section>
+    </>
   );
 }

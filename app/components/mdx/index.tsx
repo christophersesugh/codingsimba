@@ -6,6 +6,9 @@ import {
   H1,
   H2,
   H3,
+  H4,
+  H6,
+  H5,
   Hr,
   P,
   Subtle,
@@ -14,15 +17,35 @@ import { Img } from "./components/media";
 import { Ol, Ul } from "./components/lists";
 import { Code } from "./components/code";
 import { cn } from "~/lib/shadcn";
+import type { SandpackTemplate } from "~/services.server/sanity/articles/types";
+import {
+  Caption,
+  Table,
+  Tbody,
+  Th,
+  Thead,
+  Td,
+  Tr,
+  Tfoot,
+} from "./components/table";
 
 export function Markdown({
   source,
+  sandpackTemplates,
   className,
 }: {
   source: string;
   className?: string;
+  sandpackTemplates?: SandpackTemplate[];
 }) {
   const Component = React.useMemo(() => getMDXComponent(source), [source]);
+
+  const CodeWithSandpack = React.useCallback(
+    (props: React.ComponentProps<typeof Code>) => (
+      <Code {...props} sandpackTemplates={sandpackTemplates} />
+    ),
+    [sandpackTemplates],
+  );
   return (
     <div
       className={cn(
@@ -36,15 +59,26 @@ export function Markdown({
           h1: H1,
           h2: H2,
           h3: H3,
+          h4: H4,
+          h5: H5,
+          h6: H6,
           p: P,
           a: A,
           blockquote: Blockquote,
           span: Subtle,
-          code: Code,
+          code: CodeWithSandpack,
           ol: Ol,
           ul: Ul,
           img: Img,
           hr: Hr,
+          table: Table,
+          thead: Thead,
+          tbody: Tbody,
+          tfoot: Tfoot,
+          caption: Caption,
+          tr: Tr,
+          th: Th,
+          td: Td,
         }}
       />
     </div>
