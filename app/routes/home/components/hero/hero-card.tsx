@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import heroImage from "~/assets/images/hero-image.png";
 
 export function HeroCard() {
   return (
@@ -32,7 +31,7 @@ export function HeroCard() {
                 <div className="mt-6 h-10 w-1/3 rounded-md bg-blue-600 dark:bg-blue-500" />
               </div>
               <img
-                src={heroImage}
+                src="https://cdn.sanity.io/media-libraries/ml4WNZcKpiTm/images/811117a7575625abea691b4c9e21ac5d8aaa8f49-400x400.png"
                 width={200}
                 height={300}
                 alt="Hero Image"

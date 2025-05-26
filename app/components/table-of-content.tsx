@@ -23,27 +23,29 @@ function TOC({ className }: { className?: string }) {
       <nav className="space-y-3">
         <ul>
           {headings?.length ? (
-            headings.map((heading) => {
-              const { id, text } = heading;
-              const activeItem = activeId === id;
+            headings
+              .filter((h) => !!h.id)
+              .map((heading) => {
+                const { id, text } = heading;
+                const activeItem = activeId === id;
 
-              return (
-                <li key={id}>
-                  <Link
-                    to={`#${id}`}
-                    className={cn(
-                      "block text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400",
-                      {
-                        "text-blue-700 dark:text-blue-600": activeItem,
-                      },
-                    )}
-                  >
-                    <span className="mr-2 font-bold">{"👉🏽"}</span>
-                    {text}
-                  </Link>
-                </li>
-              );
-            })
+                return (
+                  <li key={id}>
+                    <Link
+                      to={`#${id}`}
+                      className={cn(
+                        "block text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400",
+                        {
+                          "text-blue-700 dark:text-blue-600": activeItem,
+                        },
+                      )}
+                    >
+                      <span className="mr-2 font-bold">{"👉🏽"}</span>
+                      {text}
+                    </Link>
+                  </li>
+                );
+              })
           ) : (
             <>
               <Skeleton className="h-2 w-full" />

@@ -4,7 +4,6 @@ import type { SandpackTemplate } from "~/services.server/sanity/articles/types";
 import { Check, Codesandbox, Copy, Youtube } from "lucide-react";
 import { useTheme } from "remix-themes";
 import { cn } from "~/lib/shadcn";
-import { Skeleton } from "~/components/ui/skeleton";
 import { Sandpack } from "./sandpack";
 import { Iframe } from "./media";
 import { EmptyState } from "~/components/empty-state";
@@ -16,27 +15,6 @@ const THEMES = {
   light: "one-light",
   dark: "night-owl",
 } as const;
-
-/**
- * Base className for code blocks
- */
-const BASE_CLASS_NAME =
-  "-mx-4 relative -my-3 block overflow-visible rounded-md border-0";
-
-/**
- * Types of elements that should not be wrapped in paragraph tags
- */
-const IGNORED_ELEMENT_TYPES = [
-  "p",
-  "img",
-  "div",
-  "code",
-  "Code",
-  "pre",
-  "ul",
-  "ol",
-  "blockquote",
-] as const;
 
 /**
  * Props for the Code component
@@ -56,13 +34,11 @@ interface CodeHighlightProps {
 
 function InvalidSandboxTemplate() {
   return (
-    <div className={cn("bg-white dark:bg-gray-700", BASE_CLASS_NAME)}>
-      <EmptyState
-        icon={<Codesandbox size={30} className="animate-spin text-red-500" />}
-        title="Invalid sandbox template"
-        className="bg-red-300/60 dark:bg-red-950"
-      />
-    </div>
+    <EmptyState
+      icon={<Codesandbox size={30} className="animate-spin text-red-500" />}
+      title="Invalid sandbox template"
+      className="bg-red-300/60 dark:bg-red-950"
+    />
   );
 }
 
@@ -127,118 +103,47 @@ export function Code({
   const language = match?.[1]?.toLowerCase();
 
   // Content type detection
-  const iframe = React.useMemo(() => {
-    const isYoutube = language?.startsWith("youtube") ?? null;
-    const isBunny = language?.startsWith("bunny") ?? null;
-    const isValidId = children ? String(children).trim() : null;
-    return {
-      isBunny,
-      isYoutube,
-      isValidId,
-      isValidLanguage: isYoutube ?? isBunny,
-    };
-  }, [children, language]);
+  const isYoutube = language?.startsWith("youtube") ?? null;
+  const isBunny = language?.startsWith("bunny") ?? null;
+  const isValidLanguage = !!isYoutube || !!isBunny;
 
-  const isSandpack = React.useMemo(
-    () => !!(language?.startsWith("sandpack") ?? null),
-    [language],
-  );
+  const isSandpack = !!(language?.startsWith("sandpack") ?? null);
 
   // Code content processing
-  const isInline = React.useMemo(() => inline || !language, [inline, language]);
-  const code = React.useMemo(
-    () =>
-      typeof children === "string" ? children.trim() : String(children).trim(),
-    [children],
-  );
+  const isInline = inline || !language;
+  const code = children
+    ? typeof children === "string"
+      ? children.trim()
+      : String(children).trim()
+    : "";
 
   React.useEffect(() => {
     setMounted(true);
   }, []);
 
-  /**
-   * Determines if the element should skip paragraph wrapping
-   * @returns {boolean} True if the element should not be wrapped in a paragraph
-   */
-  const shouldSkipParagraph = React.useMemo(() => {
-    if (!children) return false;
-
-    /**
-     * Check if the element is a Code component
-     * @param {React.ReactElement} element - The element to check
-     * @returns {boolean} True if the element is a Code component
-     */
-    function isCodeComponent(element: React.ReactElement): boolean {
-      if (typeof element.type === "function" && "name" in element.type) {
-        return element.type.name === "Code";
-      }
-      return false;
-    }
-
-    if (React.isValidElement(children)) {
-      const elementType = children.type;
-      return (
-        (typeof elementType === "string" &&
-          IGNORED_ELEMENT_TYPES.includes(
-            elementType as (typeof IGNORED_ELEMENT_TYPES)[number],
-          )) ||
-        elementType === React.Fragment ||
-        isCodeComponent(children)
-      );
-    }
-
-    if (Array.isArray(children)) {
-      return children.some(
-        (child) =>
-          React.isValidElement(child) &&
-          ((typeof child.type === "string" &&
-            IGNORED_ELEMENT_TYPES.includes(
-              child.type as (typeof IGNORED_ELEMENT_TYPES)[number],
-            )) ||
-            child.type === React.Fragment ||
-            isCodeComponent(child)),
-      );
-    }
-
-    return false;
-  }, [children]);
-
-  if (shouldSkipParagraph) {
-    return <>{children}</>;
-  }
-
   if (!mounted) {
-    return (
-      <div className={BASE_CLASS_NAME}>
-        <Skeleton className="h-20 w-full" />
-      </div>
-    );
+    return <span />;
   }
 
   // Handle iframe content
-  if (iframe.isValidLanguage) {
-    if (!iframe.isValidId) {
+
+  if (isValidLanguage) {
+    const videoId = code || null;
+    if (!videoId) {
       return (
-        <div className={cn("bg-white dark:bg-gray-700", BASE_CLASS_NAME)}>
-          <EmptyState
-            icon={<Youtube size={30} className="animate-pulse text-red-500" />}
-            title="Invalid YouTube ID"
-            className="bg-red-300/60 dark:bg-red-950"
-          />
-        </div>
+        <EmptyState
+          icon={<Youtube size={30} className="animate-pulse text-red-500" />}
+          title="Invalid YouTube ID"
+          className="bg-red-300/60 dark:bg-red-950"
+        />
       );
     }
-
-    return (
-      <div className={BASE_CLASS_NAME}>
-        <Iframe videoId={code} type={iframe.isYoutube ? "youtube" : "bunny"} />
-      </div>
-    );
+    return <Iframe videoId={code} type={isYoutube ? "youtube" : "bunny"} />;
   }
 
   // Handle Sandpack content
   if (isSandpack) {
-    const templateSlug = code ? String(code).trim() : null;
+    const templateSlug = code || null;
     const isTemplates =
       templateSlug && sandpackTemplates && sandpackTemplates?.length;
 
@@ -254,21 +159,17 @@ export function Code({
       return <InvalidSandboxTemplate />;
     }
 
-    return (
-      <div className={BASE_CLASS_NAME}>
-        <Sandpack sandpackTemplate={template} />
-      </div>
-    );
+    return <Sandpack sandpackTemplate={template} />;
   }
 
   // Handle regular code blocks
   return !isInline ? (
-    <div className={cn(BASE_CLASS_NAME, className)}>
+    <div className={cn("text-sm", className)}>
       <CopyButton code={code} />
       <ShikiHighlighter
         language={language}
         theme={currentTheme}
-        langClassName="left-2 !top-[3px]"
+        langClassName="left-2 !top-[3px] capitalize"
         delay={150}
         {...props}
       >
@@ -276,7 +177,7 @@ export function Code({
       </ShikiHighlighter>
     </div>
   ) : (
-    <pre
+    <span
       className={cn(
         "inline rounded bg-gray-100 px-1 py-0.5 font-mono text-sm",
         "text-gray-800 dark:bg-gray-800 dark:text-gray-200",
@@ -284,7 +185,7 @@ export function Code({
       )}
       {...props}
     >
-      <code>{code}</code>
-    </pre>
+      {code}
+    </span>
   );
 }

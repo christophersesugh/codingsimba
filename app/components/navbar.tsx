@@ -6,7 +6,6 @@ import { NavLink } from "./nav-link";
 import { ThemeToggle } from "./theme-toggle";
 import { cn } from "~/lib/shadcn";
 import { Logo } from "./logo";
-import { useAuthDialog } from "~/contexts/auth-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useMobileNav } from "~/contexts/mobile-nav";
 import { useOptionalUser } from "~/hooks/user";
@@ -14,9 +13,12 @@ import { getInitials } from "~/utils/user";
 
 export function Navbar() {
   const location = useLocation();
-  const { openDialog } = useAuthDialog();
   const { openMobileNav } = useMobileNav();
   const isHomePage = location.pathname === "/";
+  // const hideNavbar =
+  //   location.pathname.includes("signup") ||
+  //   location.pathname.includes("signin");
+
   const user = useOptionalUser();
   const profile = user?.profile;
 
@@ -26,6 +28,7 @@ export function Navbar() {
         "bg-transparent": isHomePage,
         "fixed left-0 right-0 top-0 z-50 border-b border-gray-200 bg-white/80 pt-0 backdrop-blur-md dark:border-gray-800 dark:bg-gray-950/80":
           !isHomePage,
+        // "p hidden": hideNavbar,
       })}
     >
       <div className="container mx-auto flex items-center justify-between px-4 py-2">
@@ -43,8 +46,8 @@ export function Navbar() {
         <div className="flex items-center gap-4">
           <ThemeToggle />
           {!user ? (
-            <Button className="hidden md:flex" onClick={openDialog}>
-              Sign In
+            <Button className="hidden md:flex" asChild>
+              <Link to={"/signin"}>Sign In</Link>
             </Button>
           ) : null}
 

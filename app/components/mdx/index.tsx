@@ -12,6 +12,8 @@ import {
   Hr,
   P,
   Subtle,
+  Pre,
+  Div,
 } from "./components/typography";
 import { Img } from "./components/media";
 import { Ol, Ul } from "./components/lists";
@@ -42,7 +44,7 @@ export function Markdown({
 
   const CodeWithSandpack = React.useCallback(
     (props: React.ComponentProps<typeof Code>) => (
-      <Code {...props} sandpackTemplates={sandpackTemplates} />
+      <Code sandpackTemplates={sandpackTemplates} {...props} />
     ),
     [sandpackTemplates],
   );
@@ -63,7 +65,9 @@ export function Markdown({
           h5: H5,
           h6: H6,
           p: P,
+          div: Div,
           a: A,
+          pre: Pre,
           blockquote: Blockquote,
           span: Subtle,
           code: CodeWithSandpack,

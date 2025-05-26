@@ -3,6 +3,7 @@ import { Quote } from "lucide-react";
 import { Link, type LinkProps } from "react-router";
 import { Separator } from "~/components/ui/separator";
 import { cn } from "~/lib/shadcn";
+import { Callout } from "~/components/ui/callout";
 
 export function H1({
   className,
@@ -96,69 +97,7 @@ export function P({
   children,
   ...props
 }: React.HTMLAttributes<HTMLParagraphElement>) {
-  const shouldSkipParagraph = React.useMemo(() => {
-    const ignoredTypes = [
-      "p",
-      "img",
-      "div",
-      "code",
-      "pre",
-      "table",
-      "ul",
-      "ol",
-      "blockquote",
-    ];
-
-    if (!children) return false;
-
-    /**
-     * Check if the element is a Code component,
-     * because shiki wraps code, pre, and div elements inside p elements
-     * @param {element} element - The element to check
-     * @returns {boolean} - Returns true if the element is a Code component
-     */
-    function isCodeComponent(element: React.ReactElement): boolean {
-      if (typeof element.type === "function" && "name" in element.type) {
-        return element.type.name === "Code";
-      }
-      return false;
-    }
-
-    /**
-     * Check if the element is a valid React element and if its
-     * type is in the ignoredTypes array or if it is a
-     * Fragment or a Code component so we do not wrap it in a p element
-     */
-    if (React.isValidElement(children)) {
-      const elementType = children.type;
-      return (
-        (typeof elementType === "string" &&
-          ignoredTypes.includes(elementType)) ||
-        elementType === React.Fragment ||
-        isCodeComponent(children)
-      );
-    }
-
-    /**
-     * Check if the children is an array of elements
-     * and if any of them are in the ignoredTypes array
-     * or if it is a Fragment or a Code component
-     */
-    if (Array.isArray(children)) {
-      return children.some(
-        (child) =>
-          React.isValidElement(child) &&
-          ((typeof child.type === "string" &&
-            ignoredTypes.includes(child.type)) ||
-            child.type === React.Fragment ||
-            isCodeComponent(child)),
-      );
-    }
-
-    return false;
-  }, [children]);
-
-  if (shouldSkipParagraph) {
+  if (React.isValidElement(children) && children.type === "img") {
     return <>{children}</>;
   }
 
@@ -172,6 +111,68 @@ export function P({
     >
       {children}
     </p>
+  );
+}
+
+export function Pre({
+  className,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLPreElement>) {
+  return (
+    <pre className={cn("p-0", className)} {...props}>
+      {children}
+    </pre>
+  );
+}
+
+type CalloutVariant = "info" | "warning" | "error";
+
+export function Div({
+  className,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  const childrenArray = React.Children.toArray(children);
+
+  const titleChild = childrenArray.find((child: React.ReactNode) => {
+    if (!React.isValidElement(child)) return false;
+    const props = child.props as { className?: string };
+    return (
+      typeof props.className === "string" &&
+      props.className.includes("remark-container-title")
+    );
+  });
+
+  const contentChildren = childrenArray.filter(
+    (child: React.ReactNode) => child !== titleChild,
+  );
+  const variant = React.isValidElement(titleChild)
+    ? (((titleChild.props as { className?: string }).className?.match(
+        /info|warning|error/,
+      ) || ["info"])[0] as CalloutVariant)
+    : null;
+
+  if (variant) {
+    return (
+      <Callout
+        variant={variant}
+        title={
+          React.isValidElement(titleChild)
+            ? (titleChild.props as { children?: string }).children
+            : undefined
+        }
+        className="my-8"
+      >
+        {contentChildren}
+      </Callout>
+    );
+  }
+
+  return (
+    <div className={cn(className)} {...props}>
+      {children}
+    </div>
   );
 }
 

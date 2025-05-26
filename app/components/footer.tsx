@@ -1,10 +1,21 @@
 import { content, legal, platform, social } from "~/constants/navlinks";
 import { NavLink } from "./nav-link";
 import { Logo } from "./logo";
+import { useLocation } from "react-router";
+import { cn } from "~/utils/misc";
 
 export function Footer() {
+  const location = useLocation();
+  const hideFooter =
+    location.pathname.includes("signup") ||
+    location.pathname.includes("signin");
+
   return (
-    <footer className="border-t border-gray-200 py-12 dark:border-gray-800">
+    <footer
+      className={cn("border-t border-gray-200 py-12 dark:border-gray-800", {
+        "p hidden": hideFooter,
+      })}
+    >
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-between md:flex-row">
           <section className="mb-6 md:mb-0">

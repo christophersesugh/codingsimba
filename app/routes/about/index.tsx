@@ -1,4 +1,4 @@
-import React from "react";
+import type { Route } from "./+types/index";
 import { Header } from "~/components/page-header";
 import { Mission } from "./components/mission";
 import { Impact } from "./components/impact";
@@ -6,8 +6,19 @@ import { Values } from "./components/values";
 import { Journey } from "./components/journey";
 import { Skills } from "./components/skills";
 import { CTA } from "./components/cta";
+import { readMdxDirectory } from "~/utils/misc.server";
+import { invariantResponse } from "~/utils/misc";
+import { StatusCodes } from "http-status-codes";
 
-export default function AboutRoute() {
+export async function loader() {
+  const files = await readMdxDirectory("about/journey");
+  invariantResponse(files.length, "No files found", {
+    status: StatusCodes.NOT_FOUND,
+  });
+  return { journeyData: files };
+}
+
+export default function AboutRoute({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <Header
@@ -16,7 +27,7 @@ export default function AboutRoute() {
       />
       <div className="container mx-auto max-w-6xl px-4 py-12">
         <Mission />
-        <Journey />
+        <Journey journeyData={loaderData.journeyData} />
         <Impact />
         <Skills />
         <Values />

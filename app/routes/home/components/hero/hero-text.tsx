@@ -1,7 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "~/components/ui/button";
-import person from "~/assets/images/person.jpeg";
 import { Link } from "react-router";
 import { slogan } from "~/constants/navlinks";
 
@@ -82,7 +81,12 @@ export function HeroText() {
               key={i}
               className="h-8 w-8 overflow-hidden rounded-full border-2 border-slate-400 dark:border-gray-900"
             >
-              <img src={person} alt={`User ${i}`} width={32} height={32} />
+              <img
+                src="https://cdn.sanity.io/media-libraries/ml4WNZcKpiTm/images/252788fa66eda851b93b61ec9701706f0f8014b1-65x59.jpg"
+                alt={`User ${i}`}
+                width={32}
+                height={32}
+              />
             </div>
           ))}
         </div>

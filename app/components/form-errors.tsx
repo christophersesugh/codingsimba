@@ -23,14 +23,23 @@ export function FormError({ errors, className }: FormErrorProps) {
   const errorArray = typeof errors === "string" ? [errors] : errors;
 
   return (
-    <div
+    <ul
       aria-live="polite"
       aria-atomic="true"
-      className={cn("font-mono text-sm text-red-500", className)}
+      role="alert"
+      className={cn(
+        "mt-1.5 space-y-1 font-mono text-sm text-red-500",
+        className,
+      )}
     >
       {errorArray.map((error, index) => (
-        <p key={index}>{error}</p>
+        <li key={index} className="flex items-start gap-1.5">
+          <span className="text-destructive mt-0.5" aria-hidden="true">
+            •
+          </span>
+          {error}
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }

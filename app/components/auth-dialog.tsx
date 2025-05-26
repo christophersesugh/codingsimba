@@ -1,7 +1,5 @@
 import React from "react";
 import type { Route } from "../+types/root";
-// import type { Route as SignupRoute } from "../routes/actions/+types/signin";
-// import type { Route as SigninRoute } from "../routes/actions/+types/signup";
 
 import {
   Form,
@@ -102,10 +100,6 @@ export function AuthDialog() {
     },
     shouldValidate: "onBlur",
   });
-
-  React.useEffect(() => {
-    if (actionData?.status === "success") closeDialog();
-  }, [actionData?.status, closeDialog]);
 
   return (
     <Dialog open={open} onOpenChange={closeDialog}>

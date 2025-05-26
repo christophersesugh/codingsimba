@@ -1,8 +1,7 @@
-import type { Route } from "./+types/onboarding";
-import { z } from "zod";
+import type { Route } from "./+types/signin";
 import { motion } from "framer-motion";
 import { LoaderCircle } from "lucide-react";
-import { data, Form, useNavigation, useSearchParams } from "react-router";
+import { data, Form, Link, useNavigation, useSearchParams } from "react-router";
 import {
   Card,
   CardContent,
@@ -17,57 +16,30 @@ import { Label } from "~/components/ui/label";
 import { FormError } from "~/components/form-errors";
 import { Button } from "~/components/ui/button";
 import { parseWithZod } from "@conform-to/zod";
+import { z } from "zod";
 import { StatusCodes } from "http-status-codes";
-import { prisma } from "~/utils/db.server";
-import { requireAnonymous, sessionKey, signup } from "~/utils/auth.server";
+import { FormConsent } from "~/components/form-consent";
+import { GithubButton } from "~/components/github-button";
+import { requireAnonymous, sessionKey, signin } from "~/utils/auth.server";
 import { authSessionStorage } from "~/utils/session.server";
 
-const AuthSchema = z
-  .object({
-    name: z
-      .string({ required_error: "Name is required" })
-      .min(2, "First and Last name must be at least 2 characters")
-      .max(30, "Name must be less than or equal to 30 characters")
-      .trim()
-      .refine(
-        (name) => {
-          const WORD_MIN_LENGTH = 2;
-          const words = name.split(/\s+/);
-
-          if (words.length < WORD_MIN_LENGTH) {
-            return false;
-          }
-
-          return words.every((word) => word.length >= WORD_MIN_LENGTH);
-        },
-        {
-          message:
-            "Please enter your first and last name (e.g., John Doe or Kent C. Dodds)",
-        },
-      ),
-    password: z
-      .string({ required_error: "Password is required" })
-      .min(6, "Password must be at least 6 characters long")
-      .max(30, "Password must be less than or equal to 30 characters")
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
-        "Password must contain at least one uppercase letter (A), one lowercase letter (a), one number (3) and one special character (&)",
-      ),
-    confirmPassword: z
-      .string({ required_error: "Please confirm your password" })
-      .min(6, "Password must be at least 6 characters long"),
-    intent: z.literal("submit"),
-    email: z.string().email().trim().toLowerCase(),
-    redirectTo: z.string().optional(),
-    rememberMe: z
-      .boolean()
-      .optional()
-      .transform((val) => (val ? "true" : undefined)),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+const AuthSchema = z.object({
+  email: z
+    .string({ required_error: "Email is required" })
+    .email("Please enter a valid email address")
+    .trim()
+    .toLowerCase(),
+  password: z
+    .string({ required_error: "Password is required" })
+    .min(6, "Password must be at least 6 characters")
+    .max(30, "Password must be less than or equal to 30 characters"),
+  intent: z.literal("submit"),
+  redirectTo: z.string().optional(),
+  rememberMe: z
+    .boolean()
+    .optional()
+    .transform((val) => (val ? "true" : undefined)),
+});
 
 export async function loader({ request }: Route.LoaderArgs) {
   await requireAnonymous(request);
@@ -79,52 +51,19 @@ export async function action({ request }: Route.ActionArgs) {
 
   const submission = await parseWithZod(formData, {
     schema: AuthSchema.transform(async (data, ctx) => {
-      const { name, password, email, intent } = data;
+      const { email, password, intent } = data;
+      if (intent !== "submit") return { ...data, session: null };
 
-      if (intent !== "submit") {
-        return { ...data, session: null };
-      }
-
-      const existingUser = await prisma.user.findUnique({
-        where: { email },
-        select: { id: true },
-      });
-
-      if (existingUser) {
-        ctx.addIssue({
-          path: ["email"],
-          code: z.ZodIssueCode.custom,
-          message: "This email is already registered. Please sign in instead.",
-        });
-        return z.NEVER;
-      }
-
-      try {
-        const session = await signup({
-          email,
-          name: name.trim().replace(/\s+/g, " "),
-          password,
-        });
-
-        if (!session) {
-          ctx.addIssue({
-            path: ["root"],
-            code: z.ZodIssueCode.custom,
-            message: "Failed to create account. Please try again.",
-          });
-          return z.NEVER;
-        }
-
-        return { ...data, session };
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (e) {
+      const session = await signin({ email, password });
+      if (!session) {
         ctx.addIssue({
           path: ["root"],
           code: z.ZodIssueCode.custom,
-          message: "An unexpected error occurred. Please try again.",
+          message: "Invalid credentials.",
         });
         return z.NEVER;
       }
+      return { ...data, session };
     }),
     async: true,
   });
@@ -161,14 +100,14 @@ export async function action({ request }: Route.ActionArgs) {
   });
 }
 
-export default function Onboarding({ actionData }: Route.ComponentProps) {
+export default function Signin({ actionData }: Route.ComponentProps) {
   const navigation = useNavigation();
   const [searchParams] = useSearchParams();
 
   const redirectTo = searchParams.get("redirectTo");
 
   const [form, fields] = useForm({
-    id: "onboarding",
+    id: "signin",
     lastResult: actionData,
     defaultValue: { redirectTo },
     onValidate({ formData }) {
@@ -178,7 +117,6 @@ export default function Onboarding({ actionData }: Route.ComponentProps) {
   });
 
   const isSubmitting = navigation.formData?.get("intent") === "submit";
-  const email = "christohybrid185@gmail.com";
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-gray-50 p-4 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
@@ -196,13 +134,8 @@ export default function Onboarding({ actionData }: Route.ComponentProps) {
       >
         <Card className="border-0 bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">
-              Please enter your details
-            </CardTitle>
-            <CardDescription>
-              Welcome back{" "}
-              <span className="text-black dark:text-white">{email}</span>
-            </CardDescription>
+            <CardTitle className="text-2xl">Welcome back</CardTitle>
+            <CardDescription>Please enter your credentials</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-6">
@@ -211,21 +144,13 @@ export default function Onboarding({ actionData }: Route.ComponentProps) {
                 {...getInputProps(fields.intent, { type: "hidden" })}
                 value="submit"
               />
-              <input
-                {...getInputProps(fields.redirectTo, { type: "hidden" })}
-                value={redirectTo ?? ""}
-              />
-              <input
-                {...getInputProps(fields.email, { type: "hidden" })}
-                value={email}
-              />
               <div className="space-y-2">
-                <Label htmlFor={fields.name.id}>Name</Label>
+                <Label htmlFor={fields.email.id}>Email</Label>
                 <Input
-                  {...getInputProps(fields.name, { type: "text" })}
-                  placeholder="Kent C. Dodds"
+                  {...getInputProps(fields.email, { type: "email" })}
+                  placeholder="hello@example.com"
                 />
-                <FormError errors={fields.name.errors} />
+                <FormError errors={fields.email.errors} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor={fields.password.id}>Password</Label>
@@ -234,18 +159,6 @@ export default function Onboarding({ actionData }: Route.ComponentProps) {
                   placeholder="••••••"
                 />
                 <FormError errors={fields.password.errors} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={fields.confirmPassword.id}>
-                  Confirm password
-                </Label>
-                <Input
-                  {...getInputProps(fields.confirmPassword, {
-                    type: "password",
-                  })}
-                  placeholder="••••••"
-                />
-                <FormError errors={fields.confirmPassword.errors} />
               </div>
               <div className="flex justify-between">
                 <Label
@@ -258,20 +171,52 @@ export default function Onboarding({ actionData }: Route.ComponentProps) {
                   />
                   Remember Me
                 </Label>
+
+                <Link
+                  to={"/forgot-password"}
+                  className="text-sm text-blue-700 dark:text-blue-500"
+                >
+                  Forgot your password?
+                </Link>
               </div>
               <Button
                 type="submit"
                 className="w-full"
                 disabled={isSubmitting}
-                aria-label="Create account"
+                aria-label="Sign in"
               >
-                Create account{" "}
+                Sign In
                 {isSubmitting ? (
                   <LoaderCircle className="ml-2 animate-spin" />
                 ) : null}
               </Button>
               <FormError errors={form.allErrors.root || form.errors} />
             </Form>
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-white px-2 text-gray-500 dark:bg-gray-900 dark:text-gray-400">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+            <div className="w-full">
+              <GithubButton action="" />
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Don&apos;t have an account?{" "}
+                <Link
+                  to="/signup"
+                  className="font-medium text-blue-600 hover:underline dark:text-blue-400"
+                >
+                  Sign Up
+                </Link>
+              </p>
+            </div>
+            <FormConsent type="signin" />
           </CardContent>
         </Card>
       </motion.div>

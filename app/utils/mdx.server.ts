@@ -2,6 +2,7 @@ import { bundleMDX as bMDX } from "mdx-bundler";
 import { rehypeInlineCodeProperty } from "react-shiki";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
+import remarkContainers from "remark-flexible-containers";
 
 /**
  * Bundles MDX source code into a single JavaScript module.
@@ -20,7 +21,11 @@ export async function bundleMDX({ source }: { source: string }) {
   return bMDX({
     source,
     mdxOptions(options) {
-      options.remarkPlugins = [...(options.remarkPlugins ?? []), remarkGfm];
+      options.remarkPlugins = [
+        ...(options.remarkPlugins ?? []),
+        remarkGfm,
+        remarkContainers,
+      ];
       options.rehypePlugins = [
         ...(options.rehypePlugins ?? []),
         rehypeSlug,

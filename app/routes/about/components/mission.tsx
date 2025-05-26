@@ -1,6 +1,5 @@
 import React from "react";
 import { CheckCircle } from "lucide-react";
-import cs from "../../../assets/images/cs.png";
 
 export function Mission() {
   return (
@@ -38,7 +37,7 @@ export function Mission() {
           <div className="relative mx-auto aspect-square w-full max-w-md">
             <div className="relative h-full w-full overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800">
               <img
-                src={cs}
+                src="https://cdn.sanity.io/media-libraries/ml4WNZcKpiTm/images/6749aa161e69b57e6d39b2cd430834da255e31bd-1024x1024.png"
                 alt="Christopher S. Aondona"
                 width={500}
                 height={500}

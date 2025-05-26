@@ -5,15 +5,20 @@ import { useSpinDelay } from "spin-delay";
 import { twMerge } from "tailwind-merge";
 
 /**
- * Get the error message from an error object. This is useful for
- * displaying error messages to the user.
- * @param error - The error object to extract the message from
- * @returns {string} - The error message
+ * Extracts a readable error message from various error types.
+ * Handles string errors, Error objects, and unknown error types.
+ *
+ * @param error - The error to extract message from
+ * @returns A string containing the error message
+ * @throws Will log to console if error type is unknown
+ *
  * @example
  * ```ts
  * const error = new Error("Something went wrong");
- * const errorMessage = getErrorMessage(error);
- * // errorMessage will be "Something went wrong"
+ * const message = getErrorMessage(error); // "Something went wrong"
+ *
+ * const stringError = "Invalid input";
+ * const message2 = getErrorMessage(stringError); // "Invalid input"
  * ```
  */
 export function getErrorMessage(error: unknown) {
@@ -31,27 +36,43 @@ export function getErrorMessage(error: unknown) {
 }
 
 /**
- * A handy utility that makes constructing class names easier.
- * It also merges tailwind classes.
+ * Combines multiple class names and merges Tailwind CSS classes efficiently.
+ * Uses clsx for conditional classes and tailwind-merge for deduplication.
+ *
+ * @param inputs - Class names to combine (strings, objects, arrays)
+ * @returns A single string of combined and deduplicated class names
+ *
+ * @example
+ * ```ts
+ * const classes = cn(
+ *   "base-class",
+ *   { "conditional-class": true },
+ *   ["array-class"],
+ *   "tailwind-class"
+ * );
+ * ```
  */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 /**
- * Provide a condition and if that condition is falsey, this throws a 400
- * Response with the given message.
+ * Throws a Response with 400 status if condition is false.
+ * Useful for validating request parameters and throwing HTTP errors.
  *
- * inspired by invariant from 'tiny-invariant'
+ * @param condition - The condition to check
+ * @param message - Error message or function returning message
+ * @param responseInit - Additional response options
+ * @throws {Response} 400 status response if condition is false
  *
  * @example
- * invariantResponse(typeof value === 'string', `value must be a string`)
- *
- * @param condition The condition to check
- * @param message The message to throw
- * @param responseInit Additional response init options if a response is thrown
- *
- * @throws {Response} if condition is falsey
+ * ```ts
+ * invariantResponse(
+ *   typeof id === 'string',
+ *   'ID must be a string',
+ *   { headers: { 'Content-Type': 'application/json' } }
+ * );
+ * ```
  */
 export function invariantResponse(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -71,20 +92,20 @@ export function invariantResponse(
 }
 
 /**
- * Provide a condition and if that condition is falsey, this throws an error
- * with the given message.
+ * Throws an Error if condition is false.
+ * Similar to invariantResponse but throws Error instead of Response.
  *
- * inspired by invariant from 'tiny-invariant' except will still include the
- * message in production.
+ * @param condition - The condition to check
+ * @param message - Error message or function returning message
+ * @throws {Error} If condition is false
  *
  * @example
- * invariant(typeof value === 'string', `value must be a string`)
- *
- * @param condition The condition to check
- * @param message The message to throw (or a callback to generate the message)
- * @param responseInit Additional response init options if a response is thrown
- *
- * @throws {Error} if condition is falsey
+ * ```ts
+ * invariant(
+ *   typeof value === 'string',
+ *   'Value must be a string'
+ * );
+ * ```
  */
 export function invariant(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -97,14 +118,22 @@ export function invariant(
 }
 
 /**
- * Returns true if the current navigation is submitting the current route's
- * form. Defaults to the current route's form action and method POST.
+ * Determines if a form is currently being submitted.
+ * Uses React Router's navigation state to check form submission status.
  *
- * Defaults state to 'non-idle'
+ * @param options - Configuration options
+ * @param options.formAction - Specific form action to check (defaults to current route)
+ * @param options.formMethod - HTTP method to check (defaults to 'POST')
+ * @param options.state - Navigation state to check (defaults to 'non-idle')
+ * @returns boolean indicating if form is being submitted
  *
- * NOTE: the default formAction will include query params, but the
- * navigation.formAction will not, so don't use the default formAction if you
- * want to know if a form is submitting without specific query params.
+ * @example
+ * ```ts
+ * const isSubmitting = useIsPending({
+ *   formMethod: 'POST',
+ *   state: 'submitting'
+ * });
+ * ```
  */
 export function useIsPending({
   formAction,
@@ -129,12 +158,21 @@ export function useIsPending({
 }
 
 /**
- * This combines useSpinDelay (from https://npm.im/spin-delay) and useIsPending
- * from our own utilities to give you a nice way to show a loading spinner for
- * a minimum amount of time, even if the request finishes right after the delay.
+ * Combines useSpinDelay with useIsPending to prevent loading state flicker.
+ * Ensures loading spinner shows for minimum duration even if request completes quickly.
  *
- * This avoids a flash of loading state regardless of how fast or slow the
- * request is.
+ * @param options - Configuration options
+ * @param options.delay - Delay before showing spinner (default: 400ms)
+ * @param options.minDuration - Minimum spinner display time (default: 300ms)
+ * @returns boolean indicating if loading state should be shown
+ *
+ * @example
+ * ```ts
+ * const showSpinner = useDelayedIsPending({
+ *   delay: 500,
+ *   minDuration: 400
+ * });
+ * ```
  */
 export function useDelayedIsPending({
   formAction,
@@ -152,7 +190,19 @@ export function useDelayedIsPending({
 }
 
 /**
- * Simple debounce implementation
+ * Creates a debounced version of a function.
+ * Prevents function from being called too frequently.
+ *
+ * @param fn - Function to debounce
+ * @param delay - Delay in milliseconds
+ * @returns Debounced function
+ *
+ * @example
+ * ```ts
+ * const debouncedSearch = debounce((query) => {
+ *   searchAPI(query);
+ * }, 300);
+ * ```
  */
 function debounce<Callback extends (...args: Parameters<Callback>) => void>(
   fn: Callback,
@@ -167,6 +217,22 @@ function debounce<Callback extends (...args: Parameters<Callback>) => void>(
   };
 }
 
+/**
+ * Calls all provided functions with the same arguments.
+ * Useful for combining multiple event handlers.
+ *
+ * @param fns - Array of functions to call
+ * @returns Function that calls all provided functions
+ *
+ * @example
+ * ```ts
+ * const combinedHandler = callAll(
+ *   onBlur,
+ *   props.onBlur,
+ *   () => console.log('blurred')
+ * );
+ * ```
+ */
 function callAll<Args extends Array<unknown>>(
   ...fns: Array<((...args: Args) => unknown) | undefined>
 ) {
@@ -174,12 +240,19 @@ function callAll<Args extends Array<unknown>>(
 }
 
 /**
- * Debounce a function using a ref to avoid recreating the function on
- * every render. This is useful for debouncing a function that is passed to
- * a component that is re-rendered frequently, such as an input field.
- * @param callback - function
- * @param delay - number
- * @returns debounced function
+ * Creates a debounced function that persists across renders.
+ * Uses useRef to maintain the debounced function instance.
+ *
+ * @param callback - Function to debounce
+ * @param delay - Delay in milliseconds
+ * @returns Debounced function that persists across renders
+ *
+ * @example
+ * ```ts
+ * const debouncedSearch = useDebounce((query) => {
+ *   searchAPI(query);
+ * }, 300);
+ * ```
  */
 export function useDebounce<
   Callback extends (...args: Parameters<Callback>) => ReturnType<Callback>,
@@ -199,16 +272,17 @@ export function useDebounce<
 }
 
 /**
- * Combine multiple headers into one. This is useful for combining headers from
- * multiple sources, such as a request and a response.
- * @param headers - array of headers to combine
- * @returns {Headers} - combined headers
+ * Combines multiple Headers objects into a single Headers instance.
+ * Useful for merging headers from different sources.
+ *
+ * @param headers - Array of Headers objects to combine
+ * @returns Combined Headers object
+ *
  * @example
  * ```ts
  * const headers = combineHeaders(
- *   { "Content-Type": "application/json" },
- *  { "X-Custom-Header": "value" },
- *  { "X-Another-Header": "value" },
+ *   new Headers({ 'Content-Type': 'application/json' }),
+ *   new Headers({ 'Authorization': 'Bearer token' })
  * );
  * ```
  */
@@ -226,16 +300,17 @@ export function combineHeaders(
 }
 
 /**
- * Combine multiple response inits into one. This is useful for combining
- * response inits from multiple sources, such as a request and a response.
- * @param responseInits - array of response inits to combine
- * @returns {ResponseInit} - combined response init
+ * Combines multiple ResponseInit objects into a single configuration.
+ * Merges headers and other response options.
+ *
+ * @param responseInits - Array of ResponseInit objects to combine
+ * @returns Combined ResponseInit object
+ *
  * @example
  * ```ts
  * const responseInit = combineResponseInits(
- *   { status: 200, headers: { "Content-Type": "application/json" } },
- *   { statusText: "OK" },
- *   { headers: { "X-Custom-Header": "value" } },
+ *   { status: 200 },
+ *   { headers: { 'Content-Type': 'application/json' } }
  * );
  * ```
  */
@@ -253,26 +328,22 @@ export function combineResponseInits(
 }
 
 /**
- * * Use this hook with a button and it will make it so the first click sets a
- * `doubleCheck` state to true, and the second click will actually trigger the
- * `onClick` handler. This allows you to have a button that can be like a
- * "are you sure?" experience for the user before doing destructive operations.
- * @returns { doubleCheck: boolean, getButtonProps: function }
+ * Hook for implementing double-click confirmation on buttons.
+ * First click sets doubleCheck state, second click triggers action.
+ *
+ * @returns Object containing doubleCheck state and button props
+ * @returns {boolean} doubleCheck - Whether button is in confirmation state
+ * @returns {function} getButtonProps - Function to get button props
+ *
  * @example
  * ```ts
  * const { doubleCheck, getButtonProps } = useDoubleCheck();
- * const handleDelete = () => {
- *  // delete the item
- * * };
- * const buttonProps = getButtonProps({
- *   onClick: handleDelete,
- *   onBlur: () => setDoubleCheck(false),
- * });
  * return (
- *   <button {...buttonProps}>
+ *   <button {...getButtonProps({ onClick: handleDelete })}>
  *     {doubleCheck ? "Are you sure?" : "Delete"}
  *   </button>
  * );
+ * ```
  */
 export function useDoubleCheck() {
   const [doubleCheck, setDoubleCheck] = useState(false);
@@ -311,15 +382,17 @@ export function useDoubleCheck() {
 }
 
 /**
- * Get the domain URL from the request object. This is useful for
- * constructing URLs for redirects or other purposes.
- * @param request - The request object from the server
- * @returns {string} - The domain URL
- * @throws {Error} - If the domain URL cannot be determined
+ * Extracts the domain URL from a Request object.
+ * Handles both development and production environments.
+ *
+ * @param request - Request object to extract domain from
+ * @returns Full domain URL including protocol
+ * @throws {Error} If host cannot be determined
+ *
  * @example
  * ```ts
  * const domainUrl = getDomainUrl(request);
- * // domainUrl will be something like "https://example.com"
+ * // Returns "https://example.com" or "http://localhost:3000"
  * ```
  */
 export function getDomainUrl(request: Request) {
@@ -333,40 +406,17 @@ export function getDomainUrl(request: Request) {
   return `${protocol}://${host}`;
 }
 
-export function validateRedirectUrl(
-  redirectTo: string,
-  allowedOrigin: string,
-): string | null {
-  try {
-    const parsedUrl = new URL(redirectTo, allowedOrigin);
-
-    if (parsedUrl.origin !== allowedOrigin) {
-      return null;
-    }
-
-    if (!parsedUrl.pathname.startsWith("/")) {
-      return null;
-    }
-
-    if (/\/\/|\.\./.test(parsedUrl.pathname)) {
-      return null;
-    }
-
-    return parsedUrl.pathname;
-  } catch {
-    return null;
-  }
-}
-
 /**
- * Get the referrer route from the request object. This is useful for
- * determining where the user came from before the current request.
- * @param request - The request object from the server
- * @returns {string} - The referrer route
+ * Extracts the referrer route from a Request object.
+ * Returns the path portion of the referrer URL if it matches the current domain.
+ *
+ * @param request - Request object to extract referrer from
+ * @returns Referrer route path or "/" if referrer is from different domain
+ *
  * @example
  * ```ts
  * const referrerRoute = getReferrerRoute(request);
- * // referrerRoute will be the path of the referrer URL, or "/" if it doesn't match the domain
+ * // Returns "/dashboard" or "/" if referrer is from different domain
  * ```
  */
 export function getReferrerRoute(request: Request) {

@@ -67,17 +67,14 @@ export function Sandpack({ sandpackTemplate }: SandpackProps) {
   const options = { ...sandpackTemplate.options };
   const isDarkMode = theme === Theme.DARK;
 
-  const refinedTheme = React.useMemo(
-    () =>
-      options.theme === "auto"
-        ? isDarkMode
-          ? atomDark
-          : ecoLight
-        : options.theme === "light"
-          ? ecoLight
-          : atomDark,
-    [options.theme, isDarkMode],
-  );
+  const refinedTheme =
+    options.theme === "auto"
+      ? isDarkMode
+        ? atomDark
+        : ecoLight
+      : options.theme === "light"
+        ? ecoLight
+        : atomDark;
 
   const handleFullscreenChange = React.useCallback(() => {
     setIsFullscreen(!!document.fullscreenElement);
@@ -108,30 +105,19 @@ export function Sandpack({ sandpackTemplate }: SandpackProps) {
     }
   }, [isFullscreen]);
 
-  const showPreview = React.useMemo(
-    () => activeView === "preview" || (activeView === "split" && !isMobile),
-    [activeView, isMobile],
-  );
+  const showPreview =
+    activeView === "preview" || (activeView === "split" && !isMobile);
 
   const showEditor = React.useMemo(
     () => activeView === "editor" || (activeView === "split" && !isMobile),
     [activeView, isMobile],
   );
 
-  const shouldShowFileExplorer = React.useMemo(
-    () => options.view !== "preview" && activeView !== "preview",
-    [options.view, activeView],
-  );
-
-  const shouldShowEditor = React.useMemo(
-    () => options.view !== "preview" && activeView !== "preview",
-    [options.view, activeView],
-  );
-
-  const shouldShowTabs = React.useMemo(
-    () => options.view !== "preview",
-    [options.view],
-  );
+  const shouldShowFileExplorer =
+    options.view !== "preview" && activeView !== "preview";
+  const shouldShowEditor =
+    options.view !== "preview" && activeView !== "preview";
+  const shouldShowTabs = options.view !== "preview";
 
   const refinedFiles = React.useMemo(() => {
     const files = sandpackTemplate.sandpackFiles || [];
@@ -151,32 +137,23 @@ export function Sandpack({ sandpackTemplate }: SandpackProps) {
     [sandpackTemplate?.customSetup],
   );
 
-  const containerClassName = React.useMemo(
-    () =>
-      cn(
-        "overflow-hidden bg-gray-100 transition-all duration-300 dark:bg-gray-700",
-        isFullscreen ? "fixed inset-0 z-50 rounded-none border-none" : "",
-      ),
-    [isFullscreen],
+  const containerClassName = cn(
+    "overflow-hidden bg-gray-100 transition-all duration-300 dark:bg-gray-700",
+    isFullscreen ? "fixed inset-0 z-50 rounded-none border-none" : "",
   );
 
-  const headerClassName = React.useMemo(
-    () =>
-      cn("flex h-8 items-center justify-between border-b px-2 pb-2", {
-        "h-full py-1": isFullscreen,
-      }),
-    [isFullscreen],
+  const headerClassName = cn(
+    "flex h-8 items-center justify-between border-b px-2 pb-2",
+    {
+      "h-full py-1": isFullscreen,
+    },
   );
 
-  const fileExplorerClassName = React.useMemo(
-    () =>
-      cn(
-        "!h-full !min-h-full border-r",
-        isMobile
-          ? "w-[150px] min-w-[100px] max-w-[150px]"
-          : "w-[200px] min-w-[150px] max-w-[200px]",
-      ),
-    [isMobile],
+  const fileExplorerClassName = cn(
+    "!h-full !min-h-full border-r",
+    isMobile
+      ? "w-[150px] min-w-[100px] max-w-[150px]"
+      : "w-[200px] min-w-[150px] max-w-[200px]",
   );
 
   return (

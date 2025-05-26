@@ -7,9 +7,15 @@ export type PermissionString =
   | `${Action}:${Entity}:${Access}`;
 
 /**
- * Parse a permission string into its components
- * @param permissionString - permission string to parse
- * @returns { action, entity, access } - parsed permission string
+ * Parses a permission string into its components (action, entity, and access level).
+ * Handles both simple and complex permission strings.
+ *
+ * @param permissionString - The permission string to parse (e.g., "CREATE:ARTICLE_COMMENT:OWN,ANY")
+ * @returns Object containing parsed components
+ * @returns {Action} action - The action component (e.g., "CREATE")
+ * @returns {Entity} entity - The entity component (e.g., "ARTICLE_COMMENT")
+ * @returns {Access[] | undefined} access - Array of access levels or undefined if not specified
+ *
  * @example
  * ```ts
  * const permissionString = "CREATE:ARTICLE_COMMENT:OWN,ANY";
@@ -33,14 +39,20 @@ export function parsePermissionString(permissionString: PermissionString) {
 }
 
 /**
- * Check if the user has a specific permission
- * @param user - user object from useUser
- * @param permission - permission string to check
- * @returns {boolean} - true if user has the permission, false otherwise
+ * Checks if a user has a specific permission.
+ * Validates against the user's roles and their associated permissions.
+ *
+ * @param user - The user object from useUser hook
+ * @param permission - The permission string to check (e.g., "CREATE:ARTICLE_COMMENT:OWN")
+ * @returns True if the user has the specified permission, false otherwise
+ *
  * @example
  * ```ts
  * const user = useUser();
- * const hasPermission = userHasPermission(user, "CREATE:ARTICLE_COMMENT");
+ * const canCreateComment = userHasPermission(user, "CREATE:ARTICLE_COMMENT");
+ * if (canCreateComment) {
+ *   // User can create comments
+ * }
  * ```
  */
 export function userHasPermission(
@@ -60,14 +72,20 @@ export function userHasPermission(
 }
 
 /**
- * Check if the user has a specific role
- * @param user - user object from useUser
- * @param role - role name to check
- * @returns {boolean} - true if user has the role, false otherwise
+ * Checks if a user has a specific role.
+ * Validates against the user's assigned roles.
+ *
+ * @param user - The user object from useUser hook
+ * @param role - The role name to check (e.g., "ADMIN")
+ * @returns True if the user has the specified role, false otherwise
+ *
  * @example
  * ```ts
  * const user = useUser();
- * const hasRole = userHasRole(user, "ADMIN");
+ * const isAdmin = userHasRole(user, "ADMIN");
+ * if (isAdmin) {
+ *   // User has admin privileges
+ * }
  * ```
  */
 export function userHasRole(
@@ -78,6 +96,20 @@ export function userHasRole(
   return user.roles.some((r) => r.name === role);
 }
 
+/**
+ * Generates initials from a person's name.
+ * Handles various name formats and edge cases.
+ *
+ * @param name - The full name to generate initials from
+ * @returns A string containing the initials (e.g., "JD" for "John Doe")
+ *
+ * @example
+ * ```ts
+ * const initials = getInitials("John Doe"); // "JD"
+ * const singleName = getInitials("John"); // "J"
+ * const withMiddle = getInitials("John A. Doe"); // "JD"
+ * ```
+ */
 export function getInitials(name: string): string {
   if (!name || typeof name !== "string") return "";
 
@@ -97,6 +129,19 @@ export function getInitials(name: string): string {
   return `${firstInitial}${lastInitial}`;
 }
 
+/**
+ * Capitalizes each word in a name string.
+ * Handles multiple spaces and preserves existing capitalization patterns.
+ *
+ * @param name - The name string to capitalize
+ * @returns The capitalized name string
+ *
+ * @example
+ * ```ts
+ * const name = capitalizeName("john doe"); // "John Doe"
+ * const complex = capitalizeName("mary-jane O'connor"); // "Mary-Jane O'Connor"
+ * ```
+ */
 export function capitalizeName(name: string) {
   return name
     .trim()
