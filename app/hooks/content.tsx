@@ -4,6 +4,10 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { getErrorMessage } from "~/utils/misc";
 
+/**
+ * Schema defining all possible content operation intents.
+ * Used to ensure type safety for content operations.
+ */
 export const ContentIntentSchema = z.enum([
   "add-comment",
   "update-comment",
@@ -17,24 +21,45 @@ export const ContentIntentSchema = z.enum([
 
 export type ContentIntent = z.infer<typeof ContentIntentSchema>;
 
+/**
+ * Schema for validating arbitrary data constraints.
+ * Used as a base for content operation payloads.
+ */
 export const DataConstraintSchema = z.record(z.unknown());
 
-// type DataConstraint = z.infer<typeof DataConstraintSchema>;
-
+/**
+ * Schema for optimistic submission payloads.
+ * Defines the structure of data sent to the server.
+ */
 export const OptimisticSubmitSchema = z.object({
+  /** Optional key for identifying the submission */
   key: z.string().optional(),
+  /** The data payload for the operation */
   data: DataConstraintSchema,
+  /** The type of content operation to perform */
   intent: ContentIntentSchema,
+  /** Optional success message to show after operation */
   toastMessage: z.string().optional(),
 });
 
+/**
+ * Schema for content update operations.
+ * Defines the structure of data for updating content.
+ */
 export const UpdateSchema = z.object({
+  /** Optional key for identifying the update */
   key: z.string().optional(),
+  /** The type of content operation to perform */
   intent: ContentIntentSchema,
+  /** ID of the parent content (if applicable) */
   parentId: z.string().nullable(),
+  /** ID of the content being operated on */
   itemId: z.string().nullable(),
+  /** ID of the user performing the operation */
   userId: z.string(),
+  /** The content text (if applicable) */
   content: z.string().min(1).optional(),
+  /** Optional success message to show after operation */
   toastMessage: z.string().optional(),
 });
 
@@ -43,27 +68,36 @@ type Update = z.infer<typeof UpdateSchema>;
 
 /** Return type from optimistic hooks */
 type OptimisticReturn = {
-  /** submission trigger */
+  /** Function to trigger the submission */
   submit: () => void;
-  /** True during submission */
+  /** True during submission, false otherwise */
   isPending: boolean;
-  /** Error object if submission failed */
+  /** Error object if submission failed, null otherwise */
   error: Error | null;
 };
 
 /**
- * Base hook for optimistic content operations
+ * Base hook for optimistic content operations.
+ * Handles the core submission logic and error handling.
+ *
  * @template T - Data payload type
- * @param {OptimisticSubmit<T>} params - Submission parameters
- * @returns {OptimisticReturn} Operation state
+ * @param {OptimisticSubmit} params - Submission parameters
+ * @returns {OptimisticReturn} Operation state and controls
  *
  * @example
- * const { isPending, error } = useOptimisticSubmit({
+ * ```tsx
+ * const { submit, isPending, error } = useOptimisticSubmit({
  *   key: 'comment-123',
  *   intent: 'add-comment',
  *   data: { content: 'Hello world' },
  *   toastMessage: 'Comment posted!'
  * });
+ *
+ * // Use in a component
+ * <button onClick={submit} disabled={isPending}>
+ *   {isPending ? 'Posting...' : 'Post Comment'}
+ * </button>
+ * ```
  */
 function useOptimisticSubmit({
   key,
@@ -72,6 +106,7 @@ function useOptimisticSubmit({
   toastMessage,
 }: OptimisticSubmit): OptimisticReturn {
   const fetcher = useFetcher({ key: key ? key : intent });
+
   const submit = React.useCallback(() => {
     try {
       const parsed = OptimisticSubmitSchema.parse({
@@ -80,18 +115,19 @@ function useOptimisticSubmit({
         intent,
         toastMessage,
       });
+
       fetcher
         .submit({ ...parsed.data, intent }, { method: "post" })
-        .then(() => toastMessage && toast(toastMessage))
+        .then(() => toastMessage && toast.success(toastMessage))
         .catch((error) => {
           const message =
             error.status === 401
               ? "Authentication required"
               : getErrorMessage(error);
-          toast(message);
+          toast.error(message);
         });
     } catch (err) {
-      toast("Invalid request data");
+      toast.error("Invalid request data");
       console.error(err);
     }
   }, [key, data, intent, toastMessage, fetcher]);
@@ -104,18 +140,23 @@ function useOptimisticSubmit({
 }
 
 /**
- * Handles comment submission with optimistic updates
+ * Hook for submitting comments with optimistic updates.
+ * Handles comment creation and updates with proper error handling.
+ *
  * @param {Update} params - Comment parameters
- * @returns {OptimisticReturn} Submission state
+ * @returns {OptimisticReturn} Submission state and controls
  *
  * @example
- * const { isPending } = useSubmitComment({
+ * ```tsx
+ * const { submit, isPending } = useSubmitComment({
  *   key: `post-${postId}-comments`,
  *   intent: 'add-comment',
  *   itemId: postId,
  *   userId: currentUser.id,
- *   content: 'Great post!'
+ *   content: 'Great post!',
+ *   toastMessage: 'Comment posted successfully!'
  * });
+ * ```
  */
 export function useSubmitComment(params: Update): OptimisticReturn {
   const memoizedParams = React.useMemo(
@@ -145,17 +186,22 @@ export function useSubmitComment(params: Update): OptimisticReturn {
 }
 
 /**
- * Handles content upvoting with optimistic UI
+ * Hook for handling content upvoting with optimistic UI.
+ * Manages upvote state and provides immediate feedback.
+ *
  * @param {Omit<Update, "content" | "parentId">} params - Upvote parameters
- * @returns {OptimisticReturn} Submission state
+ * @returns {OptimisticReturn} Submission state and controls
  *
  * @example
- * const { isPending } = useContentUpvote({
+ * ```tsx
+ * const { submit, isPending } = useContentUpvote({
  *   key: `post-${postId}-upvotes`,
  *   intent: isUpvoted ? 'remove-upvote' : 'upvote-comment',
  *   itemId: postId,
- *   userId: currentUser.id
+ *   userId: currentUser.id,
+ *   toastMessage: isUpvoted ? 'Upvote removed' : 'Post upvoted!'
  * });
+ * ```
  */
 export function useContentUpvote(
   params: Omit<Update, "content" | "parentId">,
@@ -183,17 +229,22 @@ export function useContentUpvote(
 }
 
 /**
- * Handles comment deletion with optimistic UI
+ * Hook for handling comment deletion with optimistic UI.
+ * Provides immediate feedback and handles error states.
+ *
  * @param {Omit<Update, "content" | "parentId">} params - Deletion parameters
- * @returns {OptimisticReturn} Submission state
+ * @returns {OptimisticReturn} Submission state and controls
  *
  * @example
- * const { error } = useDeleteComment({
+ * ```tsx
+ * const { submit, error } = useDeleteComment({
  *   key: `comment-${commentId}`,
  *   intent: 'delete-comment',
  *   itemId: commentId,
- *   userId: currentUser.id
+ *   userId: currentUser.id,
+ *   toastMessage: 'Comment deleted successfully'
  * });
+ * ```
  */
 export function useDeleteComment(
   params: Omit<Update, "content" | "parentId">,
@@ -221,18 +272,23 @@ export function useDeleteComment(
 }
 
 /**
- * Handles comment updates with optimistic UI
+ * Hook for handling comment updates with optimistic UI.
+ * Manages comment editing with immediate feedback.
+ *
  * @param {Omit<Update, "parentId">} params - Update parameters
- * @returns {OptimisticReturn} Submission state
+ * @returns {OptimisticReturn} Submission state and controls
  *
  * @example
- * const { isPending } = useUpdateComment({
+ * ```tsx
+ * const { submit, isPending } = useUpdateComment({
  *   key: `comment-${commentId}`,
  *   intent: 'update-comment',
  *   itemId: commentId,
  *   userId: currentUser.id,
- *   content: 'Updated comment text'
+ *   content: 'Updated comment text',
+ *   toastMessage: 'Comment updated successfully'
  * });
+ * ```
  */
 export function useUpdateComment(
   params: Omit<Update, "parentId">,

@@ -8,7 +8,7 @@ export async function sendEmail(options: {
   react: React.ReactNode;
 }) {
   const emailData = {
-    from: "info@codingsimba.com",
+    from: "me@codingsimba.com",
     ...options,
   };
 

@@ -1,8 +1,16 @@
 import type { Route } from "./+types/signup";
 import { z } from "zod";
 import { motion } from "framer-motion";
+import { generateTOTP } from "@epic-web/totp";
 import { LoaderCircle } from "lucide-react";
-import { data, Form, Link, useNavigation, useSearchParams } from "react-router";
+import {
+  data,
+  Form,
+  Link,
+  redirect,
+  useNavigation,
+  useSearchParams,
+} from "react-router";
 import {
   Card,
   CardContent,
@@ -19,8 +27,16 @@ import { Button } from "~/components/ui/button";
 import { parseWithZod } from "@conform-to/zod";
 import { StatusCodes } from "http-status-codes";
 import { FormConsent } from "~/components/form-consent";
-import { GithubButton } from "~/components/github-button";
 import { requireAnonymous } from "~/utils/auth.server";
+import { SignupEmail } from "~/components/email-templates/email-verification";
+import { onboardingSessionKey } from "./onboarding";
+import { sendEmail } from "~/services.server/resend";
+import { verifySessionStorage } from "~/utils/verification.server";
+import { getDomainUrl } from "~/utils/misc";
+import { prisma } from "~/utils/db.server";
+import type { Verification } from "~/generated/prisma";
+import { codeQueryParam, targetQueryParam, typeQueryParam } from "./verify";
+import { ProviderConnectionForm } from "~/components/provider-connection-form";
 
 const AuthSchema = z.object({
   email: z
@@ -52,36 +68,54 @@ export async function action({ request }: Route.ActionArgs) {
     });
   }
 
-  // const { email } = submission.value;
+  const { email } = submission.value;
 
-  // const verifySession = await verifySessionStorage.getSession(
-  //   request.headers.get("cookie"),
-  // );
+  const verifySession = await verifySessionStorage.getSession(
+    request.headers.get("cookie"),
+  );
 
-  // verifySession.set(onboardingSessionKey, email);
+  verifySession.set(onboardingSessionKey, email);
 
-  // const { verifyUrl, redirectTo, otp } = await prepareVerification({
-  //   period: 10 * 60,
-  //   request,
-  //   type: "onboarding",
-  //   target: email,
-  // });
+  const { otp, ...verificationConfig } = await generateTOTP({
+    period: 10 * 60,
+    algorithm: "SHA-256",
+  });
 
-  // const response = await sendEmail({
-  //   to: email,
-  //   subject: `Welcome to Epic Notes!`,
-  //   react: <SignupEmail onboardingUrl={verifyUrl.toString()} otp={otp} />,
-  // });
+  const redirectToUrl = new URL(`${getDomainUrl(request)}/verify`);
+  const type = "onboarding" as Verification["type"];
+  redirectToUrl.searchParams.set(typeQueryParam, type);
+  redirectToUrl.searchParams.set(targetQueryParam, email);
 
-  // if (response.status === "success") {
-  //   return redirect(redirectTo.toString());
-  // } else {
-  //   return data(
-  //     { ...submission.reply({ formErrors: [response.error] }) },
-  //     { status: StatusCodes.INTERNAL_SERVER_ERROR },
-  //   );
-  // }
-  return { ...submission.reply() };
+  const verifyUrl = new URL(redirectToUrl);
+  verifyUrl.searchParams.set(codeQueryParam, otp);
+
+  const verificationData = {
+    type,
+    target: email,
+    ...verificationConfig,
+    expiresAt: new Date(Date.now() + verificationConfig.period * 1000),
+  };
+
+  await prisma.verification.upsert({
+    where: { target_type: { type, target: email } },
+    create: verificationData,
+    update: verificationData,
+  });
+
+  const response = await sendEmail({
+    to: email,
+    subject: `Welcome to Coding Simba!`,
+    react: <SignupEmail code={otp} onboardingUrl={verifyUrl.toString()} />,
+  });
+
+  if (response.status === "success") {
+    return redirect(redirectToUrl.toString());
+  } else {
+    return data(
+      { ...submission.reply({ formErrors: [response.error] }) },
+      { status: StatusCodes.INTERNAL_SERVER_ERROR },
+    );
+  }
 }
 
 export default function Signup({ actionData }: Route.ComponentProps) {
@@ -145,7 +179,7 @@ export default function Signup({ actionData }: Route.ComponentProps) {
                 type="submit"
                 className="w-full"
                 disabled={isSubmitting}
-                aria-label="Sign up"
+                aria-label="Signup"
               >
                 Submit{" "}
                 {isSubmitting ? (
@@ -165,7 +199,11 @@ export default function Signup({ actionData }: Route.ComponentProps) {
               </div>
             </div>
             <div className="w-full">
-              <GithubButton action="" />
+              <ProviderConnectionForm
+                redirectTo={redirectTo}
+                providerName="github"
+                type="Signup"
+              />
             </div>
 
             <div className="text-center">
@@ -175,7 +213,7 @@ export default function Signup({ actionData }: Route.ComponentProps) {
                   to="/signin"
                   className="font-medium text-blue-600 hover:underline dark:text-blue-400"
                 >
-                  Sign In
+                  Signin
                 </Link>
               </p>
             </div>

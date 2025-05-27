@@ -9,7 +9,7 @@ async function seed() {
   await prisma.role.deleteMany();
   await prisma.user.deleteMany();
 
-  const entities: Entity[] = ["USER", "COMMENT", "REVIEW", "SETTINGS", "USER"];
+  const entities: Entity[] = ["USER", "COMMENT", "REVIEW", "SETTINGS"];
   const actions: Action[] = ["CREATE", "READ", "UPDATE", "DELETE"];
   const accesses: string[] = ["OWN", "ANY"] as const;
 
@@ -56,9 +56,9 @@ async function seed() {
         },
       },
       password: { create: createPassword(process.env.ADMIN_PASSWORD) },
-      notificationSettings: {
-        create: {},
-      },
+      // notificationSettings: {
+      //   create: {},
+      // },
     },
   });
 }

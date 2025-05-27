@@ -4,7 +4,6 @@ import {
   Links,
   Meta,
   Outlet,
-  // redirect,
   Scripts,
   ScrollRestoration,
   useLoaderData,
@@ -26,17 +25,13 @@ import { Footer } from "./components/footer";
 import { themeSessionResolver } from "~/utils/theme.server";
 import { GeneralErrorBoundary } from "./components/error-boundary";
 import { AuthDialogProvider } from "./contexts/auth-dialog";
-import { AuthDialog, AuthSchema } from "./components/auth-dialog";
+import { AuthDialog } from "./components/auth-dialog";
 import { MobileNavProvider } from "./contexts/mobile-nav";
 import { MobileNav } from "./components/mobile-nav";
 import { prisma } from "./utils/db.server";
 import { authSessionStorage } from "./utils/session.server";
-import { sessionKey, signin, signup } from "./utils/auth.server";
+import { sessionKey } from "./utils/auth.server";
 import { Toaster } from "./components/ui/sonner";
-import { parseWithZod } from "@conform-to/zod";
-import { z } from "zod";
-import { StatusCodes } from "http-status-codes";
-// import { onboardingSessionKey } from "./routes/verify";
 
 export const meta: Route.MetaFunction = () => [];
 
@@ -106,128 +101,6 @@ export async function loader({ request }: Route.LoaderArgs) {
   return dataObj;
 }
 
-export async function action({ request }: Route.ActionArgs) {
-  const formData = await request.formData();
-
-  const submission = await parseWithZod(formData, {
-    schema: AuthSchema.transform(async (data, ctx) => {
-      const { authType, email, password, intent } = data;
-      if (intent !== "submit" || !authType) return { ...data, session: null };
-
-      switch (authType) {
-        case "signup": {
-          const existingUser = await prisma.user.findUnique({
-            where: { email },
-            select: { id: true },
-          });
-
-          if (existingUser) {
-            ctx.addIssue({
-              path: ["email"],
-              code: z.ZodIssueCode.custom,
-              message: "Email already in use.",
-            });
-            return z.NEVER;
-          }
-
-          const session = await signup({
-            email,
-            name: name ?? null,
-            password,
-          });
-
-          return { ...data, session };
-        }
-
-        case "signin": {
-          const session = await signin({ email, password });
-          if (!session) {
-            ctx.addIssue({
-              path: ["root"],
-              code: z.ZodIssueCode.custom,
-              message: "Invalid credentials.",
-            });
-            return z.NEVER;
-          }
-          return { ...data, session };
-        }
-
-        default:
-          throw new Error("Invalid authType");
-      }
-    }),
-    async: true,
-  });
-
-  if (submission.status !== "success") {
-    return data({ status: "error", ...submission.reply() } as const, {
-      status:
-        submission.status === "error"
-          ? StatusCodes.BAD_REQUEST
-          : StatusCodes.OK,
-    });
-  }
-
-  if (!submission.value.session) {
-    return data({ status: "error", ...submission.reply() } as const, {
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
-    });
-  }
-
-  const { rememberMe, session, authType } = submission.value;
-
-  if (authType === "signin") {
-    const authSession = await authSessionStorage.getSession(
-      request.headers.get("cookie"),
-    );
-
-    authSession.set(sessionKey, session.id);
-
-    return data({ status: "success", ...submission.reply() } as const, {
-      headers: {
-        "Set-Cookie": await authSessionStorage.commitSession(authSession, {
-          expires: rememberMe ? session.expirationDate : undefined,
-        }),
-      },
-    });
-  } else {
-    // const verifySession = await verifySessionStorage.getSession(
-    //   request.headers.get("cookie"),
-    // );
-
-    // verifySession.set(onboardingSessionKey, email);
-
-    // const { verifyUrl, redirectTo, otp } = await prepareVerification({
-    //   period: 10 * 60,
-    //   request,
-    //   type: "onboarding",
-    //   target: email,
-    // });
-
-    // const response = await sendEmail({
-    //   to: email,
-    //   subject: `Welcome to Epic Notes!`,
-    //   react: <SignupEmail onboardingUrl={verifyUrl.toString()} otp={otp} />,
-    // });
-
-    // const emailResponse = await sendEmail({
-    //   to: email,
-    //   subject: "Sign in to Coding Simba",
-    //   react: <SigninEmail signinUrl={`${getDomainUrl(request)}/verify`} />,
-    // });
-
-    // if (response.status === "success") {
-    //   return redirect(redirectTo.toString());
-    // } else {
-    //   return data(
-    //     { ...submission.reply({ formErrors: [response.error] }) },
-    //     { status: StatusCodes.INTERNAL_SERVER_ERROR },
-    //   );
-    // }
-    return {};
-  }
-}
-
 type DocumentProps = {
   children: React.ReactNode;
   currentTheme?: Theme | null;
@@ -272,7 +145,7 @@ function App() {
 function OptionalNavbar() {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
-  return isHomePage ? null : <Navbar />;
+  return !isHomePage ? <Navbar /> : null;
 }
 
 export default function AppWithProviders({ loaderData }: Route.ComponentProps) {

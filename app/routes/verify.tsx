@@ -1,11 +1,6 @@
-// import type { Route } from "./+types/verify";
-// import { redirect } from "react-router";
-// import { sessionKey, signin } from "~/utils/auth.server";
-// import { verifySessionStorage } from "~/utils/verification.server";
-// import { validateRedirectUrl } from "~/utils/misc";
-// import { authSessionStorage } from "~/utils/session.server";
-
-import { useState, useEffect } from "react";
+import React from "react";
+import type { Route } from "./+types/verify";
+import { verifyTOTP } from "@epic-web/totp";
 import { motion } from "framer-motion";
 import { Mail, ArrowLeft, RefreshCw } from "lucide-react";
 import {
@@ -14,122 +9,213 @@ import {
   InputOTPSlot,
 } from "~/components/ui/input-otp";
 import { Button } from "~/components/ui/button";
+import { z } from "zod";
+import {
+  getFormProps,
+  getInputProps,
+  useForm,
+  type Submission,
+} from "@conform-to/react";
+import { parseWithZod } from "@conform-to/zod";
+import {
+  data,
+  Form,
+  redirect,
+  useFetcher,
+  useNavigate,
+  useNavigation,
+  useSearchParams,
+} from "react-router";
+import { FormError } from "~/components/form-errors";
+import { prisma } from "~/utils/db.server";
+import { StatusCodes } from "http-status-codes";
+import type { Verification } from "~/generated/prisma";
+import { verifySessionStorage } from "~/utils/verification.server";
+import { onboardingSessionKey } from "./onboarding";
 
-// export const onboardingSessionKey = "onboardingEmail";
+async function validateRequest(
+  request: Request,
+  body: URLSearchParams | FormData,
+) {
+  const submission = await parseWithZod(body, {
+    schema: VerifySchema.superRefine(async (data, ctx) => {
+      const verification = await prisma.verification.findUnique({
+        where: {
+          target_type: {
+            target: data[targetQueryParam],
+            type: data[typeQueryParam],
+          },
+          OR: [{ expiresAt: { gt: new Date() } }, { expiresAt: null }],
+        },
+      });
 
-// export async function loader({ request }: Route.LoaderArgs) {
-//   const verifySession = await verifySessionStorage.getSession(
-//     request.headers.get("cookie"),
-//   );
-//   async function handleRedirectTo(request: Request) {
-//     const url = new URL(request.url);
-//     const redirectTo = url.searchParams.get("redirectTo");
-
-//     const safePath = redirectTo
-//       ? validateRedirectUrl(redirectTo, url.origin)
-//       : null;
-
-//     return safePath;
-//   }
-
-//   const email = verifySession.get(onboardingSessionKey);
-//   if (typeof email !== "string" || !email) {
-//     return redirect("/?status=error", {
-//       headers: {
-//         "Set-Cookie": await verifySessionStorage.destroySession(verifySession),
-//       },
-//     });
-//   }
-//   const session = await signin({ email } as { email: string });
-//   const redirectTo = await handleRedirectTo(request);
-//   const authSession = await authSessionStorage.getSession(
-//     request.headers.get("cookie"),
-//   );
-//   authSession.set(sessionKey, session.id);
-
-//   const isOnboarded = session.user.onboarded;
-
-//   const redirectToPath = isOnboarded
-//     ? redirectTo
-//       ? redirectTo
-//       : "/?status=success"
-//     : `/onboarding?email=${email}${redirectTo ? `&${redirectTo}` : ""}`;
-
-//   return redirect(redirectToPath, {
-//     headers: {
-//       "Set-Cookie": await authSessionStorage.commitSession(authSession),
-//     },
-//   });
-// }
-
-export default function VerifyPage() {
-  const [otp] = useState("");
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [, setError] = useState("");
-  const [resendCooldown, setResendCooldown] = useState(0);
-
-  // Email would typically come from a query parameter or auth state
-  const userEmail = "user@example.com";
-
-  // Handle OTP verification
-  const handleVerifyOtp = async () => {
-    if (otp.length !== 6) {
-      setError("Please enter a complete 6-digit code");
-      return;
-    }
-
-    setIsVerifying(true);
-    setError("");
-
-    // Simulate API call
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Simulate success (in real app, check if OTP is correct)
-      if (otp === "123456") {
-        return;
-      } else {
-        setError("Invalid verification code. Please try again.");
+      if (!verification) {
+        ctx.addIssue({
+          path: ["code"],
+          code: z.ZodIssueCode.custom,
+          message: `Invalid code`,
+        });
+        return z.NEVER;
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setIsVerifying(false);
-    }
-  };
 
-  // Handle resend OTP
-  const handleResendOtp = async () => {
-    setResendCooldown(60);
-    setError("");
+      const codeIsValid = await verifyTOTP({
+        otp: data[codeQueryParam],
+        ...verification,
+      });
 
-    // Simulate API call
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // Show success message or handle resend logic
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
-      setError("Failed to resend code. Please try again.");
-    }
-  };
+      if (!codeIsValid) {
+        ctx.addIssue({
+          path: ["code"],
+          code: z.ZodIssueCode.custom,
+          message: `Invalid code`,
+        });
+        return z.NEVER;
+      }
+    }),
 
-  // Countdown timer for resend
-  useEffect(() => {
-    if (resendCooldown > 0) {
+    async: true,
+  });
+
+  if (submission.status !== "success") {
+    return data({ status: "error", ...submission.reply() } as const, {
+      status: StatusCodes.BAD_REQUEST,
+    });
+  }
+
+  if (submission.payload.intent !== "submit") {
+    return data({ status: "error", ...submission.reply() } as const);
+  }
+  const { payload: submissionValue } = submission;
+
+  // async function deleteVerification() {
+  await prisma.verification.delete({
+    where: {
+      target_type: {
+        target: submissionValue.target as Verification["target"],
+        type: submissionValue.type as Verification["type"],
+      },
+    },
+  });
+  // }
+
+  const verifySession = await verifySessionStorage.getSession(
+    request.headers.get("cookie"),
+  );
+
+  verifySession.set(onboardingSessionKey, submissionValue.target);
+
+  return redirect("/onboarding", {
+    headers: {
+      "set-cookie": await verifySessionStorage.commitSession(verifySession),
+    },
+  });
+
+  // switch (submissionValue[typeQueryParam]) {
+  //   case "onboarding": {
+  //     await deleteVerification();
+  //     return handleOnboardingVerification({ request, body, submission });
+  //   }
+  // case "reset-password": {
+  //   await deleteVerification();
+  //   return handleResetPasswordVerification({ request, body, submission });
+  // }
+  // case "change-email": {
+  //   await deleteVerification();
+  //   return handleChangeEmailVerification({ request, body, submission });
+  // }
+  // case "2fa": {
+  //   return handleLoginTwoFactorVerification({ request, body, submission });
+  // }
+  // }
+}
+
+export const codeQueryParam = "code";
+export const targetQueryParam = "target";
+export const typeQueryParam = "type";
+export const redirectToQueryParam = "redirectTo";
+
+const types = ["onboarding"] as const;
+const VerificationTypeSchema = z.enum(types);
+export type VerificationTypes = z.infer<typeof VerificationTypeSchema>;
+
+const VerifySchema = z.object({
+  [codeQueryParam]: z
+    .string({ required_error: "OTP is required." })
+    .min(6)
+    .max(6),
+  [targetQueryParam]: z.string(),
+  [typeQueryParam]: VerificationTypeSchema,
+  [redirectToQueryParam]: z.string().optional(),
+  intent: z.literal("submit"),
+});
+export type VerifyFunctionArgs = {
+  request: Request;
+  submission: Submission<z.infer<typeof VerifySchema>>;
+  body: FormData | URLSearchParams;
+};
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const params = new URL(request.url).searchParams;
+  if (!params.has(codeQueryParam)) {
+    return data({
+      status: "error",
+      submission: {
+        payload: Object.fromEntries(params) as Record<string, unknown>,
+        error: {} as Record<string, Array<string>>,
+      },
+    } as const);
+  }
+  return validateRequest(request, params);
+}
+
+export async function action({ request }: Route.ActionArgs) {
+  const formData = await request.formData();
+  return validateRequest(request, formData);
+}
+
+export default function VerifyPage({
+  loaderData,
+  actionData,
+}: Route.ComponentProps) {
+  const [resendCountdown, setResendCountdown] = React.useState(0);
+
+  const navigate = useNavigate();
+  const navigation = useNavigation();
+  const [searchParams] = useSearchParams();
+  const fetcher = useFetcher();
+
+  const isVerifying = navigation.formData?.get("intent") === "submit";
+
+  const [form, fields] = useForm({
+    id: "verify",
+    lastResult: actionData ?? loaderData,
+    onValidate({ formData }) {
+      return parseWithZod(formData, { schema: VerifySchema });
+    },
+    shouldValidate: "onBlur",
+    defaultValue: {
+      code: searchParams.get(codeQueryParam) ?? "",
+      type: searchParams.get(typeQueryParam) ?? "",
+      target: searchParams.get(targetQueryParam) ?? "",
+      redirectTo: searchParams.get(redirectToQueryParam) ?? "",
+    },
+  });
+
+  function handleResendOtp() {
+    setResendCountdown(60);
+    fetcher.submit({ intent: "resend-otp" }, { method: "post" });
+  }
+
+  React.useEffect(() => {
+    if (resendCountdown > 0) {
       const timer = setTimeout(() => {
-        setResendCooldown(resendCooldown - 1);
+        setResendCountdown(resendCountdown - 1);
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [resendCooldown]);
+  }, [resendCountdown]);
 
-  // Auto-verify when OTP is complete
-  useEffect(() => {
-    if (otp.length === 6) {
-      handleVerifyOtp();
-    }
-  }, [otp]);
+  const OTP_LENGTH = 6;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4 dark:bg-gray-950">
@@ -141,14 +227,13 @@ export default function VerifyPage() {
       >
         {/* Back button */}
         <button
-          // onClick={() => router.back()}
+          onClick={() => navigate(-1)}
           className="mb-6 flex items-center text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </button>
 
-        {/* Header */}
         <div className="mb-8 text-center">
           <div className="mb-4 flex justify-center">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
@@ -160,48 +245,54 @@ export default function VerifyPage() {
             We&apos;ve sent a 6-digit verification code to
           </p>
           <p className="mt-1 font-medium text-gray-900 dark:text-gray-100">
-            {userEmail}
+            {fields.target.value}
           </p>
         </div>
 
-        {/* OTP Input */}
-        <div className="mx-auto mb-6 flex w-full justify-center">
-          <InputOTP maxLength={6}>
-            <InputOTPGroup>
-              <InputOTPSlot index={0} />
-              <InputOTPSlot index={1} />
-              <InputOTPSlot index={2} />
-              <InputOTPSlot index={3} />
-              <InputOTPSlot index={4} />
-              <InputOTPSlot index={5} />
-            </InputOTPGroup>
-          </InputOTP>
-        </div>
+        <Form {...getFormProps(form)} method="post" className="w-full">
+          <input
+            {...getInputProps(fields[typeQueryParam], { type: "hidden" })}
+          />
+          <input
+            {...getInputProps(fields[targetQueryParam], { type: "hidden" })}
+          />
+          <input
+            {...getInputProps(fields[redirectToQueryParam], { type: "hidden" })}
+          />
+          <input
+            {...getInputProps(fields.intent, { type: "hidden" })}
+            value="submit"
+          />
+          <div className="mx-auto mb-6 flex w-full justify-center">
+            <InputOTP
+              {...getInputProps(fields[codeQueryParam], { type: "text" })}
+              maxLength={OTP_LENGTH}
+              autoFocus
+            >
+              <InputOTPGroup>
+                {[...Array(6)].map((_, i) => (
+                  <InputOTPSlot key={i} index={i} />
+                ))}
+              </InputOTPGroup>
+            </InputOTP>
+          </div>
+          <FormError errors={fields[codeQueryParam].errors} className="mb-6" />
+          <Button type="submit" className="mb-6 w-full" disabled={isVerifying}>
+            Verify Email
+            {isVerifying ? (
+              <RefreshCw className="mr-2 size-4 animate-spin" />
+            ) : null}
+          </Button>
+          <FormError errors={form.errors} />
+        </Form>
 
-        {/* Verify Button */}
-        <Button
-          onClick={handleVerifyOtp}
-          disabled={otp.length !== 6 || isVerifying}
-          className="mb-6 w-full"
-        >
-          {isVerifying ? (
-            <>
-              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-              Verifying...
-            </>
-          ) : (
-            "Verify Email"
-          )}
-        </Button>
-
-        {/* Resend Code */}
         <div className="text-center">
           <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
             Didn&apos;t receive the code?
           </p>
-          {resendCooldown > 0 ? (
+          {resendCountdown > 0 ? (
             <p className="text-sm text-gray-500 dark:text-gray-500">
-              Resend code in {resendCooldown} seconds
+              Resend code in {resendCountdown} seconds
             </p>
           ) : (
             <button
@@ -213,7 +304,6 @@ export default function VerifyPage() {
           )}
         </div>
 
-        {/* Help text */}
         <div className="mt-6 border-t border-gray-200 pt-6 dark:border-gray-800">
           <p className="text-center text-xs text-gray-500 dark:text-gray-500">
             Check your spam folder if you don&apos;t see the email. The code

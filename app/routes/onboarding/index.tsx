@@ -1,8 +1,14 @@
-import type { Route } from "./+types/onboarding";
+import type { Route } from "./+types/index";
 import { z } from "zod";
 import { motion } from "framer-motion";
 import { LoaderCircle } from "lucide-react";
-import { data, Form, useNavigation, useSearchParams } from "react-router";
+import {
+  data,
+  Form,
+  redirect,
+  useNavigation,
+  useSearchParams,
+} from "react-router";
 import {
   Card,
   CardContent,
@@ -21,6 +27,10 @@ import { StatusCodes } from "http-status-codes";
 import { prisma } from "~/utils/db.server";
 import { requireAnonymous, sessionKey, signup } from "~/utils/auth.server";
 import { authSessionStorage } from "~/utils/session.server";
+import { verifySessionStorage } from "~/utils/verification.server";
+import { safeRedirect } from "remix-utils/safe-redirect";
+
+export const onboardingSessionKey = "onboardingEmail" as const;
 
 const AuthSchema = z
   .object({
@@ -69,9 +79,22 @@ const AuthSchema = z
     path: ["confirmPassword"],
   });
 
+async function requireOnboardingEmail(request: Request) {
+  const verifySesison = await verifySessionStorage.getSession(
+    request.headers.get("cookie"),
+  );
+  const email = await verifySesison.get(onboardingSessionKey);
+
+  if (typeof email !== "string" || !email) {
+    throw redirect("/signup");
+  }
+  return email;
+}
+
 export async function loader({ request }: Route.LoaderArgs) {
   await requireAnonymous(request);
-  return {};
+  const email = await requireOnboardingEmail(request);
+  return { email };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -92,9 +115,9 @@ export async function action({ request }: Route.ActionArgs) {
 
       if (existingUser) {
         ctx.addIssue({
-          path: ["email"],
+          path: ["root"],
           code: z.ZodIssueCode.custom,
-          message: "This email is already registered. Please sign in instead.",
+          message: "Email already in use, Please sign in instead.",
         });
         return z.NEVER;
       }
@@ -116,8 +139,9 @@ export async function action({ request }: Route.ActionArgs) {
         }
 
         return { ...data, session };
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
+        console.error(e);
+
         ctx.addIssue({
           path: ["root"],
           code: z.ZodIssueCode.custom,
@@ -144,7 +168,7 @@ export async function action({ request }: Route.ActionArgs) {
     });
   }
 
-  const { rememberMe, session } = submission.value;
+  const { rememberMe, session, redirectTo } = submission.value;
 
   const authSession = await authSessionStorage.getSession(
     request.headers.get("cookie"),
@@ -152,16 +176,30 @@ export async function action({ request }: Route.ActionArgs) {
 
   authSession.set(sessionKey, session.id);
 
-  return data({ status: "success", ...submission.reply() } as const, {
-    headers: {
-      "Set-Cookie": await authSessionStorage.commitSession(authSession, {
-        expires: rememberMe ? session.expirationDate : undefined,
-      }),
-    },
-  });
+  const verifySession = await verifySessionStorage.getSession(
+    request.headers.get("cookie"),
+  );
+
+  const headers = new Headers();
+  headers.append(
+    "set-cookie",
+    await authSessionStorage.commitSession(authSession, {
+      expires: rememberMe ? session.expirationDate : undefined,
+    }),
+  );
+
+  headers.append(
+    "set-cookie",
+    await verifySessionStorage.destroySession(verifySession),
+  );
+
+  return redirect(safeRedirect(redirectTo), { headers });
 }
 
-export default function Onboarding({ actionData }: Route.ComponentProps) {
+export default function Onboarding({
+  actionData,
+  loaderData,
+}: Route.ComponentProps) {
   const navigation = useNavigation();
   const [searchParams] = useSearchParams();
 
@@ -178,7 +216,7 @@ export default function Onboarding({ actionData }: Route.ComponentProps) {
   });
 
   const isSubmitting = navigation.formData?.get("intent") === "submit";
-  const email = "christohybrid185@gmail.com";
+  const email = loaderData.email;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-gray-50 p-4 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
@@ -196,13 +234,8 @@ export default function Onboarding({ actionData }: Route.ComponentProps) {
       >
         <Card className="border-0 bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">
-              Please enter your details
-            </CardTitle>
-            <CardDescription>
-              Welcome back{" "}
-              <span className="text-black dark:text-white">{email}</span>
-            </CardDescription>
+            <CardTitle className="text-xl">Welcome aboard {email}</CardTitle>
+            <CardDescription>Please enter your details</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-6">

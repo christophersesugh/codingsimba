@@ -25,7 +25,6 @@ function isUser(
     typeof user === "object" &&
     user !== null &&
     "id" in user &&
-    "name" in user &&
     "roles" in user
   );
 }

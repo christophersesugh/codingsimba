@@ -19,9 +19,12 @@ import { parseWithZod } from "@conform-to/zod";
 import { z } from "zod";
 import { StatusCodes } from "http-status-codes";
 import { FormConsent } from "~/components/form-consent";
-import { GithubButton } from "~/components/github-button";
-import { requireAnonymous, sessionKey, signin } from "~/utils/auth.server";
-import { authSessionStorage } from "~/utils/session.server";
+import {
+  handleNewSession,
+  requireAnonymous,
+  signin,
+} from "~/utils/auth.server";
+import { ProviderConnectionForm } from "~/components/provider-connection-form";
 
 const AuthSchema = z.object({
   email: z
@@ -83,21 +86,9 @@ export async function action({ request }: Route.ActionArgs) {
     });
   }
 
-  const { rememberMe, session } = submission.value;
+  const { rememberMe, redirectTo, session } = submission.value;
 
-  const authSession = await authSessionStorage.getSession(
-    request.headers.get("cookie"),
-  );
-
-  authSession.set(sessionKey, session.id);
-
-  return data({ status: "success", ...submission.reply() } as const, {
-    headers: {
-      "Set-Cookie": await authSessionStorage.commitSession(authSession, {
-        expires: rememberMe ? session.expirationDate : undefined,
-      }),
-    },
-  });
+  return await handleNewSession({ request, session, redirectTo, rememberMe });
 }
 
 export default function Signin({ actionData }: Route.ComponentProps) {
@@ -203,7 +194,11 @@ export default function Signin({ actionData }: Route.ComponentProps) {
               </div>
             </div>
             <div className="w-full">
-              <GithubButton action="" />
+              <ProviderConnectionForm
+                redirectTo={redirectTo}
+                providerName="github"
+                type="Signin"
+              />
             </div>
             <div className="text-center">
               <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -212,7 +207,7 @@ export default function Signin({ actionData }: Route.ComponentProps) {
                   to="/signup"
                   className="font-medium text-blue-600 hover:underline dark:text-blue-400"
                 >
-                  Sign Up
+                  Signup
                 </Link>
               </p>
             </div>

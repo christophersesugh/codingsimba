@@ -1,18 +1,20 @@
 // import crypto from "node:crypto";
+import bcrypt from "bcryptjs";
 import {
+  type Connection,
   type Password,
   type Profile,
   // type Connection,
   type User,
 } from "~/generated/prisma";
 import { redirect } from "react-router";
-// import { Authenticator } from "remix-auth";
+import { Authenticator } from "remix-auth";
 import { safeRedirect } from "remix-utils/safe-redirect";
-// import { providers } from "./connections.server.ts";
+import { providers } from "./connection.server";
 import { prisma } from "./db.server";
-import { combineHeaders } from "./misc";
+import { combineHeaders, combineResponseInits } from "./misc";
 import { authSessionStorage } from "./session.server";
-import bcrypt from "bcryptjs";
+import type { ProviderUser } from "./providers/provider";
 // import { type ProviderUser } from "./providers/provider";
 // import { authSessionStorage } from "./session.server.ts";
 // import { uploadProfileImage } from "./storage.server.ts";
@@ -23,14 +25,14 @@ export const getSessionExpirationDate = () =>
 
 export const sessionKey = "sessionId";
 
-// export const authenticator = new Authenticator<ProviderUser>();
+export const authenticator = new Authenticator<ProviderUser>();
 
-// for (const [providerName, provider] of Object.entries(providers)) {
-//   const strategy = provider.getAuthStrategy();
-//   if (strategy) {
-//     authenticator.use(strategy, providerName);
-//   }
-// }
+for (const [providerName, provider] of Object.entries(providers)) {
+  const strategy = provider.getAuthStrategy();
+  if (strategy) {
+    authenticator.use(strategy, providerName);
+  }
+}
 
 export async function getUserId(request: Request) {
   const authSession = await authSessionStorage.getSession(
@@ -179,52 +181,47 @@ export async function verifyUserPassword(
   return { id: userWithPassword.id };
 }
 
-// export async function signinWithConnection({
-//   email,
-//   providerId,
-//   providerName,
-//   imageUrl,
-// }: {
-//   email: User["email"];
-//   name: User["name"];
-//   providerId: Connection["providerId"];
-//   providerName: Connection["providerName"];
-//   imageUrl?: string;
-// }) {
-//   const user = await prisma.user.create({
-//     data: {
-//       email: email.toLowerCase(),
-//       roles: { connect: { name: "USER" } },
-//       connections: { create: { providerId, providerName } },
-//     },
-//     select: { id: true },
-//   });
+export async function signupWithConnection({
+  email,
+  providerId,
+  providerName,
+  imageUrl,
+}: {
+  email: User["email"];
+  name: Profile["name"];
+  providerId: Connection["providerId"];
+  providerName: Connection["providerName"];
+  imageUrl?: string;
+}) {
+  const user = await prisma.user.create({
+    data: {
+      email: email.toLowerCase(),
+      roles: { connect: { name: "USER" } },
+      connections: { create: { providerId, providerName } },
+      ...(imageUrl
+        ? {
+            profile: {
+              create: {
+                image: imageUrl,
+              },
+            },
+          }
+        : {}),
+    },
+    select: { id: true },
+  });
 
-//   if (imageUrl) {
-//     const imageFile = await downloadFile(imageUrl);
-//     await prisma.user.update({
-//       where: { id: user.id },
-//       data: {
-//         image: {
-//           create: {
-//             objectKey: await uploadProfileImage(user.id, imageFile),
-//           },
-//         },
-//       },
-//     });
-//   }
+  // Create and return the session
+  const session = await prisma.session.create({
+    data: {
+      expirationDate: getSessionExpirationDate(),
+      userId: user.id,
+    },
+    select: { id: true, expirationDate: true },
+  });
 
-//   // Create and return the session
-//   const session = await prisma.session.create({
-//     data: {
-//       expirationDate: getSessionExpirationDate(),
-//       userId: user.id,
-//     },
-//     select: { id: true, expirationDate: true },
-//   });
-
-//   return session;
-// }
+  return session;
+}
 
 export async function logout(
   {
@@ -256,4 +253,61 @@ export async function logout(
       responseInit?.headers,
     ),
   });
+}
+
+export async function handleNewSession(
+  {
+    request,
+    session,
+    redirectTo,
+    rememberMe = undefined,
+  }: {
+    request: Request;
+    session: { userId: string; id: string; expirationDate: Date };
+    redirectTo?: string;
+    rememberMe?: "true" | undefined;
+  },
+  responseInit?: ResponseInit,
+) {
+  // if (await shouldRequestTwoFA({ request, userId: session.userId })) {
+  //   const verifySession = await verifySessionStorage.getSession();
+  //   verifySession.set(unverifiedSessionIdKey, session.id);
+  //   verifySession.set(rememberKey, remember);
+  //   const redirectUrl = getRedirectToUrl({
+  //     request,
+  //     type: twoFAVerificationType,
+  //     target: session.userId,
+  //   });
+  //   return redirect(
+  //     redirectUrl.toString(),
+  //     combineResponseInits(
+  //       {
+  //         headers: {
+  //           "set-cookie":
+  //             await verifySessionStorage.commitSession(verifySession),
+  //         },
+  //       },
+  //       responseInit,
+  //     ),
+  //   );
+  // } else {
+  const authSession = await authSessionStorage.getSession(
+    request.headers.get("cookie"),
+  );
+  authSession.set(sessionKey, session.id);
+
+  return redirect(
+    safeRedirect(redirectTo),
+    combineResponseInits(
+      {
+        headers: {
+          "set-cookie": await authSessionStorage.commitSession(authSession, {
+            expires: rememberMe ? session.expirationDate : undefined,
+          }),
+        },
+      },
+      responseInit,
+    ),
+  );
+  // }
 }

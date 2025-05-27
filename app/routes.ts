@@ -14,17 +14,26 @@ export default [
   route("verify", "routes/verify.tsx"),
   route("signup", "routes/signup.tsx"),
   route("signin", "routes/signin.tsx"),
-  route("onboarding", "routes/onboarding.tsx"),
+  // route("onboarding", "routes/onboarding.tsx"),
   route("profile", "routes/profile/index.tsx"),
+  route("*", "routes/not-found.tsx"),
+
+  // Resource routes
+  route("download-user-data", "routes/resources/download-user-data.ts"),
 
   // Action routes
   route("logout", "routes/actions/logout.ts"),
   route("set-theme", "routes/actions/set-theme.ts"),
 
-  // Resource routes
-  route("download-user-data", "routes/resources/download-user-data.ts"),
+  ...prefix("auth", [
+    route(":provider", "routes/provider/index.ts"),
+    route(":provider/callback", "routes/provider/callback.ts"),
+  ]),
 
-  route("*", "routes/not-found.tsx"),
+  ...prefix("onboarding", [
+    index("routes/onboarding/index.tsx"),
+    route(":provider", "routes/onboarding/provider.tsx"),
+  ]),
 
   ...prefix("articles", [
     index("routes/articles/index.tsx"),

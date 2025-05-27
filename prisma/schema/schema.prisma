@@ -86,13 +86,11 @@ model Verification {
   charSet   String // The valid characters for the otp
   expiresAt DateTime? // When is safe to delete the verification
 
-  @@index([type, target])
+  @@unique([target, type])
 }
 
 enum VerificationType {
-  EMAIL
-  TWO_FA
-  PASSWORD_RESET
+  onboarding
 }
 
 model Connection {

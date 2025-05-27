@@ -4,7 +4,7 @@ import { setupServer } from "msw/node";
 import { handlers as sanityHandlers } from "./sanity";
 import { handlers as resendHandlers } from "./resend";
 import { handlers as bunnyHandlers } from "./bunny";
-// import { handlers as githubHandlers } from './github.ts'
+import { handlers as githubHandlers } from "./github";
 
 const miscHandlers: HttpHandler[] = process.env.REACTR_ROUTER_DEV_ORIGIN
   ? [http.post(`${process.env.REACTR_ROUTER_DEV_ORIGIN}ping`, passthrough)]
@@ -15,7 +15,7 @@ export const server = setupServer(
   ...resendHandlers,
   ...bunnyHandlers,
   ...sanityHandlers,
-  // ...githubHandlers,
+  ...githubHandlers,
 );
 
 server.listen({ onUnhandledRequest: "warn" });
