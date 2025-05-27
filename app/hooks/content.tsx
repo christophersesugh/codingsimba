@@ -104,8 +104,8 @@ function useOptimisticSubmit({
   data,
   intent,
   toastMessage,
-}: OptimisticSubmit): OptimisticReturn {
-  const fetcher = useFetcher({ key: key ? key : intent });
+}: OptimisticSubmit) {
+  const fetcher = useFetcher({ key: key || intent });
 
   const submit = React.useCallback(() => {
     try {
@@ -115,22 +115,24 @@ function useOptimisticSubmit({
         intent,
         toastMessage,
       });
-
-      fetcher
-        .submit({ ...parsed.data, intent }, { method: "post" })
-        .then(() => toastMessage && toast.success(toastMessage))
-        .catch((error) => {
-          const message =
-            error.status === 401
-              ? "Authentication required"
-              : getErrorMessage(error);
-          toast.error(message);
-        });
+      fetcher.submit({ ...parsed.data, intent }, { method: "post" });
     } catch (err) {
       toast.error("Invalid request data");
       console.error(err);
     }
-  }, [key, data, intent, toastMessage, fetcher]);
+    // Remove fetcher from deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, data, intent, toastMessage]);
+
+  React.useEffect(() => {
+    if (fetcher.state === "idle" && fetcher.data) {
+      if (fetcher.data.success && toastMessage) {
+        toast.success(toastMessage);
+      } else if (fetcher.data.error) {
+        toast.error(getErrorMessage(fetcher.data.error));
+      }
+    }
+  }, [fetcher.state, fetcher.data, toastMessage]);
 
   return {
     submit,
@@ -159,30 +161,17 @@ function useOptimisticSubmit({
  * ```
  */
 export function useSubmitComment(params: Update): OptimisticReturn {
-  const memoizedParams = React.useMemo(
-    () => ({
-      key: params.key,
-      intent: params.intent,
-      toastMessage: params.toastMessage,
-      data: {
-        content: params.content,
-        parentId: params.parentId,
-        itemId: params.itemId,
-        userId: params.userId,
-      },
-    }),
-    [
-      params.key,
-      params.intent,
-      params.toastMessage,
-      params.content,
-      params.parentId,
-      params.itemId,
-      params.userId,
-    ],
-  );
-
-  return useOptimisticSubmit(memoizedParams);
+  return useOptimisticSubmit({
+    key: params.key,
+    intent: params.intent,
+    toastMessage: params.toastMessage,
+    data: {
+      content: params.content,
+      parentId: params.parentId,
+      itemId: params.itemId,
+      userId: params.userId,
+    },
+  });
 }
 
 /**
@@ -206,26 +195,15 @@ export function useSubmitComment(params: Update): OptimisticReturn {
 export function useContentUpvote(
   params: Omit<Update, "content" | "parentId">,
 ): OptimisticReturn {
-  const memoizedParams = React.useMemo(
-    () => ({
-      key: params.key,
-      intent: params.intent,
-      toastMessage: params.toastMessage,
-      data: {
-        itemId: params.itemId,
-        userId: params.userId,
-      },
-    }),
-    [
-      params.key,
-      params.intent,
-      params.toastMessage,
-      params.itemId,
-      params.userId,
-    ],
-  );
-
-  return useOptimisticSubmit(memoizedParams);
+  return useOptimisticSubmit({
+    key: params.key,
+    intent: params.intent,
+    toastMessage: params.toastMessage,
+    data: {
+      itemId: params.itemId,
+      userId: params.userId,
+    },
+  });
 }
 
 /**
@@ -249,26 +227,15 @@ export function useContentUpvote(
 export function useDeleteComment(
   params: Omit<Update, "content" | "parentId">,
 ): OptimisticReturn {
-  const memoizedParams = React.useMemo(
-    () => ({
-      key: params.key,
-      intent: params.intent,
-      toastMessage: params.toastMessage,
-      data: {
-        itemId: params.itemId,
-        userId: params.userId,
-      },
-    }),
-    [
-      params.key,
-      params.intent,
-      params.toastMessage,
-      params.itemId,
-      params.userId,
-    ],
-  );
-
-  return useOptimisticSubmit(memoizedParams);
+  return useOptimisticSubmit({
+    key: params.key,
+    intent: params.intent,
+    toastMessage: params.toastMessage,
+    data: {
+      itemId: params.itemId,
+      userId: params.userId,
+    },
+  });
 }
 
 /**
@@ -293,25 +260,14 @@ export function useDeleteComment(
 export function useUpdateComment(
   params: Omit<Update, "parentId">,
 ): OptimisticReturn {
-  const memoizedParams = React.useMemo(
-    () => ({
-      key: params.key,
-      intent: params.intent,
-      toastMessage: params.toastMessage,
-      data: {
-        content: params.content,
-        itemId: params.itemId,
-        userId: params.userId,
-      },
-    }),
-    [
-      params.key,
-      params.intent,
-      params.toastMessage,
-      params.content,
-      params.itemId,
-      params.userId,
-    ],
-  );
-  return useOptimisticSubmit(memoizedParams);
+  return useOptimisticSubmit({
+    key: params.key,
+    intent: params.intent,
+    toastMessage: params.toastMessage,
+    data: {
+      content: params.content,
+      itemId: params.itemId,
+      userId: params.userId,
+    },
+  });
 }
