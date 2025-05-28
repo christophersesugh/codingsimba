@@ -10,8 +10,8 @@ type CommentFormProps = {
   isForUpdate?: boolean;
   comment: string;
   setComment: (comment: string) => void;
-  hideForm?: () => void;
-  handleFormSubmit: () => void;
+  onCancel?: () => void;
+  onSubmit: () => void;
   isPending?: boolean;
 };
 
@@ -19,9 +19,8 @@ export function CommentForm({
   isForUpdate = false,
   comment,
   setComment,
-  hideForm,
-  handleFormSubmit,
-  isPending = false,
+  onCancel,
+  onSubmit: handleFormSubmit,
 }: CommentFormProps) {
   const hideSubmitButton = !comment.trim() || comment.trim() === "<br />";
   const user = useOptionalUser();
@@ -50,7 +49,7 @@ export function CommentForm({
               {isForUpdate ? (
                 <Button
                   size={"icon"}
-                  onClick={hideForm}
+                  onClick={onCancel}
                   className="mr-4 flex items-center gap-2"
                   variant={"destructive"}
                 >
@@ -60,7 +59,7 @@ export function CommentForm({
               <Button
                 type="submit"
                 size={"icon"}
-                disabled={hideSubmitButton || isPending}
+                disabled={hideSubmitButton}
                 onClick={onSubmit}
                 className="flex items-center gap-2"
               >

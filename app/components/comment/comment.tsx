@@ -138,8 +138,8 @@ export function Comment({ comment }: { comment: IComment }) {
               isForUpdate
               comment={commentBody}
               setComment={setCommentBody}
-              handleFormSubmit={handleUpdateSubmit}
-              hideForm={() => setEditComment(false)}
+              onSubmit={handleUpdateSubmit}
+              onCancel={() => setEditComment(false)}
             />
           ) : (
             <Markdown source={comment.body} className="py-0 text-sm" />
@@ -203,8 +203,8 @@ export function Comment({ comment }: { comment: IComment }) {
             <CommentForm
               comment={reply}
               setComment={setReply}
-              handleFormSubmit={handleReplySubmit}
-              hideForm={() => setShowReplyForm(false)}
+              onSubmit={handleReplySubmit}
+              onCancel={() => setShowReplyForm(false)}
             />
           ) : null}
 

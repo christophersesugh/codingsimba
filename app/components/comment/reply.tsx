@@ -86,8 +86,8 @@ export function Reply({ reply }: { reply: IComment }) {
             isForUpdate
             comment={replyBody}
             setComment={setReplyBody}
-            handleFormSubmit={handleUpdateReply}
-            hideForm={() => setShowForm(false)}
+            onSubmit={handleUpdateReply}
+            onCancel={() => setShowForm(false)}
           />
         ) : (
           <Markdown source={reply.body} className="py-1 !text-sm" />

@@ -47,11 +47,12 @@ export function Comments({
   articleId: string;
 }) {
   const [comment, setComment] = React.useState("");
-  const user = useOptionalUser();
   const [searchParams, setSearchParams] = useSearchParams();
   const commentTake = Number(searchParams.get("commentTake")) || 5;
 
-  const { submit, isPending } = useCreate({
+  const user = useOptionalUser();
+
+  const { submit } = useCreate({
     itemId: articleId,
     userId: user?.id as string,
     intent: "add-comment",
@@ -59,11 +60,8 @@ export function Comments({
   });
 
   const handleSubmit = () => {
-    if (!comment.trim()) return;
     submit();
-    if (!isPending) {
-      setComment("");
-    }
+    setComment("");
   };
 
   const handleLoadMoreComments = () => {
@@ -89,8 +87,7 @@ export function Comments({
         <CommentForm
           comment={comment}
           setComment={setComment}
-          handleFormSubmit={handleSubmit}
-          isPending={isPending}
+          onSubmit={handleSubmit}
         />
       ) : null}
 
