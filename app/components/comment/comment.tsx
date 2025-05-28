@@ -1,59 +1,109 @@
 import React from "react";
-import { formatDistanceToNow } from "date-fns";
+import { useNavigate, useSearchParams } from "react-router";
+import { formatDistanceToNowStrict } from "date-fns";
 import type { IComment } from ".";
 import { Separator } from "../ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { FilePenLine, Heart, MessageSquareQuote, Trash2 } from "lucide-react";
+import {
+  FilePenLine,
+  Heart,
+  MessageSquareQuote,
+  Trash2,
+  ChevronDown,
+} from "lucide-react";
 import { Reply } from "./reply";
 import { CommentForm } from "./comment-form";
 import { Markdown } from "../mdx";
-import { useAuthDialog } from "~/contexts/auth-dialog";
 import { useOptionalUser } from "~/hooks/user";
-import {
-  useContentUpvote,
-  useDeleteComment,
-  useSubmitComment,
-  useUpdateComment,
-} from "~/hooks/content";
+import { useUpvote, useDelete, useCreate, useUpdate } from "~/hooks/content";
 import { getInitials } from "~/utils/user";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { cn } from "~/lib/shadcn";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
 
 export function Comment({ comment }: { comment: IComment }) {
   const [editComment, setEditComment] = React.useState(false);
   const [commentBody, setCommentBody] = React.useState(comment.raw);
   const [reply, setReply] = React.useState("");
   const [showReplyForm, setShowReplyForm] = React.useState(false);
-  const { openDialog } = useAuthDialog();
+
+  const [searchParams, setSearchParams] = useSearchParams();
   const user = useOptionalUser();
+  const navigate = useNavigate();
+
+  const replyTake = Number(searchParams.get("replyTake")) || 3;
 
   const userId = user?.id;
   const author = comment!.author!.profile;
+  const isLiked = comment.likes?.some((like) => like.userId === user?.id);
+  const totalLikes = comment?.likes?.reduce(
+    (total, like) => total + like.count,
+    0,
+  );
 
-  const { submit: submitReply } = useSubmitComment({
-    itemId: null,
+  const { submit: submitReply } = useCreate({
+    itemId: comment.contentId,
     parentId: comment.id,
     userId: userId!,
     intent: "add-reply",
-    content: reply,
+    body: reply,
   });
 
-  const { submit: deleteComment } = useDeleteComment({
+  const { submit: deleteComment } = useDelete({
     itemId: comment.id,
-    userId: userId!,
     intent: "delete-comment",
+    userId: userId!,
   });
 
-  const { submit: upvoteComment } = useContentUpvote({
+  const { submit: upvoteComment } = useUpvote({
     itemId: comment.id,
-    userId: userId!,
     intent: "upvote-comment",
+    userId: userId!,
   });
 
-  const { submit: updateComment } = useUpdateComment({
+  const { submit: updateComment } = useUpdate({
     itemId: comment.id,
     userId: userId!,
-    content: "",
+    body: commentBody,
     intent: "update-comment",
   });
+
+  function handleButtonClick(fn: (...args: unknown[]) => void) {
+    return (...args: unknown[]) => (user ? fn(...args) : navigate("/signin"));
+  }
+
+  const handleReplySubmit = () => {
+    if (!reply.trim()) return;
+    submitReply();
+    setReply("");
+    setShowReplyForm(false);
+  };
+
+  const handleUpdateSubmit = () => {
+    if (!commentBody.trim()) return;
+    updateComment();
+    setEditComment(false);
+  };
+
+  const handleLoadMoreReplies = () => {
+    setSearchParams(
+      (prev) => {
+        prev.set("replyTake", String(replyTake + 3));
+        return prev;
+      },
+      { preventScrollReset: true },
+    );
+  };
 
   const basicButtonClasses =
     "flex items-center space-x-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300";
@@ -62,50 +112,59 @@ export function Comment({ comment }: { comment: IComment }) {
       <div className="flex items-start space-x-2">
         <Avatar className="-mt-0.5">
           {author?.image ? (
-            <AvatarImage src={author.image} alt={author!.name as string} />
+            <AvatarImage src={author.image} alt={author!.name!} />
           ) : null}
           <AvatarFallback>{getInitials(author!.name!)}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <div className="mb-1 flex items-center justify-between">
             <h4 className="font-medium">{author!.name}</h4>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              {formatDistanceToNow(new Date(comment.createdAt), {
-                addSuffix: true,
-                includeSeconds: true,
-              })}
-            </span>
+            <div className="flex gap-2 text-sm">
+              {comment.replies?.length ? (
+                <Badge>
+                  {comment.replies.length}{" "}
+                  {comment.replies.length === 1 ? "reply" : "replies"}
+                </Badge>
+              ) : null}
+              <span className="text-gray-500 dark:text-gray-400">
+                {formatDistanceToNowStrict(new Date(comment.createdAt), {
+                  addSuffix: true,
+                })}
+              </span>
+            </div>
           </div>
           {editComment ? (
             <CommentForm
               isForUpdate
               comment={commentBody}
               setComment={setCommentBody}
-              handleFormSubmit={() => {
-                updateComment();
-                setEditComment(false);
-              }}
+              handleFormSubmit={handleUpdateSubmit}
+              hideForm={() => setEditComment(false)}
             />
           ) : (
-            <Markdown source={comment.body} className="py-0" />
+            <Markdown source={comment.body} className="py-0 text-sm" />
           )}
           <div className="mt-2 flex items-center space-x-4">
             <button
               className={basicButtonClasses}
-              onClick={() => (user ? upvoteComment() : openDialog())}
+              onClick={handleButtonClick(upvoteComment)}
             >
-              <Heart className="size-4" />
-              <span>{comment.likes}</span>
+              <Heart
+                className={cn("size-4", {
+                  "fill-red-500 text-red-500": isLiked,
+                })}
+              />
+              <span>{totalLikes}</span>
             </button>
             <button
-              onClick={() =>
-                user ? setShowReplyForm(!showReplyForm) : openDialog()
-              }
+              onClick={handleButtonClick(() =>
+                setShowReplyForm(!showReplyForm),
+              )}
               className={basicButtonClasses}
               aria-label="reply comment"
             >
               <MessageSquareQuote className="mr-1 size-4" />
-              reply
+              Reply
             </button>
             {user ? (
               <button
@@ -114,41 +173,62 @@ export function Comment({ comment }: { comment: IComment }) {
                 aria-label="update comment"
               >
                 <FilePenLine className="mr-1 size-4 text-blue-600 dark:text-blue-500" />
-                edit
+                Edit
               </button>
             ) : null}
             {user ? (
-              <button
-                onClick={deleteComment}
-                className={basicButtonClasses}
-                aria-label="delete commment"
-              >
-                <Trash2 className="mr-1 size-4 text-red-600 dark:text-red-500" />
-                delete
-              </button>
+              <AlertDialog>
+                <AlertDialogTrigger className={basicButtonClasses}>
+                  <Trash2 className="mr-1 size-4 text-red-600 dark:text-red-500" />{" "}
+                  Delete
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you sure you want to delete this comment?
+                    </AlertDialogTitle>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>No</AlertDialogCancel>
+                    <AlertDialogAction onClick={deleteComment}>
+                      Yes
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             ) : null}
           </div>
-          <Separator className="mb-6 mt-4" />
-
+          {comment.replies?.length ? <Separator className="mb-6 mt-4" /> : null}
           {showReplyForm ? (
             <CommentForm
               comment={reply}
               setComment={setReply}
-              handleFormSubmit={submitReply}
+              handleFormSubmit={handleReplySubmit}
+              hideForm={() => setShowReplyForm(false)}
             />
           ) : null}
 
           {/* Comment replies */}
           {comment.replies?.length ? (
             <ul className="mt-4 space-y-4 pl-6 dark:border-gray-800">
-              {comment.replies.map((reply, i) => (
+              {comment.replies.map((reply, index) => (
                 <div key={reply.id}>
                   <Reply reply={reply} />
-                  {i <= (comment?.replies?.length ?? 0) - 1 ? (
+                  {index < comment.replies!.length - 1 && (
                     <Separator className="my-4" />
-                  ) : null}
+                  )}
                 </div>
               ))}
+              {comment.replies.length >= replyTake && (
+                <Button
+                  variant="ghost"
+                  className="mt-2 w-full"
+                  onClick={handleLoadMoreReplies}
+                >
+                  <ChevronDown className="mr-2 size-4" />
+                  Load More Replies
+                </Button>
+              )}
             </ul>
           ) : null}
         </div>

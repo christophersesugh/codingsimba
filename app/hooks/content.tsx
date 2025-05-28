@@ -1,23 +1,7 @@
 import React from "react";
+import { ContentIntentSchema } from "~/routes/articles/article";
 import { useFetcher } from "react-router";
-import { toast } from "sonner";
 import { z } from "zod";
-import { getErrorMessage } from "~/utils/misc";
-
-/**
- * Schema defining all possible content operation intents.
- * Used to ensure type safety for content operations.
- */
-export const ContentIntentSchema = z.enum([
-  "add-comment",
-  "update-comment",
-  "add-reply",
-  "update-reply",
-  "upvote-comment",
-  "upvote-reply",
-  "delete-comment",
-  "delete-reply",
-]);
 
 export type ContentIntent = z.infer<typeof ContentIntentSchema>;
 
@@ -32,14 +16,10 @@ export const DataConstraintSchema = z.record(z.unknown());
  * Defines the structure of data sent to the server.
  */
 export const OptimisticSubmitSchema = z.object({
-  /** Optional key for identifying the submission */
-  key: z.string().optional(),
   /** The data payload for the operation */
   data: DataConstraintSchema,
   /** The type of content operation to perform */
   intent: ContentIntentSchema,
-  /** Optional success message to show after operation */
-  toastMessage: z.string().optional(),
 });
 
 /**
@@ -47,24 +27,20 @@ export const OptimisticSubmitSchema = z.object({
  * Defines the structure of data for updating content.
  */
 export const UpdateSchema = z.object({
-  /** Optional key for identifying the update */
-  key: z.string().optional(),
   /** The type of content operation to perform */
   intent: ContentIntentSchema,
   /** ID of the parent content (if applicable) */
-  parentId: z.string().nullable(),
+  parentId: z.string().optional(),
   /** ID of the content being operated on */
-  itemId: z.string().nullable(),
-  /** ID of the user performing the operation */
+  itemId: z.string(),
+  /** ID of the user performing the operation (if applicable) */
   userId: z.string(),
   /** The content text (if applicable) */
-  content: z.string().min(1).optional(),
-  /** Optional success message to show after operation */
-  toastMessage: z.string().optional(),
+  body: z.string().optional(),
 });
 
-type OptimisticSubmit = z.infer<typeof OptimisticSubmitSchema>;
-type Update = z.infer<typeof UpdateSchema>;
+export type OptimisticSubmit = z.infer<typeof OptimisticSubmitSchema>;
+export type Update = z.infer<typeof UpdateSchema>;
 
 /** Return type from optimistic hooks */
 type OptimisticReturn = {
@@ -99,40 +75,22 @@ type OptimisticReturn = {
  * </button>
  * ```
  */
-function useOptimisticSubmit({
-  key,
-  data,
-  intent,
-  toastMessage,
-}: OptimisticSubmit) {
-  const fetcher = useFetcher({ key: key || intent });
+function useOptimisticSubmit({ data, intent }: OptimisticSubmit) {
+  const fetcher = useFetcher({ key: intent });
 
   const submit = React.useCallback(() => {
     try {
       const parsed = OptimisticSubmitSchema.parse({
-        key,
         data,
         intent,
-        toastMessage,
       });
       fetcher.submit({ ...parsed.data, intent }, { method: "post" });
     } catch (err) {
-      toast.error("Invalid request data");
       console.error(err);
     }
     // Remove fetcher from deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key, data, intent, toastMessage]);
-
-  React.useEffect(() => {
-    if (fetcher.state === "idle" && fetcher.data) {
-      if (fetcher.data.success && toastMessage) {
-        toast.success(toastMessage);
-      } else if (fetcher.data.error) {
-        toast.error(getErrorMessage(fetcher.data.error));
-      }
-    }
-  }, [fetcher.state, fetcher.data, toastMessage]);
+  }, [data, intent]);
 
   return {
     submit,
@@ -142,31 +100,26 @@ function useOptimisticSubmit({
 }
 
 /**
- * Hook for submitting comments with optimistic updates.
- * Handles comment creation and updates with proper error handling.
- *
- * @param {Update} params - Comment parameters
- * @returns {OptimisticReturn} Submission state and controls
+ * Hook for creating new content (comments, replies)
+ * @param params - Creation parameters including itemId, parentId (optional), userId, intent, and body
+ * @returns Object containing submit function, isPending state, and error state
  *
  * @example
  * ```tsx
- * const { submit, isPending } = useSubmitComment({
- *   key: `post-${postId}-comments`,
- *   intent: 'add-comment',
- *   itemId: postId,
+ * const { submit, isPending } = useCreate({
+ *   itemId: commentId,
+ *   parentId: parentCommentId, // optional
  *   userId: currentUser.id,
- *   content: 'Great post!',
- *   toastMessage: 'Comment posted successfully!'
+ *   intent: "add-reply",
+ *   body: "Reply content"
  * });
  * ```
  */
-export function useSubmitComment(params: Update): OptimisticReturn {
+export function useCreate(params: Update): OptimisticReturn {
   return useOptimisticSubmit({
-    key: params.key,
     intent: params.intent,
-    toastMessage: params.toastMessage,
     data: {
-      content: params.content,
+      body: params.body,
       parentId: params.parentId,
       itemId: params.itemId,
       userId: params.userId,
@@ -175,30 +128,24 @@ export function useSubmitComment(params: Update): OptimisticReturn {
 }
 
 /**
- * Hook for handling content upvoting with optimistic UI.
- * Manages upvote state and provides immediate feedback.
- *
- * @param {Omit<Update, "content" | "parentId">} params - Upvote parameters
- * @returns {OptimisticReturn} Submission state and controls
+ * Hook for handling content upvoting (comments, replies, articles)
+ * @param params - Upvote parameters including itemId, userId, and intent
+ * @returns Object containing submit function, isPending state, and error state
  *
  * @example
  * ```tsx
- * const { submit, isPending } = useContentUpvote({
- *   key: `post-${postId}-upvotes`,
- *   intent: isUpvoted ? 'remove-upvote' : 'upvote-comment',
- *   itemId: postId,
+ * const { submit, isPending } = useUpvote({
+ *   itemId: commentId,
  *   userId: currentUser.id,
- *   toastMessage: isUpvoted ? 'Upvote removed' : 'Post upvoted!'
+ *   intent: "upvote-comment"
  * });
  * ```
  */
-export function useContentUpvote(
+export function useUpvote(
   params: Omit<Update, "content" | "parentId">,
 ): OptimisticReturn {
   return useOptimisticSubmit({
-    key: params.key,
     intent: params.intent,
-    toastMessage: params.toastMessage,
     data: {
       itemId: params.itemId,
       userId: params.userId,
@@ -207,30 +154,24 @@ export function useContentUpvote(
 }
 
 /**
- * Hook for handling comment deletion with optimistic UI.
- * Provides immediate feedback and handles error states.
- *
- * @param {Omit<Update, "content" | "parentId">} params - Deletion parameters
- * @returns {OptimisticReturn} Submission state and controls
+ * Hook for deleting content (comments, replies)
+ * @param params - Deletion parameters including itemId, userId, and intent
+ * @returns Object containing submit function, isPending state, and error state
  *
  * @example
  * ```tsx
- * const { submit, error } = useDeleteComment({
- *   key: `comment-${commentId}`,
- *   intent: 'delete-comment',
+ * const { submit, isPending } = useDelete({
  *   itemId: commentId,
  *   userId: currentUser.id,
- *   toastMessage: 'Comment deleted successfully'
+ *   intent: "delete-comment"
  * });
  * ```
  */
-export function useDeleteComment(
+export function useDelete(
   params: Omit<Update, "content" | "parentId">,
 ): OptimisticReturn {
   return useOptimisticSubmit({
-    key: params.key,
     intent: params.intent,
-    toastMessage: params.toastMessage,
     data: {
       itemId: params.itemId,
       userId: params.userId,
@@ -239,33 +180,25 @@ export function useDeleteComment(
 }
 
 /**
- * Hook for handling comment updates with optimistic UI.
- * Manages comment editing with immediate feedback.
- *
- * @param {Omit<Update, "parentId">} params - Update parameters
- * @returns {OptimisticReturn} Submission state and controls
+ * Hook for updating content (comments, replies)
+ * @param params - Update parameters including itemId, userId, intent, and body
+ * @returns Object containing submit function, isPending state, and error state
  *
  * @example
  * ```tsx
- * const { submit, isPending } = useUpdateComment({
- *   key: `comment-${commentId}`,
- *   intent: 'update-comment',
+ * const { submit, isPending } = useUpdate({
  *   itemId: commentId,
  *   userId: currentUser.id,
- *   content: 'Updated comment text',
- *   toastMessage: 'Comment updated successfully'
+ *   intent: "update-comment",
+ *   body: "Updated content"
  * });
  * ```
  */
-export function useUpdateComment(
-  params: Omit<Update, "parentId">,
-): OptimisticReturn {
+export function useUpdate(params: Omit<Update, "parentId">): OptimisticReturn {
   return useOptimisticSubmit({
-    key: params.key,
     intent: params.intent,
-    toastMessage: params.toastMessage,
     data: {
-      content: params.content,
+      body: params.body,
       itemId: params.itemId,
       userId: params.userId,
     },

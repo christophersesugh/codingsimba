@@ -22,10 +22,34 @@ import { Await } from "react-router";
 import { Comments } from "~/components/comment";
 import { Separator } from "~/components/ui/separator";
 import { StatusCodes } from "http-status-codes";
-import { getArticleMetadata } from "~/utils/articles.server";
-// import { prisma } from "~/utils/db.server";
-import { UpdateSchema, type ContentIntent } from "~/hooks/content";
+import {
+  addComment,
+  addReply,
+  getArticleMetadata,
+  updateComment,
+  deleteComment,
+  upvoteComment,
+  updateReply,
+  deleteReply,
+  upvoteReply,
+  trackPageView,
+  upvoteArticle,
+} from "~/utils/articles.server";
+import { UpdateSchema } from "~/hooks/content";
 import { z } from "zod";
+import { useOptionalUser } from "~/hooks/user";
+
+export const ContentIntentSchema = z.enum([
+  "add-comment",
+  "update-comment",
+  "add-reply",
+  "update-reply",
+  "upvote-article",
+  "upvote-comment",
+  "upvote-reply",
+  "delete-comment",
+  "delete-reply",
+]);
 
 const SearchParamsSchema = z.object({
   commentTake: z.coerce.number().default(5),
@@ -51,6 +75,8 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     status: StatusCodes.NOT_FOUND,
   });
 
+  // Track page view
+  await trackPageView({ itemId: article.id });
   const articleMetadata = await getArticleMetadata({
     articleId: article.id,
     ...parsedParams.data,
@@ -69,33 +95,35 @@ export async function action({ request }: Route.ActionArgs) {
 
   const data = result.data;
 
-  switch (data.intent as ContentIntent) {
+  switch (data.intent) {
     case "add-comment":
-      break;
-    case "update-comment":
-      break;
-    case "delete-comment":
-      break;
-    case "upvote-comment":
-      break;
+      return await addComment(data);
     case "add-reply":
-      break;
+      return await addReply(data);
+    case "update-comment":
+      return await updateComment(data);
+    case "delete-comment":
+      return await deleteComment(data);
+    case "upvote-comment":
+      return await upvoteComment(data);
     case "update-reply":
-      break;
+      return await updateReply(data);
     case "delete-reply":
-      break;
+      return await deleteReply(data);
     case "upvote-reply":
-      break;
+      return await upvoteReply(data);
+    case "upvote-article":
+      return await upvoteArticle(data);
     default:
       throw new Error("Invalid intent");
   }
-  return {};
 }
 
 export default function ArticleDetailsRoute({
   loaderData,
 }: Route.ComponentProps) {
   const { article, popularTags, articleMetadata } = loaderData;
+  const user = useOptionalUser();
 
   return (
     <>
@@ -119,7 +147,12 @@ export default function ArticleDetailsRoute({
                 sandpackTemplates={article.sandpackTemplates}
               />
             </article>
+            <p>
+              Comment below the topics you may like me to create articles or
+              tutorials on!
+            </p>
             <Separator className="mb-4 mt-2" />
+
             <Comments
               articleId={article.id}
               comments={articleMetadata?.comments ?? []}
@@ -156,7 +189,7 @@ export default function ArticleDetailsRoute({
             <div className="sticky top-20">
               <TableOfContent className="hidden lg:block" />
               <EngagementMetrics metrics={articleMetadata?.metrics} />
-              <SubscriptionForm />
+              {!user?.isSubscribed ? <SubscriptionForm /> : null}
               <React.Suspense
                 fallback={Array.from({ length: 3 }).map((_, index) => (
                   <Skeleton key={index} />

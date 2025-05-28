@@ -4,6 +4,47 @@
   }
 
   .milkdown .editor {
-    @apply rounded-md border border-slate-200 !py-8;
+    @apply min-h-[20px] max-w-3xl rounded-md border border-slate-200 bg-white px-2 py-0.5 text-xs text-slate-900 transition-colors dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100;
+  }
+
+  .milkdown .editor:focus-within {
+    @apply border-slate-400 dark:border-slate-600;
+  }
+
+  .milkdown .editor p {
+    @apply my-0;
+  }
+
+  .milkdown .editor h1 {
+    @apply my-1 text-base font-semibold;
+  }
+
+  .milkdown .editor h2 {
+    @apply my-0.5 text-sm font-medium;
+  }
+
+  .milkdown .editor ul,
+  .milkdown .editor ol {
+    @apply my-0 ml-4;
+  }
+
+  .milkdown .editor blockquote {
+    @apply my-0 border-l-2 border-slate-200 pl-3 dark:border-slate-800;
+  }
+
+  .milkdown .editor code {
+    @apply rounded bg-slate-100 px-1 py-0.5 text-[10px] dark:bg-slate-800 dark:text-slate-100;
+  }
+
+  .milkdown .editor a {
+    @apply text-blue-600 underline dark:text-blue-400;
+  }
+
+  .milkdown .editor .placeholder {
+    @apply text-slate-400 dark:text-slate-500;
+  }
+
+  .milkdown .editor .ProseMirror {
+    @apply text-slate-800 dark:text-slate-100;
   }
 }

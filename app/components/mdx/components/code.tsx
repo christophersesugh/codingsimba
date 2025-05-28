@@ -69,7 +69,7 @@ const CopyButton = React.memo(function CopyButton({ code }: CopyButtonProps) {
   return (
     <button
       onClick={copyToClipboard}
-      className="absolute right-2 top-2 z-10 rounded-md bg-gray-200/80 p-2 transition-colors hover:bg-gray-300 dark:bg-[#112630] dark:hover:bg-[#1d3b47]"
+      className="absolute right-2 top-2 z-10 rounded-md bg-gray-200/80 p-2 text-red-500 transition-colors hover:bg-gray-300 dark:bg-[#112630] dark:hover:bg-[#1d3b47]"
       aria-label="Copy code"
       disabled={copied}
     >
@@ -164,7 +164,7 @@ export function Code({
 
   // Handle regular code blocks
   return !isInline ? (
-    <div className={cn("text-sm", className)}>
+    <div className={cn("relative text-sm", className)}>
       <CopyButton code={code} />
       <ShikiHighlighter
         language={language}

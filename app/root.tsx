@@ -61,6 +61,7 @@ export async function loader({ request }: Route.LoaderArgs) {
         select: {
           id: true,
           email: true,
+          isSubscribed: true,
           profile: {
             select: {
               name: true,

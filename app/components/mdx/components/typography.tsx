@@ -128,41 +128,53 @@ export function Pre({
 
 type CalloutVariant = "info" | "warning" | "error";
 
+interface TitleChildProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
 export function Div({
   className,
   children,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
+  const variants: Record<CalloutVariant, string> = {
+    info: "Info",
+    warning: "Warning",
+    error: "Error",
+  };
+
   const childrenArray = React.Children.toArray(children);
 
   const titleChild = childrenArray.find((child: React.ReactNode) => {
-    if (!React.isValidElement(child)) return false;
-    const props = child.props as { className?: string };
+    if (!React.isValidElement<TitleChildProps>(child)) return false;
     return (
-      typeof props.className === "string" &&
-      props.className.includes("remark-container-title")
+      typeof child.props.className === "string" &&
+      child.props.className.includes("remark-container-title")
     );
   });
 
-  const contentChildren = childrenArray.filter(
-    (child: React.ReactNode) => child !== titleChild,
-  );
-  const variant = React.isValidElement(titleChild)
-    ? (((titleChild.props as { className?: string }).className?.match(
+  const contentChildren = childrenArray.filter((child) => child !== titleChild);
+
+  const variant = React.isValidElement<TitleChildProps>(titleChild)
+    ? ((titleChild.props.className?.match(
         /info|warning|error/,
-      ) || ["info"])[0] as CalloutVariant)
+      )?.[0] as CalloutVariant) ?? "info")
     : null;
+
+  const title = React.isValidElement<TitleChildProps>(titleChild)
+    ? String(titleChild.props.children)
+    : variant
+      ? variants[variant]
+      : undefined;
 
   if (variant) {
     return (
       <Callout
         variant={variant}
-        title={
-          React.isValidElement(titleChild)
-            ? (titleChild.props as { children?: string }).children
-            : undefined
-        }
-        className="my-8"
+        title={title}
+        className={cn("my-8", className)}
+        {...props}
       >
         {contentChildren}
       </Callout>

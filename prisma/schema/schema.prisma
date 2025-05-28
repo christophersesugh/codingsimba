@@ -13,7 +13,6 @@ model User {
   id                   String               @id @default(ulid())
   email                String               @unique
   polarCustomerId      String?              @unique
-  isVerified           Boolean              @default(false)
   isSubscribed         Boolean              @default(false)
   createdAt            DateTime             @default(now())
   updatedAt            DateTime             @updatedAt

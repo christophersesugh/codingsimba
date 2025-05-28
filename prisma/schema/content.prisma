@@ -84,16 +84,20 @@ model Like {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  contentId String
-  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  contentId String?
+  content   Content? @relation(fields: [contentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  @@unique([userId, contentId])
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  commentId String?
+
+  @@unique([contentId, userId])
+  @@unique([commentId, userId])
 }
 
 model Comment {
   id        String   @id @default(ulid())
   body      String
-  likes     Int      @default(0)
+  likes     Like[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -101,11 +105,11 @@ model Comment {
   parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies  Comment[] @relation("CommentReplies")
 
-  authorId String?
-  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
 
   contentId String
-  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([authorId])
   @@index([contentId])
@@ -121,11 +125,11 @@ model Review {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  authorId String?
-  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
 
   contentId String
-  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([authorId, contentId])
   @@index([authorId])

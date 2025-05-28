@@ -17,6 +17,8 @@ export async function action({ request, params }: Route.ActionArgs) {
     await handleMockAction(providerName, request);
     return await authenticator.authenticate(providerName, request);
   } catch (error: unknown) {
+    console.log({ error });
+
     if (error instanceof Response) {
       const formData = await request.formData();
       const rawRedirectTo = formData.get("redirectTo");

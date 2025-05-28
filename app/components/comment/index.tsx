@@ -3,13 +3,18 @@ import { MessageSquareOff } from "lucide-react";
 import { EmptyState } from "../empty-state";
 import { CommentForm } from "./comment-form";
 import { Comment } from "./comment";
-// import { useFetcher } from "react-router";
-// import { toast } from "sonner";
 import { useOptionalUser } from "~/hooks/user";
-import { useAuthDialog } from "~/contexts/auth-dialog";
 import { Badge } from "../ui/badge";
-import { useSubmitComment } from "~/hooks/content";
-// import { MDXEditor } from "../mdx/editor";
+import { useCreate } from "~/hooks/content";
+import { Link, useSearchParams } from "react-router";
+import { Button } from "../ui/button";
+import { ChevronDown } from "lucide-react";
+import { Separator } from "../ui/separator";
+
+interface ILike {
+  count: number;
+  userId: string;
+}
 
 interface ICommentAuthorProfile {
   name: string | null;
@@ -25,7 +30,7 @@ export interface IComment {
   id: string;
   raw: string;
   body: string;
-  likes: number;
+  likes: ILike[];
   createdAt: Date;
   parentId: string | null;
   authorId: string | null;
@@ -43,37 +48,70 @@ export function Comments({
 }) {
   const [comment, setComment] = React.useState("");
   const user = useOptionalUser();
-  const { openDialog } = useAuthDialog();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const commentTake = Number(searchParams.get("commentTake")) || 5;
 
-  const { submit } = useSubmitComment({
+  const { submit, isPending } = useCreate({
     itemId: articleId,
-    parentId: null,
     userId: user?.id as string,
     intent: "add-comment",
-    content: comment,
+    body: comment,
   });
+
+  const handleSubmit = () => {
+    if (!comment.trim()) return;
+    submit();
+    if (!isPending) {
+      setComment("");
+    }
+  };
+
+  const handleLoadMoreComments = () => {
+    setSearchParams(
+      (prev) => {
+        prev.set("commentTake", String(commentTake + 5));
+        return prev;
+      },
+      { preventScrollReset: true },
+    );
+  };
 
   return (
     <section className="mb-8" id="comments">
-      <h3 className="mb-4 text-xl font-bold">Comments ({comments.length})</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-xl font-bold">Comments ({comments.length})</h3>
+        <Badge asChild>
+          <Link to={"/signin"}>Signin to add a comment</Link>
+        </Badge>
+      </div>
+      <Separator className="my-4" />
       {user ? (
         <CommentForm
           comment={comment}
           setComment={setComment}
-          handleFormSubmit={submit}
+          handleFormSubmit={handleSubmit}
+          isPending={isPending}
         />
-      ) : (
-        <Badge className="-mt-2 mb-4" onClick={() => openDialog()}>
-          Signin to add a comment
-        </Badge>
-      )}
+      ) : null}
 
       {comments?.length ? (
-        <ul className="space-y-6">
-          {comments.map((comment) => (
-            <Comment key={comment.id} comment={comment} />
-          ))}
-        </ul>
+        <>
+          <ul className="space-y-6">
+            {comments.map((comment) => (
+              <Comment key={comment.id} comment={comment} />
+            ))}
+          </ul>
+          {comments.length >= commentTake && (
+            <Button
+              variant="ghost"
+              className="mt-4 w-full"
+              onClick={handleLoadMoreComments}
+            >
+              <ChevronDown className="mr-2 size-4" />
+              Load More Comments
+            </Button>
+          )}
+        </>
       ) : (
         <EmptyState
           icon={<MessageSquareOff className="size-8" />}

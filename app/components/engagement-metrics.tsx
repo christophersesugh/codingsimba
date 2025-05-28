@@ -21,13 +21,15 @@ interface EMetricsProps {
 export function EngagementMetrics({ metrics }: { metrics?: EMetricsProps }) {
   const fetcher = useFetcher();
   const user = useOptionalUser();
+  const userId = user?.id;
   const MAX_LIKES = 5;
   const LEAST_COUNT = 0;
 
-  const totalLikes = metrics?._count.likes ?? LEAST_COUNT;
-  const userLikes =
-    metrics?.likes.find((like) => like.userId === user?.id)?.count ??
+  const totalLikes =
+    metrics?.likes.reduce((total, next) => total + next.count, 0) ??
     LEAST_COUNT;
+  const userLikes =
+    metrics?.likes.find((like) => like.userId === userId)?.count ?? LEAST_COUNT;
 
   const [optimisticState, setOptimisticState] = React.useState({
     totalLikes,
@@ -51,7 +53,7 @@ export function EngagementMetrics({ metrics }: { metrics?: EMetricsProps }) {
     }));
 
     fetcher.submit(
-      { intent: "upvote", itemId: metrics?.id ?? "" },
+      { intent: "upvote-article", itemId: metrics?.id ?? "", userId: userId! },
       { method: "post" },
     );
   }
@@ -63,11 +65,7 @@ export function EngagementMetrics({ metrics }: { metrics?: EMetricsProps }) {
             onClick={handleUpvote}
             disabled={optimisticState.userLikes >= MAX_LIKES}
             className="flex items-center gap-1"
-            aria-label={
-              optimisticState.userLikes > 0
-                ? "Upvote (already liked)"
-                : "Upvote"
-            }
+            aria-label="Upvote"
           >
             <Heart
               className={cn("size-5 transition-colors", {
