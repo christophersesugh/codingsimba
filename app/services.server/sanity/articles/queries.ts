@@ -47,7 +47,8 @@ export function articlesQuery({
       featured,
       "image": image.asset->url,
       excerpt,
-      content
+      content,
+      content2
     },
     "total": count(*[${filters}])
   }`;
@@ -68,6 +69,7 @@ export const countQuery = `count(*[_type == "article" && published == true])`;
  * - Image URL
  * - Content
  * - Associated Sandpack templates
+ * - Associated React components
  */
 export const articleDetailsQuery = groq`*[_type == "article" && slug.current == $slug][0] {
   "id": _id,
@@ -97,6 +99,11 @@ export const articleDetailsQuery = groq`*[_type == "article" && slug.current == 
     sandpackFiles,
     options,
     customSetup
+  },
+  "reactComponents": reactComponents[]->{
+    "id": _id,
+    title,
+    file
   }
 }`;
 

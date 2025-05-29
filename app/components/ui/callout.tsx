@@ -86,7 +86,7 @@ export function Callout({
           >
             <Icon
               className={cn(
-                "h-4 w-4 transition-transform duration-300 group-hover:scale-110",
+                "size-4 transition-transform duration-300 group-hover:scale-110",
                 styles.icon,
               )}
             />
@@ -97,11 +97,11 @@ export function Callout({
             {title && (
               <h5
                 className={cn(
-                  "mb-3 text-lg font-semibold leading-tight tracking-tight transition-colors duration-300",
+                  "mb-3 text-lg font-semibold capitalize leading-tight tracking-tight transition-colors duration-300",
                   styles.title,
                 )}
               >
-                {title}
+                {variant}
               </h5>
             )}
             <div

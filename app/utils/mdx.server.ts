@@ -5,21 +5,41 @@ import rehypeSlug from "rehype-slug";
 import remarkContainers from "remark-flexible-containers";
 
 /**
- * Bundles MDX source code into a single JavaScript module.
- * It uses `mdx-bundler` to process the MDX content and includes
- * plugins for remark and rehype to enhance the output.
- * @param param0.source - The source code to bundle.
- * @returns {Promise<{ code: string; frontmatter: Record<string, any> }>} - The bundled code and frontmatter.
+ * Bundles MDX source code into a single JavaScript module with enhanced features.
+ *
+ * This function processes MDX content using mdx-bundler and includes several plugins:
+ * - remarkGfm: Adds GitHub Flavored Markdown support
+ * - remarkContainers: Enables custom container syntax
+ * - rehypeSlug: Adds IDs to headings for anchor links
+ * - rehypeInlineCodeProperty: Enhances code block styling
+ *
+ * @param {Object} params - The parameters object
+ * @param {string} params.source - The MDX source code to bundle
+ * @param {Record<string, string>} [params.files] - Additional files to include in the bundle
+ * @returns {Promise<{ code: string; frontmatter: Record<string, any> }>} An object containing:
+ *   - code: The bundled JavaScript code
+ *   - frontmatter: The extracted frontmatter data
+ *
  * @example
  * ```ts
- * const { code, frontmatter } = await bundleMDX({ source: mdxSource });
- * // code: The bundled JavaScript code.
- * // frontmatter: The frontmatter extracted from the MDX source.
+ * const { code, frontmatter } = await bundleMDX({
+ *   source: "# Hello World\n\nThis is MDX content",
+ *   files: {
+ *     "components/Button.tsx": "export const Button = () => <button>Click me</button>"
+ *   }
+ * });
  * ```
  */
-export async function bundleMDX({ source }: { source: string }) {
+export async function bundleMDX({
+  source,
+  files,
+}: {
+  source: string;
+  files?: Record<string, string>;
+}) {
   return bMDX({
     source,
+    files,
     mdxOptions(options) {
       options.remarkPlugins = [
         ...(options.remarkPlugins ?? []),

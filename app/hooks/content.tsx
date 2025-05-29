@@ -1,7 +1,18 @@
 import React from "react";
-import { ContentIntentSchema } from "~/routes/articles/article";
 import { useFetcher } from "react-router";
 import { z } from "zod";
+
+export const ContentIntentSchema = z.enum([
+  "add-comment",
+  "update-comment",
+  "add-reply",
+  "update-reply",
+  "upvote-article",
+  "upvote-comment",
+  "upvote-reply",
+  "delete-comment",
+  "delete-reply",
+]);
 
 export type ContentIntent = z.infer<typeof ContentIntentSchema>;
 

@@ -261,7 +261,9 @@ export function Sandpack({ sandpackTemplate }: SandpackProps) {
         </div>
         <div className="flex h-6 items-center justify-between border-t px-2 pt-2 text-xs">
           <StatusIndicator />
-          <CopyCode />
+          {activeView === "editor" || activeView === "split" ? (
+            <CopyCode />
+          ) : null}
         </div>
       </SandpackProvider>
     </div>

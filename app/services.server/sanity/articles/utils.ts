@@ -1,7 +1,7 @@
-import type { Article, Category, Tag } from "./types";
+import type { Article, Category, RelatedArticles, Tag } from "./types";
 import type { QueryParams } from "@sanity/client";
 import type { ArticlesArgs } from "./types";
-import { loadQuery } from "../loader";
+import { client } from "../loader";
 import {
   articleDetailsQuery,
   articlesQuery,
@@ -12,6 +12,7 @@ import {
   tagQuery,
 } from "./queries";
 import { bundleMDX } from "~/utils/mdx.server";
+import { bundleComponents } from "~/utils/misc.server";
 
 /**
  * Retrieves a list of articles based on specified filtering criteria
@@ -53,13 +54,13 @@ export async function getArticles(args: ArticlesArgs) {
   if (category) filters += ` && category->slug.current == $category`;
   if (tag) filters += ` && $tag in tags[]->slug.current`;
 
-  const { data } = await loadQuery<{
+  const response = await client.fetch<{
     articles: Article[];
     total: number;
   }>(articlesQuery({ search, filters, order }), queryParams);
 
   const transformedData = await Promise.all(
-    (data.articles ?? []).map(async (article) => ({
+    (response.articles ?? []).map((article) => ({
       ...article,
       raw: article.content,
     })),
@@ -67,7 +68,7 @@ export async function getArticles(args: ArticlesArgs) {
 
   return {
     articles: transformedData,
-    total: data?.total ?? 0,
+    total: response.total ?? 0,
   };
 }
 
@@ -80,7 +81,7 @@ export async function getArticles(args: ArticlesArgs) {
  * console.log(`Total articles: ${count}`);
  */
 export async function countArticles() {
-  return (await loadQuery<{ count: number }>(countQuery)).data;
+  return client.fetch<{ count: number }>(countQuery);
 }
 
 /**
@@ -94,20 +95,26 @@ export async function countArticles() {
  * console.log(article.title); // "Complete Guide to React Hooks"
  */
 export async function getArticleDetails(slug: string) {
-  const article = await loadQuery<Article>(articleDetailsQuery, { slug });
-
-  const relatedArticles = await loadQuery<Article[]>(relatedQuery, {
+  const article = await client.fetch<Article>(articleDetailsQuery, { slug });
+  const relatedArticles = await client.fetch<RelatedArticles>(relatedQuery, {
     slug,
-    tagIds: article.data.tags.map((tag) => tag?.id),
-    categoryId: article.data.category?.id,
+    tagIds: article.tags?.map((tag) => tag.id),
+    categoryId: article.category?.id,
+  });
+
+  const refinedComponents = bundleComponents(article.reactComponents);
+
+  const { code } = await bundleMDX({
+    source: article.content,
+    files: refinedComponents,
   });
 
   return {
-    ...article.data,
-    raw: article.data.content,
-    content: (await bundleMDX({ source: article.data.content })).code,
-    relatedArticles: relatedArticles.data || [],
-    sandpackTemplates: article.data.sandpackTemplates || [],
+    ...article,
+    content: code,
+    raw: article.content,
+    relatedArticles: relatedArticles || [],
+    sandpackTemplates: article.sandpackTemplates || [],
   };
 }
 
@@ -121,7 +128,7 @@ export async function getArticleDetails(slug: string) {
  * popularTags.forEach(tag => console.log(tag.title));
  */
 export async function getPopularTags(limit = 10) {
-  return loadQuery<Tag[]>(tagQuery, { limit });
+  return client.fetch<Tag[]>(tagQuery, { limit });
 }
 
 /**
@@ -134,9 +141,7 @@ export async function getPopularTags(limit = 10) {
  * recentArticles.forEach(article => console.log(article.title));
  */
 export async function getRecentArticles(limit = 4) {
-  return (
-    (await loadQuery<Article[]>(recentArticlesQuery(), { limit }))?.data ?? []
-  );
+  return client.fetch<Article[]>(recentArticlesQuery(), { limit }) ?? [];
 }
 
 /**
@@ -148,5 +153,5 @@ export async function getRecentArticles(limit = 4) {
  * categories.forEach(category => console.log(category.title));
  */
 export async function getAllCategories() {
-  return loadQuery<Category[]>(categoryQuery) ?? [];
+  return client.fetch<Category[]>(categoryQuery);
 }

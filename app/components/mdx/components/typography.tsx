@@ -138,12 +138,6 @@ export function Div({
   children,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-  const variants: Record<CalloutVariant, string> = {
-    info: "Info",
-    warning: "Warning",
-    error: "Error",
-  };
-
   const childrenArray = React.Children.toArray(children);
 
   const titleChild = childrenArray.find((child: React.ReactNode) => {
@@ -162,17 +156,11 @@ export function Div({
       )?.[0] as CalloutVariant) ?? "info")
     : null;
 
-  const title = React.isValidElement<TitleChildProps>(titleChild)
-    ? String(titleChild.props.children)
-    : variant
-      ? variants[variant]
-      : undefined;
-
   if (variant) {
     return (
       <Callout
         variant={variant}
-        title={title}
+        title={variant}
         className={cn("my-8", className)}
         {...props}
       >

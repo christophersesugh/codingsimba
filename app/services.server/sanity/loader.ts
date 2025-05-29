@@ -16,4 +16,4 @@ const config: ClientConfig = {
 export const client = createClient(config);
 
 queryStore.setServerClient(client);
-export const { loadQuery } = queryStore;
+// export const { loadQuery } = queryStore;

@@ -32,24 +32,12 @@ import {
   updateReply,
   deleteReply,
   upvoteReply,
-  trackPageView,
+  // trackPageView,
   upvoteArticle,
 } from "~/utils/articles.server";
 import { UpdateSchema } from "~/hooks/content";
 import { z } from "zod";
 import { useOptionalUser } from "~/hooks/user";
-
-export const ContentIntentSchema = z.enum([
-  "add-comment",
-  "update-comment",
-  "add-reply",
-  "update-reply",
-  "upvote-article",
-  "upvote-comment",
-  "upvote-reply",
-  "delete-comment",
-  "delete-reply",
-]);
 
 const SearchParamsSchema = z.object({
   commentTake: z.coerce.number().default(5),
@@ -61,7 +49,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const searchParams = Object.fromEntries(
     new URL(request.url).searchParams.entries(),
   );
-  const parsedParams = SearchParamsSchema.safeParse(searchParams);
+  const parsedParams = await SearchParamsSchema.safeParseAsync(searchParams);
 
   invariant(params.articleSlug, "Article slug is required");
 
@@ -75,8 +63,6 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     status: StatusCodes.NOT_FOUND,
   });
 
-  // Track page view
-  await trackPageView({ itemId: article.id });
   const articleMetadata = await getArticleMetadata({
     articleId: article.id,
     ...parsedParams.data,
@@ -196,7 +182,7 @@ export default function ArticleDetailsRoute({
                 ))}
               >
                 <Await resolve={popularTags}>
-                  {(tags) => <PopularTags popularTags={tags.data} />}
+                  {(tags) => <PopularTags popularTags={tags} />}
                 </Await>
               </React.Suspense>
             </div>

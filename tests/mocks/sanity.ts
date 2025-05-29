@@ -14,6 +14,7 @@ import { readPageContent } from "~/utils/misc.server";
 
 export const handlers: HttpHandler[] = [
   http.get(SANITY_API_URL, async ({ request }) => {
+    return passthrough();
     const url = new URL(request.url);
     const query = url.searchParams.get("query");
 

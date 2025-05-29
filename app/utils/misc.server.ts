@@ -3,10 +3,19 @@ import path from "node:path";
 import { bundleMDX } from "./mdx.server";
 
 /**
- * Reads the content of a specific MDX page.
+ * Reads the raw content of a specific MDX page from the content/pages directory.
  *
- * @param pageName - Name of the page without extension
- * @returns The raw content of the page or null if not found
+ * @param {string} pageName - Name of the page without the .mdx extension
+ * @returns {Promise<string | null>} The raw content of the page or null if not found
+ * @throws {Error} If there's an error reading the file
+ *
+ * @example
+ * ```ts
+ * const content = await readPageContent("about");
+ * if (content) {
+ *   console.log(content); // Raw MDX content
+ * }
+ * ```
  */
 export async function readPageContent(
   pageName: string,
@@ -25,10 +34,21 @@ export async function readPageContent(
 }
 
 /**
- * Reads and processes a specific MDX page content.
+ * Reads and processes a specific MDX page content using bundleMDX.
+ * This function combines reading the raw content and bundling it into a processed format.
  *
- * @param pageName - Name of the page without extension
- * @returns Processed MDX content or null if not found
+ * @param {string} pageName - Name of the page without the .mdx extension
+ * @returns {Promise<{ code: string; frontmatter: Record<string, any> } | null>}
+ *   Processed MDX content with code and frontmatter, or null if not found
+ *
+ * @example
+ * ```ts
+ * const processed = await readMdxPageContent("about");
+ * if (processed) {
+ *   console.log(processed.code); // Processed content
+ *   console.log(processed.frontmatter); // Page metadata
+ * }
+ * ```
  */
 export async function readMdxPageContent(pageName: string) {
   try {
@@ -42,25 +62,28 @@ export async function readMdxPageContent(pageName: string) {
 }
 
 /**
- * Reads and processes all MDX files in a directory.
- * Each file is processed and returned with its metadata and content.
+ * Reads and processes all MDX files in a specified directory.
+ * Each file is processed to extract content, metadata, and frontmatter.
+ * Results are sorted by date in descending order.
  *
- * @param directory - Path to the directory containing MDX files
- * @returns Array of processed MDX files with their metadata and content
+ * @param {string} directory - Path to the directory containing MDX files (relative to content/pages)
+ * @returns {Promise<Array<{
+ *   slug: string;
+ *   content: string;
+ *   frontmatter: Record<string, any>;
+ *   title: string;
+ *   date: string;
+ *   description: string;
+ * }>>} Array of processed MDX files with their metadata
  *
  * @example
  * ```ts
- * const posts = await readMdxDirectory("content/posts");
- * // Returns: [
- * //   {
- * //     slug: "post-1",
- * //     title: "Post 1",
- * //     date: "2024-01-01",
- * //     content: "...",
- * //     frontmatter: { ... }
- * //   },
- * //   ...
- * // ]
+ * const posts = await readMdxDirectory("blog");
+ * posts.forEach(post => {
+ *   console.log(post.title);
+ *   console.log(post.date);
+ *   console.log(post.content);
+ * });
  * ```
  */
 export async function readMdxDirectory(directory: string) {
@@ -87,16 +110,13 @@ export async function readMdxDirectory(directory: string) {
           slug,
           content: processed.code,
           frontmatter: processed.frontmatter,
-          // Extract common metadata fields
           title: processed.frontmatter.title,
           date: processed.frontmatter.date,
           description: processed.frontmatter.description,
-          // Add any other metadata fields you need
         };
       }),
     );
 
-    // Filter out any null results and sort by date if available
     return processedFiles
       .filter((file): file is NonNullable<typeof file> => file !== null)
       .sort((a, b) => {
@@ -109,4 +129,34 @@ export async function readMdxDirectory(directory: string) {
     console.error(`Error reading MDX directory ${directory}:`, error);
     return [];
   }
+}
+
+/**
+ * Bundles React components into a format suitable for MDX bundling.
+ * Transforms an array of component objects into a record of file paths and their code content.
+ *
+ * @param {Array<{ file: { filename: string; code: string } }>} components - Array of component objects
+ * @returns {Promise<Record<string, string>>} Object mapping file paths to their code content
+ *
+ * @example
+ * ```ts
+ * const components = [
+ *   { file: { filename: "Button", code: "export const Button = () => <button>Click me</button>" } }
+ * ];
+ * const bundled = await bundleComponent(components);
+ * // Result: { "./Button.tsx": "export const Button = () => <button>Click me</button>" }
+ * ```
+ */
+export function bundleComponents(
+  components: Array<{ file: { filename: string; code: string } }>,
+) {
+  if (!components.length) {
+    return;
+  }
+  return (
+    components.reduce<Record<string, string>>((acc, component) => {
+      acc[`./${component.file.filename}.tsx`] = component.file.code;
+      return acc;
+    }, {}) ?? {}
+  );
 }

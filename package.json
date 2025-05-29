@@ -52,6 +52,7 @@
     "@react-email/components": "0.0.36",
     "@react-router/node": "^7.4.0",
     "@react-router/serve": "^7.4.0",
+    "@sanity/block-content-to-markdown": "^1.0.0",
     "@sanity/client": "^7.1.0",
     "@sanity/react-loader": "^1.11.0",
     "@tailwindcss/typography": "^0.5.16",
