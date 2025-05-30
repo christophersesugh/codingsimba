@@ -1,10 +1,9 @@
-import React from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router";
 import { Calendar, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { readingTime } from "reading-time-estimator";
-import type { Article } from "~/services.server/sanity/articles";
+import type { Article } from "~/services.server/sanity/articles/types";
 
 import {
   Breadcrumb,
@@ -83,13 +82,13 @@ export function DetailsHeader({ item }: DetailsHeaderProps) {
       </div>
 
       <div className="container relative z-10 mx-auto px-4">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Breadcrumb className="mb-4">
+            <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
                   <Link
@@ -110,12 +109,20 @@ export function DetailsHeader({ item }: DetailsHeaderProps) {
           </motion.div>
 
           <motion.h1
-            className="mb-4 text-3xl font-bold md:text-4xl"
+            className="mb-3 mt-2 text-3xl font-bold md:text-4xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
             {item.title}
+          </motion.h1>
+          <motion.h1
+            className="mb-4 max-w-3xl text-sm"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            {item.excerpt}
           </motion.h1>
 
           <motion.div

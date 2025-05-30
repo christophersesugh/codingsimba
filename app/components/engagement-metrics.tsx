@@ -4,6 +4,7 @@ import { Eye, Heart, MessageSquare } from "lucide-react";
 import { cn } from "~/lib/shadcn";
 import { Link } from "react-router";
 import { useOptionalUser } from "~/hooks/user";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface EMetricsProps {
   id: string;
@@ -19,6 +20,8 @@ interface EMetricsProps {
 }
 
 export function EngagementMetrics({ metrics }: { metrics?: EMetricsProps }) {
+  const [showFloating, setShowFloating] = React.useState(false);
+  const [animationKey, setAnimationKey] = React.useState(0);
   const fetcher = useFetcher();
   const user = useOptionalUser();
   const userId = user?.id;
@@ -26,8 +29,9 @@ export function EngagementMetrics({ metrics }: { metrics?: EMetricsProps }) {
   const LEAST_COUNT = 0;
 
   const totalLikes =
-    metrics?.likes.reduce((total, next) => total + next.count, 0) ??
+    metrics?.likes?.reduce((total, like) => total + like.count, 0) ??
     LEAST_COUNT;
+
   const userLikes =
     metrics?.likes.find((like) => like.userId === userId)?.count ?? LEAST_COUNT;
 
@@ -51,6 +55,13 @@ export function EngagementMetrics({ metrics }: { metrics?: EMetricsProps }) {
       totalLikes: prev.totalLikes + 1,
       userLikes: prev.userLikes + 1,
     }));
+
+    setShowFloating(true);
+    setAnimationKey((prev) => prev + 1);
+
+    setTimeout(() => {
+      setShowFloating(false);
+    }, 1000);
 
     fetcher.submit(
       { intent: "upvote-article", itemId: metrics?.id ?? "", userId: userId! },
@@ -81,6 +92,33 @@ export function EngagementMetrics({ metrics }: { metrics?: EMetricsProps }) {
               <sub className="text-gray-500 dark:text-gray-400">max</sub>
             ) : null}
           </button>
+          <AnimatePresence>
+            {showFloating && (
+              <motion.div
+                key={animationKey}
+                initial={{
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                }}
+                animate={{
+                  opacity: 0,
+                  y: -40,
+                  scale: 1.2,
+                }}
+                exit={{
+                  opacity: 0,
+                }}
+                transition={{
+                  duration: 1,
+                  ease: "easeOut",
+                }}
+                className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 -translate-y-2"
+              >
+                <span className="text-lg font-bold text-red-500">+1</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
         <Link to={"#comments"} className="flex items-center space-x-1">
           <MessageSquare className="size-5" />

@@ -225,7 +225,7 @@ export const ArticleSchema = z.object({
   category: CategorySchema,
   featured: z.boolean().default(false),
   tags: TagsSchema,
-  image: z.string().url("Invalid image URL"),
+  image: z.string(),
   excerpt: z.string(),
   content: z.string(),
   raw: z.string(),

@@ -24,8 +24,6 @@ import { Navbar } from "./components/navbar";
 import { Footer } from "./components/footer";
 import { themeSessionResolver } from "~/utils/theme.server";
 import { GeneralErrorBoundary } from "./components/error-boundary";
-import { AuthDialogProvider } from "./contexts/auth-dialog";
-import { AuthDialog } from "./components/auth-dialog";
 import { MobileNavProvider } from "./contexts/mobile-nav";
 import { MobileNav } from "./components/mobile-nav";
 import { prisma } from "./utils/db.server";
@@ -137,7 +135,6 @@ function App() {
       <MobileNav />
       <Outlet />
       <Toaster />
-      <AuthDialog />
       <Footer />
     </Document>
   );
@@ -154,11 +151,9 @@ export default function AppWithProviders({ loaderData }: Route.ComponentProps) {
 
   return (
     <ThemedApp theme={theme}>
-      <AuthDialogProvider>
-        <MobileNavProvider>
-          <App />
-        </MobileNavProvider>
-      </AuthDialogProvider>
+      <MobileNavProvider>
+        <App />
+      </MobileNavProvider>
     </ThemedApp>
   );
 }

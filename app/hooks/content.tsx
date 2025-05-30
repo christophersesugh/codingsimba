@@ -12,6 +12,7 @@ export const ContentIntentSchema = z.enum([
   "upvote-reply",
   "delete-comment",
   "delete-reply",
+  "track-page-view",
 ]);
 
 export type ContentIntent = z.infer<typeof ContentIntentSchema>;

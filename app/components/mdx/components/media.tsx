@@ -23,10 +23,9 @@ interface MDXIframeProps {
 
 export function Iframe({ videoId, type = "youtube" }: MDXIframeProps) {
   const srcUrls = {
-    youtube:
-      `https://www.youtube.com/embed/${videoId}?rel=0&showinfo=0&modestbranding=1&iv_load_policy=3` as const,
-    bunny: `https://video.bunnycdn.com/embed/${videoId}` as const,
-  };
+    youtube: `https://www.youtube.com/embed/${videoId}?rel=0&showinfo=0&modestbranding=1&iv_load_policy=3`,
+    bunny: `https://video.bunnycdn.com/embed/${videoId}`,
+  } as const;
 
   const srcTitle = {
     youtube: `YouTube video player`,

@@ -438,7 +438,8 @@ export async function trackPageView({ itemId }: { itemId: string }) {
     where: { sanityId: itemId },
     create: { sanityId: itemId, type: "ARTICLE", views: 1 },
     update: { views: { increment: 1 } },
-    select: { id: true, views: true },
+    select: { id: true },
   });
+
   return content;
 }

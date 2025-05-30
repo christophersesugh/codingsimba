@@ -13,6 +13,7 @@ model Content {
   reviews        Review[]
   enrollments    Enrollment[]
   courseProgress CourseProgress[]
+  timeSpent      TimeSpent[]
 
   @@index([sanityId])
   @@index([sanityId, type])
@@ -42,11 +43,12 @@ model CourseProgress {
   modules ModuleProgress[]
 
   // Progress metrics
-  progress    Int       @default(0) // 0-100
-  isCompleted Boolean   @default(false)
+  progress    Int         @default(0) // 0-100
+  isCompleted Boolean     @default(false)
   completedAt DateTime?
-  startedAt   DateTime  @default(now())
-  lastActive  DateTime  @default(now())
+  startedAt   DateTime    @default(now())
+  lastActive  DateTime    @default(now())
+  timeSpent   TimeSpent[]
 
   @@unique([userId, contentId])
   @@index([userId])
@@ -70,6 +72,7 @@ model ModuleProgress {
 
   courseProgress   CourseProgress @relation(fields: [courseProgressId], references: [id], onDelete: Cascade)
   courseProgressId String
+  timeSpent        TimeSpent[]
 
   @@index([userId])
   @@index([courseProgressId])
@@ -160,4 +163,46 @@ model Enrollment {
   @@unique([userId, contentId])
   @@index([subscriptionId])
   @@index([expiresAt])
+}
+
+model TimeSpent {
+  id        String   @id @default(ulid())
+  timeSpent Int // Time spent in seconds
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // User relation
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Content relation (for articles, tutorials, etc.)
+  contentId String?
+  content   Content? @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  // Course-specific relations
+  courseProgressId String?
+  courseProgress   CourseProgress? @relation(fields: [courseProgressId], references: [id], onDelete: Cascade)
+
+  moduleProgressId String?
+  moduleProgress   ModuleProgress? @relation(fields: [moduleProgressId], references: [id], onDelete: Cascade)
+
+  // Metadata
+  pageType   PageType
+  lastActive DateTime @default(now())
+
+  @@index([userId])
+  @@index([contentId])
+  @@index([courseProgressId])
+  @@index([moduleProgressId])
+  @@index([lastActive])
+}
+
+enum PageType {
+  ARTICLE
+  TUTORIAL
+  COURSE
+  MODULE
+  LESSON
+  SPECIALIZATION
 }

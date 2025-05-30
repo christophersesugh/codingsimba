@@ -18,7 +18,7 @@ import { invariant, invariantResponse } from "~/utils/misc";
 import { EmptyState } from "~/components/empty-state";
 import { BookX } from "lucide-react";
 import { Skeleton } from "~/components/ui/skeleton";
-import { Await } from "react-router";
+import { Await, useFetcher } from "react-router";
 import { Comments } from "~/components/comment";
 import { Separator } from "~/components/ui/separator";
 import { StatusCodes } from "http-status-codes";
@@ -32,12 +32,13 @@ import {
   updateReply,
   deleteReply,
   upvoteReply,
-  // trackPageView,
+  trackPageView,
   upvoteArticle,
 } from "~/utils/articles.server";
 import { UpdateSchema } from "~/hooks/content";
 import { z } from "zod";
 import { useOptionalUser } from "~/hooks/user";
+import { usePageView, type PageViewData } from "~/hooks/use-page-view";
 
 const SearchParamsSchema = z.object({
   commentTake: z.coerce.number().default(5),
@@ -100,6 +101,9 @@ export async function action({ request }: Route.ActionArgs) {
       return await upvoteReply(data);
     case "upvote-article":
       return await upvoteArticle(data);
+    case "track-page-view":
+      return await trackPageView(data);
+
     default:
       throw new Error("Invalid intent");
   }
@@ -110,6 +114,25 @@ export default function ArticleDetailsRoute({
 }: Route.ComponentProps) {
   const { article, popularTags, articleMetadata } = loaderData;
   const user = useOptionalUser();
+  const fetcher = useFetcher();
+
+  const handlePageView = React.useCallback(async (data: PageViewData) => {
+    console.log({ data });
+    await fetcher.submit(
+      { ...data, itemId: data.pageId, intent: "track-page-view" },
+      { method: "post" },
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const pageData = usePageView({
+    pageId: article.id,
+    userId: user?.id ?? undefined,
+    trackOnce: true,
+    minTimeThreshold: 10,
+    heartbeatInterval: 30,
+    onPageView: handlePageView,
+  });
 
   return (
     <>
@@ -127,7 +150,7 @@ export default function ArticleDetailsRoute({
                   className="aspect-video h-full w-full object-cover"
                 />
               </div>
-              <TableOfContent className="block lg:hidden" />
+              <TableOfContent pageData={pageData} className="block lg:hidden" />
               <Markdown
                 source={article.content}
                 sandpackTemplates={article.sandpackTemplates}
@@ -173,7 +196,7 @@ export default function ArticleDetailsRoute({
           {/* Sidebar */}
           <aside className="lg:col-span-4">
             <div className="sticky top-20">
-              <TableOfContent className="hidden lg:block" />
+              <TableOfContent pageData={pageData} className="hidden lg:block" />
               <EngagementMetrics metrics={articleMetadata?.metrics} />
               {!user?.isSubscribed ? <SubscriptionForm /> : null}
               <React.Suspense

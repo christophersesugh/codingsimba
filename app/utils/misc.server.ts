@@ -150,7 +150,7 @@ export async function readMdxDirectory(directory: string) {
 export function bundleComponents(
   components: Array<{ file: { filename: string; code: string } }>,
 ) {
-  if (!components.length) {
+  if (!components?.length) {
     return;
   }
   return (

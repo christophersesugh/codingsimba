@@ -30,6 +30,7 @@ model User {
   enrollments          Enrollment[]
   subscription         Subscription?
   certificates         Certificate[]
+  timeSpent            TimeSpent[]
 
   @@index([email])
 }

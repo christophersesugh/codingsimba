@@ -48,7 +48,6 @@ export function articlesQuery({
       "image": image.asset->url,
       excerpt,
       content,
-      content2
     },
     "total": count(*[${filters}])
   }`;

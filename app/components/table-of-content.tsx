@@ -4,21 +4,39 @@ import { Skeleton } from "~/components/ui/skeleton";
 import { useToc } from "~/hooks/use-toc";
 // import { useMarkdownToc } from "use-markdown-toc";
 import { cn } from "~/lib/shadcn";
+import { Badge } from "./ui/badge";
+
+type PageData = {
+  timeSpent: number;
+  isActive: boolean;
+  formattedTime: string;
+};
 
 /**
  * Memoized Table of Contents component.
  */
-function TOC({ className }: { className?: string }) {
+function TOC({
+  className,
+  pageData,
+}: {
+  className?: string;
+  pageData: PageData;
+}) {
   const { headings, activeId } = useToc({
     containerId: "markdown-content",
   });
   return (
     <div
       className={cn(
-        "mb-6 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900",
+        "relative mb-6 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900",
         className,
       )}
     >
+      <Badge className="absolute right-0 top-0 rounded-br-none rounded-tl-none">
+        Time spent on this page:{" "}
+        <span className="font-bold">{pageData.formattedTime}</span>{" "}
+        {pageData.isActive ? "🟢" : "🔴"}
+      </Badge>
       <h3 className="mb-4 text-lg font-bold">Table of Contents</h3>
       <nav className="space-y-3">
         <ul>

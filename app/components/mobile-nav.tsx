@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Sheet,
   SheetContent,
@@ -15,12 +14,10 @@ import { Link } from "react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
-import { useAuthDialog } from "~/contexts/auth-dialog";
 import { useOptionalUser } from "~/hooks/user";
 import { getInitials } from "~/utils/user";
 
 export function MobileNav() {
-  const { openDialog } = useAuthDialog();
   const { open, closeMobileNav } = useMobileNav();
 
   const user = useOptionalUser();
@@ -53,8 +50,8 @@ export function MobileNav() {
           <div className="flex justify-center gap-4 px-4 pb-4">
             <ThemeToggle />
             {!user ? (
-              <Button className="flex" onClick={openDialog}>
-                Sign In
+              <Button className="flex" asChild>
+                <Link to={"/signin"}>Sign In</Link>
               </Button>
             ) : null}
 
