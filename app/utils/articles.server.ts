@@ -3,6 +3,11 @@ import { prisma } from "./db.server";
 import { bundleMDX } from "./mdx.server";
 import { invariantResponse } from "./misc";
 import type { Update } from "~/hooks/content";
+import { determineCommentPermissions } from "./misc.server";
+
+/**
+ * LOADER FUNCTIONS
+ */
 
 /**
  * Retrieves metrics for a specific article including views, likes, and comment counts
@@ -158,6 +163,10 @@ export async function getArticleMetadata({
 }
 
 /**
+ * ACTION FUNCTIONS
+ */
+
+/**
  * Adds a new comment to an article
  * @param itemId - The Sanity.io document ID of the article
  * @param body - The comment content
@@ -228,23 +237,34 @@ export async function addReply({ itemId, body, userId, parentId }: Update) {
  * @param userId - The ID of the user updating the comment
  * @returns The updated comment
  * @throws {Error} If comment not found or user not authorized
+ * @description Checks user permissions using determineCommentPermissions and verifies UPDATE permission
  */
 export async function updateComment({ itemId, body, userId }: Update) {
+  invariantResponse(userId, "User ID is required", {
+    status: StatusCodes.NOT_FOUND,
+  });
+
   const comment = await prisma.comment.findUnique({
     where: { id: itemId },
-    select: { authorId: true },
   });
 
   invariantResponse(comment, "Comment not found", {
     status: StatusCodes.NOT_FOUND,
   });
 
+  const commentPermissions = userId
+    ? await determineCommentPermissions(userId, [comment])
+    : [];
+  const userPermissions = commentPermissions[0];
+
+  const hasUpdatePermission = userPermissions?.permissions.some(
+    (p) => p.action === "UPDATE",
+  );
+
   invariantResponse(
-    comment.authorId === userId,
-    "Not authorized to update this comment",
-    {
-      status: StatusCodes.FORBIDDEN,
-    },
+    hasUpdatePermission,
+    "Unauthorized: You don't have permission to update this comment",
+    { status: StatusCodes.FORBIDDEN },
   );
 
   const updatedComment = await prisma.comment.update({
@@ -262,23 +282,33 @@ export async function updateComment({ itemId, body, userId }: Update) {
  * @param userId - The ID of the user deleting the comment
  * @returns Object indicating successful deletion
  * @throws {Error} If comment not found or user not authorized
+ * @description Checks user permissions using determineCommentPermissions and verifies DELETE permission
  */
 export async function deleteComment({ itemId, userId }: Omit<Update, "body">) {
+  invariantResponse(userId, "User ID is required", {
+    status: StatusCodes.NOT_FOUND,
+  });
   const comment = await prisma.comment.findUnique({
     where: { id: itemId },
-    select: { authorId: true },
   });
 
   invariantResponse(comment, "Comment not found", {
     status: StatusCodes.NOT_FOUND,
   });
 
+  const commentPermissions = userId
+    ? await determineCommentPermissions(userId, [comment])
+    : [];
+  const userPermissions = commentPermissions[0];
+
+  const hasDeletePermission = userPermissions?.permissions.some(
+    (p) => p.action === "DELETE",
+  );
+
   invariantResponse(
-    comment.authorId === userId,
-    "Not authorized to delete this comment",
-    {
-      status: StatusCodes.FORBIDDEN,
-    },
+    hasDeletePermission,
+    "Unauthorized: You don't have permission to delete this comment",
+    { status: StatusCodes.FORBIDDEN },
   );
 
   await prisma.comment.delete({
@@ -314,11 +344,15 @@ export async function upvoteComment({ itemId, userId }: Omit<Update, "body">) {
  * @param userId - The ID of the user updating the reply
  * @returns The updated reply
  * @throws {Error} If reply not found, not a reply, or user not authorized
+ * @description Checks user permissions using determineCommentPermissions and verifies UPDATE permission
  */
 export async function updateReply({ itemId, body, userId }: Update) {
+  invariantResponse(userId, "User ID is required", {
+    status: StatusCodes.BAD_REQUEST,
+  });
+
   const reply = await prisma.comment.findUnique({
     where: { id: itemId },
-    select: { authorId: true, parentId: true },
   });
 
   invariantResponse(reply, "Reply not found", {
@@ -329,12 +363,19 @@ export async function updateReply({ itemId, body, userId }: Update) {
     status: StatusCodes.BAD_REQUEST,
   });
 
+  const commentPermissions = userId
+    ? await determineCommentPermissions(userId, [reply])
+    : [];
+  const userPermissions = commentPermissions[0];
+
+  const hasUpdatePermission = userPermissions?.permissions.some(
+    (p) => p.action === "UPDATE",
+  );
+
   invariantResponse(
-    reply.authorId === userId,
-    "Not authorized to update this reply",
-    {
-      status: StatusCodes.FORBIDDEN,
-    },
+    hasUpdatePermission,
+    "Unauthorized: You don't have permission to update this reply",
+    { status: StatusCodes.FORBIDDEN },
   );
 
   const updatedReply = await prisma.comment.update({
@@ -352,11 +393,15 @@ export async function updateReply({ itemId, body, userId }: Update) {
  * @param userId - The ID of the user deleting the reply
  * @returns Object indicating successful deletion
  * @throws {Error} If reply not found, not a reply, or user not authorized
+ * @description Checks user permissions using determineCommentPermissions and verifies DELETE permission
  */
 export async function deleteReply({ itemId, userId }: Omit<Update, "body">) {
+  invariantResponse(userId, "User ID is required", {
+    status: StatusCodes.BAD_REQUEST,
+  });
+
   const reply = await prisma.comment.findUnique({
     where: { id: itemId },
-    select: { authorId: true, parentId: true },
   });
 
   invariantResponse(reply, "Reply not found", {
@@ -367,12 +412,19 @@ export async function deleteReply({ itemId, userId }: Omit<Update, "body">) {
     status: StatusCodes.BAD_REQUEST,
   });
 
+  const commentPermissions = userId
+    ? await determineCommentPermissions(userId, [reply])
+    : [];
+  const userPermissions = commentPermissions[0];
+
+  const hasDeletePermission = userPermissions?.permissions.some(
+    (p) => p.action === "DELETE",
+  );
+
   invariantResponse(
-    reply.authorId === userId,
-    "Not authorized to delete this reply",
-    {
-      status: StatusCodes.FORBIDDEN,
-    },
+    hasDeletePermission,
+    "Unauthorized: You don't have permission to delete this reply",
+    { status: StatusCodes.FORBIDDEN },
   );
 
   await prisma.comment.delete({

@@ -27,6 +27,8 @@ interface UsePageViewOptions {
   onPageView?: (data: PageViewData) => void;
   /** Track only the initial view (default: false) */
   trackOnce?: boolean;
+  /** Minimum time in seconds before recording a view when trackOnce is true (default: 0) */
+  trackOnceDelay?: number;
 }
 
 /**
@@ -66,6 +68,7 @@ export function usePageView({
   heartbeatInterval = 30,
   onPageView,
   trackOnce = false,
+  trackOnceDelay = 0,
 }: UsePageViewOptions) {
   const [timeSpent, setTimeSpent] = React.useState(0);
   const [isActive, setIsActive] = React.useState(true);
@@ -93,15 +96,33 @@ export function usePageView({
       onPageViewRef.current &&
       startTimeRef.current > 0
     ) {
-      hasTrackedRef.current = true;
-      onPageViewRef.current({
-        pageId,
-        userId,
-        timeSpent: 0,
-        isActive: true,
-      });
+      // If there's a delay, wait for it before tracking
+      if (trackOnceDelay > 0) {
+        const timer = setTimeout(() => {
+          if (!hasTrackedRef.current) {
+            hasTrackedRef.current = true;
+            onPageViewRef.current?.({
+              pageId,
+              userId,
+              timeSpent: trackOnceDelay,
+              isActive: true,
+            });
+          }
+        }, trackOnceDelay * 1000);
+
+        return () => clearTimeout(timer);
+      } else {
+        // No delay, track immediately
+        hasTrackedRef.current = true;
+        onPageViewRef.current({
+          pageId,
+          userId,
+          timeSpent: 0,
+          isActive: true,
+        });
+      }
     }
-  }, [trackOnce, pageId, userId]);
+  }, [trackOnce, pageId, userId, trackOnceDelay]);
 
   /**
    * Effect to track page visibility and user activity

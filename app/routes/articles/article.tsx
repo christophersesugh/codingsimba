@@ -39,6 +39,9 @@ import { UpdateSchema } from "~/hooks/content";
 import { z } from "zod";
 import { useOptionalUser } from "~/hooks/user";
 import { usePageView, type PageViewData } from "~/hooks/use-page-view";
+import { getUserId } from "~/utils/auth.server";
+import { determineCommentPermissions } from "~/utils/misc.server";
+import { GeneralErrorBoundary } from "~/components/error-boundary";
 
 const SearchParamsSchema = z.object({
   commentTake: z.coerce.number().default(5),
@@ -59,6 +62,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   });
 
   const popularTags = getPopularTags();
+  const userId = await getUserId(request);
   const article = await getArticleDetails(params.articleSlug);
   invariantResponse(article, `Article with slug: '${article.slug}' not found`, {
     status: StatusCodes.NOT_FOUND,
@@ -69,7 +73,26 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     ...parsedParams.data,
   });
 
-  return { popularTags, article, articleMetadata };
+  const comments = articleMetadata?.comments ?? [];
+  const replies = comments.flatMap((comment) => comment.replies ?? []);
+
+  const commentPermissions = userId
+    ? [
+        ...(await determineCommentPermissions(userId, comments)),
+        ...(await determineCommentPermissions(userId, replies)),
+      ]
+    : [];
+
+  const commentPermissionMap = new Map(
+    commentPermissions.map((p) => [p.commentId, p]),
+  );
+
+  return {
+    popularTags,
+    article,
+    articleMetadata,
+    commentPermissionMap,
+  };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -112,7 +135,8 @@ export async function action({ request }: Route.ActionArgs) {
 export default function ArticleDetailsRoute({
   loaderData,
 }: Route.ComponentProps) {
-  const { article, popularTags, articleMetadata } = loaderData;
+  const { article, popularTags, articleMetadata, commentPermissionMap } =
+    loaderData;
   const user = useOptionalUser();
   const fetcher = useFetcher();
 
@@ -129,6 +153,7 @@ export default function ArticleDetailsRoute({
     pageId: article.id,
     userId: user?.id ?? undefined,
     trackOnce: true,
+    trackOnceDelay: 10,
     minTimeThreshold: 10,
     heartbeatInterval: 30,
     onPageView: handlePageView,
@@ -165,6 +190,7 @@ export default function ArticleDetailsRoute({
             <Comments
               articleId={article.id}
               comments={articleMetadata?.comments ?? []}
+              commentPermissionMap={commentPermissionMap}
             />
             <Tags article={article} />
             <Share article={article} />
@@ -213,5 +239,18 @@ export default function ArticleDetailsRoute({
         </div>
       </div>
     </>
+  );
+}
+
+export function ErrorBoundary() {
+  return (
+    <GeneralErrorBoundary
+      statusHandlers={{
+        403: () => <p>You do not have permission</p>,
+        404: ({ params }) => (
+          <p>Article with ${params.articleId} does not exist</p>
+        ),
+      }}
+    />
   );
 }

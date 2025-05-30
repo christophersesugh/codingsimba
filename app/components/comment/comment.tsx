@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { formatDistanceToNowStrict } from "date-fns";
-import type { IComment } from ".";
+import type { CommentPermissionMap, IComment } from ".";
 import { Separator } from "../ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
@@ -31,7 +31,13 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 
-export function Comment({ comment }: { comment: IComment }) {
+export function Comment({
+  comment,
+  commentPermissionMap,
+}: {
+  comment: IComment;
+  commentPermissionMap: CommentPermissionMap;
+}) {
   const [editComment, setEditComment] = React.useState(false);
   const [commentBody, setCommentBody] = React.useState(comment.raw);
   const [reply, setReply] = React.useState("");
@@ -44,12 +50,22 @@ export function Comment({ comment }: { comment: IComment }) {
   const replyTake = Number(searchParams.get("replyTake")) || 3;
 
   const userId = user?.id;
-  const author = comment!.author!.profile;
+  const author = comment?.author?.profile;
+
+  const userPermission = commentPermissionMap.get(comment.id);
+
   const isLiked = comment.likes?.some((like) => like.userId === user?.id);
   const totalLikes = comment?.likes?.reduce(
     (total, like) => total + like.count,
     0,
   );
+
+  const canDelete =
+    userPermission?.isOwner ||
+    userPermission?.permissions.some((p) => p.action === "DELETE");
+  const canUpdate =
+    userPermission?.isOwner ||
+    userPermission?.permissions.some((p) => p.action === "UPDATE");
 
   const { submit: submitReply } = useCreate({
     itemId: comment.contentId,
@@ -78,7 +94,7 @@ export function Comment({ comment }: { comment: IComment }) {
     intent: "update-comment",
   });
 
-  function handleButtonClick(fn: (...args: unknown[]) => void) {
+  function requireAuth(fn: (...args: unknown[]) => void) {
     return (...args: unknown[]) => (user ? fn(...args) : navigate("/signin"));
   }
 
@@ -147,7 +163,7 @@ export function Comment({ comment }: { comment: IComment }) {
           <div className="mt-2 flex items-center space-x-4">
             <button
               className={basicButtonClasses}
-              onClick={handleButtonClick(upvoteComment)}
+              onClick={requireAuth(upvoteComment)}
             >
               <Heart
                 className={cn("size-4", {
@@ -157,16 +173,14 @@ export function Comment({ comment }: { comment: IComment }) {
               <span>{totalLikes}</span>
             </button>
             <button
-              onClick={handleButtonClick(() =>
-                setShowReplyForm(!showReplyForm),
-              )}
+              onClick={requireAuth(() => setShowReplyForm(!showReplyForm))}
               className={basicButtonClasses}
               aria-label="reply comment"
             >
               <MessageSquareQuote className="mr-1 size-4" />
               Reply
             </button>
-            {user ? (
+            {canUpdate ? (
               <button
                 onClick={() => setEditComment(true)}
                 className={basicButtonClasses}
@@ -176,7 +190,7 @@ export function Comment({ comment }: { comment: IComment }) {
                 Edit
               </button>
             ) : null}
-            {user ? (
+            {canDelete ? (
               <AlertDialog>
                 <AlertDialogTrigger className={basicButtonClasses}>
                   <Trash2 className="mr-1 size-4 text-red-600 dark:text-red-500" />{" "}
@@ -213,7 +227,10 @@ export function Comment({ comment }: { comment: IComment }) {
             <ul className="mt-4 space-y-4 pl-6 dark:border-gray-800">
               {comment.replies.map((reply, index) => (
                 <div key={reply.id}>
-                  <Reply reply={reply} />
+                  <Reply
+                    reply={reply}
+                    commentPermissionMap={commentPermissionMap}
+                  />
                   {index < comment.replies!.length - 1 && (
                     <Separator className="my-4" />
                   )}

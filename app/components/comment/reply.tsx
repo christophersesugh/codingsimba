@@ -2,7 +2,7 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { FilePenLine, Heart, Trash2 } from "lucide-react";
 import { cn } from "~/lib/shadcn";
-import type { IComment } from ".";
+import type { CommentPermissionMap, IComment } from ".";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Markdown } from "../mdx";
 import { getInitials } from "~/utils/user";
@@ -21,23 +21,35 @@ import {
 import { CommentForm } from "./comment-form";
 import { useNavigate } from "react-router";
 
-export function Reply({ reply }: { reply: IComment }) {
+export function Reply({
+  reply,
+  commentPermissionMap,
+}: {
+  reply: IComment;
+  commentPermissionMap: CommentPermissionMap;
+}) {
   const [replyBody, setReplyBody] = React.useState(reply.raw);
-  const [showForm, setShowForm] = React.useState(false);
+  const [editReply, setEditReply] = React.useState(false);
   const navigate = useNavigate();
 
   const author = reply?.author?.profile;
   const user = useOptionalUser();
   const userId = user?.id;
+
   const isLiked = reply.likes?.some((like) => like.userId === userId);
   const totalLikes = reply?.likes?.reduce(
     (total, like) => total + like.count,
     0,
   );
 
-  function handleButtonClick(fn: (...args: unknown[]) => void) {
-    return (...args: unknown[]) => (user ? fn(...args) : navigate("/signin"));
-  }
+  const userPermission = commentPermissionMap.get(reply.id);
+
+  const canDelete =
+    userPermission?.isOwner ||
+    userPermission?.permissions.some((p) => p.action === "DELETE");
+  const canUpdate =
+    userPermission?.isOwner ||
+    userPermission?.permissions.some((p) => p.action === "UPDATE");
 
   const { submit: deleteReply } = useDelete({
     itemId: reply.id,
@@ -61,7 +73,11 @@ export function Reply({ reply }: { reply: IComment }) {
   function handleUpdateReply() {
     if (!replyBody) return;
     updateReply();
-    setShowForm(false);
+    setEditReply(false);
+  }
+
+  function requireAuth(fn: (...args: unknown[]) => void) {
+    return (...args: unknown[]) => (user ? fn(...args) : navigate("/signin"));
   }
 
   const basicButtonClasses =
@@ -81,20 +97,20 @@ export function Reply({ reply }: { reply: IComment }) {
             })}
           </span>
         </div>
-        {showForm ? (
+        {editReply ? (
           <CommentForm
             isForUpdate
             comment={replyBody}
             setComment={setReplyBody}
             onSubmit={handleUpdateReply}
-            onCancel={() => setShowForm(false)}
+            onCancel={() => setEditReply(false)}
           />
         ) : (
           <Markdown source={reply.body} className="py-1 !text-sm" />
         )}
         <div className="mt-2 flex items-center gap-4">
           <button
-            onClick={handleButtonClick(upvoteReply)}
+            onClick={requireAuth(upvoteReply)}
             disabled={isLiked}
             className={cn(basicButtonClasses, "flex items-center")}
           >
@@ -105,33 +121,34 @@ export function Reply({ reply }: { reply: IComment }) {
             />
             <span>{totalLikes}</span>
           </button>
-          {user ? (
-            <>
-              <button
-                onClick={() => setShowForm(!showForm)}
-                className={basicButtonClasses}
-              >
-                <FilePenLine className="size-4 text-blue-600 dark:text-blue-500" />
-              </button>
-              <AlertDialog>
-                <AlertDialogTrigger>
-                  <Trash2 className="size-4 text-red-600 dark:text-red-500" />
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you sure you want to delete this reply?
-                    </AlertDialogTitle>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>No</AlertDialogCancel>
-                    <AlertDialogAction onClick={deleteReply}>
-                      Yes
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </>
+
+          {canUpdate ? (
+            <button
+              onClick={() => setEditReply(!editReply)}
+              className={basicButtonClasses}
+            >
+              <FilePenLine className="size-4 text-blue-600 dark:text-blue-500" />
+            </button>
+          ) : null}
+          {canDelete ? (
+            <AlertDialog>
+              <AlertDialogTrigger>
+                <Trash2 className="size-4 text-red-600 dark:text-red-500" />
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Are you sure you want to delete this reply?
+                  </AlertDialogTitle>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>No</AlertDialogCancel>
+                  <AlertDialogAction onClick={deleteReply}>
+                    Yes
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           ) : null}
         </div>
       </div>

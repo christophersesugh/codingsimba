@@ -1,6 +1,55 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { bundleMDX } from "./mdx.server";
+import type { Comment } from "~/generated/prisma";
+import { prisma } from "./db.server";
+import type { IComment } from "~/components/comment";
+
+/**
+ * Determines permissions for comments and replies
+ * @param userId - The ID of the user to check permissions for
+ * @param entityArray - Array of comments or replies to check permissions for
+ * @returns Array of permission objects containing commentId, isOwner, and permissions array
+ * @description Checks both ownership and role-based permissions for each entity.
+ * For owners, checks both OWN and ANY access types.
+ * For non-owners, only checks ANY access type.
+ * Returns an array of permission objects with:
+ * - commentId: The ID of the comment/reply
+ * - isOwner: Whether the user owns the entity
+ * - permissions: Array of permission objects with action and hasPermission
+ */
+export async function determineCommentPermissions(
+  userId: string,
+  entityArray: (Comment | IComment)[],
+) {
+  if (!userId || !entityArray?.length) {
+    return [];
+  }
+  return Promise.all(
+    entityArray.map(async (item) => {
+      const isOwner = item.authorId === userId;
+      const permissions = await prisma.permission.findMany({
+        select: { id: true, action: true },
+        where: {
+          roles: { some: { users: { some: { id: userId } } } },
+          entity: "COMMENT",
+          action: {
+            in: ["CREATE", "READ", "UPDATE", "DELETE"],
+          },
+          access: isOwner ? "OWN" : "ANY",
+        },
+      });
+      return {
+        commentId: item.id,
+        isOwner,
+        permissions: permissions.map((p) => ({
+          action: p.action,
+          hasPermission: true,
+        })),
+      };
+    }),
+  );
+}
 
 /**
  * Reads the raw content of a specific MDX page from the content/pages directory.

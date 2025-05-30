@@ -10,6 +10,7 @@ import { Link, useSearchParams } from "react-router";
 import { Button } from "../ui/button";
 import { ChevronDown } from "lucide-react";
 import { Separator } from "../ui/separator";
+import type { Action } from "~/generated/prisma";
 
 interface ILike {
   count: number;
@@ -39,12 +40,24 @@ export interface IComment {
   replies?: IComment[];
 }
 
+type PermissionData = {
+  permissions: {
+    action: Action;
+    hasPermission: boolean;
+  }[];
+  isOwner: boolean;
+};
+
+export type CommentPermissionMap = Map<string, PermissionData>;
+
 export function Comments({
   comments,
   articleId,
+  commentPermissionMap,
 }: {
   comments: IComment[];
   articleId: string;
+  commentPermissionMap: CommentPermissionMap;
 }) {
   const [comment, setComment] = React.useState("");
   const [searchParams, setSearchParams] = useSearchParams();
@@ -95,7 +108,11 @@ export function Comments({
         <>
           <ul className="space-y-6">
             {comments.map((comment) => (
-              <Comment key={comment.id} comment={comment} />
+              <Comment
+                key={comment.id}
+                comment={comment}
+                commentPermissionMap={commentPermissionMap}
+              />
             ))}
           </ul>
           {comments.length >= commentTake && (
