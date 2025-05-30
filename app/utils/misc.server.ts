@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { bundleMDX } from "./mdx.server";
-import type { Comment } from "~/generated/prisma";
+import type { Comment, Entity } from "~/generated/prisma";
 import { prisma } from "./db.server";
 import type { IComment } from "~/components/comment";
 
@@ -18,10 +18,15 @@ import type { IComment } from "~/components/comment";
  * - isOwner: Whether the user owns the entity
  * - permissions: Array of permission objects with action and hasPermission
  */
-export async function determineCommentPermissions(
-  userId: string,
-  entityArray: (Comment | IComment)[],
-) {
+export async function determinePermissions({
+  userId,
+  entity,
+  entityArray,
+}: {
+  userId: string;
+  entity: Entity;
+  entityArray: (Comment | IComment)[];
+}) {
   if (!userId || !entityArray?.length) {
     return [];
   }
@@ -31,8 +36,8 @@ export async function determineCommentPermissions(
       const permissions = await prisma.permission.findMany({
         select: { id: true, action: true },
         where: {
+          entity,
           roles: { some: { users: { some: { id: userId } } } },
-          entity: "COMMENT",
           action: {
             in: ["CREATE", "READ", "UPDATE", "DELETE"],
           },

@@ -40,7 +40,7 @@ import { z } from "zod";
 import { useOptionalUser } from "~/hooks/user";
 import { usePageView, type PageViewData } from "~/hooks/use-page-view";
 import { getUserId } from "~/utils/auth.server";
-import { determineCommentPermissions } from "~/utils/misc.server";
+import { determinePermissions } from "~/utils/misc.server";
 import { GeneralErrorBoundary } from "~/components/error-boundary";
 
 const SearchParamsSchema = z.object({
@@ -78,8 +78,16 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
   const commentPermissions = userId
     ? [
-        ...(await determineCommentPermissions(userId, comments)),
-        ...(await determineCommentPermissions(userId, replies)),
+        ...(await determinePermissions({
+          userId,
+          entity: "COMMENT",
+          entityArray: comments,
+        })),
+        ...(await determinePermissions({
+          userId,
+          entity: "COMMENT",
+          entityArray: replies,
+        })),
       ]
     : [];
 

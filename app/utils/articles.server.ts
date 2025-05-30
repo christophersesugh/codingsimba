@@ -3,7 +3,7 @@ import { prisma } from "./db.server";
 import { bundleMDX } from "./mdx.server";
 import { invariantResponse } from "./misc";
 import type { Update } from "~/hooks/content";
-import { determineCommentPermissions } from "./misc.server";
+import { determinePermissions } from "./misc.server";
 
 /**
  * LOADER FUNCTIONS
@@ -237,7 +237,7 @@ export async function addReply({ itemId, body, userId, parentId }: Update) {
  * @param userId - The ID of the user updating the comment
  * @returns The updated comment
  * @throws {Error} If comment not found or user not authorized
- * @description Checks user permissions using determineCommentPermissions and verifies UPDATE permission
+ * @description Checks user permissions using determinePermissions and verifies UPDATE permission
  */
 export async function updateComment({ itemId, body, userId }: Update) {
   invariantResponse(userId, "User ID is required", {
@@ -253,7 +253,11 @@ export async function updateComment({ itemId, body, userId }: Update) {
   });
 
   const commentPermissions = userId
-    ? await determineCommentPermissions(userId, [comment])
+    ? await determinePermissions({
+        userId,
+        entity: "COMMENT",
+        entityArray: [comment],
+      })
     : [];
   const userPermissions = commentPermissions[0];
 
@@ -282,7 +286,7 @@ export async function updateComment({ itemId, body, userId }: Update) {
  * @param userId - The ID of the user deleting the comment
  * @returns Object indicating successful deletion
  * @throws {Error} If comment not found or user not authorized
- * @description Checks user permissions using determineCommentPermissions and verifies DELETE permission
+ * @description Checks user permissions using determinePermissions and verifies DELETE permission
  */
 export async function deleteComment({ itemId, userId }: Omit<Update, "body">) {
   invariantResponse(userId, "User ID is required", {
@@ -297,7 +301,11 @@ export async function deleteComment({ itemId, userId }: Omit<Update, "body">) {
   });
 
   const commentPermissions = userId
-    ? await determineCommentPermissions(userId, [comment])
+    ? await determinePermissions({
+        userId,
+        entity: "COMMENT",
+        entityArray: [comment],
+      })
     : [];
   const userPermissions = commentPermissions[0];
 
@@ -344,7 +352,7 @@ export async function upvoteComment({ itemId, userId }: Omit<Update, "body">) {
  * @param userId - The ID of the user updating the reply
  * @returns The updated reply
  * @throws {Error} If reply not found, not a reply, or user not authorized
- * @description Checks user permissions using determineCommentPermissions and verifies UPDATE permission
+ * @description Checks user permissions using determinePermissions and verifies UPDATE permission
  */
 export async function updateReply({ itemId, body, userId }: Update) {
   invariantResponse(userId, "User ID is required", {
@@ -364,7 +372,11 @@ export async function updateReply({ itemId, body, userId }: Update) {
   });
 
   const commentPermissions = userId
-    ? await determineCommentPermissions(userId, [reply])
+    ? await determinePermissions({
+        userId,
+        entity: "COMMENT",
+        entityArray: [reply],
+      })
     : [];
   const userPermissions = commentPermissions[0];
 
@@ -393,7 +405,7 @@ export async function updateReply({ itemId, body, userId }: Update) {
  * @param userId - The ID of the user deleting the reply
  * @returns Object indicating successful deletion
  * @throws {Error} If reply not found, not a reply, or user not authorized
- * @description Checks user permissions using determineCommentPermissions and verifies DELETE permission
+ * @description Checks user permissions using determinePermissions and verifies DELETE permission
  */
 export async function deleteReply({ itemId, userId }: Omit<Update, "body">) {
   invariantResponse(userId, "User ID is required", {
@@ -413,7 +425,11 @@ export async function deleteReply({ itemId, userId }: Omit<Update, "body">) {
   });
 
   const commentPermissions = userId
-    ? await determineCommentPermissions(userId, [reply])
+    ? await determinePermissions({
+        userId,
+        entity: "COMMENT",
+        entityArray: [reply],
+      })
     : [];
   const userPermissions = commentPermissions[0];
 
