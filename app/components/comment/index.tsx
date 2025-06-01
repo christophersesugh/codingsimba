@@ -48,16 +48,16 @@ type PermissionData = {
   isOwner: boolean;
 };
 
-export type CommentPermissionMap = Map<string, PermissionData>;
+export type PermissionMap = Map<string, PermissionData>;
 
 export function Comments({
   comments,
   articleId,
-  commentPermissionMap,
+  permissionMap,
 }: {
   comments: IComment[];
   articleId: string;
-  commentPermissionMap: CommentPermissionMap;
+  permissionMap: PermissionMap;
 }) {
   const [comment, setComment] = React.useState("");
   const [searchParams, setSearchParams] = useSearchParams();
@@ -73,6 +73,7 @@ export function Comments({
   });
 
   const handleSubmit = () => {
+    if (!comment.trim()) return;
     submit();
     setComment("");
   };
@@ -91,9 +92,11 @@ export function Comments({
     <section className="mb-8" id="comments">
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-bold">Comments ({comments.length})</h3>
-        <Badge asChild>
-          <Link to={"/signin"}>Signin to add a comment</Link>
-        </Badge>
+        {!user ? (
+          <Badge asChild>
+            <Link to={"/signin"}>Signin to add a comment</Link>
+          </Badge>
+        ) : null}
       </div>
       <Separator className="my-4" />
       {user ? (
@@ -111,7 +114,7 @@ export function Comments({
               <Comment
                 key={comment.id}
                 comment={comment}
-                commentPermissionMap={commentPermissionMap}
+                permissionMap={permissionMap}
               />
             ))}
           </ul>

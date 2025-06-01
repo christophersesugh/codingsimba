@@ -1,10 +1,10 @@
-import type { Article } from "~/services.server/sanity/articles";
+import type { Article } from "~/services.server/sanity/articles/types";
 import { Link } from "react-router";
 import { format } from "date-fns";
 import { readingTime } from "reading-time-estimator";
 
 export function FeaturedArticle({ article }: { article: Article }) {
-  const stats = readingTime(article.raw);
+  const stats = readingTime(article.markdown);
   const MAX_EXCERPT_LENGTH = 200;
   return (
     <Link

@@ -7,7 +7,7 @@ import { Await, Link } from "react-router";
 export function AboutText({
   articlesCount,
 }: {
-  articlesCount: Promise<{ count: number }>;
+  articlesCount: Promise<number>;
 }) {
   const startYear = 2019;
   const experienceYears = new Date().getFullYear() - startYear;
@@ -56,7 +56,7 @@ export function AboutText({
         <div className="flex flex-col">
           <span className="text-3xl font-bold text-blue-600 dark:text-blue-400">
             <React.Suspense fallback={<Skeleton className="rounded-full" />}>
-              <Await resolve={articlesCount}>{(data) => data.count}</Await>
+              <Await resolve={articlesCount}>{(count) => count}</Await>
             </React.Suspense>
           </span>
           <span className="text-gray-500 dark:text-gray-400">

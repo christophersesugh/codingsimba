@@ -1,4 +1,4 @@
-import type { Tag } from "~/services.server/sanity/articles";
+import type { Tag } from "~/services.server/sanity/articles/types";
 import { Link } from "react-router";
 
 export function Tags({ article }: { article: { tags: Tag[] } }) {

@@ -9,12 +9,10 @@ export default [
   index("routes/home/index.tsx"),
   route("terms", "routes/terms.tsx"),
   route("about", "routes/about/index.tsx"),
-  route("contact", "routes/contact.tsx"),
   route("privacy", "routes/privacy.tsx"),
   route("verify", "routes/verify.tsx"),
   route("signup", "routes/signup.tsx"),
   route("signin", "routes/signin.tsx"),
-  // route("onboarding", "routes/onboarding.tsx"),
   route("profile", "routes/profile/index.tsx"),
   route("*", "routes/not-found.tsx"),
 
@@ -24,6 +22,12 @@ export default [
   // Action routes
   route("logout", "routes/actions/logout.ts"),
   route("set-theme", "routes/actions/set-theme.ts"),
+
+  ...prefix("contact", [
+    index("routes/contact/index.tsx"),
+    route("success", "routes/contact/success.tsx"),
+    route("webhook", "routes/contact/webhook.tsx"),
+  ]),
 
   ...prefix("auth", [
     route(":provider", "routes/provider/index.ts"),

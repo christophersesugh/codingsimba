@@ -9,13 +9,15 @@ import { CTA } from "./components/cta";
 import { readMdxDirectory } from "~/utils/misc.server";
 import { invariantResponse } from "~/utils/misc";
 import { StatusCodes } from "http-status-codes";
+import { countArticles } from "~/services.server/sanity/articles/utils";
 
 export async function loader() {
+  const articlesCount = countArticles();
   const files = await readMdxDirectory("about/journey");
   invariantResponse(files.length, "No files found", {
     status: StatusCodes.NOT_FOUND,
   });
-  return { journeyData: files };
+  return { journeyData: files, articlesCount };
 }
 
 export default function AboutRoute({ loaderData }: Route.ComponentProps) {
@@ -28,7 +30,7 @@ export default function AboutRoute({ loaderData }: Route.ComponentProps) {
       <div className="container mx-auto max-w-6xl px-4 py-12">
         <Mission />
         <Journey journeyData={loaderData.journeyData} />
-        <Impact />
+        <Impact articlesCount={loaderData.articlesCount} />
         <Skills />
         <Values />
         <CTA />

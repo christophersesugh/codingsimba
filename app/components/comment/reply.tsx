@@ -1,8 +1,8 @@
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { FilePenLine, Heart, Trash2 } from "lucide-react";
+import { FilePenLine, Heart, Loader, Trash2 } from "lucide-react";
 import { cn } from "~/lib/shadcn";
-import type { CommentPermissionMap, IComment } from ".";
+import type { PermissionMap, IComment } from ".";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Markdown } from "../mdx";
 import { getInitials } from "~/utils/user";
@@ -23,10 +23,10 @@ import { useNavigate } from "react-router";
 
 export function Reply({
   reply,
-  commentPermissionMap,
+  permissionMap,
 }: {
   reply: IComment;
-  commentPermissionMap: CommentPermissionMap;
+  permissionMap: PermissionMap;
 }) {
   const [replyBody, setReplyBody] = React.useState(reply.raw);
   const [editReply, setEditReply] = React.useState(false);
@@ -42,7 +42,7 @@ export function Reply({
     0,
   );
 
-  const userPermission = commentPermissionMap.get(reply.id);
+  const userPermission = permissionMap.get(reply.id);
 
   const canDelete =
     userPermission?.isOwner ||
@@ -51,24 +51,40 @@ export function Reply({
     userPermission?.isOwner ||
     userPermission?.permissions.some((p) => p.action === "UPDATE");
 
-  const { submit: deleteReply } = useDelete({
+  const {
+    submit: deleteReply,
+    isPending: isDeleting,
+    submittedItemId: deletedItemId,
+  } = useDelete({
     itemId: reply.id,
     intent: "delete-reply",
     userId: userId!,
   });
 
-  const { submit: upvoteReply } = useUpvote({
+  const isDeletingReply = isDeleting && deletedItemId === reply.id;
+
+  const {
+    submit: upvoteReply,
+    isPending: isUpvoting,
+    submittedItemId: upvotedItemId,
+  } = useUpvote({
     itemId: reply.id,
     intent: "upvote-reply",
     userId: userId!,
   });
+  const isUpvotingReply = isUpvoting && upvotedItemId === reply.id;
 
-  const { submit: updateReply } = useUpdate({
+  const {
+    submit: updateReply,
+    isPending: isUpdating,
+    submittedItemId: updatedItemId,
+  } = useUpdate({
     itemId: reply.id,
     userId: userId!,
     body: replyBody,
     intent: "update-reply",
   });
+  const isUpdatingReply = isUpdating && updatedItemId === reply.id;
 
   function handleUpdateReply() {
     if (!replyBody) return;
@@ -111,12 +127,12 @@ export function Reply({
         <div className="mt-2 flex items-center gap-4">
           <button
             onClick={requireAuth(upvoteReply)}
-            disabled={isLiked}
             className={cn(basicButtonClasses, "flex items-center")}
           >
             <Heart
               className={cn("size-4", {
                 "fill-red-500 text-red-500": isLiked,
+                "animate-bounce": isUpvotingReply,
               })}
             />
             <span>{totalLikes}</span>
@@ -125,15 +141,24 @@ export function Reply({
           {canUpdate ? (
             <button
               onClick={() => setEditReply(!editReply)}
+              disabled={isUpdatingReply}
               className={basicButtonClasses}
             >
-              <FilePenLine className="size-4 text-blue-600 dark:text-blue-500" />
+              {isUpdatingReply ? (
+                <Loader className="size-4 animate-spin" />
+              ) : (
+                <FilePenLine className="size-4 text-blue-600 dark:text-blue-500" />
+              )}
             </button>
           ) : null}
           {canDelete ? (
             <AlertDialog>
-              <AlertDialogTrigger>
-                <Trash2 className="size-4 text-red-600 dark:text-red-500" />
+              <AlertDialogTrigger disabled={isDeletingReply}>
+                {isDeletingReply ? (
+                  <Loader className="size-4 animate-spin" />
+                ) : (
+                  <Trash2 className="size-4 text-red-600 dark:text-red-500" />
+                )}
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>

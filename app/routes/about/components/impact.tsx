@@ -1,8 +1,10 @@
 import React from "react";
 import { Award, BookOpen, Users } from "lucide-react";
 import { SectionHeader } from "./section-header";
+import { Await } from "react-router";
+import { Skeleton } from "~/components/ui/skeleton";
 
-export function Impact() {
+export function Impact({ articlesCount }: { articlesCount: Promise<number> }) {
   return (
     <section className="mb-24 rounded-2xl bg-gray-50 p-8 md:p-12 dark:bg-gray-900">
       <SectionHeader
@@ -11,15 +13,33 @@ export function Impact() {
           a glimpse of my journey so far."
       />
       <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-        <Item icon={<Users className="h-8 w-8" />} count="10k+">
+        <Item icon={<Users className="h-8 w-8" />} count="1k+">
           Students
         </Item>
         <Item icon={<BookOpen className="h-8 w-8" />} count="50+">
           Courses
         </Item>
-        <Item icon={<Award className="h-8 w-8" />} count="200+">
-          Articles
-        </Item>
+        <React.Suspense
+          fallback={
+            <div className="mx-auto flex flex-col gap-2">
+              <Skeleton className="size-20 rounded-full" />
+              <Skeleton className="mx-auto h-12 w-2" />
+              <Skeleton className="h-4" />
+            </div>
+          }
+        >
+          <Await resolve={articlesCount}>
+            {(count) => (
+              <Item
+                icon={<Award className="h-8 w-8" />}
+                count={count.toString()}
+              >
+                Articles
+              </Item>
+            )}
+          </Await>
+        </React.Suspense>
+
         <Item
           icon={
             <svg

@@ -1,10 +1,6 @@
 import { AboutCard, AboutText } from "~/components/about";
 
-export function About({
-  articlesCount,
-}: {
-  articlesCount: Promise<{ count: number }>;
-}) {
+export function About({ articlesCount }: { articlesCount: Promise<number> }) {
   return (
     <section id="about" className="relative overflow-hidden py-24">
       <div className="absolute left-0 top-0 h-1/3 w-1/3 rounded-full bg-blue-500/5 blur-3xl" />

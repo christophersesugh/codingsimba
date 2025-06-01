@@ -1,4 +1,4 @@
-import type { Article } from "~/services.server/sanity/articles";
+import type { Article } from "~/services.server/sanity/articles/types";
 import { readingTime } from "reading-time-estimator";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -13,14 +13,16 @@ import {
 import { CardBadge } from "../../../components/card-badge";
 import { Button } from "../../../components/ui/button";
 import { format } from "date-fns";
+import type { RelatedArticle } from "./related-article";
+import { PrefetchPageLinks } from "react-router";
 
 type ArticleCardProps = {
-  article: Article;
+  article: Article | RelatedArticle;
   index: number;
 };
 
 export function ArticleCard({ article, index }: ArticleCardProps) {
-  const stats = readingTime(article.raw);
+  const stats = readingTime(article.markdown);
   const MAX_EXCERPT_LENGTH = 150;
 
   return (
@@ -31,6 +33,8 @@ export function ArticleCard({ article, index }: ArticleCardProps) {
       viewport={{ once: true }}
       className="group h-full"
     >
+      {/* Prefetch article resources for instant navigation */}
+      <PrefetchPageLinks page={`/articles/${article.slug}`} />
       <Card className="h-full overflow-hidden pt-0 transition-shadow duration-300 hover:shadow-md">
         <CardHeader className="relative p-0">
           <div className="aspect-video w-full overflow-hidden">

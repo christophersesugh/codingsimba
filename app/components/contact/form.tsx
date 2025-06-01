@@ -1,63 +1,43 @@
-import type React from "react";
-
-import { useState } from "react";
+import React from "react";
+import { z } from "zod";
 import { motion } from "framer-motion";
-
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
-import { Form } from "react-router";
+import {
+  getFormProps,
+  getInputProps,
+  getTextareaProps,
+  useForm,
+} from "@conform-to/react";
+import { parseWithZod } from "@conform-to/zod";
+import { Loader2 } from "lucide-react";
+
+const ContactFormSchema = z.object({
+  name: z
+    .string({ required_error: "Name is required" })
+    .min(2, "Name must be at least 2 characters"),
+  email: z
+    .string({ required_error: "Email is required" })
+    .email("Invalid email address"),
+  subject: z
+    .string({ required_error: "Subject is required" })
+    .min(5, "Subject must be atleast 5 characters"),
+  message: z
+    .string({ required_error: "Message is required" })
+    .min(10, "Message must be atleast 10 characters"),
+});
 
 export function ContactForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-    }, 1500);
-  };
-
-  if (isSubmitted) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="rounded-xl border border-slate-300 bg-white p-8 text-center dark:border-slate-600 dark:bg-slate-900"
-      >
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-8 w-8 text-blue-600 dark:text-blue-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        </div>
-        <h3 className="mb-2 text-xl font-bold">Message Sent!</h3>
-        <p className="text-muted-foreground mb-6">
-          Thank you for reaching out. I&apos;ll get back to you as soon as
-          possible.
-        </p>
-        <Button variant="outline" onClick={() => setIsSubmitted(false)}>
-          Send Another Message
-        </Button>
-      </motion.div>
-    );
-  }
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const formRef = React.useRef<HTMLFormElement>(null);
+  const [form, fields] = useForm({
+    onValidate({ formData }) {
+      return parseWithZod(formData, { schema: ContactFormSchema });
+    },
+    shouldValidate: "onBlur",
+  });
 
   return (
     <motion.div
@@ -68,44 +48,78 @@ export function ContactForm() {
     >
       <h2 className="mb-6 text-2xl font-bold">Leave a message</h2>
 
-      <Form
-        onSubmit={handleSubmit}
+      <form
+        ref={formRef}
+        {...getFormProps(form)}
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
+        action={`https://formsubmit.co/4e6d736d95b932b2d66e894716711b8e`}
+        method="POST"
         className="rounded-xl border border-slate-300 bg-white p-6 shadow-sm dark:border-slate-600 dark:bg-gray-900"
       >
+        {/* <input
+          type="hidden"
+          name="_next"
+          value="http://localhost:5173/contact/success"
+        /> */}
+        {/* <input
+          type="hidden"
+          name="_webhook"
+          value="https://codingsimba.com/contact/webhook"
+        /> */}
+        {/* <input type="hidden" name="_cc" value="christohybrid185@gmail.com" /> */}
+        <input type="hidden" name="_captcha" />
+        <input type="text" name="_honey" style={{ display: "none" }} />
+
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" placeholder="John Doe" required />
+              <Label htmlFor={fields.name.id}>Name</Label>
+              <Input
+                {...getInputProps(fields.name, { type: "text" })}
+                placeholder="John Doe"
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor={fields.email.id}>Email</Label>
               <Input
-                id="email"
-                type="email"
+                {...getInputProps(fields.email, { type: "email" })}
                 placeholder="john@doe.com"
-                required
               />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="subject">Subject</Label>
-            <Input id="subject" placeholder="How can I help you?" required />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="message">Message</Label>
-            <Textarea
-              id="message"
-              placeholder="Your message here..."
-              rows={5}
-              required
+            <Label htmlFor={fields.subject.id}>Subject</Label>
+            <Input
+              {...getInputProps(fields.subject, { type: "text" })}
+              name="_subject"
+              placeholder="How can I help you?"
             />
           </div>
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Sending..." : "Send Message"}
+          <div className="space-y-2">
+            <Label htmlFor={fields.message.id}>Message</Label>
+            <Textarea
+              {...getTextareaProps(fields.message)}
+              placeholder="Your message here..."
+              name="message"
+              rows={5}
+            />
+          </div>
+          <Button
+            type="button"
+            onClick={() => {
+              setIsSubmitting(true);
+              formRef.current?.submit();
+              setIsSubmitting(false);
+            }}
+            className="w-full"
+          >
+            Send Message{" "}
+            {isSubmitting ? <Loader2 className="ml-1 animate-spin" /> : null}
           </Button>
         </div>
-      </Form>
+      </form>
     </motion.div>
   );
 }

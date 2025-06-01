@@ -3,7 +3,8 @@ import { prisma } from "./db.server";
 import { bundleMDX } from "./mdx.server";
 import { invariantResponse } from "./misc";
 import type { Update } from "~/hooks/content";
-import { determinePermissions } from "./misc.server";
+import { MarkdownConverter } from "./misc.server";
+import { determinePermissions } from "./permissions.server";
 
 /**
  * LOADER FUNCTIONS
@@ -147,12 +148,12 @@ export async function getArticleMetadata({
       })
     ).map(async (comment) => ({
       ...comment,
-      raw: comment.body,
+      raw: await MarkdownConverter.toHtml(comment.body),
       body: (await bundleMDX({ source: comment.body })).code,
       replies: await Promise.all(
         (comment.replies || []).map(async (reply) => ({
           ...reply,
-          raw: reply.body,
+          raw: await MarkdownConverter.toHtml(reply.body),
           body: (await bundleMDX({ source: reply.body })).code,
         })),
       ),
@@ -186,7 +187,7 @@ export async function addComment({ itemId, body, userId }: Update) {
 
   const comment = await prisma.comment.create({
     data: {
-      body: body!,
+      body: MarkdownConverter.toMarkdown(body!),
       contentId: article.id,
       authorId: userId,
       parentId: null,
@@ -220,10 +221,10 @@ export async function addReply({ itemId, body, userId, parentId }: Update) {
 
   const reply = await prisma.comment.create({
     data: {
-      body,
-      contentId: article.id,
-      authorId: userId,
       parentId,
+      authorId: userId,
+      contentId: article.id,
+      body: MarkdownConverter.toMarkdown(body!),
     },
     select: { id: true },
   });
@@ -240,8 +241,8 @@ export async function addReply({ itemId, body, userId, parentId }: Update) {
  * @description Checks user permissions using determinePermissions and verifies UPDATE permission
  */
 export async function updateComment({ itemId, body, userId }: Update) {
-  invariantResponse(userId, "User ID is required", {
-    status: StatusCodes.NOT_FOUND,
+  invariantResponse(body, "Comment body is required", {
+    status: StatusCodes.BAD_REQUEST,
   });
 
   const comment = await prisma.comment.findUnique({
@@ -273,7 +274,7 @@ export async function updateComment({ itemId, body, userId }: Update) {
 
   const updatedComment = await prisma.comment.update({
     where: { id: itemId },
-    data: { body },
+    data: { body: MarkdownConverter.toMarkdown(body) },
     select: { id: true },
   });
 
@@ -359,6 +360,10 @@ export async function updateReply({ itemId, body, userId }: Update) {
     status: StatusCodes.BAD_REQUEST,
   });
 
+  invariantResponse(body, "Reply body is required", {
+    status: StatusCodes.BAD_REQUEST,
+  });
+
   const reply = await prisma.comment.findUnique({
     where: { id: itemId },
   });
@@ -392,7 +397,7 @@ export async function updateReply({ itemId, body, userId }: Update) {
 
   const updatedReply = await prisma.comment.update({
     where: { id: itemId },
-    data: { body },
+    data: { body: MarkdownConverter.toMarkdown(body) },
     select: { id: true },
   });
 

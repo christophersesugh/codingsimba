@@ -40,8 +40,8 @@ import { z } from "zod";
 import { useOptionalUser } from "~/hooks/user";
 import { usePageView, type PageViewData } from "~/hooks/use-page-view";
 import { getUserId } from "~/utils/auth.server";
-import { determinePermissions } from "~/utils/misc.server";
 import { GeneralErrorBoundary } from "~/components/error-boundary";
+import { determinePermissions } from "~/utils/permissions.server";
 
 const SearchParamsSchema = z.object({
   commentTake: z.coerce.number().default(5),
@@ -198,7 +198,7 @@ export default function ArticleDetailsRoute({
             <Comments
               articleId={article.id}
               comments={articleMetadata?.comments ?? []}
-              commentPermissionMap={commentPermissionMap}
+              permissionMap={commentPermissionMap}
             />
             <Tags article={article} />
             <Share article={article} />

@@ -1,50 +1,73 @@
 @layer components {
-  .milkdown {
-    @apply rounded-md;
+  .code-block:first-child {
+    @apply mt-0;
   }
 
-  .milkdown .editor {
-    @apply min-h-[20px] max-w-3xl rounded-md border border-slate-200 bg-white px-2 py-0.5 text-xs text-slate-900 transition-colors dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100;
+  .code-block {
+    @apply relative;
   }
 
-  .milkdown .editor:focus-within {
-    @apply border-slate-400 dark:border-slate-600;
+  .code-block select {
+    @apply absolute right-2 top-2 z-10 rounded border border-gray-200 bg-white px-2 py-1 text-sm text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100;
   }
 
-  .milkdown .editor p {
-    @apply my-0;
+  .code-block pre {
+    @apply my-6 rounded-lg !bg-gray-100 px-4 py-3 font-mono !text-gray-900 dark:!bg-gray-800 dark:!text-gray-100;
   }
 
-  .milkdown .editor h1 {
-    @apply my-1 text-base font-semibold;
+  .code-block pre code {
+    @apply bg-transparent p-0 !text-sm text-inherit;
   }
 
-  .milkdown .editor h2 {
-    @apply my-0.5 text-sm font-medium;
+  /* Syntax highlighting styles */
+  .code-block .hljs-comment,
+  .code-block .hljs-quote {
+    @apply !text-gray-500 dark:!text-gray-400;
   }
 
-  .milkdown .editor ul,
-  .milkdown .editor ol {
-    @apply my-0 ml-4;
+  .code-block .hljs-variable,
+  .code-block .hljs-template-variable,
+  .code-block .hljs-attribute,
+  .code-block .hljs-tag,
+  .code-block .hljs-name,
+  .code-block .hljs-regexp,
+  .code-block .hljs-link,
+  .code-block .hljs-selector-id,
+  .code-block .hljs-selector-class {
+    @apply !text-red-600 dark:!text-red-400;
   }
 
-  .milkdown .editor blockquote {
-    @apply my-0 border-l-2 border-slate-200 pl-3 dark:border-slate-800;
+  .code-block .hljs-number,
+  .code-block .hljs-meta,
+  .code-block .hljs-built_in,
+  .code-block .hljs-builtin-name,
+  .code-block .hljs-literal,
+  .code-block .hljs-type,
+  .code-block .hljs-params {
+    @apply !text-orange-600 dark:!text-orange-400;
   }
 
-  .milkdown .editor code {
-    @apply rounded bg-slate-100 px-1 py-0.5 text-[10px] dark:bg-slate-800 dark:text-slate-100;
+  .code-block .hljs-string,
+  .code-block .hljs-symbol,
+  .code-block .hljs-bullet {
+    @apply !text-green-600 dark:!text-green-400;
   }
 
-  .milkdown .editor a {
-    @apply text-blue-600 underline dark:text-blue-400;
+  .code-block .hljs-title,
+  .code-block .hljs-section {
+    @apply !text-yellow-600 dark:!text-yellow-400;
   }
 
-  .milkdown .editor .placeholder {
-    @apply text-slate-400 dark:text-slate-500;
+  .code-block .hljs-keyword,
+  .code-block .hljs-selector-tag {
+    @apply !text-blue-600 dark:!text-blue-400;
   }
 
-  .milkdown .editor .ProseMirror {
-    @apply text-slate-800 dark:text-slate-100;
+  .code-block .hljs-emphasis {
+    @apply !italic;
+  }
+
+  .code-block .hljs-strong {
+    @apply !font-bold;
   }
 }

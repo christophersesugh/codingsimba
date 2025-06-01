@@ -2,7 +2,7 @@ import React from "react";
 import { Check, Copy, Linkedin, Twitter } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
-import type { Article } from "~/services.server/sanity/articles";
+import type { Article } from "~/services.server/sanity/articles/types";
 
 export function Share({ article }: { article: Article }) {
   const [copied, setCopied] = React.useState(false);

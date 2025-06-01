@@ -1,15 +1,15 @@
-import type { Article } from "~/services.server/sanity/articles";
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "~/components/ui/button";
 import { ArticleCard } from "~/routes/articles/components/article-card";
 import { Await, Link } from "react-router";
 import { Skeleton } from "~/components/ui/skeleton";
+import type { RelatedArticle } from "../articles/components/related-article";
 
 export function ArticlesSection({
   articles,
 }: {
-  articles: Promise<Article[]>;
+  articles: Promise<RelatedArticle[]>;
 }) {
   return (
     <section
@@ -36,7 +36,7 @@ export function ArticlesSection({
         <div className="grid gap-8 md:grid-cols-2">
           <React.Suspense
             fallback={Array.from({ length: 3 }).map((_, index) => (
-              <Skeleton key={index} className="h-24" />
+              <Skeleton key={index} className="h-48" />
             ))}
           >
             <Await resolve={articles}>

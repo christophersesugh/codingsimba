@@ -12,7 +12,7 @@ import {
   tagQuery,
 } from "./queries";
 import { bundleMDX } from "~/utils/mdx.server";
-import { bundleComponents } from "~/utils/misc.server";
+import { bundleComponents, MarkdownConverter } from "~/utils/misc.server";
 
 /**
  * Retrieves a list of articles based on specified filtering criteria
@@ -60,9 +60,10 @@ export async function getArticles(args: ArticlesArgs) {
   }>(articlesQuery({ search, filters, order }), queryParams);
 
   const transformedData = await Promise.all(
-    (response.articles ?? []).map((article) => ({
+    (response.articles ?? []).map(async (article) => ({
       ...article,
-      raw: article.content,
+      markdown: article.content,
+      html: await MarkdownConverter.toHtml(article.content),
     })),
   );
 
@@ -81,7 +82,7 @@ export async function getArticles(args: ArticlesArgs) {
  * console.log(`Total articles: ${count}`);
  */
 export async function countArticles() {
-  return client.fetch<{ count: number }>(countQuery);
+  return client.fetch<number>(countQuery);
 }
 
 /**
@@ -109,11 +110,22 @@ export async function getArticleDetails(slug: string) {
     files: refinedComponents,
   });
 
+  /**
+   * Tiptap editor needs html
+   * MDX previewer needs bundled markdown
+   */
   return {
     ...article,
     content: code,
-    raw: article.content,
-    relatedArticles: relatedArticles || [],
+    markdown: article.content,
+    html: await MarkdownConverter.toHtml(article.content),
+    relatedArticles:
+      (await Promise.all(
+        (relatedArticles ?? []).map(async (a) => ({
+          ...a,
+          markdown: a.content,
+        })),
+      )) || [],
     sandpackTemplates: article.sandpackTemplates || [],
   };
 }
@@ -141,7 +153,17 @@ export async function getPopularTags(limit = 10) {
  * recentArticles.forEach(article => console.log(article.title));
  */
 export async function getRecentArticles(limit = 4) {
-  return client.fetch<Article[]>(recentArticlesQuery(), { limit }) ?? [];
+  const articles =
+    (await client.fetch<RelatedArticles>(recentArticlesQuery(), { limit })) ??
+    [];
+  return (
+    (await Promise.all(
+      articles.map(async (a) => ({
+        ...a,
+        markdown: a.content,
+      })),
+    )) || []
+  );
 }
 
 /**

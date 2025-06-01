@@ -1,60 +1,9 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import TurndownService from "turndown";
+import { marked } from "marked";
+import DOMPurify from "isomorphic-dompurify";
 import { bundleMDX } from "./mdx.server";
-import type { Comment, Entity } from "~/generated/prisma";
-import { prisma } from "./db.server";
-import type { IComment } from "~/components/comment";
-
-/**
- * Determines permissions for comments and replies
- * @param userId - The ID of the user to check permissions for
- * @param entityArray - Array of comments or replies to check permissions for
- * @returns Array of permission objects containing commentId, isOwner, and permissions array
- * @description Checks both ownership and role-based permissions for each entity.
- * For owners, checks both OWN and ANY access types.
- * For non-owners, only checks ANY access type.
- * Returns an array of permission objects with:
- * - commentId: The ID of the comment/reply
- * - isOwner: Whether the user owns the entity
- * - permissions: Array of permission objects with action and hasPermission
- */
-export async function determinePermissions({
-  userId,
-  entity,
-  entityArray,
-}: {
-  userId: string;
-  entity: Entity;
-  entityArray: (Comment | IComment)[];
-}) {
-  if (!userId || !entityArray?.length) {
-    return [];
-  }
-  return Promise.all(
-    entityArray.map(async (item) => {
-      const isOwner = item.authorId === userId;
-      const permissions = await prisma.permission.findMany({
-        select: { id: true, action: true },
-        where: {
-          entity,
-          roles: { some: { users: { some: { id: userId } } } },
-          action: {
-            in: ["CREATE", "READ", "UPDATE", "DELETE"],
-          },
-          access: isOwner ? "OWN" : "ANY",
-        },
-      });
-      return {
-        commentId: item.id,
-        isOwner,
-        permissions: permissions.map((p) => ({
-          action: p.action,
-          hasPermission: true,
-        })),
-      };
-    }),
-  );
-}
 
 /**
  * Reads the raw content of a specific MDX page from the content/pages directory.
@@ -213,4 +162,50 @@ export function bundleComponents(
       return acc;
     }, {}) ?? {}
   );
+}
+
+const turndownService = new TurndownService({
+  headingStyle: "atx", // Use # for headings
+  bulletListMarker: "-", // Use - for lists
+  codeBlockStyle: "fenced", // Use ``` for code blocks
+});
+
+marked.setOptions({
+  breaks: true, // Convert line breaks to <br>
+  gfm: true, // GitHub Flavored Markdown
+});
+
+/**
+ * Service for converting between Markdown and HTML formats.
+ * Uses marked for Markdown to HTML conversion and Turndown for HTML to Markdown conversion.
+ * Includes sanitization of input using DOMPurify.
+ */
+export class MarkdownConverter {
+  /**
+   * Converts Markdown to sanitized HTML.
+   * @param markdown - The Markdown string to convert
+   * @returns Promise<string> - The sanitized HTML output
+   * @example
+   * ```ts
+   * const html = await MarkdownConverter.toHtml("# Hello World");
+   * // Returns: "<h1>Hello World</h1>"
+   * ```
+   */
+  static async toHtml(markdown: string) {
+    return await marked.parse(DOMPurify.sanitize(markdown));
+  }
+
+  /**
+   * Converts HTML to Markdown format.
+   * @param html - The HTML string to convert
+   * @returns string - The Markdown output
+   * @example
+   * ```ts
+   * const markdown = MarkdownConverter.toMarkdown("<h1>Hello World</h1>");
+   * // Returns: "# Hello World"
+   * ```
+   */
+  static toMarkdown(html: string) {
+    return turndownService.turndown(html);
+  }
 }

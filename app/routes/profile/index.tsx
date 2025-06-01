@@ -14,10 +14,31 @@ import { Courses } from "./components/courses";
 import { Certificates } from "./components/certificates";
 import { Subscription } from "./components/subscription";
 import { Notifications } from "./components/notifications";
-import { requireUser } from "~/utils/auth.server";
+import { requireUserId } from "~/utils/auth.server";
+import { prisma } from "~/utils/db.server";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  await requireUser(request);
+  const userId = await requireUserId(request);
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+    select: {
+      id: true,
+      email: true,
+      profile: true,
+      _count: {
+        select: {
+          sessions: {
+            where: {
+              expirationDate: { gt: new Date() },
+            },
+          },
+        },
+      },
+    },
+  });
+  return { user };
+}
+export async function action({}: Route.ActionArgs) {
   return {};
 }
 

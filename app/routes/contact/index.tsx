@@ -1,4 +1,4 @@
-import type { Route } from "./+types/contact";
+import type { Route } from "../contact/+types";
 import { StatusCodes } from "http-status-codes";
 import { ContactForm } from "~/components/contact/form";
 import { ContactInformation } from "~/components/contact/information";

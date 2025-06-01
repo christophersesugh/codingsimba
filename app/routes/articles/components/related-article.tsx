@@ -1,17 +1,34 @@
-import type { Article } from "~/services.server/sanity/articles";
+// import type { Article } from "~/services.server/sanity/articles/types";
 import { Card, CardTitle, CardContent } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
-import { Link } from "react-router";
+import { Link, PrefetchPageLinks } from "react-router";
 import { readingTime } from "reading-time-estimator";
 
-export function RelatedArticleCard({ article }: { article: Article }) {
-  const stats = readingTime(article.raw);
+export interface RelatedArticle {
+  id: string;
+  slug: string;
+  title: string;
+  image: string;
+  excerpt: string;
+  createdAt: string;
+  category: {
+    id: string;
+    slug: string;
+    title: string;
+  };
+  markdown: string;
+}
+
+export function RelatedArticleCard({ article }: { article: RelatedArticle }) {
+  const stats = readingTime(article.markdown);
   return (
     <Link
       prefetch="intent"
       to={`/articles/${article.slug}`}
       className="group h-full"
     >
+      {/* Prefetch article resources for instant navigation */}
+      <PrefetchPageLinks page={`/articles/${article.slug}`} />
       <Card className="h-full overflow-hidden pt-0 transition-shadow hover:shadow-md">
         <div className="relative aspect-video h-[180px] max-h-[180px]">
           <img

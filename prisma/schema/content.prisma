@@ -204,5 +204,4 @@ enum PageType {
   COURSE
   MODULE
   LESSON
-  SPECIALIZATION
 }

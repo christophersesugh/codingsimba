@@ -1,9 +1,9 @@
 export const slogan = "Elevate Your Code from Functional to Exceptional";
 
 export const content = [
-  { name: "courses", path: "courses" },
   { name: "articles", path: "articles" },
   { name: "tutorials", path: "tutorials" },
+  { name: "courses", path: "courses" },
 ];
 
 export const platform = [

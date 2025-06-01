@@ -1,10 +1,11 @@
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Send, X } from "lucide-react";
-import { MDXEditor } from "../mdx/editor";
+// import { MDXEditor } from "../mdx/editor";
 import { Button } from "../ui/button";
 import { useOptionalUser } from "~/hooks/user";
 import { getInitials } from "~/utils/user";
+import { MDXEditor } from "../mdx/editor";
 
 type CommentFormProps = {
   isForUpdate?: boolean;
@@ -22,7 +23,7 @@ export function CommentForm({
   onCancel,
   onSubmit: handleFormSubmit,
 }: CommentFormProps) {
-  const hideSubmitButton = !comment.trim() || comment.trim() === "<br />";
+  const hideSubmitButton = !comment.trim();
   const user = useOptionalUser();
   const profile = user?.profile;
 

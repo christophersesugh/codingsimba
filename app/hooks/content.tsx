@@ -1,6 +1,8 @@
 import React from "react";
 import { useFetcher } from "react-router";
+import { toast } from "sonner";
 import { z } from "zod";
+import { getErrorMessage } from "~/utils/misc";
 
 export const ContentIntentSchema = z.enum([
   "add-comment",
@@ -60,6 +62,8 @@ type OptimisticReturn = {
   submit: () => void;
   /** True during submission, false otherwise */
   isPending: boolean;
+  /** ID of item being submitted */
+  submittedItemId: FormDataEntryValue | null | undefined;
   /** Error object if submission failed, null otherwise */
   error: Error | null;
 };
@@ -88,7 +92,7 @@ type OptimisticReturn = {
  * ```
  */
 function useOptimisticSubmit({ data, intent }: OptimisticSubmit) {
-  const fetcher = useFetcher({ key: intent });
+  const fetcher = useFetcher({ key: `${intent}-${data.itemId}` });
 
   const submit = React.useCallback(() => {
     try {
@@ -97,8 +101,9 @@ function useOptimisticSubmit({ data, intent }: OptimisticSubmit) {
         intent,
       });
       fetcher.submit({ ...parsed.data, intent }, { method: "post" });
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
+      toast.error(getErrorMessage(error));
     }
     // Remove fetcher from deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -106,7 +111,8 @@ function useOptimisticSubmit({ data, intent }: OptimisticSubmit) {
 
   return {
     submit,
-    isPending: fetcher.state === "submitting",
+    isPending: fetcher.state !== "idle",
+    submittedItemId: fetcher.formData?.get("itemId"),
     error: fetcher.data?.error || null,
   };
 }

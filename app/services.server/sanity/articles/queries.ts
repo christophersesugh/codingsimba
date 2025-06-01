@@ -114,22 +114,26 @@ export const articleDetailsQuery = groq`*[_type == "article" && slug.current == 
  * - Excludes the current article
  * - Sorted by creation date
  */
-export const relatedQuery = groq`*[
-  _type == "article" &&
-  published == true &&
-  slug.current != $slug &&
-  (
+export const relatedQuery = groq`
+  *[_type == "article" && published == true && slug.current != $slug && (
     count(tags[@._ref in $tagIds]) > 0 ||
     category._ref == $categoryId
   )
-] | order(createdAt desc) [0...3] {
-  "id": _id,
-  title,
-  "slug": slug.current,
-  createdAt,
-  "image": image.asset->url,
-  excerpt
-}`;
+  ] | order(createdAt desc) [0...3] {
+    id,
+    title,
+    slug,
+    createdAt,
+    image,
+    excerpt,
+    content,
+    category->{
+      id,
+      title,
+      slug
+    }
+  }
+`;
 
 /**
  * GROQ query to fetch popular tags with their usage count
@@ -168,7 +172,8 @@ export function recentArticlesQuery() {
       "slug": slug.current
     },
     "image": image.asset->url,
-    excerpt
+    excerpt,
+    content
   }`;
 }
 

@@ -192,8 +192,10 @@ const RelatedArticlesSchema = z
       title: z.string(),
       slug: z.string(),
       createdAt: z.string(),
+      category: CategorySchema,
       image: z.string().url(),
       excerpt: z.string(),
+      content: z.string(),
     }),
   )
   .default([]);
@@ -211,8 +213,9 @@ const RelatedArticlesSchema = z
  * @property {TagsSchema} tags - Array of tags associated with the article
  * @property {string} image - URL of the article's main image
  * @property {string} excerpt - Short description of the article
- * @property {string} content - The main content of the article
- * @property {string} raw - The raw content before processing
+ * @property {string} content - The mdx bundled content of the article
+ * @property {string} rmarkdown - The markdown content before processing
+ * @property {string} html - The processed html content before processing
  * @property {RelatedArticlesSchema} relatedArticles - Array of related articles
  * @property {SandpackTemplateSchema[]} sandpackTemplates - Array of associated Sandpack templates
  * @property {ComponentSchema[]} reactComponents - Array of React components used in the article
@@ -228,7 +231,8 @@ export const ArticleSchema = z.object({
   image: z.string(),
   excerpt: z.string(),
   content: z.string(),
-  raw: z.string(),
+  markdown: z.string(),
+  html: z.string(),
   relatedArticles: RelatedArticlesSchema,
   sandpackTemplates: z.array(SandpackTemplateSchema),
   reactComponents: z.array(ComponentSchema),

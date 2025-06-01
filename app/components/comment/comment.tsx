@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { formatDistanceToNowStrict } from "date-fns";
-import type { CommentPermissionMap, IComment } from ".";
+import type { PermissionMap, IComment } from ".";
 import { Separator } from "../ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
@@ -10,6 +10,7 @@ import {
   MessageSquareQuote,
   Trash2,
   ChevronDown,
+  Loader,
 } from "lucide-react";
 import { Reply } from "./reply";
 import { CommentForm } from "./comment-form";
@@ -33,10 +34,10 @@ import {
 
 export function Comment({
   comment,
-  commentPermissionMap,
+  permissionMap,
 }: {
   comment: IComment;
-  commentPermissionMap: CommentPermissionMap;
+  permissionMap: PermissionMap;
 }) {
   const [editComment, setEditComment] = React.useState(false);
   const [commentBody, setCommentBody] = React.useState(comment.raw);
@@ -52,7 +53,7 @@ export function Comment({
   const userId = user?.id;
   const author = comment?.author?.profile;
 
-  const userPermission = commentPermissionMap.get(comment.id);
+  const userPermission = permissionMap.get(comment.id);
 
   const isLiked = comment.likes?.some((like) => like.userId === user?.id);
   const totalLikes = comment?.likes?.reduce(
@@ -67,32 +68,52 @@ export function Comment({
     userPermission?.isOwner ||
     userPermission?.permissions.some((p) => p.action === "UPDATE");
 
-  const { submit: submitReply } = useCreate({
+  const {
+    submit: submitReply,
+    isPending: isCreating,
+    submittedItemId: createdItemId,
+  } = useCreate({
     itemId: comment.contentId,
     parentId: comment.id,
     userId: userId!,
     intent: "add-reply",
     body: reply,
   });
+  const isCreatingReply = isCreating && createdItemId === comment.contentId;
 
-  const { submit: deleteComment } = useDelete({
+  const {
+    submit: deleteComment,
+    isPending: isDeleting,
+    submittedItemId: deletedItemId,
+  } = useDelete({
     itemId: comment.id,
     intent: "delete-comment",
     userId: userId!,
   });
+  const isDeletingComment = isDeleting && deletedItemId === comment.id;
 
-  const { submit: upvoteComment } = useUpvote({
+  const {
+    submit: upvoteComment,
+    isPending: isUpvoting,
+    submittedItemId: upvotedItemId,
+  } = useUpvote({
     itemId: comment.id,
     intent: "upvote-comment",
     userId: userId!,
   });
+  const isUpvotingComment = isUpvoting && upvotedItemId === comment.id;
 
-  const { submit: updateComment } = useUpdate({
+  const {
+    submit: updateComment,
+    isPending: isUpdating,
+    submittedItemId: updatedItemId,
+  } = useUpdate({
     itemId: comment.id,
     userId: userId!,
     body: commentBody,
     intent: "update-comment",
   });
+  const isUpdatingComment = isUpdating && updatedItemId === comment.id;
 
   function requireAuth(fn: (...args: unknown[]) => void) {
     return (...args: unknown[]) => (user ? fn(...args) : navigate("/signin"));
@@ -132,6 +153,7 @@ export function Comment({
           ) : null}
           <AvatarFallback>{getInitials(author!.name!)}</AvatarFallback>
         </Avatar>
+
         <div className="flex-1">
           <div className="mb-1 flex items-center justify-between">
             <h4 className="font-medium">{author!.name}</h4>
@@ -168,6 +190,7 @@ export function Comment({
               <Heart
                 className={cn("size-4", {
                   "fill-red-500 text-red-500": isLiked,
+                  "animate-bounce": isUpvotingComment,
                 })}
               />
               <span>{totalLikes}</span>
@@ -175,25 +198,44 @@ export function Comment({
             <button
               onClick={requireAuth(() => setShowReplyForm(!showReplyForm))}
               className={basicButtonClasses}
-              aria-label="reply comment"
+              aria-label={
+                isCreatingReply ? "replying comment" : "reply comment"
+              }
             >
-              <MessageSquareQuote className="mr-1 size-4" />
+              {isCreatingReply ? (
+                <Loader className="mr-1 size-4 animate-spin" />
+              ) : (
+                <MessageSquareQuote className="mr-1 size-4" />
+              )}
               Reply
             </button>
             {canUpdate ? (
               <button
                 onClick={() => setEditComment(true)}
                 className={basicButtonClasses}
-                aria-label="update comment"
+                aria-label={
+                  isUpdatingComment ? "updating comment" : "update comment"
+                }
               >
-                <FilePenLine className="mr-1 size-4 text-blue-600 dark:text-blue-500" />
+                {isUpdatingComment ? (
+                  <Loader className="mr-1 size-4 animate-spin" />
+                ) : (
+                  <FilePenLine className="mr-1 size-4 text-blue-600 dark:text-blue-500" />
+                )}
                 Edit
               </button>
             ) : null}
             {canDelete ? (
               <AlertDialog>
-                <AlertDialogTrigger className={basicButtonClasses}>
-                  <Trash2 className="mr-1 size-4 text-red-600 dark:text-red-500" />{" "}
+                <AlertDialogTrigger
+                  disabled={isDeletingComment}
+                  className={basicButtonClasses}
+                >
+                  {isDeletingComment ? (
+                    <Loader className="mr-1 size-4 animate-spin" />
+                  ) : (
+                    <Trash2 className="mr-1 size-4 text-red-600 dark:text-red-500" />
+                  )}{" "}
                   Delete
                 </AlertDialogTrigger>
                 <AlertDialogContent>
@@ -227,10 +269,7 @@ export function Comment({
             <ul className="mt-4 space-y-4 pl-6 dark:border-gray-800">
               {comment.replies.map((reply, index) => (
                 <div key={reply.id}>
-                  <Reply
-                    reply={reply}
-                    commentPermissionMap={commentPermissionMap}
-                  />
+                  <Reply reply={reply} permissionMap={permissionMap} />
                   {index < comment.replies!.length - 1 && (
                     <Separator className="my-4" />
                   )}
