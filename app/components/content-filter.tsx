@@ -1,5 +1,5 @@
 import React from "react";
-import { useSearchParams } from "react-router";
+import { Await, useSearchParams } from "react-router";
 import { Filter } from "lucide-react";
 import {
   Select,
@@ -8,9 +8,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import type { Category } from "~/services.server/sanity/articles";
+import type { Category } from "~/services.server/sanity/articles/types";
+import { Skeleton } from "./ui/skeleton";
 
-export function ContentFilter({ categories }: { categories: Category[] }) {
+export function ContentFilter({
+  categories,
+}: {
+  categories: Promise<Category[]>;
+}) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = React.useState({
     category: "",
@@ -72,21 +77,31 @@ export function ContentFilter({ categories }: { categories: Category[] }) {
         <span className="font-medium">Filters:</span>
       </div>
       <div className="flex flex-wrap gap-3">
-        <Select
-          value={filters.category}
-          onValueChange={(value) => handleSelectOnchange(value, "category")}
+        <React.Suspense
+          fallback={<Skeleton className="h-12 w-full rounded-xl" />}
         >
-          <SelectTrigger>
-            <SelectValue placeholder="Select category" />
-          </SelectTrigger>
-          <SelectContent>
-            {categories.map((category) => (
-              <SelectItem key={category.id} value={category.slug}>
-                {category.title}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <Await resolve={categories}>
+            {(categories) => (
+              <Select
+                value={filters.category}
+                onValueChange={(value) =>
+                  handleSelectOnchange(value, "category")
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.slug}>
+                      {category.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </Await>
+        </React.Suspense>
 
         <Select
           value={filters.order || "createdAt desc"}

@@ -25,7 +25,6 @@ import { StatusCodes } from "http-status-codes";
 import {
   addComment,
   addReply,
-  getArticleMetadata,
   updateComment,
   deleteComment,
   upvoteComment,
@@ -34,6 +33,8 @@ import {
   upvoteReply,
   trackPageView,
   upvoteArticle,
+  getArticleMetrics,
+  getArticleComments,
 } from "~/utils/articles.server";
 import { UpdateSchema } from "~/hooks/content";
 import { z } from "zod";
@@ -68,12 +69,16 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     status: StatusCodes.NOT_FOUND,
   });
 
-  const articleMetadata = await getArticleMetadata({
+  const metrics = getArticleMetrics({
+    articleId: article.id,
+  });
+
+  const articleComments = getArticleComments({
     articleId: article.id,
     ...parsedParams.data,
   });
 
-  const comments = articleMetadata?.comments ?? [];
+  const comments = (await articleComments) ?? [];
   const replies = comments.flatMap((comment) => comment.replies ?? []);
 
   const commentPermissions = userId
@@ -97,8 +102,9 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
   return {
     popularTags,
+    metrics,
+    comments: articleComments,
     article,
-    articleMetadata,
     commentPermissionMap,
   };
 }
@@ -143,13 +149,12 @@ export async function action({ request }: Route.ActionArgs) {
 export default function ArticleDetailsRoute({
   loaderData,
 }: Route.ComponentProps) {
-  const { article, popularTags, articleMetadata, commentPermissionMap } =
+  const { popularTags, comments, metrics, article, commentPermissionMap } =
     loaderData;
   const user = useOptionalUser();
   const fetcher = useFetcher();
 
   const handlePageView = React.useCallback(async (data: PageViewData) => {
-    console.log({ data });
     await fetcher.submit(
       { ...data, itemId: data.pageId, intent: "track-page-view" },
       { method: "post" },
@@ -197,7 +202,7 @@ export default function ArticleDetailsRoute({
 
             <Comments
               articleId={article.id}
-              comments={articleMetadata?.comments ?? []}
+              comments={comments}
               permissionMap={commentPermissionMap}
             />
             <Tags article={article} />
@@ -231,7 +236,7 @@ export default function ArticleDetailsRoute({
           <aside className="lg:col-span-4">
             <div className="sticky top-20">
               <TableOfContent pageData={pageData} className="hidden lg:block" />
-              <EngagementMetrics metrics={articleMetadata?.metrics} />
+              <EngagementMetrics metrics={metrics} />
               {!user?.isSubscribed ? <SubscriptionForm /> : null}
               <React.Suspense
                 fallback={Array.from({ length: 3 }).map((_, index) => (

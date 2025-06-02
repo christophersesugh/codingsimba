@@ -34,7 +34,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const safeStart = (safePage - 1) * PAGE_SIZE;
   const safeEnd = safeStart + PAGE_SIZE;
 
-  const categories = await getAllCategories();
+  const categories = getAllCategories();
   const articlesData = await getArticles({
     search,
     tag,

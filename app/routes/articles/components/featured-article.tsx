@@ -1,5 +1,5 @@
 import type { Article } from "~/services.server/sanity/articles/types";
-import { Link } from "react-router";
+import { Link, PrefetchPageLinks } from "react-router";
 import { format } from "date-fns";
 import { readingTime } from "reading-time-estimator";
 
@@ -12,6 +12,7 @@ export function FeaturedArticle({ article }: { article: Article }) {
       className="group mb-12 block"
       prefetch="intent"
     >
+      <PrefetchPageLinks page={`/articles/${article.slug}`} />
       <article className="grid gap-8 overflow-hidden rounded-2xl bg-gray-100 md:h-[300px] md:max-h-[300px] md:grid-cols-2 dark:bg-gray-900">
         <div className="relative aspect-video md:aspect-auto md:h-[300px] md:max-h-[300px]">
           <img

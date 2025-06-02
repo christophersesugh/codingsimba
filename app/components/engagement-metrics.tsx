@@ -1,12 +1,16 @@
 import React from "react";
-import { useFetcher } from "react-router";
+import { Await, useFetcher } from "react-router";
 import { Eye, Heart, MessageSquare } from "lucide-react";
 import { cn } from "~/lib/shadcn";
 import { Link } from "react-router";
 import { useOptionalUser } from "~/hooks/user";
 import { AnimatePresence, motion } from "framer-motion";
+import { Skeleton } from "./ui/skeleton";
 
-interface EMetricsProps {
+/**
+ * Props for the metrics data structure
+ */
+type MetricsProps = {
   id: string;
   views: number;
   _count: {
@@ -15,11 +19,62 @@ interface EMetricsProps {
   };
   likes: {
     count: number;
-    userId: string | null;
+    userId: string;
   }[];
+} | null;
+
+/**
+ * EngagementMetrics component displays article engagement statistics
+ * @param {Object} props - Component props
+ * @param {Promise<MetricsProps>} props.metrics - Promise containing metrics data
+ * @returns {JSX.Element} Rendered component with metrics display
+ * @example
+ * ```tsx
+ * <EngagementMetrics metrics={articleMetrics} />
+ * ```
+ */
+export function EngagementMetrics({
+  metrics,
+}: {
+  metrics: Promise<MetricsProps>;
+}) {
+  return (
+    <React.Suspense fallback={<Loading />}>
+      <Await resolve={metrics}>
+        {(metrics) => <Metrics metrics={metrics} />}
+      </Await>
+    </React.Suspense>
+  );
 }
 
-export function EngagementMetrics({ metrics }: { metrics?: EMetricsProps }) {
+/**
+ * Loading skeleton component for metrics display
+ * @returns {JSX.Element} Loading skeleton UI
+ */
+function Loading() {
+  return (
+    <div className="mb-8 flex flex-col items-start justify-between border-b border-gray-200 py-4 dark:border-gray-800">
+      <div className="flex items-center space-x-6">
+        <Skeleton className="h-4 w-8 rounded-xl" />
+        <Skeleton className="h-4 w-8 rounded-xl" />
+        <Skeleton className="h-4 w-14 rounded-xl" />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Metrics component displays the actual metrics data with interactive features
+ * @param {Object} props - Component props
+ * @param {MetricsProps} props.metrics - Metrics data
+ * @returns {JSX.Element} Rendered metrics with upvote functionality
+ * @description
+ * - Displays likes, comments, and views
+ * - Handles upvote functionality with optimistic updates
+ * - Shows floating animation on upvote
+ * - Enforces maximum likes limit
+ */
+function Metrics({ metrics }: { metrics: MetricsProps }) {
   const [showFloating, setShowFloating] = React.useState(false);
   const [animationKey, setAnimationKey] = React.useState(0);
   const fetcher = useFetcher();
@@ -87,7 +142,7 @@ export function EngagementMetrics({ metrics }: { metrics?: EMetricsProps }) {
                 "opacity-80": optimisticState.userLikes >= MAX_LIKES,
               })}
             />
-            <span>{optimisticState.totalLikes}</span>
+            <span>{optimisticState.totalLikes.toLocaleString()}</span>
             {optimisticState.userLikes >= MAX_LIKES ? (
               <sub className="text-gray-500 dark:text-gray-400">max</sub>
             ) : null}
@@ -122,7 +177,9 @@ export function EngagementMetrics({ metrics }: { metrics?: EMetricsProps }) {
         </div>
         <Link to={"#comments"} className="flex items-center space-x-1">
           <MessageSquare className="size-5" />
-          <span>{metrics?._count.comments ?? LEAST_COUNT}</span>
+          <span>
+            {metrics?._count.comments.toLocaleString() ?? LEAST_COUNT}
+          </span>
         </Link>
         <div className="flex items-center space-x-1">
           <Eye className="size-5" />

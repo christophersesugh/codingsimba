@@ -3,14 +3,14 @@ import { AlertTriangle, Info, XCircle } from "lucide-react";
 import { cn } from "~/lib/shadcn";
 
 interface CalloutProps {
-  variant?: "info" | "warning" | "error";
+  variant?: "tip" | "caution" | "danger";
   title?: string;
   children: React.ReactNode;
   className?: string;
 }
 
 const calloutVariants = {
-  info: {
+  tip: {
     container:
       "border-blue-200/60 bg-gradient-to-r from-blue-50/80 to-blue-100/40 dark:border-blue-500/20 dark:from-blue-950/40 dark:to-blue-900/20 shadow-blue-100/50 dark:shadow-blue-950/20",
     iconBg: "bg-blue-500 dark:bg-blue-400",
@@ -19,7 +19,7 @@ const calloutVariants = {
     content: "text-blue-800/90 dark:text-blue-200/90",
     accent: "bg-blue-500 dark:bg-blue-400",
   },
-  warning: {
+  caution: {
     container:
       "border-amber-200/60 bg-gradient-to-r from-amber-50/80 to-amber-100/40 dark:border-amber-500/20 dark:from-amber-950/40 dark:to-amber-900/20 shadow-amber-100/50 dark:shadow-amber-950/20",
     iconBg: "bg-amber-500 dark:bg-amber-400",
@@ -28,7 +28,7 @@ const calloutVariants = {
     content: "text-amber-800/90 dark:text-amber-200/90",
     accent: "bg-amber-500 dark:bg-amber-400",
   },
-  error: {
+  danger: {
     container:
       "border-red-200/60 bg-gradient-to-r from-red-50/80 to-red-100/40 dark:border-red-500/20 dark:from-red-950/40 dark:to-red-900/20 shadow-red-100/50 dark:shadow-red-950/20",
     iconBg: "bg-red-500 dark:bg-red-400",
@@ -40,13 +40,13 @@ const calloutVariants = {
 };
 
 const icons = {
-  info: Info,
-  warning: AlertTriangle,
-  error: XCircle,
+  tip: Info,
+  caution: AlertTriangle,
+  danger: XCircle,
 };
 
 export function Callout({
-  variant = "info",
+  variant = "tip",
   title,
   children,
   className,

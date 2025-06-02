@@ -1,43 +1,12 @@
 import React from "react";
-import { z } from "zod";
 import { motion } from "framer-motion";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
-import {
-  getFormProps,
-  getInputProps,
-  getTextareaProps,
-  useForm,
-} from "@conform-to/react";
-import { parseWithZod } from "@conform-to/zod";
-import { Loader2 } from "lucide-react";
-
-const ContactFormSchema = z.object({
-  name: z
-    .string({ required_error: "Name is required" })
-    .min(2, "Name must be at least 2 characters"),
-  email: z
-    .string({ required_error: "Email is required" })
-    .email("Invalid email address"),
-  subject: z
-    .string({ required_error: "Subject is required" })
-    .min(5, "Subject must be atleast 5 characters"),
-  message: z
-    .string({ required_error: "Message is required" })
-    .min(10, "Message must be atleast 10 characters"),
-});
 
 export function ContactForm() {
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const formRef = React.useRef<HTMLFormElement>(null);
-  const [form, fields] = useForm({
-    onValidate({ formData }) {
-      return parseWithZod(formData, { schema: ContactFormSchema });
-    },
-    shouldValidate: "onBlur",
-  });
 
   return (
     <motion.div
@@ -47,13 +16,8 @@ export function ContactForm() {
       viewport={{ once: true }}
     >
       <h2 className="mb-6 text-2xl font-bold">Leave a message</h2>
-
       <form
         ref={formRef}
-        {...getFormProps(form)}
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
         action={`https://formsubmit.co/4e6d736d95b932b2d66e894716711b8e`}
         method="POST"
         className="rounded-xl border border-slate-300 bg-white p-6 shadow-sm dark:border-slate-600 dark:bg-gray-900"
@@ -75,48 +39,47 @@ export function ContactForm() {
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor={fields.name.id}>Name</Label>
+              <Label htmlFor="name">Name</Label>
               <Input
-                {...getInputProps(fields.name, { type: "text" })}
+                type="text"
+                name="name"
                 placeholder="John Doe"
+                required
+                minLength={2}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor={fields.email.id}>Email</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                {...getInputProps(fields.email, { type: "email" })}
+                type="email"
+                name="email"
                 placeholder="john@doe.com"
+                required
               />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor={fields.subject.id}>Subject</Label>
+            <Label htmlFor="_subject">Subject</Label>
             <Input
-              {...getInputProps(fields.subject, { type: "text" })}
+              type="text"
               name="_subject"
               placeholder="How can I help you?"
+              required
+              minLength={5}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor={fields.message.id}>Message</Label>
+            <Label htmlFor="message">Message</Label>
             <Textarea
-              {...getTextareaProps(fields.message)}
               placeholder="Your message here..."
               name="message"
               rows={5}
+              required
+              minLength={10}
             />
           </div>
-          <Button
-            type="button"
-            onClick={() => {
-              setIsSubmitting(true);
-              formRef.current?.submit();
-              setIsSubmitting(false);
-            }}
-            className="w-full"
-          >
+          <Button type="submit" className="w-full">
             Send Message{" "}
-            {isSubmitting ? <Loader2 className="ml-1 animate-spin" /> : null}
           </Button>
         </div>
       </form>

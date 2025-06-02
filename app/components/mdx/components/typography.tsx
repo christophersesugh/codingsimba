@@ -126,7 +126,7 @@ export function Pre({
   );
 }
 
-type CalloutVariant = "info" | "warning" | "error";
+type CalloutVariant = "tip" | "caution" | "danger";
 
 interface TitleChildProps {
   className?: string;
@@ -152,8 +152,8 @@ export function Div({
 
   const variant = React.isValidElement<TitleChildProps>(titleChild)
     ? ((titleChild.props.className?.match(
-        /info|warning|error/,
-      )?.[0] as CalloutVariant) ?? "info")
+        /tip|caution|danger/,
+      )?.[0] as CalloutVariant) ?? "tip")
     : null;
 
   if (variant) {

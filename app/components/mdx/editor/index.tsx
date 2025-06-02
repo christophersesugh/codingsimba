@@ -7,10 +7,10 @@ import {
   type Editor as IEditor,
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Placeholder from "@tiptap/extension-placeholder";
 import { common, createLowlight } from "lowlight";
 import { MenuBar } from "./menu-bar";
 import { CodeBlockComponent } from "./code-blok-component";
-
 export interface MenuBarProps {
   editor: IEditor | null;
 }
@@ -20,13 +20,21 @@ const lowlight = createLowlight(common);
 interface EditorProps {
   value?: string;
   setValue?: (value: string) => void;
+  placeholder?: string;
 }
 
-export function MDXEditor({ value = "", setValue }: EditorProps) {
+export function MDXEditor({
+  value = "",
+  setValue,
+  placeholder = "Write your comment here...",
+}: EditorProps) {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
       StarterKit,
+      Placeholder.configure({
+        placeholder,
+      }),
       CodeBlockLowlight.extend({
         addNodeView() {
           return ReactNodeViewRenderer(CodeBlockComponent);

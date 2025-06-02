@@ -34,7 +34,7 @@ export function FormError({ errors, className }: FormErrorProps) {
     >
       {errorArray.map((error, index) => (
         <li key={index} className="flex items-start gap-1.5">
-          <span className="text-destructive mt-0.5" aria-hidden="true">
+          <span className="mt-0.5" aria-hidden="true">
             •
           </span>
           {error}

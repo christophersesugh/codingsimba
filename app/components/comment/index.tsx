@@ -6,7 +6,7 @@ import { Comment } from "./comment";
 import { useOptionalUser } from "~/hooks/user";
 import { Badge } from "../ui/badge";
 import { useCreate } from "~/hooks/content";
-import { Link, useSearchParams } from "react-router";
+import { Await, Link, useSearchParams } from "react-router";
 import { Button } from "../ui/button";
 import { ChevronDown } from "lucide-react";
 import { Separator } from "../ui/separator";
@@ -90,53 +90,63 @@ export function Comments({
 
   return (
     <section className="mb-8" id="comments">
-      <div className="flex items-center justify-between">
-        <h3 className="text-xl font-bold">Comments ({comments.length})</h3>
-        {!user ? (
-          <Badge asChild>
-            <Link to={"/signin"}>Signin to add a comment</Link>
-          </Badge>
-        ) : null}
-      </div>
-      <Separator className="my-4" />
-      {user ? (
-        <CommentForm
-          comment={comment}
-          setComment={setComment}
-          onSubmit={handleSubmit}
-        />
-      ) : null}
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <Await resolve={comments}>
+          {(comments) => (
+            <>
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold">
+                  Comments ({comments.length})
+                </h3>
+                {!user ? (
+                  <Badge asChild>
+                    <Link to={"/signin"}>Signin to add a comment</Link>
+                  </Badge>
+                ) : null}
+              </div>
+              <Separator className="my-4" />
+              {user ? (
+                <CommentForm
+                  comment={comment}
+                  setComment={setComment}
+                  onSubmit={handleSubmit}
+                />
+              ) : null}
 
-      {comments?.length ? (
-        <>
-          <ul className="space-y-6">
-            {comments.map((comment) => (
-              <Comment
-                key={comment.id}
-                comment={comment}
-                permissionMap={permissionMap}
-              />
-            ))}
-          </ul>
-          {comments.length >= commentTake && (
-            <Button
-              variant="ghost"
-              className="mt-4 w-full"
-              onClick={handleLoadMoreComments}
-            >
-              <ChevronDown className="mr-2 size-4" />
-              Load More Comments
-            </Button>
+              {comments?.length ? (
+                <>
+                  <ul className="space-y-6">
+                    {comments.map((comment) => (
+                      <Comment
+                        key={comment.id}
+                        comment={comment}
+                        permissionMap={permissionMap}
+                      />
+                    ))}
+                  </ul>
+                  {comments.length >= commentTake && (
+                    <Button
+                      variant="ghost"
+                      className="mt-4 w-full"
+                      onClick={handleLoadMoreComments}
+                    >
+                      <ChevronDown className="mr-2 size-4" />
+                      Load More Comments
+                    </Button>
+                  )}
+                </>
+              ) : (
+                <EmptyState
+                  icon={<MessageSquareOff className="size-8" />}
+                  title="No comments yet"
+                  description="Be the first to share your thoughts on this article!"
+                  className="py-6"
+                />
+              )}
+            </>
           )}
-        </>
-      ) : (
-        <EmptyState
-          icon={<MessageSquareOff className="size-8" />}
-          title="No comments yet"
-          description="Be the first to share your thoughts on this article!"
-          className="py-6"
-        />
-      )}
+        </Await>
+      </React.Suspense>
     </section>
   );
 }

@@ -30,6 +30,7 @@ export function MenuBar({ editor }: MenuBarProps) {
           editor.isActive("bold") && "bg-gray-100 dark:bg-gray-800",
         )}
         title="Bold"
+        aria-label="Bold"
       >
         <Bold className="size-4" />
       </button>
@@ -40,6 +41,7 @@ export function MenuBar({ editor }: MenuBarProps) {
           editor.isActive("italic") && "bg-gray-100 dark:bg-gray-800",
         )}
         title="Italic"
+        aria-label="Italic"
       >
         <Italic className="size-4" />
       </button>
@@ -50,6 +52,7 @@ export function MenuBar({ editor }: MenuBarProps) {
           editor.isActive("strike") && "bg-gray-100 dark:bg-gray-800",
         )}
         title="Strike"
+        aria-label="Strike"
       >
         <Strikethrough className="size-4" />
       </button>
@@ -62,6 +65,7 @@ export function MenuBar({ editor }: MenuBarProps) {
             "bg-gray-100 dark:bg-gray-800",
         )}
         title="Heading 3"
+        aria-label="Heading 3"
       >
         <Heading3 className="size-4" />
       </button>
@@ -73,6 +77,7 @@ export function MenuBar({ editor }: MenuBarProps) {
             "bg-gray-100 dark:bg-gray-800",
         )}
         title="Heading 4"
+        aria-label="Heading 4"
       >
         <Heading4 className="size-4" />
       </button>
@@ -84,6 +89,7 @@ export function MenuBar({ editor }: MenuBarProps) {
             "bg-gray-100 dark:bg-gray-800",
         )}
         title="Heading 5"
+        aria-label="Heading 5"
       >
         <Heading5 className="size-4" />
       </button>
@@ -95,6 +101,7 @@ export function MenuBar({ editor }: MenuBarProps) {
           editor.isActive("code") && "bg-gray-100 dark:bg-gray-800",
         )}
         title="Code"
+        aria-label="Code"
       >
         <Code className="size-4" />
       </button>
@@ -105,6 +112,7 @@ export function MenuBar({ editor }: MenuBarProps) {
           editor.isActive("codeBlock") && "bg-gray-100 dark:bg-gray-800",
         )}
         title="Code Block"
+        aria-label="Code Block"
       >
         <Code2 className="size-4" />
       </button>
@@ -116,6 +124,7 @@ export function MenuBar({ editor }: MenuBarProps) {
           editor.isActive("bulletList") && "bg-gray-100 dark:bg-gray-800",
         )}
         title="Bullet List"
+        aria-label="Bullet List"
       >
         <List className="size-4" />
       </button>
@@ -126,6 +135,7 @@ export function MenuBar({ editor }: MenuBarProps) {
           editor.isActive("orderedList") && "bg-gray-100 dark:bg-gray-800",
         )}
         title="Ordered List"
+        aria-label="Ordered List"
       >
         <ListOrdered className="size-4" />
       </button>
@@ -136,6 +146,7 @@ export function MenuBar({ editor }: MenuBarProps) {
           editor.isActive("blockquote") && "bg-gray-100 dark:bg-gray-800",
         )}
         title="Blockquote"
+        aria-label="Blockquote"
       >
         <Quote className="size-4" />
       </button>
@@ -144,6 +155,7 @@ export function MenuBar({ editor }: MenuBarProps) {
         onClick={() => editor.chain().focus().undo().run()}
         className="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
         title="Undo"
+        aria-label="Undo"
       >
         <Undo className="size-4" />
       </button>
@@ -151,6 +163,7 @@ export function MenuBar({ editor }: MenuBarProps) {
         onClick={() => editor.chain().focus().redo().run()}
         className="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
         title="Redo"
+        aria-label="Redo"
       >
         <Redo className="size-4" />
       </button>

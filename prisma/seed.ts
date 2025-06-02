@@ -56,9 +56,11 @@ async function seed() {
         },
       },
       password: { create: createPassword(process.env.ADMIN_PASSWORD) },
-      // notificationSettings: {
-      //   create: {},
-      // },
+      notificationSettings: {
+        create: {
+          newContent: true,
+        },
+      },
     },
   });
 }

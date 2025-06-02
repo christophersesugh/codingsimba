@@ -143,6 +143,11 @@ export async function signup({
               hash: hashedPassword,
             },
           },
+          notificationSettings: {
+            create: {
+              newContent: true,
+            },
+          },
         },
       },
     },
@@ -198,6 +203,11 @@ export async function signupWithConnection({
       email: email.toLowerCase(),
       roles: { connect: { name: "USER" } },
       connections: { create: { providerId, providerName } },
+      notificationSettings: {
+        create: {
+          newContent: true,
+        },
+      },
       ...(imageUrl
         ? {
             profile: {

@@ -15,8 +15,8 @@ import { determinePermissions } from "./permissions.server";
  * @param articleId - The Sanity.io document ID of the article
  * @returns Object containing article metrics and likes, or undefined if article not found
  */
-async function getArticleMetrics({ articleId }: { articleId: string }) {
-  const contentMetrics = await prisma.content.findUnique({
+export async function getArticleMetrics({ articleId }: { articleId: string }) {
+  return await prisma.content.findUnique({
     where: {
       sanityId: articleId,
       type: "ARTICLE",
@@ -24,6 +24,12 @@ async function getArticleMetrics({ articleId }: { articleId: string }) {
     select: {
       id: true,
       views: true,
+      likes: {
+        select: {
+          count: true,
+          userId: true,
+        },
+      },
       _count: {
         select: {
           likes: true,
@@ -32,13 +38,6 @@ async function getArticleMetrics({ articleId }: { articleId: string }) {
       },
     },
   });
-  if (!contentMetrics) return;
-  //WE DON'T WANNA PASS THE USER ID, WE WANNA GET CURRENT USER LIKES ON THE CLIENT
-  const likes = await prisma.like.findMany({
-    where: { contentId: contentMetrics.id },
-    select: { count: true, userId: true },
-  });
-  return { ...contentMetrics, likes };
 }
 
 /**
@@ -48,7 +47,7 @@ async function getArticleMetrics({ articleId }: { articleId: string }) {
  * @param replyTake - Number of replies to retrieve per comment
  * @returns Array of comments with their associated replies and author information
  */
-async function getArticleComments({
+export async function getArticleComments({
   articleId,
   commentTake,
   replyTake,
@@ -57,7 +56,7 @@ async function getArticleComments({
   commentTake: number;
   replyTake: number;
 }) {
-  return prisma.comment.findMany({
+  const comments = await prisma.comment.findMany({
     where: {
       contentId: articleId,
       parentId: null,
@@ -117,36 +116,9 @@ async function getArticleComments({
       createdAt: "desc",
     },
   });
-}
 
-/**
- * Retrieves complete article metadata including metrics and processed comments
- * @param articleId - The Sanity.io document ID of the article
- * @param commentTake - Number of comments to retrieve
- * @param replyTake - Number of replies to retrieve per comment
- * @returns Object containing article metrics and processed comments, or null if article not found
- */
-export async function getArticleMetadata({
-  articleId,
-  commentTake,
-  replyTake,
-}: {
-  articleId: string;
-  commentTake: number;
-  replyTake: number;
-}) {
-  const metrics = await getArticleMetrics({ articleId });
-  if (!metrics) {
-    return null;
-  }
-  const comments = await Promise.all(
-    (
-      await getArticleComments({
-        articleId: metrics.id,
-        commentTake,
-        replyTake,
-      })
-    ).map(async (comment) => ({
+  return await Promise.all(
+    comments?.map(async (comment) => ({
       ...comment,
       raw: await MarkdownConverter.toHtml(comment.body),
       body: (await bundleMDX({ source: comment.body })).code,
@@ -157,10 +129,8 @@ export async function getArticleMetadata({
           body: (await bundleMDX({ source: reply.body })).code,
         })),
       ),
-    })),
+    })) ?? [],
   );
-
-  return { metrics, comments } as const;
 }
 
 /**
