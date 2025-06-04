@@ -34,8 +34,6 @@ import {
 import { verifySessionStorage } from "~/utils/verification.server";
 import { safeRedirect } from "remix-utils/safe-redirect";
 import { ProviderNameSchema } from "~/components/provider-connection-form";
-import { invariant } from "~/utils/misc";
-import type { VerifyFunctionArgs } from "../verify";
 import { authSessionStorage } from "~/utils/session.server";
 
 export const onboardingSessionKey = "onboardingEmail";
@@ -76,22 +74,6 @@ async function requireData({
     console.error(result.error);
     throw redirect("/signup");
   }
-}
-
-export async function handleVerification({
-  request,
-  submission,
-}: VerifyFunctionArgs) {
-  invariant(submission.payload, "submission.payload should be defined by now");
-  const verifySession = await verifySessionStorage.getSession(
-    request.headers.get("cookie"),
-  );
-  verifySession.set(onboardingSessionKey, submission.payload.target);
-  return redirect("/onboarding", {
-    headers: {
-      "set-cookie": await verifySessionStorage.commitSession(verifySession),
-    },
-  });
 }
 
 export async function loader({ request, params }: Route.LoaderArgs) {

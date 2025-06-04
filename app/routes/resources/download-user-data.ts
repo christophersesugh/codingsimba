@@ -15,5 +15,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     },
   });
 
+  throw new Error("Not implemented");
+
   return { user };
 }

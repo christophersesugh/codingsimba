@@ -18,7 +18,9 @@ const githubUserFixturePath = path.join(
   ),
 );
 
-await fsExtra.ensureDir(path.dirname(githubUserFixturePath));
+(async () => {
+  await fsExtra.ensureDir(path.dirname(githubUserFixturePath));
+})();
 
 function createGitHubUser(
   code?: string | null,

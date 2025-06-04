@@ -21,7 +21,7 @@ export default function TermsRoute({ loaderData }: Route.ComponentProps) {
         description="These Terms of Service govern your use of our website and services."
       />
       <section>
-        <Markdown source={loaderData.pageContent} />
+        <Markdown source={loaderData.pageContent.code} />
       </section>
     </>
   );

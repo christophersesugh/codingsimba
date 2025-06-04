@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import { prisma } from "./db.server";
 import { bundleMDX } from "./mdx.server";
-import { invariantResponse } from "./misc";
+import { invariant, invariantResponse } from "./misc";
 import type { Update } from "~/hooks/content";
 import { MarkdownConverter } from "./misc.server";
 import { determinePermissions } from "./permissions.server";
@@ -145,9 +145,7 @@ export async function getArticleComments({
  * @returns The created comment
  */
 export async function addComment({ itemId, body, userId }: Update) {
-  invariantResponse(body, "Comment body is required to add  a comment", {
-    status: StatusCodes.BAD_REQUEST,
-  });
+  invariant(body, "Comment body is required to add  a comment");
   const article = await prisma.content.upsert({
     where: { sanityId: itemId },
     create: { sanityId: itemId, type: "ARTICLE" },
@@ -176,12 +174,8 @@ export async function addComment({ itemId, body, userId }: Update) {
  * @returns The created reply
  */
 export async function addReply({ itemId, body, userId, parentId }: Update) {
-  invariantResponse(parentId, "Parent ID is required to reply to a comment", {
-    status: StatusCodes.BAD_REQUEST,
-  });
-  invariantResponse(body, "Reply content is required to update a reply", {
-    status: StatusCodes.BAD_REQUEST,
-  });
+  invariant(parentId, "Parent ID is required to reply to a comment");
+  invariant(body, "Reply content is required to update a reply");
   const article = await prisma.content.upsert({
     where: { sanityId: itemId },
     create: { sanityId: itemId, type: "ARTICLE" },
@@ -211,17 +205,13 @@ export async function addReply({ itemId, body, userId, parentId }: Update) {
  * @description Checks user permissions using determinePermissions and verifies UPDATE permission
  */
 export async function updateComment({ itemId, body, userId }: Update) {
-  invariantResponse(body, "Comment body is required", {
-    status: StatusCodes.BAD_REQUEST,
-  });
+  invariant(body, "Comment body is required");
 
   const comment = await prisma.comment.findUnique({
     where: { id: itemId },
   });
 
-  invariantResponse(comment, "Comment not found", {
-    status: StatusCodes.NOT_FOUND,
-  });
+  invariant(comment, "Comment not found");
 
   const commentPermissions = userId
     ? await determinePermissions({
@@ -260,16 +250,12 @@ export async function updateComment({ itemId, body, userId }: Update) {
  * @description Checks user permissions using determinePermissions and verifies DELETE permission
  */
 export async function deleteComment({ itemId, userId }: Omit<Update, "body">) {
-  invariantResponse(userId, "User ID is required", {
-    status: StatusCodes.NOT_FOUND,
-  });
+  invariant(userId, "User ID is required");
   const comment = await prisma.comment.findUnique({
     where: { id: itemId },
   });
 
-  invariantResponse(comment, "Comment not found", {
-    status: StatusCodes.NOT_FOUND,
-  });
+  invariant(comment, "Comment not found");
 
   const commentPermissions = userId
     ? await determinePermissions({
@@ -304,9 +290,7 @@ export async function deleteComment({ itemId, userId }: Omit<Update, "body">) {
  * @returns The updated like record
  */
 export async function upvoteComment({ itemId, userId }: Omit<Update, "body">) {
-  invariantResponse(itemId, "Item ID is required", {
-    status: StatusCodes.NOT_FOUND,
-  });
+  invariant(itemId, "Item ID is required");
   const upsertLike = await prisma.like.upsert({
     where: { commentId_userId: { commentId: itemId, userId } },
     update: { count: { increment: 1 } },
@@ -326,25 +310,15 @@ export async function upvoteComment({ itemId, userId }: Omit<Update, "body">) {
  * @description Checks user permissions using determinePermissions and verifies UPDATE permission
  */
 export async function updateReply({ itemId, body, userId }: Update) {
-  invariantResponse(userId, "User ID is required", {
-    status: StatusCodes.BAD_REQUEST,
-  });
-
-  invariantResponse(body, "Reply body is required", {
-    status: StatusCodes.BAD_REQUEST,
-  });
+  invariant(userId, "User ID is required");
+  invariant(body, "Reply body is required");
 
   const reply = await prisma.comment.findUnique({
     where: { id: itemId },
   });
 
-  invariantResponse(reply, "Reply not found", {
-    status: StatusCodes.NOT_FOUND,
-  });
-
-  invariantResponse(reply.parentId, "This is not a reply", {
-    status: StatusCodes.BAD_REQUEST,
-  });
+  invariant(reply, "Reply not found");
+  invariant(reply.parentId, "This is not a reply");
 
   const commentPermissions = userId
     ? await determinePermissions({
@@ -383,21 +357,14 @@ export async function updateReply({ itemId, body, userId }: Update) {
  * @description Checks user permissions using determinePermissions and verifies DELETE permission
  */
 export async function deleteReply({ itemId, userId }: Omit<Update, "body">) {
-  invariantResponse(userId, "User ID is required", {
-    status: StatusCodes.BAD_REQUEST,
-  });
+  invariant(userId, "User ID is required");
 
   const reply = await prisma.comment.findUnique({
     where: { id: itemId },
   });
 
-  invariantResponse(reply, "Reply not found", {
-    status: StatusCodes.NOT_FOUND,
-  });
-
-  invariantResponse(reply.parentId, "This is not a reply", {
-    status: StatusCodes.BAD_REQUEST,
-  });
+  invariant(reply, "Reply not found");
+  invariant(reply.parentId, "This is not a reply");
 
   const commentPermissions = userId
     ? await determinePermissions({
@@ -438,9 +405,7 @@ export async function upvoteReply({ itemId, userId }: Omit<Update, "body">) {
     select: { parentId: true },
   });
 
-  invariantResponse(reply?.parentId, "This is not a reply", {
-    status: StatusCodes.BAD_REQUEST,
-  });
+  invariant(reply?.parentId, "This is not a reply");
 
   const updatedReply = await prisma.like.upsert({
     where: { commentId_userId: { commentId: itemId, userId } },
@@ -459,9 +424,7 @@ export async function upvoteReply({ itemId, userId }: Omit<Update, "body">) {
  * @returns The updated like record
  */
 export async function upvoteArticle({ itemId, userId }: Omit<Update, "body">) {
-  invariantResponse(itemId, "Item ID is required", {
-    status: StatusCodes.NOT_FOUND,
-  });
+  invariant(itemId, "Item ID is required");
   const upsertLike = await prisma.like.upsert({
     where: { contentId_userId: { contentId: itemId, userId } },
     update: { count: { increment: 1 } },
