@@ -77,7 +77,7 @@ export function usePageView({
   const onPageViewRef = React.useRef(onPageView);
   const hasTrackedRef = React.useRef(false);
 
-  // Initialize timestamps on client-side only
+  // Initialize timestamps on client-side only to avoid hydration errors
   React.useEffect(() => {
     startTimeRef.current = Date.now();
     lastActiveRef.current = Date.now();

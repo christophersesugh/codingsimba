@@ -433,3 +433,29 @@ export function getReferrerRoute(request: Request) {
     return "/";
   }
 }
+
+/**
+ * Formats a number of seconds into a time string with hours, minutes, and seconds.
+ * Returns HH:MM:SS format if hours are present, otherwise MM:SS format.
+ * Pads minutes and seconds with leading zeros for consistent formatting.
+ *
+ * @param seconds - The number of seconds to format
+ * @returns A string in the format "HH:MM:SS" or "MM:SS"
+ *
+ * @example
+ * ```ts
+ * formatTime(3665) // "1:01:05"
+ * formatTime(65)   // "1:05"
+ * formatTime(5)    // "0:05"
+ * ```
+ */
+export function formatTime(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const remainingSecondsAfterHours = seconds % 3600;
+  const mins = Math.floor(remainingSecondsAfterHours / 60);
+  const secs = remainingSecondsAfterHours % 60;
+
+  return hours > 0
+    ? `${hours}:${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`
+    : `${mins}:${secs.toString().padStart(2, "0")}`;
+}

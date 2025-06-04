@@ -103,7 +103,7 @@ export async function readMdxDirectory(directory: string) {
 
         if (!content) return null;
 
-        const processed = await bundleMDX({
+        const { frontmatter, code } = await bundleMDX({
           source: content,
         });
 
@@ -111,23 +111,19 @@ export async function readMdxDirectory(directory: string) {
 
         return {
           slug,
-          content: processed.code,
-          frontmatter: processed.frontmatter,
-          title: processed.frontmatter.title,
-          date: processed.frontmatter.date,
-          description: processed.frontmatter.description,
+          frontmatter,
+          content: code,
         };
       }),
     );
 
-    return processedFiles
-      .filter((file): file is NonNullable<typeof file> => file !== null)
-      .sort((a, b) => {
-        if (a.date && b.date) {
-          return new Date(b.date).getTime() - new Date(a.date).getTime();
-        }
-        return 0;
-      });
+    return processedFiles.filter(Boolean);
+    // .sort((a, b) => {
+    //   if (a.date && b.date) {
+    //     return new Date(b.date).getTime() - new Date(a.date).getTime();
+    //   }
+    //   return 0;
+    // });
   } catch (error) {
     console.error(`Error reading MDX directory ${directory}:`, error);
     return [];
@@ -139,29 +135,69 @@ export async function readMdxDirectory(directory: string) {
  * Transforms an array of component objects into a record of file paths and their code content.
  *
  * @param {Array<{ file: { filename: string; code: string } }>} components - Array of component objects
- * @returns {Promise<Record<string, string>>} Object mapping file paths to their code content
+ * @returns {Record<string, string>} Object mapping file paths to their code content
  *
  * @example
  * ```ts
  * const components = [
  *   { file: { filename: "Button", code: "export const Button = () => <button>Click me</button>" } }
  * ];
- * const bundled = await bundleComponent(components);
- * // Result: { "./Button.tsx": "export const Button = () => <button>Click me</button>" }
+ * const bundled = bundleComponents(components);
+ * // Result: { "./Button.tsx": "export const WrappedButton = (props) => ..." }
  * ```
  */
 export function bundleComponents(
   components: Array<{ file: { filename: string; code: string } }>,
-) {
+): Record<string, string> {
   if (!components?.length) {
-    return;
+    return {};
   }
-  return (
-    components.reduce<Record<string, string>>((acc, component) => {
-      acc[`./${component.file.filename}.tsx`] = component.file.code;
-      return acc;
-    }, {}) ?? {}
-  );
+
+  return components.reduce<Record<string, string>>((acc, component) => {
+    const componentName = component.file.filename
+      .split(/[-_]/)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join("");
+
+    const escapedCode = JSON.stringify(component.file.code).slice(1, -1);
+
+    const fileKey = `./${component.file.filename}.tsx`;
+
+    acc[fileKey] = `
+    import React, { useState } from 'react';
+
+    ${component.file.code}
+
+    export default function Embedded(props) {
+      const [showCode, setShowCode] = useState(false);
+
+      return (
+        <div className="mdx-embedded-wrapper">
+          <div className="mdx-embedded-header">
+            <h3 className="mdx-embedded-title">
+              ${componentName}
+            </h3>
+            <button onClick={() => setShowCode(!showCode)}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+            </button>
+          </div>
+          <div className="mdx-embedded-content">
+            <${componentName} {...props} />
+          </div>
+          <div className={\`mdx-embedded-code-container \${showCode ? 'show' : ''}\`}>
+            <pre className="mdx-embedded-code">
+              <code>{\`${escapedCode}\`}</code>
+            </pre>
+          </div>
+        </div>
+      );
+    }
+    `;
+    return acc;
+  }, {});
 }
 
 const turndownService = new TurndownService({

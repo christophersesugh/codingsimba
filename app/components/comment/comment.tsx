@@ -122,8 +122,8 @@ export function Comment({
   const handleReplySubmit = () => {
     if (!reply.trim()) return;
     submitReply();
-    setReply("");
     setShowReplyForm(false);
+    setReply("");
   };
 
   const handleUpdateSubmit = () => {

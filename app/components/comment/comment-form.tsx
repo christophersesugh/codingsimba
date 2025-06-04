@@ -1,7 +1,5 @@
-import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Send, X } from "lucide-react";
-// import { MDXEditor } from "../mdx/editor";
 import { Button } from "../ui/button";
 import { useOptionalUser } from "~/hooks/user";
 import { getInitials } from "~/utils/user";
@@ -28,7 +26,7 @@ export function CommentForm({
   const profile = user?.profile;
 
   const onSubmit = () => {
-    if (hideSubmitButton) return;
+    if (hideSubmitButton || !comment.trim()) return;
     handleFormSubmit();
   };
 

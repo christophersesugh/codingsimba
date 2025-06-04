@@ -5,11 +5,11 @@ import { useToc } from "~/hooks/use-toc";
 // import { useMarkdownToc } from "use-markdown-toc";
 import { cn } from "~/lib/shadcn";
 import { Badge } from "./ui/badge";
+import { formatTime } from "~/utils/misc";
 
 type PageData = {
   timeSpent: number;
   isActive: boolean;
-  formattedTime: string;
 };
 
 /**
@@ -25,6 +25,7 @@ function TOC({
   const { headings, activeId } = useToc({
     containerId: "markdown-content",
   });
+
   return (
     <div
       className={cn(
@@ -34,7 +35,7 @@ function TOC({
     >
       <Badge className="absolute right-0 top-0 rounded-br-none rounded-tl-none">
         Time spent on this page:{" "}
-        <span className="font-bold">{pageData.formattedTime}</span>{" "}
+        <span className="font-bold">{formatTime(pageData.timeSpent)}</span>{" "}
         {pageData.isActive ? "🟢" : "🔴"}
       </Badge>
       <h3 className="mb-4 text-lg font-bold">Table of Contents</h3>

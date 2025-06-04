@@ -55,7 +55,7 @@ export function Comments({
   articleId,
   permissionMap,
 }: {
-  comments: IComment[];
+  comments: Promise<IComment[]>;
   articleId: string;
   permissionMap: PermissionMap;
 }) {

@@ -143,9 +143,9 @@ export function Sandpack({ sandpackTemplate }: SandpackProps) {
   );
 
   const headerClassName = cn(
-    "flex h-8 items-center justify-between border-b px-2 pb-2",
+    "flex items-center justify-between border-b px-2 py-1",
     {
-      "h-full py-1": isFullscreen,
+      "h-full": isFullscreen,
     },
   );
 
@@ -259,7 +259,7 @@ export function Sandpack({ sandpackTemplate }: SandpackProps) {
             )}
           </div>
         </div>
-        <div className="flex h-6 items-center justify-between border-t px-2 pt-2 text-xs">
+        <div className="flex items-center justify-between border-t px-2 py-2 text-xs">
           <StatusIndicator />
           {activeView === "editor" || activeView === "split" ? (
             <CopyCode />

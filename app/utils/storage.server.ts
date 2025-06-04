@@ -1,6 +1,7 @@
 import type { FileUpload } from "@mjackson/form-data-parser";
 import { uploadToBunny } from "~/services.server/bunny/file-upload";
-import { getErrorMessage } from "./misc";
+import { getErrorMessage, invariantResponse } from "./misc";
+import { StatusCodes } from "http-status-codes";
 
 type UploadHandlerOptions = {
   fieldName?: string;
@@ -41,11 +42,13 @@ export function createUploadHandler(
   const { fieldName, uploadPath, generateUniqueFilename = true } = options;
 
   return async function uploadHandler(file: FileUpload) {
-    if (fieldName && file.fieldName !== fieldName) {
-      throw new Error(
-        `Invalid file field name. Expected '${fieldName}', got '${file.fieldName}'`,
-      );
-    }
+    invariantResponse(
+      file.fieldName === fieldName,
+      `Invalid file field name. Expected '${fieldName}', got '${file.fieldName}'`,
+      {
+        status: StatusCodes.BAD_REQUEST,
+      },
+    );
 
     const chunks: Uint8Array[] = [];
     const reader = file.stream().getReader();

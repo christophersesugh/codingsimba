@@ -39,7 +39,7 @@ import {
 import { UpdateSchema } from "~/hooks/content";
 import { z } from "zod";
 import { useOptionalUser } from "~/hooks/user";
-import { usePageView, type PageViewData } from "~/hooks/use-page-view";
+import { usePageView, type PageViewData } from "use-page-view";
 import { getUserId } from "~/utils/auth.server";
 import { GeneralErrorBoundary } from "~/components/error-boundary";
 import { determinePermissions } from "~/utils/permissions.server";
@@ -155,6 +155,7 @@ export default function ArticleDetailsRoute({
   const fetcher = useFetcher();
 
   const handlePageView = React.useCallback(async (data: PageViewData) => {
+    console.log(data);
     await fetcher.submit(
       { ...data, itemId: data.pageId, intent: "track-page-view" },
       { method: "post" },
