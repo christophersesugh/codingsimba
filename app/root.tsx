@@ -31,7 +31,7 @@ import { authSessionStorage } from "./utils/session.server";
 import { sessionKey } from "./utils/auth.server";
 import { Toaster } from "./components/ui/sonner";
 
-export const meta: Route.MetaFunction = () => [];
+// export const meta: Route.MetaFunction = () => [];
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/favicon.png" },
