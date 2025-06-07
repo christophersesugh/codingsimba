@@ -155,7 +155,6 @@ export default function ArticleDetailsRoute({
   const fetcher = useFetcher();
 
   const handlePageView = React.useCallback(async (data: PageViewData) => {
-    console.log(data);
     await fetcher.submit(
       { ...data, itemId: data.pageId, intent: "track-page-view" },
       { method: "post" },

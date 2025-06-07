@@ -44,7 +44,7 @@ model Password {
 
 model Profile {
   id        String   @id @default(ulid())
-  name      String?  @default("")
+  name      String
   image     String?  @default("")
   bio       String?  @default("")
   location  String?  @default("")

@@ -4,8 +4,6 @@ import { Skeleton } from "~/components/ui/skeleton";
 import { useToc } from "~/hooks/use-toc";
 // import { useMarkdownToc } from "use-markdown-toc";
 import { cn } from "~/lib/shadcn";
-import { Badge } from "./ui/badge";
-import { formatTime } from "~/utils/misc";
 
 type PageData = {
   timeSpent: number;
@@ -15,13 +13,7 @@ type PageData = {
 /**
  * Memoized Table of Contents component.
  */
-function TOC({
-  className,
-  pageData,
-}: {
-  className?: string;
-  pageData: PageData;
-}) {
+function TOC({ className }: { className?: string; pageData: PageData }) {
   const { headings, activeId } = useToc({
     containerId: "markdown-content",
   });
@@ -33,11 +25,6 @@ function TOC({
         className,
       )}
     >
-      <Badge className="absolute right-0 top-0 rounded-br-none rounded-tl-none">
-        Time spent on this page:{" "}
-        <span className="font-bold">{formatTime(pageData.timeSpent)}</span>{" "}
-        {pageData.isActive ? "🟢" : "🔴"}
-      </Badge>
       <h3 className="mb-4 text-lg font-bold">Table of Contents</h3>
       <nav className="space-y-3">
         <ul>

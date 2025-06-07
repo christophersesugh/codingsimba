@@ -21,7 +21,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix",
     "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@codesandbox/sandpack-react": "^2.20.0",
@@ -73,14 +74,17 @@
     "lucide-react": "^0.484.0",
     "marked": "^15.0.12",
     "mdx-bundler": "^10.1.1",
+    "prisma": "^6.8.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.4.0",
     "react-shiki": "^0.5.0",
     "reading-time-estimator": "^1.12.0",
+    "rehype-mathjax": "^7.1.0",
     "rehype-slug": "^6.0.0",
     "remark-flexible-containers": "^1.2.1",
     "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
     "remix-auth": "^4.1.0",
     "remix-auth-github": "^3.0.2",
     "remix-themes": "^2.0.4",
@@ -92,6 +96,7 @@
     "turndown": "^7.2.0",
     "tw-animate-css": "^1.2.5",
     "use-markdown-toc": "^0.2.5",
+    "use-page-view": "^1.0.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -122,7 +127,6 @@
     "playwright": "^1.51.1",
     "prettier": "3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "prisma": "^6.8.2",
     "react-router-devtools": "^1.1.0",
     "tailwindcss": "^4.0.0",
     "tsx": "^4.19.3",

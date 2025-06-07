@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import { DataAndSecurity } from "./data-and-security";
 import { ChangePassword } from "./change-password";
