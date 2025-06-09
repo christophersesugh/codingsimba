@@ -24,7 +24,7 @@ export function DetailsHeader({ item }: DetailsHeaderProps) {
   // const isTutorial = itemType === "tutorials";
   // const isCourse = itemType === "courses";
 
-  const stats = isArticle ? readingTime(item?.raw) : null;
+  const stats = isArticle ? readingTime(item.markdown) : null;
 
   const shapes = Array.from({ length: 15 }, (_, i) => {
     const seededRandom = (seed: number) => {
@@ -109,7 +109,7 @@ export function DetailsHeader({ item }: DetailsHeaderProps) {
           </motion.div>
 
           <motion.h1
-            className="mb-3 mt-2 text-3xl font-bold md:text-4xl"
+            className="mb-3 mt-2 text-2xl font-bold md:text-3xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}

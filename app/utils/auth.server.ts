@@ -188,6 +188,7 @@ export async function verifyUserPassword(
 
 export async function signupWithConnection({
   email,
+  name,
   providerId,
   providerName,
   imageUrl,
@@ -208,15 +209,12 @@ export async function signupWithConnection({
           newContent: true,
         },
       },
-      ...(imageUrl
-        ? {
-            profile: {
-              create: {
-                image: imageUrl,
-              },
-            },
-          }
-        : {}),
+      profile: {
+        create: {
+          name: name,
+          ...(imageUrl && { image: imageUrl }),
+        },
+      },
     },
     select: { id: true },
   });

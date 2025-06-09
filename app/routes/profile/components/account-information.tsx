@@ -1,6 +1,5 @@
-import React from "react";
 import type { Route } from "../+types/index";
-import { Form, useActionData, useLoaderData } from "react-router";
+import { useActionData, useFetcher, useLoaderData } from "react-router";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -15,23 +14,46 @@ import {
 import { parseWithZod } from "@conform-to/zod";
 import { FormError } from "~/components/form-errors";
 
+export const ACCOUNT_INFORMATION_INTENT = "update-profile";
+
 export const AcccountInformationSchema = z.object({
-  name: z.string({ required_error: "Name is required" }),
-  email: z
-    .string({ required_error: "Email is required" })
-    .email("Invalid email address"),
+  userId: z.string(),
+  name: z
+    .string({ required_error: "Name is required" })
+    .min(2, "First and Last name must be at least 2 characters")
+    .max(30, "Name must be less than or equal to 30 characters")
+    .trim()
+    .refine(
+      (name) => {
+        const WORD_MIN_LENGTH = 2;
+        const words = name.split(/\s+/);
+
+        if (words.length < WORD_MIN_LENGTH) {
+          return false;
+        }
+
+        return words.every((word) => word.length >= WORD_MIN_LENGTH);
+      },
+      {
+        message:
+          "Please enter your first and last name (e.g., John Doe or Kent C. Dodds)",
+      },
+    ),
+  email: z.string().optional(),
   bio: z.string().min(20, "Your bio must be atleast 20 Characters").optional(),
   location: z.string().optional(),
   website: z.string().url("Invalid website URL").optional(),
-  intent: z.literal("submit"),
+  intent: z.literal(ACCOUNT_INFORMATION_INTENT),
 });
 
 export function AccountInformation() {
+  const fetcher = useFetcher();
   const actionData = useActionData() as Route.ComponentProps["actionData"];
   const loaderData = useLoaderData() as Route.ComponentProps["loaderData"];
 
   const user = loaderData.user;
   const profile = user.profile;
+  const isSaving = fetcher.formData?.get("userId") === user.id;
 
   const [form, fields] = useForm({
     id: "account-information",
@@ -40,7 +62,7 @@ export function AccountInformation() {
       return parseWithZod(formData, { schema: AcccountInformationSchema });
     },
     shouldValidate: "onBlur",
-    defaultValue: { intent: "submit" },
+    defaultValue: { userId: user.id, intent: ACCOUNT_INFORMATION_INTENT },
   });
   return (
     <section className="mb-8 rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
@@ -48,7 +70,17 @@ export function AccountInformation() {
         <h2 className="text-xl font-bold">Account Information</h2>
       </div>
       <div className="p-6">
-        <Form {...getFormProps(form)} method="post" className="space-y-6">
+        <fetcher.Form
+          {...getFormProps(form)}
+          method="post"
+          className="space-y-6"
+        >
+          <input type="hidden" name="userId" value={user.id} />
+          <input
+            type="hidden"
+            name="intent"
+            value={ACCOUNT_INFORMATION_INTENT}
+          />
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor={fields.name.id}>Name</Label>
@@ -102,10 +134,13 @@ export function AccountInformation() {
               <FormError errors={fields.website.errors} />
             </div>
           </div>
+          <FormError errors={form.errors} />
           <div className="flex justify-end">
-            <Button type="submit">Save Changes</Button>
+            <Button type="submit" disabled={isSaving}>
+              Save Changes
+            </Button>
           </div>
-        </Form>
+        </fetcher.Form>
       </div>
     </section>
   );

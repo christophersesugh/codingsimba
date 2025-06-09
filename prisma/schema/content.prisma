@@ -23,7 +23,6 @@ enum ContentType {
   ARTICLE
   TUTORIAL
   COURSE
-  SPECIALIZATION
 }
 
 model CourseProgress {
@@ -109,8 +108,8 @@ model Comment {
   parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies  Comment[] @relation("CommentReplies")
 
-  authorId String
-  author   User   @relation(fields: [authorId], references: [id])
+  authorId String?
+  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
   contentId String
   content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade, onUpdate: Cascade)

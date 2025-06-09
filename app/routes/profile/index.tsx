@@ -1,4 +1,5 @@
 import React from "react";
+import { z } from "zod";
 import type { Route } from "../profile/+types";
 import { SideNav } from "./components/side-nav";
 import { Account } from "./components/account";
@@ -13,9 +14,69 @@ import {
 import { Courses } from "./components/courses";
 import { Certificates } from "./components/certificates";
 import { Subscription } from "./components/subscription";
-import { Notifications } from "./components/notifications";
-import { requireUserId } from "~/utils/auth.server";
+import {
+  Notifications,
+  NotificationSettingsSchema,
+  UPDATE_NOTIFICATIONS_INTENT,
+} from "./components/notifications";
+import {
+  getPasswordHash,
+  requireUserId,
+  sessionKey,
+  verifyUserPassword,
+} from "~/utils/auth.server";
 import { prisma } from "~/utils/db.server";
+import {
+  AcccountInformationSchema,
+  ACCOUNT_INFORMATION_INTENT,
+} from "./components/account-information";
+import { parseWithZod } from "@conform-to/zod";
+import { data, redirect } from "react-router";
+import { StatusCodes } from "http-status-codes";
+import {
+  CHANGE_PASSWORD_INTENT,
+  PasswordSchema,
+} from "./components/change-password";
+import {
+  DELETE_USER_INTENT,
+  DeleteUserSchema,
+  SessionSchema,
+  SIGNOUT_SESSIONS_INTENT,
+} from "./components/data-and-security";
+import { authSessionStorage } from "~/utils/session.server";
+import { invariantResponse } from "~/utils/misc";
+
+const IntentSchema = z.object({
+  intent: z.enum([
+    ACCOUNT_INFORMATION_INTENT,
+    CHANGE_PASSWORD_INTENT,
+    UPDATE_NOTIFICATIONS_INTENT,
+    SIGNOUT_SESSIONS_INTENT,
+    DELETE_USER_INTENT,
+  ]),
+});
+
+const AcccountUpdateSchema = z.union([
+  IntentSchema.merge(AcccountInformationSchema),
+  IntentSchema.merge(NotificationSettingsSchema),
+  IntentSchema.merge(SessionSchema),
+  IntentSchema.merge(DeleteUserSchema),
+  IntentSchema.merge(PasswordSchema).refine(
+    async (data) => {
+      if (data.newPassword !== data.confirmPassword) {
+        return false;
+      }
+      return await verifyUserPassword(
+        { email: data.email },
+        data.currentPassword,
+      );
+    },
+    {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    },
+  ),
+]);
 
 export async function loader({ request }: Route.LoaderArgs) {
   const userId = await requireUserId(request);
@@ -25,6 +86,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       id: true,
       email: true,
       profile: true,
+      notificationSettings: true,
       _count: {
         select: {
           sessions: {
@@ -38,8 +100,149 @@ export async function loader({ request }: Route.LoaderArgs) {
   });
   return { user };
 }
-export async function action({}: Route.ActionArgs) {
-  return {};
+
+export async function action({ request }: Route.ActionArgs) {
+  const formData = await request.formData();
+
+  const submission = await parseWithZod(formData, {
+    schema: AcccountUpdateSchema.transform(async (data, ctx) => {
+      switch (data.intent) {
+        case ACCOUNT_INFORMATION_INTENT: {
+          const { userId, name, bio, location, website } = data as z.infer<
+            typeof AcccountInformationSchema
+          >;
+          const updateData = { name, bio, location, website };
+          const user = await prisma.profile.update({
+            where: { userId },
+            select: { id: true },
+            data: {
+              ...updateData,
+            },
+          });
+
+          if (!user) {
+            ctx.addIssue({
+              path: ["root"],
+              code: z.ZodIssueCode.custom,
+              message: "Failed to save changes, please try again.",
+            });
+            return z.NEVER;
+          }
+          return { ...data, user };
+        }
+
+        case CHANGE_PASSWORD_INTENT: {
+          const { email, userId, currentPassword, newPassword } =
+            data as z.infer<typeof PasswordSchema>;
+          const isValid = await verifyUserPassword({ email }, currentPassword);
+          if (!isValid) {
+            ctx.addIssue({
+              path: ["currentPassword"],
+              code: z.ZodIssueCode.custom,
+              message: "Current password is incorrect.",
+            });
+            return z.NEVER;
+          }
+          const passwordHash = await getPasswordHash(newPassword);
+          const updatedPassword = await prisma.password.update({
+            where: { userId },
+            select: { userId: true },
+            data: {
+              hash: passwordHash,
+            },
+          });
+
+          if (!updatedPassword) {
+            ctx.addIssue({
+              path: ["root"],
+              code: z.ZodIssueCode.custom,
+              message: "Failed to update password, please try again.",
+            });
+            return z.NEVER;
+          }
+          return { ...data, updatedPassword };
+        }
+
+        case UPDATE_NOTIFICATIONS_INTENT: {
+          const {
+            userId,
+            contentUpdate,
+            promotions,
+            communityEvents,
+            allNotifications,
+          } = data as z.infer<typeof NotificationSettingsSchema>;
+
+          const updateData = {
+            contentUpdate,
+            promotions,
+            communityEvents,
+            allNotifications,
+          };
+          const notification = await prisma.notificationSetting.update({
+            where: { userId },
+            select: { id: true },
+            data: {
+              ...updateData,
+            },
+          });
+          if (!notification) {
+            ctx.addIssue({
+              path: ["root"],
+              code: z.ZodIssueCode.custom,
+              message: "Failed to save changes, please try again.",
+            });
+            return z.NEVER;
+          }
+          return { ...data, notification };
+        }
+
+        case SIGNOUT_SESSIONS_INTENT: {
+          const { userId } = data;
+
+          const authSession = await authSessionStorage.getSession(
+            request.headers.get("cookie"),
+          );
+          const sessionId = authSession.get(sessionKey);
+          invariantResponse(
+            sessionId,
+            "You must be authenticated to sign out of other sessions",
+          );
+          await prisma.session.deleteMany({
+            where: {
+              userId,
+              id: { not: sessionId },
+            },
+          });
+          return data;
+        }
+
+        case DELETE_USER_INTENT: {
+          const { userId } = data;
+          await prisma.user.delete({
+            where: {
+              id: userId,
+            },
+          });
+          throw redirect("/");
+        }
+
+        default:
+          throw new Error("Invalid Intent");
+      }
+    }),
+    async: true,
+  });
+
+  if (submission.status !== "success") {
+    return data({ status: "error", ...submission.reply() } as const, {
+      status:
+        submission.status === "error"
+          ? StatusCodes.BAD_REQUEST
+          : StatusCodes.OK,
+    });
+  }
+
+  return data(submission);
 }
 
 export type TabValue =

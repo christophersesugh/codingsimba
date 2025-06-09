@@ -159,15 +159,12 @@ enum RoleName {
 model NotificationSetting {
   id               String  @id @default(ulid())
   contentUpdate    Boolean @default(true)
-  newContent       Boolean @default(true)
   promotions       Boolean @default(false)
   communityEvents  Boolean @default(true)
   allNotifications Boolean @default(false)
 
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  @@index([userId])
 }
 
 model Certificate {

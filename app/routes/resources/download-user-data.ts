@@ -10,12 +10,9 @@ export async function loader({ request }: Route.LoaderArgs) {
     where: { id: userId },
     include: {
       profile: true,
-
       password: false, // <-- intentionally omit password
     },
   });
-
-  throw new Error("Not implemented");
 
   return { user };
 }

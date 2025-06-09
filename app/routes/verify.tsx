@@ -21,7 +21,7 @@ import {
   data,
   Form,
   redirect,
-  useFetcher,
+  // useFetcher,
   useNavigate,
   useNavigation,
   useSearchParams,
@@ -168,6 +168,8 @@ export async function loader({ request }: Route.LoaderArgs) {
   return validateRequest(request, params);
 }
 
+// const RESEND_OTP_INTENT = "resend-otp";
+
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
   return validateRequest(request, formData);
@@ -182,7 +184,7 @@ export default function VerifyPage({
   const navigate = useNavigate();
   const navigation = useNavigation();
   const [searchParams] = useSearchParams();
-  const fetcher = useFetcher();
+  // const fetcher = useFetcher();
 
   const isVerifying = navigation.formData?.get("intent") === "submit";
 
@@ -201,10 +203,10 @@ export default function VerifyPage({
     },
   });
 
-  function handleResendOtp() {
-    setResendCountdown(60);
-    fetcher.submit({ intent: "resend-otp" }, { method: "post" });
-  }
+  // function handleResendOtp() {
+  //   setResendCountdown(60);
+  //   fetcher.submit({ intent: RESEND_OTP_INTENT }, { method: "post" });
+  // }
 
   React.useEffect(() => {
     if (resendCountdown > 0) {
@@ -270,7 +272,7 @@ export default function VerifyPage({
               autoFocus
             >
               <InputOTPGroup>
-                {[...Array(6)].map((_, i) => (
+                {[...Array(OTP_LENGTH)].map((_, i) => (
                   <InputOTPSlot key={i} index={i} />
                 ))}
               </InputOTPGroup>
@@ -286,7 +288,7 @@ export default function VerifyPage({
           <FormError errors={form.errors} />
         </Form>
 
-        <div className="text-center">
+        {/* <div className="text-center">
           <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
             Didn&apos;t receive the code?
           </p>
@@ -302,7 +304,7 @@ export default function VerifyPage({
               Resend verification code
             </button>
           )}
-        </div>
+        </div> */}
 
         <div className="mt-6 border-t border-gray-200 pt-6 dark:border-gray-800">
           <p className="text-center text-xs text-gray-500 dark:text-gray-500">
