@@ -56,9 +56,16 @@ export async function getArticleComments({
   commentTake: number;
   replyTake: number;
 }) {
+  const content = await prisma.content.findUnique({
+    where: { sanityId: articleId },
+    select: { id: true },
+  });
+  if (!content) {
+    return [];
+  }
   const comments = await prisma.comment.findMany({
     where: {
-      contentId: articleId,
+      contentId: content.id,
       parentId: null,
     },
     select: {
@@ -120,12 +127,14 @@ export async function getArticleComments({
   return await Promise.all(
     comments?.map(async (comment) => ({
       ...comment,
-      raw: await MarkdownConverter.toHtml(comment.body),
+      markdown: comment.body,
+      html: await MarkdownConverter.toHtml(comment.body),
       body: (await bundleMDX({ source: comment.body })).code,
       replies: await Promise.all(
         (comment.replies || []).map(async (reply) => ({
           ...reply,
-          raw: await MarkdownConverter.toHtml(reply.body),
+          markdown: reply.body,
+          html: await MarkdownConverter.toHtml(reply.body),
           body: (await bundleMDX({ source: reply.body })).code,
         })),
       ),
@@ -155,13 +164,14 @@ export async function addComment({ itemId, body, userId }: Update) {
 
   const comment = await prisma.comment.create({
     data: {
-      body: MarkdownConverter.toMarkdown(body!),
+      body: MarkdownConverter.toMarkdown(body),
       contentId: article.id,
       authorId: userId,
       parentId: null,
     },
     select: { id: true },
   });
+
   return comment;
 }
 

@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { DataAndSecurity } from "./data-and-security";
-import { ChangePassword } from "./change-password";
 import { AccountInformation } from "./account-information";
 
 export function Account() {
@@ -11,7 +10,6 @@ export function Account() {
       transition={{ duration: 0.3 }}
     >
       <AccountInformation />
-      <ChangePassword />
       <DataAndSecurity />
     </motion.div>
   );

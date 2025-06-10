@@ -2,18 +2,12 @@ import React from "react";
 import { Link } from "react-router";
 import { Skeleton } from "~/components/ui/skeleton";
 import { useToc } from "~/hooks/use-toc";
-// import { useMarkdownToc } from "use-markdown-toc";
 import { cn } from "~/lib/shadcn";
-
-type PageData = {
-  timeSpent: number;
-  isActive: boolean;
-};
 
 /**
  * Memoized Table of Contents component.
  */
-function TOC({ className }: { className?: string; pageData: PageData }) {
+function TOC({ className }: { className?: string }) {
   const { headings, activeId } = useToc({
     containerId: "markdown-content",
   });

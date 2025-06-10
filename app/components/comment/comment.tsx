@@ -40,7 +40,7 @@ export function Comment({
   permissionMap: PermissionMap;
 }) {
   const [editComment, setEditComment] = React.useState(false);
-  const [commentBody, setCommentBody] = React.useState(comment.raw);
+  const [commentBody, setCommentBody] = React.useState(comment.html);
   const [reply, setReply] = React.useState("");
   const [showReplyForm, setShowReplyForm] = React.useState(false);
 

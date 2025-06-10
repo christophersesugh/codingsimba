@@ -18,6 +18,8 @@ import {
   type ViewProps,
 } from "./sandpack-components";
 import { Preview } from "./preview";
+import { toast } from "sonner";
+import { getErrorMessage } from "~/utils/misc";
 
 /**
  * Template mapping for different Sandpack templates
@@ -96,10 +98,12 @@ export function Sandpack({ sandpackTemplate }: SandpackProps) {
   const toggleFullscreen = React.useCallback(() => {
     if (!isFullscreen && sandpackRef.current) {
       sandpackRef.current.requestFullscreen().catch((err) => {
+        toast.error(getErrorMessage(err));
         console.error(`Error attempting to enable fullscreen: ${err.message}`);
       });
     } else if (document.fullscreenElement) {
       document.exitFullscreen().catch((err) => {
+        toast.error(getErrorMessage(err));
         console.error(`Error attempting to exit fullscreen: ${err.message}`);
       });
     }

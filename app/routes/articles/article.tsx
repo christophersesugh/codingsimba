@@ -162,11 +162,11 @@ export default function ArticleDetailsRoute({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const pageData = usePageView({
+  usePageView({
     pageId: article.id,
     userId: user?.id ?? undefined,
     trackOnce: true,
-    trackOnceDelay: 10,
+    trackOnceDelay: 30,
     minTimeThreshold: 10,
     heartbeatInterval: 30,
     onPageView: handlePageView,
@@ -188,12 +188,14 @@ export default function ArticleDetailsRoute({
                   className="aspect-video h-full w-full object-cover"
                 />
               </div>
-              <TableOfContent pageData={pageData} className="block lg:hidden" />
+              <TableOfContent className="block lg:hidden" />
               <Markdown
                 source={article.content}
                 sandpackTemplates={article.sandpackTemplates}
               />
             </article>
+            <EngagementMetrics metrics={metrics} className="md:hidden" />
+
             <p>
               Comment below the topics you may like me to create articles or
               tutorials on!
@@ -235,8 +237,11 @@ export default function ArticleDetailsRoute({
           {/* Sidebar */}
           <aside className="lg:col-span-4">
             <div className="sticky top-20">
-              <TableOfContent pageData={pageData} className="hidden lg:block" />
-              <EngagementMetrics metrics={metrics} />
+              <TableOfContent className="hidden lg:block" />
+              <EngagementMetrics
+                metrics={metrics}
+                className="hidden md:block"
+              />
               {!user?.isSubscribed ? <SubscriptionForm /> : null}
               <React.Suspense
                 fallback={Array.from({ length: 3 }).map((_, index) => (

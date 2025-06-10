@@ -1,0 +1,12 @@
+mjx-container[jax="SVG"] {
+  direction: ltr;
+  display: inline-block;
+  vertical-align: baseline;
+  margin: 0 0.125rem;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1rem 0;
+}

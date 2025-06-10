@@ -28,7 +28,7 @@ export function Reply({
   reply: IComment;
   permissionMap: PermissionMap;
 }) {
-  const [replyBody, setReplyBody] = React.useState(reply.raw);
+  const [replyBody, setReplyBody] = React.useState(reply.html);
   const [editReply, setEditReply] = React.useState(false);
   const navigate = useNavigate();
 

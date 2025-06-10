@@ -29,7 +29,8 @@ interface ICommentAuthor {
 
 export interface IComment {
   id: string;
-  raw: string;
+  markdown: string;
+  html: string;
   body: string;
   likes: ILike[];
   createdAt: Date;

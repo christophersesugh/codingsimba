@@ -35,13 +35,15 @@ type MetricsProps = {
  */
 export function EngagementMetrics({
   metrics,
+  className,
 }: {
   metrics: Promise<MetricsProps>;
+  className?: string;
 }) {
   return (
     <React.Suspense fallback={<Loading />}>
       <Await resolve={metrics}>
-        {(metrics) => <Metrics metrics={metrics} />}
+        {(metrics) => <Metrics metrics={metrics} className={className} />}
       </Await>
     </React.Suspense>
   );
@@ -74,7 +76,13 @@ function Loading() {
  * - Shows floating animation on upvote
  * - Enforces maximum likes limit
  */
-function Metrics({ metrics }: { metrics: MetricsProps }) {
+function Metrics({
+  metrics,
+  className,
+}: {
+  metrics: MetricsProps;
+  className?: string;
+}) {
   const [showFloating, setShowFloating] = React.useState(false);
   const [animationKey, setAnimationKey] = React.useState(0);
   const fetcher = useFetcher();
@@ -124,7 +132,12 @@ function Metrics({ metrics }: { metrics: MetricsProps }) {
     );
   }
   return (
-    <div className="mb-8 flex flex-col items-start justify-between border-b border-gray-200 py-4 dark:border-gray-800">
+    <div
+      className={cn(
+        "mb-8 flex flex-col items-start justify-between border-b border-gray-200 py-4 dark:border-gray-800",
+        className,
+      )}
+    >
       <div className="flex items-center space-x-6">
         <div className="relative mr-4 flex items-center">
           <button

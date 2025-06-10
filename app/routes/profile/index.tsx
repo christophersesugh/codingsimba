@@ -19,12 +19,7 @@ import {
   NotificationSettingsSchema,
   UPDATE_NOTIFICATIONS_INTENT,
 } from "./components/notifications";
-import {
-  getPasswordHash,
-  requireUserId,
-  sessionKey,
-  verifyUserPassword,
-} from "~/utils/auth.server";
+import { requireUserId, sessionKey } from "~/utils/auth.server";
 import { prisma } from "~/utils/db.server";
 import {
   AcccountInformationSchema,
@@ -33,10 +28,6 @@ import {
 import { parseWithZod } from "@conform-to/zod";
 import { data, redirect } from "react-router";
 import { StatusCodes } from "http-status-codes";
-import {
-  CHANGE_PASSWORD_INTENT,
-  PasswordSchema,
-} from "./components/change-password";
 import {
   DELETE_USER_INTENT,
   DeleteUserSchema,
@@ -49,7 +40,6 @@ import { invariantResponse } from "~/utils/misc";
 const IntentSchema = z.object({
   intent: z.enum([
     ACCOUNT_INFORMATION_INTENT,
-    CHANGE_PASSWORD_INTENT,
     UPDATE_NOTIFICATIONS_INTENT,
     SIGNOUT_SESSIONS_INTENT,
     DELETE_USER_INTENT,
@@ -61,21 +51,6 @@ const AcccountUpdateSchema = z.union([
   IntentSchema.merge(NotificationSettingsSchema),
   IntentSchema.merge(SessionSchema),
   IntentSchema.merge(DeleteUserSchema),
-  IntentSchema.merge(PasswordSchema).refine(
-    async (data) => {
-      if (data.newPassword !== data.confirmPassword) {
-        return false;
-      }
-      return await verifyUserPassword(
-        { email: data.email },
-        data.currentPassword,
-      );
-    },
-    {
-      message: "Passwords do not match",
-      path: ["confirmPassword"],
-    },
-  ),
 ]);
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -129,38 +104,6 @@ export async function action({ request }: Route.ActionArgs) {
             return z.NEVER;
           }
           return { ...data, user };
-        }
-
-        case CHANGE_PASSWORD_INTENT: {
-          const { email, userId, currentPassword, newPassword } =
-            data as z.infer<typeof PasswordSchema>;
-          const isValid = await verifyUserPassword({ email }, currentPassword);
-          if (!isValid) {
-            ctx.addIssue({
-              path: ["currentPassword"],
-              code: z.ZodIssueCode.custom,
-              message: "Current password is incorrect.",
-            });
-            return z.NEVER;
-          }
-          const passwordHash = await getPasswordHash(newPassword);
-          const updatedPassword = await prisma.password.update({
-            where: { userId },
-            select: { userId: true },
-            data: {
-              hash: passwordHash,
-            },
-          });
-
-          if (!updatedPassword) {
-            ctx.addIssue({
-              path: ["root"],
-              code: z.ZodIssueCode.custom,
-              message: "Failed to update password, please try again.",
-            });
-            return z.NEVER;
-          }
-          return { ...data, updatedPassword };
         }
 
         case UPDATE_NOTIFICATIONS_INTENT: {

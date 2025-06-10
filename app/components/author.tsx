@@ -12,15 +12,15 @@ export function Author() {
           alt={"Christopher S. Aondona"}
           width={80}
           height={80}
-          className="rounded-full"
+          className="hidden rounded-full sm:block"
         />
         <div>
-          <h3 className="mb-2 text-xl font-bold">
-            <span className="text-gray-500"> About</span> Christopher S. Aondona
-            (Coding Simba)
+          <h3 className="mb-2 text-lg font-black">
+            <span className="text-gray-500"> Written by</span> Christopher S.
+            Aondona <span className="text-gray-500">(Coding Simba)</span>
           </h3>
           <p className="text-gray-600 dark:text-gray-300">
-            Software Developer (TypeScript/Rust). Building open-source tools for
+            Rust/JavaScript software engineer. Building open-source tools for
             the modern web and teaching through code. Passionate about robust
             systems, community-driven development, and sharing knowledge. Always
             learning, always shipping.
