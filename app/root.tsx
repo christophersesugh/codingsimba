@@ -30,6 +30,9 @@ import { prisma } from "./utils/db.server";
 import { authSessionStorage } from "./utils/session.server";
 import { sessionKey } from "./utils/auth.server";
 import { Toaster } from "./components/ui/sonner";
+import { getToast } from "./utils/toast.server";
+import { combineHeaders } from "./utils/misc";
+import { toast } from "sonner";
 
 // export const meta: Route.MetaFunction = () => [];
 
@@ -41,6 +44,8 @@ export const links: Route.LinksFunction = () => [
 
 export async function loader({ request }: Route.LoaderArgs) {
   const { getTheme } = await themeSessionResolver(request);
+  const { toast: toastSession, headers: toastHeaders } =
+    await getToast(request);
 
   const authSession = await authSessionStorage.getSession(
     request.headers.get("cookie"),
@@ -82,7 +87,8 @@ export async function loader({ request }: Route.LoaderArgs) {
       })
     : null;
 
-  const dataObj = { user, theme: getTheme() } as const;
+  const dataObj = { user, toastSession, theme: getTheme() };
+
   /**
    * 😜 Maybe a user is deleted in DB 🤷🏽‍♂️
    * If we can't find the user in DB, we need to remove the userId from the cookie
@@ -90,14 +96,25 @@ export async function loader({ request }: Route.LoaderArgs) {
    * This will prevent the user from being logged in and will automatically log them out
    */
   if (sessionId && !user) {
-    return data({ ...dataObj, user: null } as const, {
-      headers: {
-        "Set-Cookie": await authSessionStorage.destroySession(authSession),
+    return data(
+      { ...dataObj, user: null },
+      {
+        headers: combineHeaders(
+          {
+            "set-cookie": await authSessionStorage.destroySession(authSession),
+          },
+          toastHeaders,
+        ),
       },
-    });
+    );
   }
 
-  return dataObj;
+  return data(dataObj, {
+    headers: combineHeaders(
+      // csrfCookieHeader ? { "set-cookie": csrfCookieHeader } : null,
+      toastHeaders,
+    ),
+  });
 }
 
 type DocumentProps = {
@@ -127,15 +144,25 @@ function Document({ children, currentTheme, theme }: DocumentProps) {
 
 function App() {
   const [currentTheme] = useTheme();
-  const { theme } = useLoaderData() as Route.ComponentProps["loaderData"];
+  const { theme, toastSession } =
+    useLoaderData() as Route.ComponentProps["loaderData"];
+
+  React.useEffect(() => {
+    if (toastSession) {
+      toast[toastSession.type](toastSession.title, {
+        id: toastSession.id,
+        description: toastSession.description,
+      });
+    }
+  }, [toastSession]);
 
   return (
     <Document currentTheme={currentTheme} theme={theme}>
       <OptionalNavbar />
       <MobileNav />
       <Outlet />
-      <Toaster />
       <Footer />
+      <Toaster position="top-center" richColors />
     </Document>
   );
 }

@@ -5,12 +5,12 @@ import { z } from "zod";
 
 const toastKey = "toast";
 
-const TypeSchema = z.enum(["message", "success", "error"]);
+const TypeSchema = z.enum(["info", "success", "warning", "error"]);
 const ToastSchema = z.object({
   description: z.string(),
   id: z.string().default(() => cuid()),
   title: z.string().optional(),
-  type: TypeSchema.default("message"),
+  type: TypeSchema.default("success"),
 });
 
 export type Toast = z.infer<typeof ToastSchema>;
