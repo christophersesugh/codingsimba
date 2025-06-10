@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "~/components/ui/button";
-import { ChevronRight } from "lucide-react";
+import { ArrowDownAZ, ChevronRight } from "lucide-react";
+import { EmptyState } from "~/components/empty-state";
 
 export function Subscription() {
   const user = {
@@ -66,7 +68,12 @@ export function Subscription() {
           <h2 className="text-xl font-bold">Subscription Details</h2>
         </div>
         <div className="p-6">
-          <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
+          <EmptyState
+            icon={<ArrowDownAZ className="size-8" />}
+            title="Not Implemented!"
+            description="We are working to implement this feature."
+          />
+          {/* <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
@@ -135,7 +142,7 @@ export function Subscription() {
                 <ChevronRight className="ml-1 h-4 w-4" />
               </Button>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -144,7 +151,12 @@ export function Subscription() {
           <h2 className="text-xl font-bold">Manage Subscription</h2>
         </div>
         <div className="p-6">
-          <div className="space-y-6">
+          <EmptyState
+            icon={<ArrowDownAZ className="size-8" />}
+            title="Not Implemented!"
+            description="We are working to implement this feature."
+          />
+          {/* <div className="space-y-6">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               <div className="rounded-lg border border-gray-200 p-6 text-center dark:border-gray-800">
                 <h3 className="mb-2 text-lg font-bold">Basic</h3>
@@ -204,7 +216,7 @@ export function Subscription() {
                 Cancel Subscription
               </Button>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </motion.div>

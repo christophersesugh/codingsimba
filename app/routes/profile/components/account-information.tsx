@@ -13,6 +13,7 @@ import {
 } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { FormError } from "~/components/form-errors";
+import { Container } from "./container";
 
 export const ACCOUNT_INFORMATION_INTENT = "update-profile";
 
@@ -65,83 +66,70 @@ export function AccountInformation() {
     defaultValue: { userId: user.id, intent: ACCOUNT_INFORMATION_INTENT },
   });
   return (
-    <section className="mb-8 rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-      <div className="border-b border-gray-200 p-6 dark:border-gray-800">
-        <h2 className="text-xl font-bold">Account Information</h2>
-      </div>
-      <div className="p-6">
-        <fetcher.Form
-          {...getFormProps(form)}
-          method="post"
-          className="space-y-6"
-        >
-          <input type="hidden" name="userId" value={user.id} />
-          <input
-            type="hidden"
-            name="intent"
-            value={ACCOUNT_INFORMATION_INTENT}
-          />
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor={fields.name.id}>Name</Label>
-              <Input
-                {...getInputProps(fields.name, { type: "text" })}
-                defaultValue={profile!.name!}
-                className="border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
-              />
-              <FormError errors={fields.name.errors} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor={fields.email.id}>Email</Label>
-              <Input
-                {...getInputProps(fields.email, { type: "email" })}
-                defaultValue={user.email}
-                className="border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
-                disabled
-              />
-              <FormError errors={fields.email.errors} />
-            </div>
-          </div>
+    <Container headerTitle="Account Information" className="mb-8">
+      <fetcher.Form {...getFormProps(form)} method="post" className="space-y-6">
+        <input type="hidden" name="userId" value={user.id} />
+        <input type="hidden" name="intent" value={ACCOUNT_INFORMATION_INTENT} />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor={fields.bio.id}>Bio</Label>
-            <Textarea
-              {...getFieldsetProps(fields.bio)}
-              defaultValue={profile?.bio ?? ""}
-              rows={4}
+            <Label htmlFor={fields.name.id}>Name</Label>
+            <Input
+              {...getInputProps(fields.name, { type: "text" })}
+              defaultValue={profile!.name!}
               className="border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
             />
-            <FormError errors={fields.bio.errors} />
+            <FormError errors={fields.name.errors} />
           </div>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor={fields.location.id}>Location</Label>
-              <Input
-                {...getInputProps(fields.location, { type: "text" })}
-                defaultValue={profile?.location ?? ""}
-                placeholder="e.g. Netherlands"
-                className="border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
-              />
-              <FormError errors={fields.location.errors} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor={fields.website.id}>Website</Label>
-              <Input
-                {...getInputProps(fields.website, { type: "url" })}
-                defaultValue={profile?.website ?? ""}
-                placeholder="https://example.com"
-                className="border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
-              />
-              <FormError errors={fields.website.errors} />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor={fields.email.id}>Email</Label>
+            <Input
+              {...getInputProps(fields.email, { type: "email" })}
+              defaultValue={user.email}
+              className="border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
+              disabled
+            />
+            <FormError errors={fields.email.errors} />
           </div>
-          <FormError errors={form.errors} />
-          <div className="flex justify-end">
-            <Button type="submit" disabled={isSaving}>
-              Save Changes
-            </Button>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={fields.bio.id}>Bio</Label>
+          <Textarea
+            {...getFieldsetProps(fields.bio)}
+            defaultValue={profile?.bio ?? ""}
+            rows={4}
+            className="border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
+          />
+          <FormError errors={fields.bio.errors} />
+        </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor={fields.location.id}>Location</Label>
+            <Input
+              {...getInputProps(fields.location, { type: "text" })}
+              defaultValue={profile?.location ?? ""}
+              placeholder="e.g. Netherlands"
+              className="border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
+            />
+            <FormError errors={fields.location.errors} />
           </div>
-        </fetcher.Form>
-      </div>
-    </section>
+          <div className="space-y-2">
+            <Label htmlFor={fields.website.id}>Website</Label>
+            <Input
+              {...getInputProps(fields.website, { type: "url" })}
+              defaultValue={profile?.website ?? ""}
+              placeholder="https://example.com"
+              className="border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
+            />
+            <FormError errors={fields.website.errors} />
+          </div>
+        </div>
+        <FormError errors={form.errors} />
+        <div className="flex justify-end">
+          <Button type="submit" disabled={isSaving}>
+            Save Changes
+          </Button>
+        </div>
+      </fetcher.Form>
+    </Container>
   );
 }

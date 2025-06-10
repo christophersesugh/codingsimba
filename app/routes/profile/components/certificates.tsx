@@ -1,8 +1,12 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Button } from "~/components/ui/button";
+// import { Button } from "~/components/ui/button";
+import { EmptyState } from "~/components/empty-state";
+import { ArrowDownAZ } from "lucide-react";
+import { Container } from "./container";
 
 export function Certificates() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const user = {
     name: "John Doe",
     email: "john@example.com",
@@ -60,12 +64,13 @@ export function Certificates() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-        <div className="border-b border-gray-200 p-6 dark:border-gray-800">
-          <h2 className="text-xl font-bold">My Certificates</h2>
-        </div>
-        <div className="p-6">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <Container headerTitle="My Certificates">
+        <EmptyState
+          icon={<ArrowDownAZ className="size-8" />}
+          title="Not Implemented!"
+          description="We are working to implement this feature."
+        />
+        {/* <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {user.certificates.map((certificate) => (
               <div
                 key={certificate.id}
@@ -97,9 +102,8 @@ export function Certificates() {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </div>
+          </div> */}
+      </Container>
     </motion.div>
   );
 }

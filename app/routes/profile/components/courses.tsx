@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { motion } from "framer-motion";
-import { Clock } from "lucide-react";
+import { ArrowDownAZ, Clock } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
+import { EmptyState } from "~/components/empty-state";
+import { Container } from "./container";
 
 export function Courses() {
   const user = {
@@ -62,12 +65,13 @@ export function Courses() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-        <div className="border-b border-gray-200 p-6 dark:border-gray-800">
-          <h2 className="text-xl font-bold">My Courses</h2>
-        </div>
-        <div className="p-6">
-          <div className="space-y-6">
+      <Container headerTitle="My Courses">
+        <EmptyState
+          icon={<ArrowDownAZ className="size-8" />}
+          title="Not Implemented!"
+          description="We are working to implement this feature."
+        />
+        {/* <div className="space-y-6">
             {user.courses.map((course) => (
               <div
                 key={course.id}
@@ -105,9 +109,8 @@ export function Courses() {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </div>
+          </div> */}
+      </Container>
     </motion.div>
   );
 }

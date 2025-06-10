@@ -6,6 +6,7 @@ import { useActionData, useFetcher, useLoaderData } from "react-router";
 import { getInputProps, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { cn } from "~/lib/shadcn";
+import { Container } from "./container";
 
 export const UPDATE_NOTIFICATIONS_INTENT = "update-notifications";
 
@@ -57,46 +58,41 @@ export function Notifications() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-        <div className="border-b border-gray-200 p-6 dark:border-gray-800">
-          <h2 className="text-xl font-bold">Notifications</h2>
+      <Container headerTitle="Notifications">
+        <div className="space-y-6">
+          <Toggle
+            {...getInputProps(fields.allNotifications, { type: "checkbox" })}
+            label="Receive all notifications"
+            description="Receive all updates straight to your inbox"
+            defaultChecked={turnAllOn}
+            onChange={handleSubmit}
+          />
+
+          <Toggle
+            {...getInputProps(fields.contentUpdate, { type: "checkbox" })}
+            label="Content updates"
+            description="Get notified about new content and updates"
+            checked={notifications?.contentUpdate || turnAllOn}
+            onChange={handleSubmit}
+          />
+
+          <Toggle
+            {...getInputProps(fields.promotions, { type: "checkbox" })}
+            label="Promotions"
+            description="Receive promotional offers and discounts"
+            checked={notifications?.promotions || turnAllOn}
+            onChange={handleSubmit}
+          />
+
+          <Toggle
+            {...getInputProps(fields.communityEvents, { type: "checkbox" })}
+            label="Community events"
+            description="Stay updated with community activities"
+            checked={notifications?.communityEvents || turnAllOn}
+            onChange={handleSubmit}
+          />
         </div>
-        <div className="p-6">
-          <div className="space-y-6">
-            <Toggle
-              {...getInputProps(fields.allNotifications, { type: "checkbox" })}
-              label="Receive all notifications"
-              description="Receive all updates straight to your inbox"
-              defaultChecked={notifications?.allNotifications}
-              onChange={handleSubmit}
-            />
-
-            <Toggle
-              {...getInputProps(fields.contentUpdate, { type: "checkbox" })}
-              label="Content updates"
-              description="Get notified about new content and updates"
-              checked={notifications?.contentUpdate || turnAllOn}
-              onChange={handleSubmit}
-            />
-
-            <Toggle
-              {...getInputProps(fields.promotions, { type: "checkbox" })}
-              label="Promotions"
-              description="Receive promotional offers and discounts"
-              checked={notifications?.promotions || turnAllOn}
-              onChange={handleSubmit}
-            />
-
-            <Toggle
-              {...getInputProps(fields.communityEvents, { type: "checkbox" })}
-              label="Community events"
-              description="Stay updated with community activities"
-              checked={notifications?.communityEvents || turnAllOn}
-              onChange={handleSubmit}
-            />
-          </div>
-        </div>
-      </div>
+      </Container>
     </motion.div>
   );
 }
