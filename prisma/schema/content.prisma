@@ -152,7 +152,6 @@ model Enrollment {
   content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
   contentId String
 
-  // Subscription linkage
   subscription   Subscription? @relation(fields: [subscriptionId], references: [subscriptionId])
   subscriptionId String?
 
@@ -171,22 +170,18 @@ model TimeSpent {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // User relation
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // Content relation (for articles, tutorials, etc.)
   contentId String?
   content   Content? @relation(fields: [contentId], references: [id], onDelete: Cascade)
 
-  // Course-specific relations
   courseProgressId String?
   courseProgress   CourseProgress? @relation(fields: [courseProgressId], references: [id], onDelete: Cascade)
 
   moduleProgressId String?
   moduleProgress   ModuleProgress? @relation(fields: [moduleProgressId], references: [id], onDelete: Cascade)
 
-  // Metadata
   pageType   PageType
   lastActive DateTime @default(now())
 

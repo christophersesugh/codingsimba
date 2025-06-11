@@ -8,6 +8,9 @@ export default defineWorkspace([
       name: "unit",
       environment: "node",
       setupFiles: ["./tests/setup-tests.ts"],
+      env: {
+        TESTING: "true",
+      },
       include: ["**/__tests__/unit/**/*.{test,spec}.{ts,tsx}"],
       exclude: [
         "**/__tests__/browser/**/*.{test,spec}.{ts,tsx}",
@@ -25,6 +28,9 @@ export default defineWorkspace([
         instances: [{ browser: "chromium" }],
       },
       setupFiles: ["./tests/setup-tests.ts"],
+      env: {
+        TESTING: "true",
+      },
       include: ["**/__tests__/browser/**/*.{test,spec}.{ts,tsx}"],
       exclude: [
         "**/__tests__/unit/**/*.{test,spec}.{ts,tsx}",

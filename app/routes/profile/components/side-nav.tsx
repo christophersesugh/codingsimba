@@ -1,11 +1,13 @@
+import type { Route } from "../+types/index";
 import { LogOut, type LucideIcon } from "lucide-react";
 import React from "react";
-import { Form } from "react-router";
+import { Form, useLoaderData } from "react-router";
 import { Button } from "~/components/ui/button";
+
 import { cn } from "~/lib/shadcn";
 import type { TabValue } from "..";
-import { useUser } from "~/hooks/user";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { getInitials } from "~/utils/user";
 
 type SideNavProps = {
   tabs: { value: TabValue; Icon: LucideIcon }[];
@@ -14,7 +16,8 @@ type SideNavProps = {
 };
 
 export function SideNav({ tabs, activeTab, setActiveTab }: SideNavProps) {
-  const user = useUser();
+  const loaderData = useLoaderData() as Route.ComponentProps["loaderData"];
+  const user = loaderData.user;
   const profile = user.profile;
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 shadow-sm dark:border-gray-800 dark:bg-gray-900">
@@ -24,14 +27,14 @@ export function SideNav({ tabs, activeTab, setActiveTab }: SideNavProps) {
             {profile?.image ? (
               <AvatarImage src={profile.image} alt={profile!.name!} />
             ) : null}
-            <AvatarFallback>{profile!.name!.charAt(0)}</AvatarFallback>
+            <AvatarFallback>{getInitials(profile!.name)}</AvatarFallback>
           </Avatar>
         </div>
-        <h2 className="text-xl font-bold">{profile!.name!}</h2>
+        <h2 className="text-2xl font-bold">{profile!.name!}</h2>
         <p className="text-gray-500 dark:text-gray-400">{user.email}</p>
         <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
           <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
-            Free Plan
+            {user.isSubscribed ? "Premium Plan" : " Free Plan"}
           </span>
         </div>
       </div>
@@ -50,12 +53,12 @@ export function SideNav({ tabs, activeTab, setActiveTab }: SideNavProps) {
       </nav>
       <Form
         method="post"
-        action="/logout"
+        action="/signout"
         className="border-t border-gray-200 p-4 dark:border-gray-800"
       >
         <Button variant="destructive" className="w-full font-bold">
           <LogOut className="mr-3 h-5 w-5" />
-          Logout
+          Sign Out
         </Button>
       </Form>
     </div>

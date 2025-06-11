@@ -1,7 +1,13 @@
 import type { Route } from "../+types/index";
 import { z } from "zod";
-import { AlertTriangle, Download, Users } from "lucide-react";
-import { useFetcher, useLoaderData } from "react-router";
+import {
+  AlertTriangle,
+  Download,
+  Mail,
+  RectangleEllipsis,
+  Users,
+} from "lucide-react";
+import { Link, useFetcher, useLoaderData } from "react-router";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,6 +21,7 @@ import {
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { Container } from "./container";
+import { cn } from "~/lib/shadcn";
 
 export const SIGNOUT_SESSIONS_INTENT = "signout-other-sessions";
 export const DELETE_USER_INTENT = "delete-user";
@@ -30,31 +37,62 @@ export function DataAndSecurity() {
   const otherSessionsCount = user._count.sessions - 1;
 
   return (
-    <Container headerTitle="Data and Security">
-      <div className="flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-800">
-        <div>
-          <h3 className="mb-1 text-lg font-medium">Download Your Data</h3>
-          <p className="text-gray-500 dark:text-gray-400">
-            Get a copy of all your data stored in your account
-          </p>
-        </div>
-        <a href="/download-user-data" download={"codingsimba-data.json"}>
-          <Button variant="outline">
+    <Container title="Data and Security">
+      <Item
+        title="Change Email"
+        description={
+          <>
+            Change your email from{" "}
+            <span className="font-bold">{user.email}</span>
+          </>
+        }
+      >
+        <Button variant="outline" asChild>
+          <Link to={"/profile/change-email"}>
+            <Mail className="mr-1 size-4" />
+            Change
+          </Link>
+        </Button>
+      </Item>
+      <Item
+        title="Update Password"
+        description="Update your password to a new, secure one"
+        className="mt-4"
+      >
+        <Button variant="outline" asChild>
+          <Link to={"/profile/change-password"}>
+            <RectangleEllipsis className="mr-1 size-4" />
+            Update
+          </Link>
+        </Button>
+      </Item>
+
+      <Item
+        title="Download Your Data"
+        description="Get a copy of all your data stored in your account"
+        className="mt-4"
+      >
+        <Button variant="outline">
+          <a
+            href="/download-user-data"
+            download="codingsimba-data"
+            className="flex items-center"
+          >
             <Download className="mr-2 size-4" />
             Download
-          </Button>
-        </a>
-      </div>
+          </a>
+        </Button>
+      </Item>
 
-      <div className="flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-800">
-        <div className="pt-4">
-          <h3 className="mb-1 text-lg font-medium">Active Sessions</h3>
-          <p className="text-gray-500 dark:text-gray-400">
-            {otherSessionsCount
-              ? "Sign out from all other devices where you're signed in"
-              : "This is your only session"}
-          </p>
-        </div>
+      <Item
+        title="Active Sessions"
+        description={
+          otherSessionsCount
+            ? "Sign out from all other devices where you're signed in"
+            : "This is your only session"
+        }
+        className="mt-4"
+      >
         {otherSessionsCount ? (
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -92,7 +130,7 @@ export function DataAndSecurity() {
             </AlertDialogContent>
           </AlertDialog>
         ) : null}
-      </div>
+      </Item>
 
       <div className="pt-4">
         <h3 className="mb-1 text-lg font-medium text-red-500 dark:text-red-400">
@@ -142,5 +180,32 @@ export function DataAndSecurity() {
         </AlertDialog>
       </div>
     </Container>
+  );
+}
+
+function Item({
+  title,
+  description,
+  children,
+  className,
+}: {
+  title: string;
+  description: string | React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-800",
+        className,
+      )}
+    >
+      <div>
+        <h3 className="mb-1 text-lg font-medium">{title}</h3>
+        <p className="text-gray-500 dark:text-gray-400">{description}</p>
+      </div>
+      {children}
+    </div>
   );
 }

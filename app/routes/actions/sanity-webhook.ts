@@ -1,12 +1,11 @@
 import { redirect } from "react-router";
-import type { Route } from "./+types/logout";
-import { logout } from "~/utils/auth.server";
+import type { Route } from "./+types/sanity-webhook";
 
 export async function loader() {
   return redirect("/");
 }
 
 export async function action({ request }: Route.ActionArgs) {
-  await logout({ request });
+  console.log(await request);
   return {};
 }

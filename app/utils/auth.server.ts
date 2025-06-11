@@ -84,7 +84,7 @@ export async function requireUser(
     select: { id: true, email: true },
   });
   if (!user) {
-    throw logout({ request });
+    throw signout({ request });
   }
   return user;
 }
@@ -231,7 +231,7 @@ export async function signupWithConnection({
   return session;
 }
 
-export async function logout(
+export async function signout(
   {
     request,
     redirectTo = "/",

@@ -3,6 +3,7 @@ import {
   index,
   route,
   prefix,
+  layout,
 } from "@react-router/dev/routes";
 
 export default [
@@ -13,20 +14,26 @@ export default [
   route("verify", "routes/verify.tsx"),
   route("signup", "routes/signup.tsx"),
   route("signin", "routes/signin.tsx"),
-  route("profile", "routes/profile/index.tsx"),
   route("*", "routes/not-found.tsx"),
 
   // Resource routes
   route("download-user-data", "routes/resources/download-user-data.ts"),
 
   // Action routes
-  route("logout", "routes/actions/logout.ts"),
+  route("signout", "routes/actions/signout.ts"),
   route("set-theme", "routes/actions/set-theme.ts"),
+  route("content/webhook", "routes/actions/sanity-webhook.ts"),
 
   ...prefix("contact", [
     index("routes/contact/index.tsx"),
     route("success", "routes/contact/success.tsx"),
     route("webhook", "routes/contact/webhook.tsx"),
+  ]),
+
+  ...prefix("profile", [
+    index("routes/profile/index.tsx"),
+    route("change-password", "routes/profile/change-password.tsx"),
+    route("change-email", "routes/profile/change-email.tsx"),
   ]),
 
   ...prefix("auth", [
@@ -46,15 +53,21 @@ export default [
 
   ...prefix("courses", [
     index("routes/courses/index.tsx"),
-    route(":courseId", "routes/courses/course.tsx", [
-      route("lessons/:lessonId", "routes/courses/lesson.tsx"),
+    layout("routes/courses/layout.tsx", [
+      route(":courseId", "routes/courses/course.tsx", [
+        route("modules/:moduleId", "routes/courses/module.tsx", [
+          route("lessons/:lessonId", "routes/courses/lesson.tsx"),
+        ]),
+      ]),
     ]),
   ]),
 
   ...prefix("tutorials", [
     index("routes/tutorials/index.tsx"),
-    route(":tutorialId", "routes/tutorials/tutorial.tsx", [
-      route("lessons/:lessonId", "routes/tutorials/lesson.tsx"),
+    layout("routes/tutorials/layout.tsx", [
+      route(":tutorialId", "routes/tutorials/tutorial.tsx", [
+        route("lessons/:lessonId", "routes/tutorials/lesson.tsx"),
+      ]),
     ]),
   ]),
 ] satisfies RouteConfig;

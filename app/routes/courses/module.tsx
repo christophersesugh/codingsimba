@@ -1,5 +1,5 @@
 import React from "react";
-import type { Route } from "./+types/course";
+import type { Route } from "./+types/module";
 import { Outlet } from "react-router";
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -8,10 +8,10 @@ export async function loader({ params }: Route.LoaderArgs) {
   return {};
 }
 
-export default function CourseRoute() {
+export default function CourseModuleRoute() {
   return (
-    <div>
-      course item
+    <div className="mt-20 text-4xl">
+      course module
       <Outlet />
     </div>
   );

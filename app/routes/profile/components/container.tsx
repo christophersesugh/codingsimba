@@ -2,11 +2,13 @@ import React from "react";
 import { cn } from "~/lib/shadcn";
 
 export function Container({
-  headerTitle,
+  title,
+  description,
   className,
   children,
 }: {
-  headerTitle: string;
+  title: string;
+  description?: string | React.ReactNode;
   className?: string;
   children: React.ReactNode;
 }) {
@@ -18,7 +20,8 @@ export function Container({
       )}
     >
       <div className="border-b border-gray-200 p-6 dark:border-gray-800">
-        <h2 className="text-xl font-bold">{headerTitle}</h2>
+        <h2 className="mb-2 text-xl font-bold">{title}</h2>
+        {description ? <div>{description}</div> : null}
       </div>
       <div className="p-6">{children}</div>
     </div>

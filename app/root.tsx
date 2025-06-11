@@ -93,7 +93,7 @@ export async function loader({ request }: Route.LoaderArgs) {
    * 😜 Maybe a user is deleted in DB 🤷🏽‍♂️
    * If we can't find the user in DB, we need to remove the userId from the cookie
    * session and return null user.
-   * This will prevent the user from being logged in and will automatically log them out
+   * This will prevent the user from being signed in and will automatically sign them out
    */
   if (sessionId && !user) {
     return data(

@@ -1,7 +1,7 @@
-import { Link, useLocation } from "react-router";
+import { Form, Link, useLocation } from "react-router";
 import { Button } from "./ui/button";
 import { navLinks } from "~/constants/navlinks";
-import { Menu } from "lucide-react";
+import { LogOut, Menu, UserPen } from "lucide-react";
 import { NavLink } from "./nav-link";
 import { ThemeToggle } from "./theme-toggle";
 import { cn } from "~/lib/shadcn";
@@ -10,14 +10,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useMobileNav } from "~/contexts/mobile-nav";
 import { useOptionalUser } from "~/hooks/user";
 import { getInitials } from "~/utils/user";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Separator } from "./ui/separator";
 
 export function Navbar() {
   const location = useLocation();
   const { openMobileNav } = useMobileNav();
   const isHomePage = location.pathname === "/";
-  // const hideNavbar =
-  //   location.pathname.includes("signup") ||
-  //   location.pathname.includes("signin");
 
   const user = useOptionalUser();
   const profile = user?.profile;
@@ -52,14 +56,33 @@ export function Navbar() {
           ) : null}
 
           {profile ? (
-            <Link to={"/profile"} prefetch="intent" className="hidden md:block">
-              <Avatar className="size-9">
-                <AvatarImage src={profile.image!} alt={profile.name!} />
-                <AvatarFallback className="border border-slate-300 dark:border-gray-800">
-                  {getInitials(profile.name!)}
-                </AvatarFallback>
-              </Avatar>
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="hidden md:block" asChild>
+                <Avatar className="size-9">
+                  <AvatarImage src={profile.image!} alt={profile.name!} />
+                  <AvatarFallback className="border border-slate-300 dark:border-gray-800">
+                    {getInitials(profile.name)}
+                  </AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem className="font-bold" asChild>
+                  <Link to={"/profile"} prefetch="intent">
+                    <UserPen className="mr-2 size-4" /> Profile
+                  </Link>
+                </DropdownMenuItem>
+                <Separator className="my-1" />
+                <DropdownMenuItem
+                  className="font-bold text-red-600 dark:text-red-500"
+                  asChild
+                >
+                  <Form method="post" action="/signout">
+                    <LogOut className="mr-2 size-4 font-bold text-red-600 dark:text-red-500" />
+                    Sign Out
+                  </Form>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : null}
 
           <Button
