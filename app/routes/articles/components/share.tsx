@@ -16,6 +16,12 @@ export function Share({ article }: { article: Article }) {
     .join(",")
     .replace(/-/g, "_");
 
+  //     <meta name="twitter:card" content="summary_large_image">
+  // <meta name="twitter:title" content="Your Article Title">
+  // <meta name="twitter:description" content="Brief article description">
+  // <meta name="twitter:image" content="https://example.com/path-to-article-image.jpg">
+  // <meta name="twitter:site" content="@codingsimba_"></meta>
+
   const shareViaTwitter = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
     shareText,
   )}&url=${encodeURIComponent(shareUrl)}&hashtags=${encodeURIComponent(

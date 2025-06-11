@@ -64,7 +64,7 @@ export function Certificates() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Container headerTitle="My Certificates">
+      <Container title="My Certificates">
         <EmptyState
           icon={<ArrowDownAZ className="size-8" />}
           title="Not Implemented!"

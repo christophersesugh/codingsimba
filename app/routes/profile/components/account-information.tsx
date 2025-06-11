@@ -66,7 +66,7 @@ export function AccountInformation() {
     defaultValue: { userId: user.id, intent: ACCOUNT_INFORMATION_INTENT },
   });
   return (
-    <Container headerTitle="Account Information" className="mb-8">
+    <Container title="Account Information" className="mb-8">
       <fetcher.Form {...getFormProps(form)} method="post" className="space-y-6">
         <input type="hidden" name="userId" value={user.id} />
         <input type="hidden" name="intent" value={ACCOUNT_INFORMATION_INTENT} />
@@ -76,7 +76,7 @@ export function AccountInformation() {
             <Input
               {...getInputProps(fields.name, { type: "text" })}
               defaultValue={profile!.name!}
-              className="border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
+              className="h-12 border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
             />
             <FormError errors={fields.name.errors} />
           </div>
@@ -85,7 +85,7 @@ export function AccountInformation() {
             <Input
               {...getInputProps(fields.email, { type: "email" })}
               defaultValue={user.email}
-              className="border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
+              className="h-12 border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
               disabled
             />
             <FormError errors={fields.email.errors} />
@@ -96,7 +96,7 @@ export function AccountInformation() {
           <Textarea
             {...getFieldsetProps(fields.bio)}
             defaultValue={profile?.bio ?? ""}
-            rows={4}
+            rows={6}
             className="border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
           />
           <FormError errors={fields.bio.errors} />
@@ -108,7 +108,7 @@ export function AccountInformation() {
               {...getInputProps(fields.location, { type: "text" })}
               defaultValue={profile?.location ?? ""}
               placeholder="e.g. Netherlands"
-              className="border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
+              className="h-12 border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
             />
             <FormError errors={fields.location.errors} />
           </div>
@@ -118,7 +118,7 @@ export function AccountInformation() {
               {...getInputProps(fields.website, { type: "url" })}
               defaultValue={profile?.website ?? ""}
               placeholder="https://example.com"
-              className="border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
+              className="h-12 border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-900"
             />
             <FormError errors={fields.website.errors} />
           </div>

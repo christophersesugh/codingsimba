@@ -10,12 +10,19 @@ import { useMobileNav } from "~/contexts/mobile-nav";
 import { navLinks } from "~/constants/navlinks";
 import { NavLink } from "./nav-link";
 import { Separator } from "./ui/separator";
-import { Link } from "react-router";
+import { Form, Link } from "react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { useOptionalUser } from "~/hooks/user";
 import { getInitials } from "~/utils/user";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { LogOut, UserPen } from "lucide-react";
 
 export function MobileNav() {
   const { open, closeMobileNav } = useMobileNav();
@@ -56,12 +63,44 @@ export function MobileNav() {
             ) : null}
 
             {profile ? (
-              <Link to={"/profile"} prefetch="intent" onClick={closeMobileNav}>
-                <Avatar className="size-9">
-                  <AvatarImage src={profile.image!} alt={profile.name!} />
-                  <AvatarFallback>{getInitials(profile.image!)}</AvatarFallback>
-                </Avatar>
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger className="md:hiddden" asChild>
+                  <Avatar className="size-9">
+                    <AvatarImage src={profile.image!} alt={profile.name!} />
+                    <AvatarFallback className="border border-slate-300 dark:border-gray-800">
+                      {getInitials(profile.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem className="font-bold" asChild>
+                    <Link
+                      to={"/profile"}
+                      prefetch="intent"
+                      className="font-bold"
+                      onClick={closeMobileNav}
+                    >
+                      <UserPen className="mr-2 size-4" /> Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <Separator className="my-1" />
+
+                  <Form
+                    method="post"
+                    action="/signout"
+                    className="h-full w-full px-2 font-bold text-red-600 dark:text-red-500"
+                  >
+                    <button
+                      type="submit"
+                      // onClick={closeMobileNav}
+                      className="flex items-center"
+                    >
+                      <LogOut className="mr-2 size-4 font-bold text-red-600 dark:text-red-500" />
+                      Sign Out
+                    </button>
+                  </Form>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : null}
           </div>
         </SheetContent>

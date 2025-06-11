@@ -58,7 +58,7 @@ export function Notifications() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Container headerTitle="Notifications">
+      <Container title="Notifications">
         <div className="space-y-6">
           <Toggle
             {...getInputProps(fields.allNotifications, { type: "checkbox" })}

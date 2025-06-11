@@ -65,7 +65,7 @@ export function Courses() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Container headerTitle="My Courses">
+      <Container title="My Courses">
         <EmptyState
           icon={<ArrowDownAZ className="size-8" />}
           title="Not Implemented!"

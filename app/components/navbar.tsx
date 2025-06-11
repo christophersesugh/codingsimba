@@ -67,20 +67,22 @@ export function Navbar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
                 <DropdownMenuItem className="font-bold" asChild>
-                  <Link to={"/profile"} prefetch="intent">
+                  <Link to={"/profile"} prefetch="intent" className="font-bold">
                     <UserPen className="mr-2 size-4" /> Profile
                   </Link>
                 </DropdownMenuItem>
                 <Separator className="my-1" />
-                <DropdownMenuItem
-                  className="font-bold text-red-600 dark:text-red-500"
-                  asChild
+
+                <Form
+                  method="post"
+                  action="/signout"
+                  className="h-full w-full px-2 font-bold text-red-600 dark:text-red-500"
                 >
-                  <Form method="post" action="/signout">
+                  <button type="submit" className="flex items-center">
                     <LogOut className="mr-2 size-4 font-bold text-red-600 dark:text-red-500" />
                     Sign Out
-                  </Form>
-                </DropdownMenuItem>
+                  </button>
+                </Form>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : null}

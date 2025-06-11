@@ -14,6 +14,7 @@ export default [
   route("verify", "routes/verify.tsx"),
   route("signup", "routes/signup.tsx"),
   route("signin", "routes/signin.tsx"),
+  route("forgot-password", "routes/forgot-password.tsx"),
   route("*", "routes/not-found.tsx"),
 
   // Resource routes
@@ -34,6 +35,7 @@ export default [
     index("routes/profile/index.tsx"),
     route("change-password", "routes/profile/change-password.tsx"),
     route("change-email", "routes/profile/change-email.tsx"),
+    route("change-photo", "routes/profile/change-photo.tsx"),
   ]),
 
   ...prefix("auth", [

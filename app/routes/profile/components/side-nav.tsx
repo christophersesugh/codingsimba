@@ -1,7 +1,7 @@
 import type { Route } from "../+types/index";
-import { LogOut, type LucideIcon } from "lucide-react";
+import { Camera, LogOut, type LucideIcon } from "lucide-react";
 import React from "react";
-import { Form, useLoaderData } from "react-router";
+import { Form, Link, useLoaderData } from "react-router";
 import { Button } from "~/components/ui/button";
 
 import { cn } from "~/lib/shadcn";
@@ -22,12 +22,20 @@ export function SideNav({ tabs, activeTab, setActiveTab }: SideNavProps) {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 shadow-sm dark:border-gray-800 dark:bg-gray-900">
       <div className="border-b border-gray-200 p-6 text-center dark:border-gray-800">
-        <div className="relative mx-auto mb-4 h-24 w-24">
-          <Avatar className="size-24">
+        <div className="relative mx-auto mb-4 size-24 overflow-visible">
+          <Avatar className="size-24 overflow-visible">
             {profile?.image ? (
               <AvatarImage src={profile.image} alt={profile!.name!} />
             ) : null}
             <AvatarFallback>{getInitials(profile!.name)}</AvatarFallback>
+            <Link to={"/profile/change-photo"}>
+              <Button
+                size={"icon"}
+                className="absolute right-0 top-0 rounded-full outline outline-red-500"
+              >
+                <Camera className="size-6" />
+              </Button>
+            </Link>
           </Avatar>
         </div>
         <h2 className="text-2xl font-bold">{profile!.name!}</h2>

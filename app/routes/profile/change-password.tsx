@@ -1,7 +1,6 @@
 import type { Route } from "./+types/change-password";
 import { z } from "zod";
 import { motion } from "framer-motion";
-import { Header } from "~/components/page-header";
 import { Container } from "./components/container";
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
@@ -19,6 +18,7 @@ import { Button } from "~/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { StatusCodes } from "http-status-codes";
 import { redirectWithToast } from "~/utils/toast.server";
+import { OptionalContainer } from "~/components/optional-container";
 
 const PasswordSchema = z
   .object({
@@ -126,15 +126,17 @@ export default function ChangeEmail({
     shouldValidate: "onBlur",
   });
   return (
-    <>
-      <Header title="Update your password" />
+    <OptionalContainer>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="mx-auto max-w-lg"
+        className="mx-auto w-full max-w-lg"
       >
-        <Container title="Update your password" className="mb-20 mt-12 w-full">
+        <Container
+          title="Update your password"
+          className="w-full bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80"
+        >
           <Form
             {...getFormProps(form)}
             method="post"
@@ -199,6 +201,6 @@ export default function ChangeEmail({
           </Form>
         </Container>
       </motion.div>
-    </>
+    </OptionalContainer>
   );
 }
