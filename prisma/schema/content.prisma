@@ -8,21 +8,53 @@ model Content {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  likes          Like[]
-  comments       Comment[]
-  reviews        Review[]
-  enrollments    Enrollment[]
-  courseProgress CourseProgress[]
-  timeSpent      TimeSpent[]
+  likes           Like[]
+  comments        Comment[]
+  reviews         Review[]
+  enrollments     Enrollment[]
+  courseProgress  CourseProgress[]
+  programProgress ProgramProgress[]
+  timeSpent       TimeSpent[]
 
-  @@index([sanityId])
-  @@index([sanityId, type])
+  @@unique([sanityId, type])
 }
 
 enum ContentType {
   ARTICLE
   TUTORIAL
   COURSE
+  PROGRAM
+}
+
+model ProgramProgress {
+  id String @id @default(ulid())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  content   Content @relation(fields: [contentId], references: [id])
+  contentId String
+
+  currentCourse    String?
+  currentModule    String? // Active module ID
+  currentLesson    String? // Active lesson ID
+  completedLessons Json? // List of completed lesson IDs
+  completedModules Json? // List of completed module IDs
+  completedCourses Json?
+
+  courses CourseProgress[]
+
+  // Progress metrics
+  progress    Int         @default(0) // 0-100
+  isCompleted Boolean     @default(false)
+  completedAt DateTime?
+  startedAt   DateTime    @default(now())
+  lastActive  DateTime    @default(now())
+  timeSpent   TimeSpent[]
+
+  @@unique([userId, contentId])
+  @@index([userId])
+  @@index([contentId])
 }
 
 model CourseProgress {
@@ -42,12 +74,14 @@ model CourseProgress {
   modules ModuleProgress[]
 
   // Progress metrics
-  progress    Int         @default(0) // 0-100
-  isCompleted Boolean     @default(false)
-  completedAt DateTime?
-  startedAt   DateTime    @default(now())
-  lastActive  DateTime    @default(now())
-  timeSpent   TimeSpent[]
+  progress          Int              @default(0) // 0-100
+  isCompleted       Boolean          @default(false)
+  completedAt       DateTime?
+  startedAt         DateTime         @default(now())
+  lastActive        DateTime         @default(now())
+  timeSpent         TimeSpent[]
+  ProgramProgress   ProgramProgress? @relation(fields: [programProgressId], references: [id])
+  programProgressId String?
 
   @@unique([userId, contentId])
   @@index([userId])
@@ -120,10 +154,11 @@ model Comment {
 }
 
 model Review {
-  id     String       @id @default(ulid())
-  rating Int
-  body   String
-  status ReviewStatus @default(PENDING)
+  id       String       @id @default(ulid())
+  rating   Int
+  body     String
+  featured Boolean      @default(false)
+  status   ReviewStatus @default(PENDING)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -165,7 +200,7 @@ model Enrollment {
 
 model TimeSpent {
   id        String   @id @default(ulid())
-  timeSpent Int // Time spent in seconds
+  timeSpent Int // Time spent in milliseconds
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -182,8 +217,10 @@ model TimeSpent {
   moduleProgressId String?
   moduleProgress   ModuleProgress? @relation(fields: [moduleProgressId], references: [id], onDelete: Cascade)
 
-  pageType   PageType
-  lastActive DateTime @default(now())
+  pageType          PageType
+  lastActive        DateTime         @default(now())
+  ProgramProgress   ProgramProgress? @relation(fields: [programProgressId], references: [id])
+  programProgressId String?
 
   @@index([userId])
   @@index([contentId])
@@ -195,6 +232,7 @@ model TimeSpent {
 enum PageType {
   ARTICLE
   TUTORIAL
+  PROGRAM
   COURSE
   MODULE
   LESSON

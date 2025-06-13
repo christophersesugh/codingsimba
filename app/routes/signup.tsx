@@ -27,8 +27,7 @@ import { Button } from "~/components/ui/button";
 import { parseWithZod } from "@conform-to/zod";
 import { StatusCodes } from "http-status-codes";
 import { FormConsent } from "~/components/form-consent";
-import { requireAnonymous } from "~/utils/auth.server";
-import { SignupEmail } from "~/components/email-templates/email-verification";
+import { SignupEmail } from "~/components/email-templates/verification";
 import { onboardingSessionKey } from "./onboarding";
 import { sendEmail } from "~/services.server/resend";
 import { verifySessionStorage } from "~/utils/verification.server";
@@ -36,7 +35,8 @@ import { getDomainUrl } from "~/utils/misc";
 import { prisma } from "~/utils/db.server";
 import type { Verification } from "~/generated/prisma";
 import { codeQueryParam, targetQueryParam, typeQueryParam } from "./verify";
-import { ProviderConnectionForm } from "~/components/provider-connection-form";
+import { ConnectionForm } from "~/components/connection-form";
+import { requireAnonymous } from "~/utils/auth.server";
 
 const AuthSchema = z.object({
   email: z
@@ -199,7 +199,7 @@ export default function Signup({ actionData }: Route.ComponentProps) {
               </div>
             </div>
             <div className="w-full">
-              <ProviderConnectionForm
+              <ConnectionForm
                 redirectTo={redirectTo}
                 providerName="github"
                 type="Signup"

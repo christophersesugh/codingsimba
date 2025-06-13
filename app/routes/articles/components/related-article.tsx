@@ -1,4 +1,3 @@
-// import type { Article } from "~/services.server/sanity/articles/types";
 import { Card, CardTitle, CardContent } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Link, PrefetchPageLinks } from "react-router";

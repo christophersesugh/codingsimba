@@ -1,4 +1,4 @@
-import { ProviderNameSchema } from "~/components/provider-connection-form";
+import { ProviderNameSchema } from "~/components/connection-form";
 import type { Route } from "./+types/index";
 import { redirect } from "react-router";
 import { authenticator } from "~/utils/auth.server";
@@ -7,7 +7,7 @@ import { getReferrerRoute } from "~/utils/misc";
 import { getRedirectCookieHeader } from "~/utils/redirect-cookie.server";
 
 export async function loader() {
-  return redirect("/signin");
+  return redirect("/");
 }
 
 export async function action({ request, params }: Route.ActionArgs) {
@@ -17,8 +17,6 @@ export async function action({ request, params }: Route.ActionArgs) {
     await handleMockAction(providerName, request);
     return await authenticator.authenticate(providerName, request);
   } catch (error: unknown) {
-    console.log({ error });
-
     if (error instanceof Response) {
       const formData = await request.formData();
       const rawRedirectTo = formData.get("redirectTo");

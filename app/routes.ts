@@ -24,6 +24,7 @@ export default [
   route("signout", "routes/actions/signout.ts"),
   route("set-theme", "routes/actions/set-theme.ts"),
   route("content/webhook", "routes/actions/sanity-webhook.ts"),
+  route("unsubscribe", "routes/actions/unsubscribe.ts"),
 
   ...prefix("contact", [
     index("routes/contact/index.tsx"),
@@ -53,6 +54,15 @@ export default [
     route(":articleSlug", "routes/articles/article.tsx"),
   ]),
 
+  ...prefix("tutorials", [
+    index("routes/tutorials/index.tsx"),
+    layout("routes/tutorials/layout.tsx", [
+      route(":tutorialId", "routes/tutorials/tutorial.tsx", [
+        route("lessons/:lessonId", "routes/tutorials/lesson.tsx"),
+      ]),
+    ]),
+  ]),
+
   ...prefix("courses", [
     index("routes/courses/index.tsx"),
     layout("routes/courses/layout.tsx", [
@@ -60,15 +70,6 @@ export default [
         route("modules/:moduleId", "routes/courses/module.tsx", [
           route("lessons/:lessonId", "routes/courses/lesson.tsx"),
         ]),
-      ]),
-    ]),
-  ]),
-
-  ...prefix("tutorials", [
-    index("routes/tutorials/index.tsx"),
-    layout("routes/tutorials/layout.tsx", [
-      route(":tutorialId", "routes/tutorials/tutorial.tsx", [
-        route("lessons/:lessonId", "routes/tutorials/lesson.tsx"),
       ]),
     ]),
   ]),

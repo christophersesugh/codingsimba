@@ -19,12 +19,9 @@ import { parseWithZod } from "@conform-to/zod";
 import { z } from "zod";
 import { StatusCodes } from "http-status-codes";
 import { FormConsent } from "~/components/form-consent";
-import {
-  handleNewSession,
-  requireAnonymous,
-  signin,
-} from "~/utils/auth.server";
-import { ProviderConnectionForm } from "~/components/provider-connection-form";
+import { ConnectionForm } from "~/components/connection-form";
+import { requireAnonymous, signin } from "~/utils/auth.server";
+import { handleNewSession } from "~/utils/session.server";
 
 const AuthSchema = z.object({
   email: z
@@ -56,7 +53,6 @@ export async function action({ request }: Route.ActionArgs) {
     schema: AuthSchema.transform(async (data, ctx) => {
       const { email, password, intent } = data;
       if (intent !== "submit") return { ...data, session: null };
-
       const session = await signin({ email, password });
       if (!session) {
         ctx.addIssue({
@@ -88,7 +84,12 @@ export async function action({ request }: Route.ActionArgs) {
 
   const { rememberMe, redirectTo, session } = submission.value;
 
-  return await handleNewSession({ request, session, redirectTo, rememberMe });
+  return await handleNewSession({
+    request,
+    session,
+    redirectTo,
+    rememberMe,
+  });
 }
 
 export default function Signin({ actionData }: Route.ComponentProps) {
@@ -194,7 +195,7 @@ export default function Signin({ actionData }: Route.ComponentProps) {
               </div>
             </div>
             <div className="w-full">
-              <ProviderConnectionForm
+              <ConnectionForm
                 redirectTo={redirectTo}
                 providerName="github"
                 type="Signin"

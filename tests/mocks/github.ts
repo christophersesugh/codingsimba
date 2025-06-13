@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import { faker } from "@faker-js/faker";
 import fsExtra from "fs-extra";
 import { HttpResponse, passthrough, http, type HttpHandler } from "msw";
+import { StatusCodes } from "http-status-codes";
 
 const { json } = HttpResponse;
 
@@ -116,14 +117,14 @@ async function getUser(request: Request) {
     ?.slice("token ".length);
 
   if (!accessToken) {
-    return new Response("Unauthorized", { status: 401 });
+    return new Response("Unauthorized", { status: StatusCodes.UNAUTHORIZED });
   }
   const user = (await getGitHubUsers()).find(
     (u) => u.accessToken === accessToken,
   );
 
   if (!user) {
-    return new Response("Not Found", { status: 404 });
+    return new Response("Not Found", { status: StatusCodes.NOT_FOUND });
   }
   return user;
 }
@@ -132,13 +133,9 @@ const passthroughGitHub =
   !process.env.GITHUB_CLIENT_ID.startsWith("MOCK_") &&
   process.env.MOCKS !== "true";
 export const handlers: Array<HttpHandler> = [
-  // test this github stuff out without going through github's oauth flow by
-  // going to http://localhost:3000/auth/github/callback?code=MOCK_GITHUB_CODE_KODY&state=MOCK_STATE
   http.post(
     "https://github.com/login/oauth/access_token",
     async ({ request }) => {
-      // Test error
-      // throw new Error('AAAAAAAAAAAAAAAAAAAAAAAAAAAA')
       if (passthroughGitHub) return passthrough();
       const params = new URLSearchParams(await request.text());
 
@@ -152,12 +149,13 @@ export const handlers: Array<HttpHandler> = [
       return new Response(
         new URLSearchParams({
           access_token: user.accessToken,
-          token_type: "__MOCK_TOKEN_TYPE__",
+          token_type: "bearer",
         }).toString(),
         { headers: { "content-type": "application/x-www-form-urlencoded" } },
       );
     },
   ),
+
   http.get("https://api.github.com/user/emails", async ({ request }) => {
     if (passthroughGitHub) return passthrough();
 
@@ -174,7 +172,7 @@ export const handlers: Array<HttpHandler> = [
     );
     if (mockUser) return json(mockUser.profile);
 
-    return new Response("Not Found", { status: 404 });
+    return new Response("Not Found", { status: StatusCodes.NOT_FOUND });
   }),
   http.get("https://api.github.com/user", async ({ request }) => {
     if (passthroughGitHub) return passthrough();

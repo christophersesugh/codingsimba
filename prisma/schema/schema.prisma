@@ -25,6 +25,7 @@ model User {
   likes                Like[]
   comments             Comment[]
   reviews              Review[]
+  programProgress      ProgramProgress[]
   courseProgress       CourseProgress[]
   moduleProgress       ModuleProgress[]
   enrollments          Enrollment[]

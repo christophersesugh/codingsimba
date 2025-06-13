@@ -70,5 +70,41 @@
       }
     ],
     "primaryEmail": "Jeff.Parisian@hotmail.com"
+  },
+  {
+    "code": "MOCK_CODE_GITHUB_CS",
+    "accessToken": "MOCK_CODE_GITHUB_CS_mock_access_token",
+    "profile": {
+      "login": "Genevieve.Corwin",
+      "id": "MOCK_CODE_GITHUB_CS_profile_id",
+      "name": "Dr. Archie Kozey V",
+      "avatar_url": "https://github.com/ghost.png",
+      "emails": [
+        "Ramiro.Hickle@gmail.com",
+        "Chauncey_Kohler10@hotmail.com",
+        "Aisha.Batz19@gmail.com"
+      ]
+    },
+    "emails": [
+      {
+        "email": "Ramiro.Hickle@gmail.com",
+        "verified": false,
+        "primary": false,
+        "visibility": "public"
+      },
+      {
+        "email": "Chauncey_Kohler10@hotmail.com",
+        "verified": true,
+        "primary": false,
+        "visibility": null
+      },
+      {
+        "email": "Aisha.Batz19@gmail.com",
+        "verified": true,
+        "primary": true,
+        "visibility": "public"
+      }
+    ],
+    "primaryEmail": "Aisha.Batz19@gmail.com"
   }
 ]

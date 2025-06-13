@@ -1,5 +1,5 @@
 import { createCookieSessionStorage } from "react-router";
-import { type ProviderName } from "~/components/provider-connection-form";
+import { type ProviderName } from "~/components/connection-form";
 import { GitHubProvider } from "./providers/github.server";
 import { type AuthProvider } from "./providers/provider";
 
@@ -11,7 +11,8 @@ export const connectionSessionStorage = createCookieSessionStorage({
     httpOnly: true,
     maxAge: 60 * 10, // 10 minutes
     secrets: process.env.SESSION_SECRET.split(","),
-    secure: process.env.NODE_ENV === "production",
+    secure: true,
+    // process.env.NODE_ENV === "production",
   },
 });
 
@@ -19,11 +20,14 @@ export const providers: Record<ProviderName, AuthProvider> = {
   github: new GitHubProvider(),
 };
 
-export function handleMockAction(providerName: ProviderName, request: Request) {
+export async function handleMockAction(
+  providerName: ProviderName,
+  request: Request,
+) {
   return providers[providerName].handleMockAction(request);
 }
 
-export function resolveConnectionData(
+export async function resolveConnectionData(
   providerName: ProviderName,
   providerId: string,
 ) {

@@ -9,11 +9,9 @@ export const schema = z.object({
   BUNNY_ACCESS_KEY: z.string(),
   GITHUB_CLIENT_ID: z.string(),
   GITHUB_CLIENT_SECRET: z.string(),
-  // VIDEO_LIBRARY_ID: z.string(),
   RESEND_API_KEY: z.string(),
   SANITY_STUDIO_PROJECT_ID: z.string(),
   SANITY_STUDIO_DATASET: z.string(),
-  // REDIS_CLIENT_URL: z.string(),
 });
 
 declare global {

@@ -33,7 +33,7 @@ import {
 } from "~/utils/auth.server";
 import { verifySessionStorage } from "~/utils/verification.server";
 import { safeRedirect } from "remix-utils/safe-redirect";
-import { ProviderNameSchema } from "~/components/provider-connection-form";
+import { ProviderNameSchema } from "~/components/connection-form";
 import { authSessionStorage } from "~/utils/session.server";
 
 export const onboardingSessionKey = "onboardingEmail";

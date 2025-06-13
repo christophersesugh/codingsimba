@@ -203,7 +203,7 @@ export class MarkdownConverter {
    * ```
    */
   static async toHtml(markdown: string) {
-    return await marked.parse(DOMPurify.sanitize(markdown));
+    return marked.parse(DOMPurify.sanitize(markdown));
   }
 
   /**
