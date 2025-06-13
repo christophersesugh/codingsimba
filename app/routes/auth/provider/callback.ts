@@ -4,7 +4,7 @@ import {
   authenticator,
   getSessionExpirationDate,
   getUserId,
-} from "~/utils/auth.server";
+} from "../auh.server";
 import { verifySessionStorage } from "~/utils/verification.server";
 import {
   onboardingSessionKey,

@@ -1,4 +1,4 @@
-import { requireUserId } from "~/utils/auth.server";
+import { requireUserId } from "../auth/auh.server";
 import type { Route } from "./+types/download-user-data";
 import { prisma } from "~/utils/db.server";
 

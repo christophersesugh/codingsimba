@@ -11,7 +11,7 @@ import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { Container } from "./profile/components/container";
+import { Container } from "../profile/components/container";
 import { OptionalContainer } from "~/components/optional-container";
 
 const EmailSchema = z.object({

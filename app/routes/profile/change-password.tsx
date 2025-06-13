@@ -9,7 +9,7 @@ import {
   getPasswordHash,
   requireUserId,
   verifyUserPassword,
-} from "~/utils/auth.server";
+} from "../auth/auh.server";
 import { data, Form, Link, useNavigation } from "react-router";
 import { FormError } from "~/components/form-errors";
 import { Label } from "~/components/ui/label";

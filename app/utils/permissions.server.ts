@@ -1,11 +1,11 @@
 import { data } from "react-router";
 import { StatusCodes } from "http-status-codes";
-import { requireUserId } from "./auth.server";
 import { prisma } from "./db.server";
 import type { Comment, RoleName } from "~/generated/prisma/client";
-import { type PermissionString, parsePermissionString } from "./user";
+import { type PermissionString, parsePermissionString } from "./permissions";
 import type { Entity } from "~/generated/prisma/enums";
 import type { IComment } from "~/components/comment";
+import { requireUserId } from "~/routes/auth/auh.server";
 
 /**
  * Requires a user to have a specific permission

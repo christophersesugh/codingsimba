@@ -30,7 +30,7 @@ import {
   requireAnonymous,
   sessionKey,
   signupWithConnection,
-} from "~/utils/auth.server";
+} from "../auh.server";
 import { verifySessionStorage } from "~/utils/verification.server";
 import { safeRedirect } from "remix-utils/safe-redirect";
 import { ProviderNameSchema } from "~/components/connection-form";

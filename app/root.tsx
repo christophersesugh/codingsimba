@@ -27,7 +27,7 @@ import { GeneralErrorBoundary } from "./components/error-boundary";
 import { MobileNavProvider } from "./contexts/mobile-nav";
 import { MobileNav } from "./components/mobile-nav";
 import { prisma } from "./utils/db.server";
-import { sessionKey } from "./utils/auth.server";
+import { sessionKey } from "./routes/auth/auh.server";
 import { Toaster } from "./components/ui/sonner";
 import { getToast } from "./utils/toast.server";
 import { combineHeaders } from "./utils/misc";

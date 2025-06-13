@@ -33,16 +33,15 @@ import {
   upvoteReply,
   trackPageView,
   upvoteArticle,
-  getArticleMetrics,
-  getArticleComments,
-} from "~/utils/articles.server";
+} from "./action.server";
+import { getArticleMetrics, getArticleComments } from "./loader.server";
 import { UpdateSchema } from "~/hooks/content";
 import { z } from "zod";
 import { useOptionalUser } from "~/hooks/user";
 import { usePageView, type PageViewData } from "use-page-view";
-import { getUserId } from "~/utils/auth.server";
 import { GeneralErrorBoundary } from "~/components/error-boundary";
 import { determinePermissions } from "~/utils/permissions.server";
+import { getUserId } from "../auth/auh.server";
 
 const SearchParamsSchema = z.object({
   commentTake: z.coerce.number().default(5),

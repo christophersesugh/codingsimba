@@ -25,7 +25,7 @@ import { Button } from "~/components/ui/button";
 import { parseWithZod } from "@conform-to/zod";
 import { StatusCodes } from "http-status-codes";
 import { prisma } from "~/utils/db.server";
-import { requireAnonymous, sessionKey, signup } from "~/utils/auth.server";
+import { requireAnonymous, sessionKey, signup } from "../auh.server";
 import { authSessionStorage } from "~/utils/session.server";
 import { verifySessionStorage } from "~/utils/verification.server";
 import { safeRedirect } from "remix-utils/safe-redirect";

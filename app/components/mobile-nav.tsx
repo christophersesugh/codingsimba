@@ -15,7 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { useOptionalUser } from "~/hooks/user";
-import { getInitials } from "~/utils/user";
+import { getInitials } from "~/utils/permissions";
 import {
   DropdownMenu,
   DropdownMenuContent,

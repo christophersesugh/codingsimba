@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Send, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { useOptionalUser } from "~/hooks/user";
-import { getInitials } from "~/utils/user";
+import { getInitials } from "~/utils/permissions";
 import { MDXEditor } from "../mdx/editor";
 
 type CommentFormProps = {

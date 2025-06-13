@@ -17,7 +17,7 @@ import { CommentForm } from "./comment-form";
 import { Markdown } from "../mdx";
 import { useOptionalUser } from "~/hooks/user";
 import { useUpvote, useDelete, useCreate, useUpdate } from "~/hooks/content";
-import { getInitials } from "~/utils/user";
+import { getInitials } from "~/utils/permissions";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { cn } from "~/lib/shadcn";

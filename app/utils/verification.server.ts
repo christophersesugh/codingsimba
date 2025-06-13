@@ -1,7 +1,7 @@
 import { createCookieSessionStorage, redirect } from "react-router";
-import type { VerifyFunctionArgs } from "~/routes/verify";
+import type { VerifyFunctionArgs } from "~/routes/auth/verify";
 import { invariant } from "./misc";
-import { onboardingSessionKey } from "~/routes/onboarding";
+import { onboardingSessionKey } from "~/routes/auth/onboarding";
 
 export const verifySessionStorage = createCookieSessionStorage({
   cookie: {

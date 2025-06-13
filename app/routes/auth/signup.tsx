@@ -1,7 +1,16 @@
-import type { Route } from "./+types/signin";
+import type { Route } from "./+types/signup";
+import { z } from "zod";
 import { motion } from "framer-motion";
+import { generateTOTP } from "@epic-web/totp";
 import { LoaderCircle } from "lucide-react";
-import { data, Form, Link, useNavigation, useSearchParams } from "react-router";
+import {
+  data,
+  Form,
+  Link,
+  redirect,
+  useNavigation,
+  useSearchParams,
+} from "react-router";
 import {
   Card,
   CardContent,
@@ -16,29 +25,26 @@ import { Label } from "~/components/ui/label";
 import { FormError } from "~/components/form-errors";
 import { Button } from "~/components/ui/button";
 import { parseWithZod } from "@conform-to/zod";
-import { z } from "zod";
 import { StatusCodes } from "http-status-codes";
 import { FormConsent } from "~/components/form-consent";
+import { SignupEmail } from "~/components/email-templates/verification";
+import { onboardingSessionKey } from "./onboarding";
+import { sendEmail } from "~/services.server/resend";
+import { verifySessionStorage } from "~/utils/verification.server";
+import { getDomainUrl } from "~/utils/misc";
+import { prisma } from "~/utils/db.server";
+import type { Verification } from "~/generated/prisma";
+import { codeQueryParam, targetQueryParam, typeQueryParam } from "./verify";
 import { ConnectionForm } from "~/components/connection-form";
-import { requireAnonymous, signin } from "~/utils/auth.server";
-import { handleNewSession } from "~/utils/session.server";
+import { requireAnonymous } from "./auh.server";
 
 const AuthSchema = z.object({
   email: z
     .string({ required_error: "Email is required" })
-    .email("Please enter a valid email address")
-    .trim()
-    .toLowerCase(),
-  password: z
-    .string({ required_error: "Password is required" })
-    .min(6, "Password must be at least 6 characters")
-    .max(30, "Password must be less than or equal to 30 characters"),
+    .email("Please enter a valid email address"),
   intent: z.literal("submit"),
   redirectTo: z.string().optional(),
-  rememberMe: z
-    .boolean()
-    .optional()
-    .transform((val) => (val ? "true" : undefined)),
+  rememberMe: z.string().optional(),
 });
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -49,22 +55,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
 
-  const submission = await parseWithZod(formData, {
-    schema: AuthSchema.transform(async (data, ctx) => {
-      const { email, password, intent } = data;
-      if (intent !== "submit") return { ...data, session: null };
-      const session = await signin({ email, password });
-      if (!session) {
-        ctx.addIssue({
-          path: ["root"],
-          code: z.ZodIssueCode.custom,
-          message: "Invalid credentials.",
-        });
-        return z.NEVER;
-      }
-      return { ...data, session };
-    }),
-    async: true,
+  const submission = parseWithZod(formData, {
+    schema: AuthSchema,
   });
 
   if (submission.status !== "success") {
@@ -76,30 +68,64 @@ export async function action({ request }: Route.ActionArgs) {
     });
   }
 
-  if (!submission.value.session) {
-    return data({ status: "error", ...submission.reply() } as const, {
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
-    });
-  }
+  const { email } = submission.value;
 
-  const { rememberMe, redirectTo, session } = submission.value;
+  const verifySession = await verifySessionStorage.getSession(
+    request.headers.get("cookie"),
+  );
 
-  return await handleNewSession({
-    request,
-    session,
-    redirectTo,
-    rememberMe,
+  verifySession.set(onboardingSessionKey, email);
+
+  const { otp, ...verificationConfig } = await generateTOTP({
+    period: 10 * 60,
+    algorithm: "SHA-256",
   });
+
+  const redirectToUrl = new URL(`${getDomainUrl(request)}/verify`);
+  const type = "onboarding" as Verification["type"];
+  redirectToUrl.searchParams.set(typeQueryParam, type);
+  redirectToUrl.searchParams.set(targetQueryParam, email);
+
+  const verifyUrl = new URL(redirectToUrl);
+  verifyUrl.searchParams.set(codeQueryParam, otp);
+
+  const verificationData = {
+    type,
+    target: email,
+    ...verificationConfig,
+    expiresAt: new Date(Date.now() + verificationConfig.period * 1000),
+  };
+
+  await prisma.verification.upsert({
+    where: { target_type: { type, target: email } },
+    create: verificationData,
+    update: verificationData,
+  });
+
+  const response = await sendEmail({
+    to: email,
+    subject: `Welcome to Coding Simba!`,
+    react: <SignupEmail code={otp} onboardingUrl={verifyUrl.toString()} />,
+  });
+
+  if (response.status === "success") {
+    return redirect(redirectToUrl.toString());
+  } else {
+    return data(
+      { ...submission.reply({ formErrors: [response.error] }) },
+      { status: StatusCodes.INTERNAL_SERVER_ERROR },
+    );
+  }
 }
 
-export default function Signin({ actionData }: Route.ComponentProps) {
+export default function Signup({ actionData }: Route.ComponentProps) {
   const navigation = useNavigation();
   const [searchParams] = useSearchParams();
 
   const redirectTo = searchParams.get("redirectTo");
 
   const [form, fields] = useForm({
-    id: "signin",
+    id: "signup",
     lastResult: actionData,
     defaultValue: { redirectTo },
     onValidate({ formData }) {
@@ -126,8 +152,8 @@ export default function Signin({ actionData }: Route.ComponentProps) {
       >
         <Card className="border-0 bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Welcome back</CardTitle>
-            <CardDescription>Please enter your credentials</CardDescription>
+            <CardTitle className="text-2xl">Let&apos;s Begin!</CardTitle>
+            <CardDescription>Enter your email to continue</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-6">
@@ -135,6 +161,10 @@ export default function Signin({ actionData }: Route.ComponentProps) {
               <input
                 {...getInputProps(fields.intent, { type: "hidden" })}
                 value="submit"
+              />
+              <input
+                {...getInputProps(fields.redirectTo, { type: "hidden" })}
+                value={redirectTo ?? ""}
               />
               <div className="space-y-2">
                 <Label htmlFor={fields.email.id}>Email</Label>
@@ -144,40 +174,14 @@ export default function Signin({ actionData }: Route.ComponentProps) {
                 />
                 <FormError errors={fields.email.errors} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor={fields.password.id}>Password</Label>
-                <Input
-                  {...getInputProps(fields.password, { type: "password" })}
-                  placeholder="••••••"
-                />
-                <FormError errors={fields.password.errors} />
-              </div>
-              <div className="flex justify-between">
-                <Label
-                  htmlFor={fields.rememberMe.id}
-                  className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
-                >
-                  <input
-                    {...getInputProps(fields.rememberMe, { type: "checkbox" })}
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800"
-                  />
-                  Remember Me
-                </Label>
 
-                <Link
-                  to={"/forgot-password"}
-                  className="text-sm text-blue-700 dark:text-blue-500"
-                >
-                  Forgot your password?
-                </Link>
-              </div>
               <Button
                 type="submit"
                 className="w-full"
                 disabled={isSubmitting}
-                aria-label="Sign in"
+                aria-label="Signup"
               >
-                Sign In
+                Submit{" "}
                 {isSubmitting ? (
                   <LoaderCircle className="ml-2 animate-spin" />
                 ) : null}
@@ -198,21 +202,22 @@ export default function Signin({ actionData }: Route.ComponentProps) {
               <ConnectionForm
                 redirectTo={redirectTo}
                 providerName="github"
-                type="Signin"
+                type="Signup"
               />
             </div>
+
             <div className="text-center">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Don&apos;t have an account?{" "}
+                Already have an account?{" "}
                 <Link
-                  to="/signup"
+                  to="/signin"
                   className="font-medium text-blue-600 hover:underline dark:text-blue-400"
                 >
-                  Signup
+                  Signin
                 </Link>
               </p>
             </div>
-            <FormConsent type="signin" />
+            <FormConsent type="signup" />
           </CardContent>
         </Card>
       </motion.div>

@@ -1,23 +1,18 @@
-// import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
 import {
   type Connection,
   type Password,
   type Profile,
-  // type Connection,
   type User,
 } from "~/generated/prisma";
 import { redirect } from "react-router";
 import { Authenticator } from "remix-auth";
 import { safeRedirect } from "remix-utils/safe-redirect";
-import { providers } from "./connection.server";
-import { prisma } from "./db.server";
-import { combineHeaders, combineResponseInits } from "./misc";
-import { authSessionStorage } from "./session.server";
-import type { ProviderUser } from "./providers/provider";
-// import { type ProviderUser } from "./providers/provider";
-// import { authSessionStorage } from "./session.server.ts";
-// import { uploadProfileImage } from "./storage.server.ts";
+import { prisma } from "~/utils/db.server";
+import type { ProviderUser } from "~/utils/providers/provider";
+import { providers } from "~/utils/connection.server";
+import { authSessionStorage } from "~/utils/session.server";
+import { combineHeaders } from "~/utils/misc";
 
 export const SESSION_EXPIRATION_TIME = 14 * 24 * 60 * 60 * 1000; // 14 days
 export const getSessionExpirationDate = () =>
@@ -245,11 +240,8 @@ export async function signout(
     request.headers.get("cookie"),
   );
   const sessionId = authSession.get(sessionKey);
-  // if this fails, we still need to delete the session from the user's browser
-  // and it doesn't do any harm staying in the db anyway.
+
   if (sessionId) {
-    // the .catch is important because that's what triggers the query.
-    // learn more about PrismaPromise: https://www.prisma.io/docs/orm/reference/prisma-client-reference#prismapromise-behavior
     void prisma.session
       .deleteMany({ where: { id: sessionId } })
       .catch(() => {});
@@ -261,61 +253,4 @@ export async function signout(
       responseInit?.headers,
     ),
   });
-}
-
-export async function handleNewSession(
-  {
-    request,
-    session,
-    redirectTo,
-    rememberMe = undefined,
-  }: {
-    request: Request;
-    session: { userId: string; id: string; expirationDate: Date };
-    redirectTo?: string;
-    rememberMe?: "true" | undefined;
-  },
-  responseInit?: ResponseInit,
-) {
-  // if (await shouldRequestTwoFA({ request, userId: session.userId })) {
-  //   const verifySession = await verifySessionStorage.getSession();
-  //   verifySession.set(unverifiedSessionIdKey, session.id);
-  //   verifySession.set(rememberKey, remember);
-  //   const redirectUrl = getRedirectToUrl({
-  //     request,
-  //     type: twoFAVerificationType,
-  //     target: session.userId,
-  //   });
-  //   return redirect(
-  //     redirectUrl.toString(),
-  //     combineResponseInits(
-  //       {
-  //         headers: {
-  //           "set-cookie":
-  //             await verifySessionStorage.commitSession(verifySession),
-  //         },
-  //       },
-  //       responseInit,
-  //     ),
-  //   );
-  // } else {
-  const authSession = await authSessionStorage.getSession(
-    request.headers.get("cookie"),
-  );
-  authSession.set(sessionKey, session.id);
-
-  return redirect(
-    safeRedirect(redirectTo),
-    combineResponseInits(
-      {
-        headers: {
-          "set-cookie": await authSessionStorage.commitSession(authSession, {
-            expires: rememberMe ? session.expirationDate : undefined,
-          }),
-        },
-      },
-      responseInit,
-    ),
-  );
-  // }
 }

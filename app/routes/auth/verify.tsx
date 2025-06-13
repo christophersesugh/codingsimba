@@ -1,6 +1,6 @@
 import React from "react";
 import type { Route } from "./+types/verify";
-import { verifyTOTP } from "@epic-web/totp";
+import { TOTP } from "~/utils/totp.server";
 import { motion } from "framer-motion";
 import { Mail, ArrowLeft, RefreshCw } from "lucide-react";
 import {
@@ -58,7 +58,7 @@ async function validateRequest(
         return z.NEVER;
       }
 
-      const codeIsValid = await verifyTOTP({
+      const codeIsValid = await TOTP.verifyTOTP({
         otp: data[codeQueryParam],
         ...verification,
       });

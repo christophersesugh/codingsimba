@@ -435,6 +435,61 @@ export function getReferrerRoute(request: Request) {
 }
 
 /**
+ * Generates initials from a person's name.
+ * Handles various name formats and edge cases.
+ *
+ * @param name - The full name to generate initials from
+ * @returns A string containing the initials (e.g., "JD" for "John Doe")
+ *
+ * @example
+ * ```ts
+ * const initials = getInitials("John Doe"); // "JD"
+ * const singleName = getInitials("John"); // "J"
+ * const withMiddle = getInitials("John A. Doe"); // "JD"
+ * ```
+ */
+export function getInitials(name: string): string {
+  if (!name || typeof name !== "string") return "";
+
+  const words = name
+    .split(/\s+/)
+    .filter(
+      (word) => word.length > 0 && !(word.length === 2 && word.endsWith(".")),
+    );
+
+  if (words.length === 1) {
+    return words[0].charAt(0).toUpperCase();
+  }
+
+  const firstInitial = words[0].charAt(0).toUpperCase();
+  const lastInitial = words[words.length - 1].charAt(0).toUpperCase();
+
+  return `${firstInitial}${lastInitial}`;
+}
+
+/**
+ * Capitalizes each word in a name string.
+ * Handles multiple spaces and preserves existing capitalization patterns.
+ *
+ * @param name - The name string to capitalize
+ * @returns The capitalized name string
+ *
+ * @example
+ * ```ts
+ * const name = capitalizeName("john doe"); // "John Doe"
+ * const complex = capitalizeName("mary-jane O'connor"); // "Mary-Jane O'Connor"
+ * ```
+ */
+export function capitalizeName(name: string) {
+  return name
+    .trim()
+    .replace(
+      /\b\w+/g,
+      (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+    );
+}
+
+/**
  * Formats a number of seconds into a time string with hours, minutes, and seconds.
  * Returns HH:MM:SS format if hours are present, otherwise MM:SS format.
  * Pads minutes and seconds with leading zeros for consistent formatting.

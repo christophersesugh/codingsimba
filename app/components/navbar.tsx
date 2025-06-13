@@ -9,7 +9,7 @@ import { Logo } from "./logo";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useMobileNav } from "~/contexts/mobile-nav";
 import { useOptionalUser } from "~/hooks/user";
-import { getInitials } from "~/utils/user";
+import { getInitials } from "~/utils/permissions";
 import {
   DropdownMenu,
   DropdownMenuContent,

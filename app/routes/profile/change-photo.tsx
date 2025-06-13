@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { prisma } from "~/utils/db.server";
-import { requireUserId } from "~/utils/auth.server";
+import { requireUserId } from "../auth/auh.server";
 import { Form, Link, useNavigation } from "react-router";
 import { FormError } from "~/components/form-errors";
 import { Label } from "~/components/ui/label";
@@ -14,7 +14,6 @@ import { Button } from "~/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { OptionalContainer } from "~/components/optional-container";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { getInitials } from "~/utils/user";
 import {
   Card,
   CardFooter,
@@ -23,6 +22,7 @@ import {
   CardHeader,
   CardDescription,
 } from "~/components/ui/card";
+import { getInitials } from "~/utils/misc";
 
 const EmailSchema = z.object({
   intent: z.literal("submit"),

@@ -11,17 +11,17 @@ export default [
   route("terms", "routes/terms.tsx"),
   route("about", "routes/about/index.tsx"),
   route("privacy", "routes/privacy.tsx"),
-  route("verify", "routes/verify.tsx"),
-  route("signup", "routes/signup.tsx"),
-  route("signin", "routes/signin.tsx"),
-  route("forgot-password", "routes/forgot-password.tsx"),
+  route("verify", "routes/auth/verify.tsx"),
+  route("signup", "routes/auth/signup.tsx"),
+  route("signin", "routes/auth/signin.tsx"),
+  route("signout", "routes/auth/signout.ts"),
+  route("forgot-password", "routes/auth/forgot-password.tsx"),
   route("*", "routes/not-found.tsx"),
 
   // Resource routes
   route("download-user-data", "routes/resources/download-user-data.ts"),
 
   // Action routes
-  route("signout", "routes/actions/signout.ts"),
   route("set-theme", "routes/actions/set-theme.ts"),
   route("content/webhook", "routes/actions/sanity-webhook.ts"),
   route("unsubscribe", "routes/actions/unsubscribe.ts"),
@@ -40,13 +40,13 @@ export default [
   ]),
 
   ...prefix("auth", [
-    route(":provider", "routes/provider/index.ts"),
-    route(":provider/callback", "routes/provider/callback.ts"),
+    route(":provider", "routes/auth/provider/index.ts"),
+    route(":provider/callback", "routes/auth/provider/callback.ts"),
   ]),
 
   ...prefix("onboarding", [
-    index("routes/onboarding/index.tsx"),
-    route(":provider", "routes/onboarding/provider.tsx"),
+    index("routes/auth/onboarding/index.tsx"),
+    route(":provider", "routes/auth/onboarding/provider.tsx"),
   ]),
 
   ...prefix("articles", [
@@ -73,4 +73,15 @@ export default [
       ]),
     ]),
   ]),
+
+  // ...prefix("programs", [
+  //   index("routes/courses/index.tsx"),
+  //   layout("routes/courses/layout.tsx", [
+  //     route(":courseId", "routes/courses/course.tsx", [
+  //       route("modules/:moduleId", "routes/courses/module.tsx", [
+  //         route("lessons/:lessonId", "routes/courses/lesson.tsx"),
+  //       ]),
+  //     ]),
+  //   ]),
+  // ]),
 ] satisfies RouteConfig;
