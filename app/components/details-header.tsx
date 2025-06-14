@@ -23,6 +23,7 @@ export function DetailsHeader({ item }: DetailsHeaderProps) {
   const isArticle = itemType === "articles";
   // const isTutorial = itemType === "tutorials";
   // const isCourse = itemType === "courses";
+  // const isProgram = itemType === "programs"
 
   const stats = isArticle ? readingTime(item.markdown) : null;
 

@@ -53,6 +53,7 @@ model ProgramProgress {
   timeSpent   TimeSpent[]
 
   @@unique([userId, contentId])
+  @@index([userId, isCompleted])
   @@index([userId])
   @@index([contentId])
 }
@@ -84,6 +85,7 @@ model CourseProgress {
   programProgressId String?
 
   @@unique([userId, contentId])
+  @@index([userId, isCompleted])
   @@index([userId])
   @@index([contentId])
 }
@@ -109,6 +111,7 @@ model ModuleProgress {
 
   @@index([userId])
   @@index([courseProgressId])
+  @@index([userId, isCompleted])
   @@index([courseProgressId, userId])
 }
 
@@ -151,6 +154,7 @@ model Comment {
   @@index([authorId])
   @@index([contentId])
   @@index([parentId])
+  @@index([createdAt])
 }
 
 model Review {
@@ -172,6 +176,7 @@ model Review {
   @@unique([authorId, contentId])
   @@index([authorId])
   @@index([contentId])
+  @@index([createdAt])
 }
 
 enum ReviewStatus {

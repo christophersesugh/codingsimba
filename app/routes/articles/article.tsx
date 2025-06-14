@@ -178,7 +178,7 @@ export default function ArticleDetailsRoute({
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
           {/* Main content */}
-          <main className="lg:col-span-8">
+          <main className="w-full max-w-full lg:col-span-8">
             <article className="mb-8">
               <div className="relative mb-8 aspect-video overflow-hidden rounded-xl">
                 <img

@@ -149,7 +149,7 @@ export function Comment({
       <div className="flex items-start space-x-2">
         <Avatar className="-mt-0.5">
           {author?.image ? (
-            <AvatarImage src={author.image} alt={author!.name!} />
+            <AvatarImage src={author.image} alt={author.name!} />
           ) : null}
           <AvatarFallback>{getInitials(author!.name!)}</AvatarFallback>
         </Avatar>

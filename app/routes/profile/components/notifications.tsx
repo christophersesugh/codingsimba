@@ -17,7 +17,6 @@ const stringToBoolean = z.union([z.string(), z.boolean()]).transform((val) => {
 
 export const NotificationSettingsSchema = z.object({
   userId: z.string(),
-  newContent: stringToBoolean,
   contentUpdate: stringToBoolean,
   promotions: stringToBoolean,
   communityEvents: stringToBoolean,

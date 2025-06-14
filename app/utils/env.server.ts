@@ -3,8 +3,10 @@ import { z } from "zod";
 export const schema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"] as const),
   SESSION_SECRET: z.string(),
-  ADMIN_EMAIL: z.string(),
   ADMIN_PASSWORD: z.string(),
+  TURSO_DATABASE_URL: z.string(),
+  TURSO_AUTH_TOKEN: z.string(),
+  DATABASE_URL: z.string().default("file:./dev.db"),
   BUNNY_STORAGE_ZONE: z.string(),
   BUNNY_ACCESS_KEY: z.string(),
   GITHUB_CLIENT_ID: z.string(),
@@ -37,7 +39,6 @@ export function init() {
 export function getEnv() {
   return {
     MODE: process.env.NODE_ENV,
-    CDN_URL: process.env.CDN_URL,
   };
 }
 

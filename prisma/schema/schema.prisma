@@ -1,7 +1,8 @@
 generator client {
-  provider     = "prisma-client"
-  output       = "../../app/generated/prisma"
-  moduleFormat = "esm"
+  provider        = "prisma-client"
+  output          = "../../app/generated/prisma"
+  moduleFormat    = "esm"
+  previewFeatures = ["queryCompiler", "driverAdapters"]
 }
 
 datasource db {
@@ -90,6 +91,8 @@ model Verification {
 
 enum VerificationType {
   onboarding
+  password_reset
+  email_update
 }
 
 model Connection {
