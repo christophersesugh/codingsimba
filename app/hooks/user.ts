@@ -48,9 +48,8 @@ function isUser(
  */
 export function useOptionalUser() {
   const data = useRouteLoaderData<Route.ComponentProps["loaderData"]>("root");
-
   if (!data || !isUser(data.user)) {
-    return undefined;
+    return null;
   }
   return data.user;
 }

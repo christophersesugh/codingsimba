@@ -23,6 +23,7 @@ export function NavLink({
         "m-0 p-0 capitalize text-gray-700 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white",
         { "text-lg": type === "navbar" },
       )}
+      asChild
     >
       <NLink
         className={({ isActive }) =>

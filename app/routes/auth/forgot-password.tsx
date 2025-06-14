@@ -35,7 +35,7 @@ export async function action({ request }: Route.ActionArgs) {
   return {};
 }
 
-export default function ChangeEmail({
+export default function ChangePassword({
   actionData,
   // loaderData,
 }: Route.ComponentProps) {

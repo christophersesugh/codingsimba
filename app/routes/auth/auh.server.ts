@@ -140,7 +140,7 @@ export async function signup({
           },
           notificationSettings: {
             create: {
-              newContent: true,
+              contentUpdate: true,
             },
           },
         },
@@ -201,7 +201,7 @@ export async function signupWithConnection({
       connections: { create: { providerId, providerName } },
       notificationSettings: {
         create: {
-          newContent: true,
+          contentUpdate: true,
         },
       },
       profile: {

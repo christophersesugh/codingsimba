@@ -4,8 +4,7 @@ import { motion } from "framer-motion";
 import { Container } from "./components/container";
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
-import { prisma } from "~/utils/db.server";
-import { requireUserId } from "../auth/auh.server";
+import { requireUser } from "../auth/auh.server";
 import { Form, useNavigation } from "react-router";
 import { FormError } from "~/components/form-errors";
 import { Label } from "~/components/ui/label";
@@ -22,11 +21,7 @@ const EmailSchema = z.object({
 });
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const userId = await requireUserId(request);
-  const user = await prisma.user.findUniqueOrThrow({
-    where: { id: userId },
-    select: { id: true, email: true },
-  });
+  const user = await requireUser(request);
   return { user };
 }
 

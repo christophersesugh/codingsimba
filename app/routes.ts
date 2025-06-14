@@ -39,6 +39,15 @@ export default [
     route("change-photo", "routes/profile/change-photo.tsx"),
   ]),
 
+  ...prefix("admin", [
+    layout("routes/admin/layout.tsx", [
+      index("routes/admin/index.tsx"),
+      route("users", "routes/admin/users.tsx"),
+      route("reviews", "routes/admin/reviews.tsx"),
+      route("moderation", "routes/admin/moderation.tsx"),
+    ]),
+  ]),
+
   ...prefix("auth", [
     route(":provider", "routes/auth/provider/index.ts"),
     route(":provider/callback", "routes/auth/provider/callback.ts"),

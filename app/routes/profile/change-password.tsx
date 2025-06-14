@@ -7,7 +7,7 @@ import { parseWithZod } from "@conform-to/zod";
 import { prisma } from "~/utils/db.server";
 import {
   getPasswordHash,
-  requireUserId,
+  requireUser,
   verifyUserPassword,
 } from "../auth/auh.server";
 import { data, Form, Link, useNavigation } from "react-router";
@@ -46,11 +46,7 @@ const PasswordSchema = z
   });
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const userId = await requireUserId(request);
-  const user = await prisma.user.findUniqueOrThrow({
-    where: { id: userId },
-    select: { id: true, email: true },
-  });
+  const user = await requireUser(request);
   return { user };
 }
 

@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router";
+import { DoorClosed } from "lucide-react";
 import { Button } from "./ui/button";
 import { navLinks } from "~/constants/navlinks";
 import { Menu, UserPen } from "lucide-react";
@@ -18,6 +19,7 @@ import {
 import { Separator } from "./ui/separator";
 import { getInitials } from "~/utils/misc";
 import { SignoutButton } from "./signout-button";
+import { userHasRole } from "~/utils/permissions";
 
 export function Navbar() {
   const location = useLocation();
@@ -25,8 +27,9 @@ export function Navbar() {
   const isHomePage = location.pathname === "/";
 
   const user = useOptionalUser();
-  const profile = user?.profile;
+  const userIsAdmin = userHasRole(user, "ADMIN");
 
+  const profile = user?.profile;
   return (
     <nav
       className={cn("pt-6", {
@@ -55,11 +58,17 @@ export function Navbar() {
               <Link to={"/signin"}>Sign In</Link>
             </Button>
           ) : null}
-
+          {userIsAdmin ? (
+            <Button size={"icon"} variant={"outline"} asChild>
+              <Link to={"/admin"}>
+                <DoorClosed />
+              </Link>
+            </Button>
+          ) : null}
           {profile ? (
             <DropdownMenu>
               <DropdownMenuTrigger className="hidden md:block" asChild>
-                <Avatar className="size-9">
+                <Avatar className="size-8">
                   <AvatarImage src={profile.image!} alt={profile.name!} />
                   <AvatarFallback className="border border-slate-300 dark:border-gray-800">
                     {getInitials(profile.name)}
