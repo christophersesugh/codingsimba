@@ -18,9 +18,10 @@ type JourneyProps = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
   };
-};
+} | null;
 
 export function Journey({ journeyData }: { journeyData: JourneyProps[] }) {
+  if (!journeyData) return;
   return (
     <section className="mb-24">
       <SectionHeader
@@ -29,9 +30,11 @@ export function Journey({ journeyData }: { journeyData: JourneyProps[] }) {
           educator."
       />
       <div className="mx-auto grid auto-rows-auto grid-cols-1 gap-3 md:grid-cols-3">
-        {journeyData.map((item, index) => (
-          <GridItem key={item.slug} index={index} journeyItem={item} />
-        ))}
+        {journeyData
+          ? journeyData.map((item, index) => (
+              <GridItem key={item?.slug} index={index} journeyItem={item} />
+            ))
+          : null}
       </div>
     </section>
   );
@@ -56,7 +59,7 @@ function GridItem({
   ];
 
   const gridClasses = layoutPattern[index % layoutPattern.length] || "";
-  const frontmatter = journeyItem.frontmatter;
+  const frontmatter = journeyItem ? journeyItem.frontmatter : {};
   return (
     <Dialog>
       <DialogContent>
@@ -64,7 +67,7 @@ function GridItem({
           <DialogTitle>{frontmatter.title}</DialogTitle>
         </DialogHeader>
         <div className="-my-6">
-          <Markdown source={journeyItem.content} />
+          <Markdown source={journeyItem!.content} />
         </div>
       </DialogContent>
       <DialogTrigger

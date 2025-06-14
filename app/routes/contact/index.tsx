@@ -45,10 +45,10 @@ export default function ContactPage({ loaderData }: Route.ComponentProps) {
                 className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900"
               >
                 <h3 className="mb-3 text-xl font-bold">
-                  {faq.frontmatter.question}
+                  {faq!.frontmatter.question}
                 </h3>
                 <div className="-my-6">
-                  <Markdown source={faq.content} />
+                  <Markdown source={faq!.content} />
                 </div>
               </div>
             ))}

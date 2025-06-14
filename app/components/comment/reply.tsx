@@ -5,7 +5,6 @@ import { cn } from "~/lib/shadcn";
 import type { PermissionMap, IComment } from ".";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Markdown } from "../mdx";
-import { getInitials } from "~/utils/permissions";
 import { useOptionalUser } from "~/hooks/user";
 import { useUpvote, useDelete, useUpdate } from "~/hooks/content";
 import {
@@ -20,6 +19,7 @@ import {
 } from "../ui/alert-dialog";
 import { CommentForm } from "./comment-form";
 import { useNavigate } from "react-router";
+import { getInitials } from "~/utils/misc";
 
 export function Reply({
   reply,

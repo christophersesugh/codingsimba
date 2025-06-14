@@ -10,7 +10,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import { common, createLowlight } from "lowlight";
 import { MenuBar } from "./menu-bar";
-import { CodeBlockComponent } from "./code-blok-component";
+import { CodeBlockComponent } from "./code-block-component";
 export interface MenuBarProps {
   editor: IEditor | null;
 }

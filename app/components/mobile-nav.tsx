@@ -10,19 +10,20 @@ import { useMobileNav } from "~/contexts/mobile-nav";
 import { navLinks } from "~/constants/navlinks";
 import { NavLink } from "./nav-link";
 import { Separator } from "./ui/separator";
-import { Form, Link } from "react-router";
+import { Link } from "react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { useOptionalUser } from "~/hooks/user";
-import { getInitials } from "~/utils/permissions";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { LogOut, UserPen } from "lucide-react";
+import { UserPen } from "lucide-react";
+import { getInitials } from "~/utils/misc";
+import { SignoutButton } from "./signout-button";
 
 export function MobileNav() {
   const { open, closeMobileNav } = useMobileNav();
@@ -85,20 +86,7 @@ export function MobileNav() {
                   </DropdownMenuItem>
                   <Separator className="my-1" />
 
-                  <Form
-                    method="post"
-                    action="/signout"
-                    className="h-full w-full px-2 font-bold text-red-600 dark:text-red-500"
-                  >
-                    <button
-                      type="submit"
-                      // onClick={closeMobileNav}
-                      className="flex items-center"
-                    >
-                      <LogOut className="mr-2 size-4 font-bold text-red-600 dark:text-red-500" />
-                      Sign Out
-                    </button>
-                  </Form>
+                  <SignoutButton onClick={closeMobileNav} />
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : null}

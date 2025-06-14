@@ -7,7 +7,7 @@ import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/shadcn";
 import type { TabValue } from "..";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { getInitials } from "~/utils/permissions";
+import { getInitials } from "~/utils/misc";
 
 type SideNavProps = {
   tabs: { value: TabValue; Icon: LucideIcon }[];

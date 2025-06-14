@@ -1,6 +1,5 @@
 import { http, HttpResponse, passthrough, type HttpHandler } from "msw";
 import { StatusCodes } from "http-status-codes";
-import articles from "../fixtures/sanity/articles.json";
 import { SANITY_API_URL } from "~/services.server/sanity/loader";
 import {
   articleDetailsQuery,

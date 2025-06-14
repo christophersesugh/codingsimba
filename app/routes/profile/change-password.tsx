@@ -18,7 +18,7 @@ import { Button } from "~/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { StatusCodes } from "http-status-codes";
 import { redirectWithToast } from "~/utils/toast.server";
-import { OptionalContainer } from "~/components/optional-container";
+import { GradientContainer } from "~/components/gradient-container";
 
 const PasswordSchema = z
   .object({
@@ -126,7 +126,7 @@ export default function ChangeEmail({
     shouldValidate: "onBlur",
   });
   return (
-    <OptionalContainer>
+    <GradientContainer>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -201,6 +201,6 @@ export default function ChangeEmail({
           </Form>
         </Container>
       </motion.div>
-    </OptionalContainer>
+    </GradientContainer>
   );
 }

@@ -1,7 +1,7 @@
-import { Form, Link, useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 import { Button } from "./ui/button";
 import { navLinks } from "~/constants/navlinks";
-import { LogOut, Menu, UserPen } from "lucide-react";
+import { Menu, UserPen } from "lucide-react";
 import { NavLink } from "./nav-link";
 import { ThemeToggle } from "./theme-toggle";
 import { cn } from "~/lib/shadcn";
@@ -9,7 +9,6 @@ import { Logo } from "./logo";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useMobileNav } from "~/contexts/mobile-nav";
 import { useOptionalUser } from "~/hooks/user";
-import { getInitials } from "~/utils/permissions";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +16,8 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Separator } from "./ui/separator";
+import { getInitials } from "~/utils/misc";
+import { SignoutButton } from "./signout-button";
 
 export function Navbar() {
   const location = useLocation();
@@ -72,17 +73,7 @@ export function Navbar() {
                   </Link>
                 </DropdownMenuItem>
                 <Separator className="my-1" />
-
-                <Form
-                  method="post"
-                  action="/signout"
-                  className="h-full w-full px-2 font-bold text-red-600 dark:text-red-500"
-                >
-                  <button type="submit" className="flex items-center">
-                    <LogOut className="mr-2 size-4 font-bold text-red-600 dark:text-red-500" />
-                    Sign Out
-                  </button>
-                </Form>
+                <SignoutButton />
               </DropdownMenuContent>
             </DropdownMenu>
           ) : null}
