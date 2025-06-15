@@ -40,8 +40,6 @@ import { z } from "zod";
 import { useOptionalUser } from "~/hooks/user";
 import { usePageView, type PageViewData } from "use-page-view";
 import { GeneralErrorBoundary } from "~/components/error-boundary";
-import { determinePermissions } from "~/utils/permissions.server";
-import { getUserId } from "../auth/auh.server";
 
 const SearchParamsSchema = z.object({
   commentTake: z.coerce.number().default(5),
@@ -62,7 +60,6 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   });
 
   const popularTags = getPopularTags();
-  const userId = await getUserId(request);
   const article = await getArticleDetails(params.articleSlug);
   invariantResponse(article, `Article with slug: '${article.slug}' not found`, {
     status: StatusCodes.NOT_FOUND,
@@ -77,34 +74,11 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     ...parsedParams.data,
   });
 
-  const comments = (await articleComments) ?? [];
-  const replies = comments.flatMap((comment) => comment.replies ?? []);
-
-  const commentPermissions = userId
-    ? [
-        ...(await determinePermissions({
-          userId,
-          entity: "COMMENT",
-          entityArray: comments,
-        })),
-        ...(await determinePermissions({
-          userId,
-          entity: "COMMENT",
-          entityArray: replies,
-        })),
-      ]
-    : [];
-
-  const commentPermissionMap = new Map(
-    commentPermissions.map((p) => [p.commentId, p]),
-  );
-
   return {
     popularTags,
     metrics,
     comments: articleComments,
     article,
-    commentPermissionMap,
   };
 }
 
@@ -124,15 +98,15 @@ export async function action({ request }: Route.ActionArgs) {
     case "add-reply":
       return await addReply(data);
     case "update-comment":
-      return await updateComment(data);
+      return await updateComment(request, data);
     case "delete-comment":
-      return await deleteComment(data);
+      return await deleteComment(request, data);
     case "upvote-comment":
       return await upvoteComment(data);
     case "update-reply":
-      return await updateReply(data);
+      return await updateReply(request, data);
     case "delete-reply":
-      return await deleteReply(data);
+      return await deleteReply(request, data);
     case "upvote-reply":
       return await upvoteReply(data);
     case "upvote-article":
@@ -148,8 +122,7 @@ export async function action({ request }: Route.ActionArgs) {
 export default function ArticleDetailsRoute({
   loaderData,
 }: Route.ComponentProps) {
-  const { popularTags, comments, metrics, article, commentPermissionMap } =
-    loaderData;
+  const { popularTags, comments, metrics, article } = loaderData;
   const user = useOptionalUser();
   const fetcher = useFetcher();
 
@@ -187,7 +160,10 @@ export default function ArticleDetailsRoute({
                   className="aspect-video h-full w-full object-cover"
                 />
               </div>
-              <TableOfContent className="block lg:hidden" />
+              <TableOfContent
+                articleSlug={article.slug}
+                className="block lg:hidden"
+              />
               <Markdown
                 source={article.content}
                 sandpackTemplates={article.sandpackTemplates}
@@ -201,11 +177,7 @@ export default function ArticleDetailsRoute({
             </p>
             <Separator className="mb-4 mt-2" />
 
-            <Comments
-              articleId={article.id}
-              comments={comments}
-              permissionMap={commentPermissionMap}
-            />
+            <Comments articleId={article.id} comments={comments} />
             <Tags article={article} />
             <Share article={article} />
             <Author />
@@ -236,7 +208,10 @@ export default function ArticleDetailsRoute({
           {/* Sidebar */}
           <aside className="lg:col-span-4">
             <div className="sticky top-20">
-              <TableOfContent className="hidden lg:block" />
+              <TableOfContent
+                articleSlug={article.slug}
+                className="hidden lg:block"
+              />
               <EngagementMetrics
                 metrics={metrics}
                 className="hidden md:block"

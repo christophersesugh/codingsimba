@@ -135,8 +135,9 @@ enum Action {
 enum Entity {
   USER
   COMMENT
+  REPLY
   REVIEW
-  SETTINGS
+  PROFILE
 }
 
 model Role {

@@ -7,7 +7,13 @@ import { cn } from "~/lib/shadcn";
 /**
  * Memoized Table of Contents component.
  */
-function TOC({ className }: { className?: string }) {
+function TOC({
+  className,
+  articleSlug,
+}: {
+  className?: string;
+  articleSlug: string;
+}) {
   const { headings, activeId } = useToc({
     containerId: "markdown-content",
   });
@@ -25,12 +31,12 @@ function TOC({ className }: { className?: string }) {
           {headings?.length ? (
             headings
               .filter((h) => !!h.id)
-              .map((heading) => {
+              .map((heading, i) => {
                 const { id, text } = heading;
                 const activeItem = activeId === id;
 
                 return (
-                  <li key={id}>
+                  <li key={`${id}-${i}-${articleSlug}`}>
                     <Link
                       to={`#${id}`}
                       className={cn(

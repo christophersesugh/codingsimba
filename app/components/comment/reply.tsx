@@ -1,8 +1,8 @@
 import React from "react";
+import type { IComment } from ".";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { FilePenLine, Heart, Loader, Trash2 } from "lucide-react";
 import { cn } from "~/lib/shadcn";
-import type { PermissionMap, IComment } from ".";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Markdown } from "../mdx";
 import { useOptionalUser } from "~/hooks/user";
@@ -19,22 +19,18 @@ import {
 } from "../ui/alert-dialog";
 import { CommentForm } from "./comment-form";
 import { useNavigate } from "react-router";
-import { getInitials } from "~/utils/misc";
+import { getInitials, requireAuth } from "~/utils/misc";
+import { userHasPermission } from "~/utils/permissions";
 
-export function Reply({
-  reply,
-  permissionMap,
-}: {
-  reply: IComment;
-  permissionMap: PermissionMap;
-}) {
+export function Reply({ reply }: { reply: IComment }) {
   const [replyBody, setReplyBody] = React.useState(reply.html);
   const [editReply, setEditReply] = React.useState(false);
   const navigate = useNavigate();
+  const user = useOptionalUser();
 
   const author = reply?.author?.profile;
-  const user = useOptionalUser();
   const userId = user?.id;
+  const isOwner = userId === reply.authorId;
 
   const isLiked = reply.likes?.some((like) => like.userId === userId);
   const totalLikes = reply?.likes?.reduce(
@@ -42,14 +38,14 @@ export function Reply({
     0,
   );
 
-  const userPermission = permissionMap.get(reply.id);
-
-  const canDelete =
-    userPermission?.isOwner ||
-    userPermission?.permissions.some((p) => p.action === "DELETE");
-  const canUpdate =
-    userPermission?.isOwner ||
-    userPermission?.permissions.some((p) => p.action === "UPDATE");
+  const canDelete = userHasPermission(
+    user,
+    isOwner ? "DELETE:REPLY:OWN" : "DELETE:REPLY:ANY",
+  );
+  const canUpdate = userHasPermission(
+    user,
+    isOwner ? "UPDATE:REPLY:OWN" : "UPDATE:REPLY:ANY",
+  );
 
   const {
     submit: deleteReply,
@@ -92,10 +88,6 @@ export function Reply({
     setEditReply(false);
   }
 
-  function requireAuth(fn: (...args: unknown[]) => void) {
-    return (...args: unknown[]) => (user ? fn(...args) : navigate("/signin"));
-  }
-
   const basicButtonClasses =
     "space-x-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300";
   return (
@@ -104,7 +96,7 @@ export function Reply({
         <AvatarImage src={author?.image ?? ""} alt={author?.name ?? ""} />
         <AvatarFallback>{getInitials(author!.name!)}</AvatarFallback>
       </Avatar>
-      <div className="flex-1">
+      <div className="flex-1 overflow-hidden">
         <div className="mb-1 flex items-center justify-between">
           <h5 className="text-sm font-medium">{author!.name}</h5>
           <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -122,12 +114,15 @@ export function Reply({
             onCancel={() => setEditReply(false)}
           />
         ) : (
-          <Markdown source={reply.body} className="py-1 !text-sm" />
+          <div className="overflow-x-auto">
+            <Markdown source={reply.body} className="py-1 !text-sm" />
+          </div>
         )}
         <div className="mt-2 flex items-center gap-4">
           <button
-            onClick={requireAuth(upvoteReply)}
+            onClick={requireAuth({ fn: upvoteReply, user, navigate })}
             className={cn(basicButtonClasses, "flex items-center")}
+            aria-label={isUpvotingReply ? "Upvoting" : "Upvote"}
           >
             <Heart
               className={cn("size-4", {
@@ -143,6 +138,7 @@ export function Reply({
               onClick={() => setEditReply(!editReply)}
               disabled={isUpdatingReply}
               className={basicButtonClasses}
+              aria-label={isUpdatingReply ? "Updating" : "Update"}
             >
               {isUpdatingReply ? (
                 <Loader className="size-4 animate-spin" />

@@ -27,12 +27,14 @@ export function articlesQuery({
   const searchCondition = search
     ? `&& (title match $search || excerpt match $search || content match $search)`
     : "";
+  const publishedCondition = `&& published == false`;
   return groq`{
-    "articles": *[${filters} ${searchCondition}] | order(${order}) [$start...$end] {
+    "articles": *[${filters} ${publishedCondition} ${searchCondition}] | order(${order}) [$start...$end] {
       "id": _id,
       title,
       "slug": slug.current,
       createdAt,
+      "updatedAt": _updatedAt,
       "category": category->{
         "id": _id,
         title,
@@ -43,8 +45,6 @@ export function articlesQuery({
         title,
         "slug": slug.current
       },
-      published,
-      featured,
       "image": image.asset->url,
       excerpt,
       content,
@@ -75,6 +75,7 @@ export const articleDetailsQuery = groq`*[_type == "article" && slug.current == 
   title,
   "slug": slug.current,
   createdAt,
+  "updatedAt": _uppdatedAt,
   "category": category->{
     "id": _id,
     title,
@@ -85,7 +86,6 @@ export const articleDetailsQuery = groq`*[_type == "article" && slug.current == 
     title,
     "slug": slug.current
   },
-  published,
   "image": image.asset->url,
   excerpt,
   content,
@@ -125,7 +125,6 @@ export const relatedQuery = groq`
     slug,
     createdAt,
     image,
-    excerpt,
     content,
     category->{
       id,
@@ -187,4 +186,22 @@ export const categoryQuery = groq`*[_type == "category"] {
   "id": _id,
   title,
   "slug": slug.current
+}`;
+
+export const featuredArticleQuery = `*[_type == "article" && published == true && featured == true][0] {
+  _id,
+  title,
+  "slug": slug.current,
+  excerpt,
+  content,
+  createdAt,
+  "category": category->{
+    title,
+    slug
+  },
+  "tags": tags[]->{
+    title,
+    slug
+  },
+  "image": image.asset->url
 }`;

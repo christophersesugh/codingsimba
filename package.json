@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "react-router build",
-    "dev": "cross-env MOCKS=true react-router dev",
+    "dev": "VITE_CJS_TRACE=true cross-env MOCKS=true react-router dev",
     "start": "react-router-serve ./build/server/index.js",
     "test:unit": "vitest --workspace=vitest.workspace.ts --project unit",
     "test:browser": "vitest --workspace=vitest.workspace.ts --project browser",

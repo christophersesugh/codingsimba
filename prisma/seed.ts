@@ -1,21 +1,9 @@
-import { PrismaLibSQL } from "@prisma/adapter-libsql";
-import { PrismaClient } from "../app/generated/prisma/client";
 import { type Entity, type Action } from "../app/generated/prisma/client";
 import { createPassword } from "tests/db-utils";
-import { DEV_DB_URL } from "~/utils/db.server";
+import { prisma } from "~/utils/db.server";
 
-const { NODE_ENV, TURSO_DATABASE_URL, TURSO_AUTH_TOKEN, ADMIN_PASSWORD } =
-  process.env;
-
-const isDev = NODE_ENV === "development" || NODE_ENV === undefined;
+const { ADMIN_PASSWORD } = process.env;
 const ADMIN_EMAIL = "me@codingsimba.com";
-
-const databaseConfig = isDev
-  ? { url: DEV_DB_URL }
-  : { url: TURSO_DATABASE_URL, authToken: TURSO_AUTH_TOKEN };
-
-const adapter = new PrismaLibSQL(databaseConfig);
-const prisma = new PrismaClient({ adapter });
 
 async function seed() {
   await prisma.permission.deleteMany();
@@ -23,7 +11,7 @@ async function seed() {
   await prisma.comment.deleteMany();
   await prisma.user.deleteMany();
 
-  const entities: Entity[] = ["USER", "COMMENT", "REVIEW", "SETTINGS"];
+  const entities: Entity[] = ["USER", "COMMENT", "REPLY", "REVIEW", "PROFILE"];
   const actions: Action[] = ["CREATE", "READ", "UPDATE", "DELETE"];
   const accesses: string[] = ["OWN", "ANY"] as const;
 

@@ -54,11 +54,9 @@ export type PermissionMap = Map<string, PermissionData>;
 export function Comments({
   comments,
   articleId,
-  permissionMap,
 }: {
   comments: Promise<IComment[]>;
   articleId: string;
-  permissionMap: PermissionMap;
 }) {
   const [comment, setComment] = React.useState("");
   const [searchParams, setSearchParams] = useSearchParams();
@@ -118,11 +116,7 @@ export function Comments({
                 <>
                   <ul className="space-y-6">
                     {comments.map((comment) => (
-                      <Comment
-                        key={comment.id}
-                        comment={comment}
-                        permissionMap={permissionMap}
-                      />
+                      <Comment key={comment.id} comment={comment} />
                     ))}
                   </ul>
                   {comments.length >= commentTake && (

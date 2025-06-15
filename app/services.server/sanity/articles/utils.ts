@@ -10,6 +10,7 @@ import {
   recentArticlesQuery,
   relatedQuery,
   tagQuery,
+  featuredArticleQuery,
 } from "./queries";
 import { bundleMDX } from "~/utils/mdx.server";
 import { bundleComponents, MarkdownConverter } from "~/utils/misc.server";
@@ -176,4 +177,23 @@ export async function getRecentArticles(limit = 4) {
  */
 export async function getAllCategories() {
   return client.fetch<Category[]>(categoryQuery);
+}
+
+/**
+ * Retrieves the featured article
+ * @returns {Promise<Article | null>} The featured article or null if none exists
+ * @example
+ * // Get the featured article
+ * const featured = await getFeaturedArticle();
+ * if (featured) {
+ *   console.log(featured.title);
+ * }
+ */
+export async function getFeaturedArticle() {
+  const article = await client.fetch<Article | null>(featuredArticleQuery);
+  if (!article) return null;
+  return {
+    ...article,
+    markdown: article.content,
+  };
 }

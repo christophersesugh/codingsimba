@@ -3,14 +3,15 @@ import type { Update } from "~/hooks/content";
 import { prisma } from "~/utils/db.server";
 import { invariant, invariantResponse } from "~/utils/misc";
 import { MarkdownConverter } from "~/utils/misc.server";
-import { determinePermissions } from "~/utils/permissions.server";
+import { requireUserWithPermission } from "~/utils/permissions.server";
 
 /**
  * Adds a new comment to an article
  * @param itemId - The Sanity.io document ID of the article
- * @param body - The comment content
+ * @param body - The comment content in HTML format
  * @param userId - The ID of the user creating the comment
- * @returns The created comment
+ * @returns The created comment with its ID
+ * @throws {Error} If comment body is missing
  */
 export async function addComment({ itemId, body, userId }: Update) {
   invariant(body, "Comment body is required to add  a comment");
@@ -37,10 +38,11 @@ export async function addComment({ itemId, body, userId }: Update) {
 /**
  * Adds a reply to an existing comment
  * @param itemId - The Sanity.io document ID of the article
- * @param body - The reply content
+ * @param body - The reply content in HTML format
  * @param userId - The ID of the user creating the reply
- * @param parentId - The ID of the parent comment
- * @returns The created reply
+ * @param parentId - The ID of the parent comment being replied to
+ * @returns The created reply with its ID
+ * @throws {Error} If parent ID or reply content is missing
  */
 export async function addReply({ itemId, body, userId, parentId }: Update) {
   invariant(parentId, "Parent ID is required to reply to a comment");
@@ -66,37 +68,25 @@ export async function addReply({ itemId, body, userId, parentId }: Update) {
 
 /**
  * Updates an existing comment
+ * @param request - The HTTP request object for permission checking
  * @param itemId - The ID of the comment to update
- * @param body - The new comment content
- * @param userId - The ID of the user updating the comment
- * @returns The updated comment
- * @throws {Error} If comment not found or user not authorized
- * @description Checks user permissions using determinePermissions and verifies UPDATE permission
+ * @param body - The new comment content in HTML format
+ * @returns The updated comment with its ID
+ * @throws {Error} If comment not found, body is missing, or user lacks UPDATE:COMMENT:OWN permission
  */
-export async function updateComment({ itemId, body, userId }: Update) {
+export async function updateComment(
+  request: Request,
+  { itemId, body }: Update,
+) {
   invariant(body, "Comment body is required");
-
   const comment = await prisma.comment.findUnique({
     where: { id: itemId },
+    select: { id: true },
   });
-
   invariant(comment, "Comment not found");
 
-  const commentPermissions = userId
-    ? await determinePermissions({
-        userId,
-        entity: "COMMENT",
-        entityArray: [comment],
-      })
-    : [];
-  const userPermissions = commentPermissions[0];
-
-  const hasUpdatePermission = userPermissions?.permissions.some(
-    (p) => p.action === "UPDATE",
-  );
-
   invariantResponse(
-    hasUpdatePermission,
+    await requireUserWithPermission(request, "UPDATE:COMMENT:OWN"),
     "Unauthorized: You don't have permission to update this comment",
     { status: StatusCodes.FORBIDDEN },
   );
@@ -112,35 +102,24 @@ export async function updateComment({ itemId, body, userId }: Update) {
 
 /**
  * Deletes a comment
+ * @param request - The HTTP request object for permission checking
  * @param itemId - The ID of the comment to delete
- * @param userId - The ID of the user deleting the comment
+ * @param userId - The ID of the user attempting to delete
  * @returns Object indicating successful deletion
- * @throws {Error} If comment not found or user not authorized
- * @description Checks user permissions using determinePermissions and verifies DELETE permission
+ * @throws {Error} If comment not found, user ID is missing, or user lacks DELETE:COMMENT:OWN permission
  */
-export async function deleteComment({ itemId, userId }: Omit<Update, "body">) {
+export async function deleteComment(
+  request: Request,
+  { itemId, userId }: Omit<Update, "body">,
+) {
   invariant(userId, "User ID is required");
   const comment = await prisma.comment.findUnique({
     where: { id: itemId },
   });
-
   invariant(comment, "Comment not found");
 
-  const commentPermissions = userId
-    ? await determinePermissions({
-        userId,
-        entity: "COMMENT",
-        entityArray: [comment],
-      })
-    : [];
-  const userPermissions = commentPermissions[0];
-
-  const hasDeletePermission = userPermissions?.permissions.some(
-    (p) => p.action === "DELETE",
-  );
-
   invariantResponse(
-    hasDeletePermission,
+    await requireUserWithPermission(request, "DELETE:COMMENT:OWN"),
     "Unauthorized: You don't have permission to delete this comment",
     { status: StatusCodes.FORBIDDEN },
   );
@@ -156,7 +135,8 @@ export async function deleteComment({ itemId, userId }: Omit<Update, "body">) {
  * Toggles upvote status for a comment
  * @param itemId - The ID of the comment to upvote
  * @param userId - The ID of the user upvoting
- * @returns The updated like record
+ * @returns The updated like record with its ID
+ * @throws {Error} If item ID is missing
  */
 export async function upvoteComment({ itemId, userId }: Omit<Update, "body">) {
   invariant(itemId, "Item ID is required");
@@ -171,39 +151,30 @@ export async function upvoteComment({ itemId, userId }: Omit<Update, "body">) {
 
 /**
  * Updates an existing reply
+ * @param request - The HTTP request object for permission checking
  * @param itemId - The ID of the reply to update
- * @param body - The new reply content
+ * @param body - The new reply content in HTML format
  * @param userId - The ID of the user updating the reply
- * @returns The updated reply
- * @throws {Error} If reply not found, not a reply, or user not authorized
- * @description Checks user permissions using determinePermissions and verifies UPDATE permission
+ * @returns The updated reply with its ID
+ * @throws {Error} If reply not found, not a reply, body is missing, or user lacks UPDATE:REPLY:OWN permission
  */
-export async function updateReply({ itemId, body, userId }: Update) {
+export async function updateReply(
+  request: Request,
+  { itemId, body, userId }: Update,
+) {
   invariant(userId, "User ID is required");
   invariant(body, "Reply body is required");
 
   const reply = await prisma.comment.findUnique({
     where: { id: itemId },
+    select: { parentId: true },
   });
 
   invariant(reply, "Reply not found");
   invariant(reply.parentId, "This is not a reply");
 
-  const commentPermissions = userId
-    ? await determinePermissions({
-        userId,
-        entity: "COMMENT",
-        entityArray: [reply],
-      })
-    : [];
-  const userPermissions = commentPermissions[0];
-
-  const hasUpdatePermission = userPermissions?.permissions.some(
-    (p) => p.action === "UPDATE",
-  );
-
   invariantResponse(
-    hasUpdatePermission,
+    await requireUserWithPermission(request, "UPDATE:REPLY:OWN"),
     "Unauthorized: You don't have permission to update this reply",
     { status: StatusCodes.FORBIDDEN },
   );
@@ -219,37 +190,28 @@ export async function updateReply({ itemId, body, userId }: Update) {
 
 /**
  * Deletes a reply
+ * @param request - The HTTP request object for permission checking
  * @param itemId - The ID of the reply to delete
- * @param userId - The ID of the user deleting the reply
+ * @param userId - The ID of the user attempting to delete
  * @returns Object indicating successful deletion
- * @throws {Error} If reply not found, not a reply, or user not authorized
- * @description Checks user permissions using determinePermissions and verifies DELETE permission
+ * @throws {Error} If reply not found, not a reply, user ID is missing, or user lacks DELETE:REPLY:OWN permission
  */
-export async function deleteReply({ itemId, userId }: Omit<Update, "body">) {
+export async function deleteReply(
+  request: Request,
+  { itemId, userId }: Omit<Update, "body">,
+) {
   invariant(userId, "User ID is required");
 
   const reply = await prisma.comment.findUnique({
     where: { id: itemId },
+    select: { parentId: true },
   });
 
   invariant(reply, "Reply not found");
   invariant(reply.parentId, "This is not a reply");
 
-  const commentPermissions = userId
-    ? await determinePermissions({
-        userId,
-        entity: "COMMENT",
-        entityArray: [reply],
-      })
-    : [];
-  const userPermissions = commentPermissions[0];
-
-  const hasDeletePermission = userPermissions?.permissions.some(
-    (p) => p.action === "DELETE",
-  );
-
   invariantResponse(
-    hasDeletePermission,
+    await requireUserWithPermission(request, "DELETE:REPLY:OWN"),
     "Unauthorized: You don't have permission to delete this reply",
     { status: StatusCodes.FORBIDDEN },
   );
@@ -265,17 +227,15 @@ export async function deleteReply({ itemId, userId }: Omit<Update, "body">) {
  * Toggles upvote status for a reply
  * @param itemId - The ID of the reply to upvote
  * @param userId - The ID of the user upvoting
- * @returns The updated like record
- * @throws {Error} If not a reply
+ * @returns The updated like record with its ID
+ * @throws {Error} If the comment is not a reply
  */
 export async function upvoteReply({ itemId, userId }: Omit<Update, "body">) {
   const reply = await prisma.comment.findUnique({
     where: { id: itemId },
     select: { parentId: true },
   });
-
   invariant(reply?.parentId, "This is not a reply");
-
   const updatedReply = await prisma.like.upsert({
     where: { commentId_userId: { commentId: itemId, userId } },
     update: { count: { increment: 1 } },
@@ -290,7 +250,8 @@ export async function upvoteReply({ itemId, userId }: Omit<Update, "body">) {
  * Toggles upvote status for an article
  * @param itemId - The ID of the article to upvote
  * @param userId - The ID of the user upvoting
- * @returns The updated like record
+ * @returns The updated like record with its ID
+ * @throws {Error} If item ID is missing
  */
 export async function upvoteArticle({ itemId, userId }: Omit<Update, "body">) {
   invariant(itemId, "Item ID is required");
@@ -306,7 +267,8 @@ export async function upvoteArticle({ itemId, userId }: Omit<Update, "body">) {
 /**
  * Tracks a page view for an article
  * @param itemId - The Sanity.io document ID of the article
- * @returns The updated content record with view count
+ * @returns The updated content record with its ID
+ * @description Creates a new content record if it doesn't exist, otherwise increments the view count
  */
 export async function trackPageView({ itemId }: { itemId: string }) {
   const content = await prisma.content.upsert({
@@ -315,6 +277,5 @@ export async function trackPageView({ itemId }: { itemId: string }) {
     update: { views: { increment: 1 } },
     select: { id: true },
   });
-
   return content;
 }

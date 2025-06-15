@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { formatDistanceToNowStrict } from "date-fns";
-import type { PermissionMap, IComment } from ".";
+import type { IComment } from ".";
 import { Separator } from "../ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
@@ -30,15 +30,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
-import { getInitials } from "~/utils/misc";
+import { getInitials, requireAuth } from "~/utils/misc";
+import { userHasPermission } from "~/utils/permissions";
 
-export function Comment({
-  comment,
-  permissionMap,
-}: {
-  comment: IComment;
-  permissionMap: PermissionMap;
-}) {
+export function Comment({ comment }: { comment: IComment }) {
   const [editComment, setEditComment] = React.useState(false);
   const [commentBody, setCommentBody] = React.useState(comment.html);
   const [reply, setReply] = React.useState("");
@@ -52,8 +47,7 @@ export function Comment({
 
   const userId = user?.id;
   const author = comment?.author?.profile;
-
-  const userPermission = permissionMap.get(comment.id);
+  const isOwner = userId === comment.authorId;
 
   const isLiked = comment.likes?.some((like) => like.userId === user?.id);
   const totalLikes = comment?.likes?.reduce(
@@ -61,12 +55,14 @@ export function Comment({
     0,
   );
 
-  const canDelete =
-    userPermission?.isOwner ||
-    userPermission?.permissions.some((p) => p.action === "DELETE");
-  const canUpdate =
-    userPermission?.isOwner ||
-    userPermission?.permissions.some((p) => p.action === "UPDATE");
+  const canDelete = userHasPermission(
+    user,
+    isOwner ? "DELETE:COMMENT:OWN" : "DELETE:COMMENT:ANY",
+  );
+  const canUpdate = userHasPermission(
+    user,
+    isOwner ? "UPDATE:COMMENT:OWN" : "UPDATE:COMMENT:ANY",
+  );
 
   const {
     submit: submitReply,
@@ -115,10 +111,6 @@ export function Comment({
   });
   const isUpdatingComment = isUpdating && updatedItemId === comment.id;
 
-  function requireAuth(fn: (...args: unknown[]) => void) {
-    return (...args: unknown[]) => (user ? fn(...args) : navigate("/signin"));
-  }
-
   const handleReplySubmit = () => {
     if (!reply.trim()) return;
     submitReply();
@@ -154,7 +146,7 @@ export function Comment({
           <AvatarFallback>{getInitials(author!.name!)}</AvatarFallback>
         </Avatar>
 
-        <div className="flex-1">
+        <div className="flex-1 overflow-hidden">
           <div className="mb-1 flex items-center justify-between">
             <h4 className="font-medium">{author!.name}</h4>
             <div className="flex gap-2 text-sm">
@@ -180,12 +172,14 @@ export function Comment({
               onCancel={() => setEditComment(false)}
             />
           ) : (
-            <Markdown source={comment.body} className="py-0 text-sm" />
+            <div className="overflow-x-auto">
+              <Markdown source={comment.body} className="py-0 text-sm" />
+            </div>
           )}
           <div className="mt-2 flex items-center space-x-4">
             <button
               className={basicButtonClasses}
-              onClick={requireAuth(upvoteComment)}
+              onClick={requireAuth({ fn: upvoteComment, user, navigate })}
             >
               <Heart
                 className={cn("size-4", {
@@ -196,7 +190,11 @@ export function Comment({
               <span>{totalLikes}</span>
             </button>
             <button
-              onClick={requireAuth(() => setShowReplyForm(!showReplyForm))}
+              onClick={requireAuth({
+                fn: () => setShowReplyForm(!showReplyForm),
+                user,
+                navigate,
+              })}
               className={basicButtonClasses}
               aria-label={
                 isCreatingReply ? "replying comment" : "reply comment"
@@ -269,7 +267,7 @@ export function Comment({
             <ul className="mt-4 space-y-4 pl-6 dark:border-gray-800">
               {comment.replies.map((reply, index) => (
                 <div key={reply.id}>
-                  <Reply reply={reply} permissionMap={permissionMap} />
+                  <Reply reply={reply} />
                   {index < comment.replies!.length - 1 && (
                     <Separator className="my-4" />
                   )}

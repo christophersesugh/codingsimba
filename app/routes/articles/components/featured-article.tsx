@@ -1,9 +1,25 @@
+import React from "react";
 import type { Article } from "~/services.server/sanity/articles/types";
-import { Link, PrefetchPageLinks } from "react-router";
+import { Await, Link, PrefetchPageLinks } from "react-router";
 import { format } from "date-fns";
 import { readingTime } from "reading-time-estimator";
+import { Skeleton } from "~/components/ui/skeleton";
 
-export function FeaturedArticle({ article }: { article: Article }) {
+export function FeaturedArticle({
+  article,
+}: {
+  article: Promise<Article | null> | null;
+}) {
+  return (
+    <React.Suspense fallback={<Skeleton className="h-52 w-full rounded-lg" />}>
+      <Await resolve={article}>
+        {(article) => (article ? <Article article={article} /> : null)}
+      </Await>
+    </React.Suspense>
+  );
+}
+
+function Article({ article }: { article: Article }) {
   const stats = readingTime(article.markdown);
   const MAX_EXCERPT_LENGTH = 200;
   return (

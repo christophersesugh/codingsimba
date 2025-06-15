@@ -12,6 +12,7 @@ import { ContentPagination } from "~/components/content-pagination";
 import {
   getAllCategories,
   getArticles,
+  getFeaturedArticle,
 } from "~/services.server/sanity/articles/utils";
 import { invariantResponse } from "~/utils/misc";
 import { EmptyState } from "~/components/empty-state";
@@ -35,6 +36,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const safeEnd = safeStart + PAGE_SIZE;
 
   const categories = getAllCategories();
+  const featuredArticle = getFeaturedArticle();
   const articlesData = await getArticles({
     search,
     tag,
@@ -49,6 +51,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   });
 
   return {
+    featuredArticle,
     articles: articlesData.articles,
     total: articlesData.total,
     currentPage: page,
@@ -59,16 +62,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
   const [, setSearchParams] = useSearchParams();
-  const { articles, currentPage, totalPages, categories } = loaderData;
-
-  const featuredArticle = React.useMemo(
-    () => articles.find((article) => article.featured),
-    [articles],
-  );
-  const filteredArticles = React.useMemo(
-    () => articles.filter((article) => !article.featured),
-    [articles],
-  );
+  const { featuredArticle, articles, currentPage, totalPages, categories } =
+    loaderData;
 
   const PAGE = "page";
   const isIndexPage = currentPage === 1;
@@ -94,12 +89,10 @@ export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
       />
       <section className="container mx-auto px-4 pb-12 pt-6">
         <ContentFilter categories={categories} />
-        {featuredArticle && isIndexPage ? (
-          <FeaturedArticle article={featuredArticle} />
-        ) : null}
+        {isIndexPage ? <FeaturedArticle article={featuredArticle} /> : null}
         <section className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {filteredArticles?.length
-            ? filteredArticles.map((article, index) => (
+          {articles?.length
+            ? articles.map((article, index) => (
                 <Link
                   prefetch="intent"
                   key={article.id}
@@ -110,7 +103,7 @@ export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
               ))
             : null}
         </section>
-        {!filteredArticles?.length ? (
+        {!articles?.length ? (
           <EmptyState
             icon={<Search className="size-8" />}
             title="No results found"
@@ -121,12 +114,12 @@ export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
             }}
           />
         ) : null}
-        {!filteredArticles?.length ? null : (
+        {articles?.length ? (
           <ContentPagination
             totalPages={totalPages}
             currentPage={currentPage}
           />
-        )}
+        ) : null}
       </section>
     </>
   );

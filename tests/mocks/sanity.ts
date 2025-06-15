@@ -145,9 +145,10 @@ async function handleArticlesQuery(url: URL, query: string) {
   const tag = url.searchParams.get("$tag");
   const start = Math.max(0, Number(url.searchParams.get("$start") ?? 0));
   const end = Number(url.searchParams.get("$end") ?? start + 6);
+  const pageSize = end - start;
 
   const articles = await getArticles();
-  let filteredArticles = articles.filter((a) => a.published);
+  let filteredArticles = articles.filter((a) => a.published && !a.featured);
 
   // Apply search filter
   if (search) {
@@ -174,30 +175,16 @@ async function handleArticlesQuery(url: URL, query: string) {
     );
   }
 
-  // Apply ordering (assuming createdAt desc by default)
   filteredArticles.sort((a, b) => {
     const dateA = new Date(a.createdAt).getTime();
     const dateB = new Date(b.createdAt).getTime();
     return dateB - dateA; // desc order
   });
 
-  // Apply pagination
-  const paginatedArticles = filteredArticles.slice(start, end);
+  const paginatedArticles = filteredArticles.slice(start, start + pageSize);
 
   return {
-    articles: paginatedArticles.map((article) => ({
-      id: article.id,
-      title: article.title,
-      slug: article.slug,
-      createdAt: article.createdAt,
-      category: article.category,
-      tags: article.tags,
-      published: article.published,
-      featured: article.featured,
-      image: article.image,
-      excerpt: article.excerpt,
-      content: article.content,
-    })),
+    articles: paginatedArticles,
     total: filteredArticles.length,
   };
 }
@@ -362,6 +349,29 @@ async function handleCategoryQuery() {
   return uniqueCategories;
 }
 
+async function handleFeaturedArticleQuery() {
+  const articles = await getArticles();
+  const featuredArticle = articles.find(
+    (article) => article.featured && article.published,
+  );
+
+  if (!featuredArticle) return null;
+
+  return {
+    id: featuredArticle.id,
+    title: featuredArticle.title,
+    slug: featuredArticle.slug,
+    createdAt: featuredArticle.createdAt,
+    category: featuredArticle.category,
+    tags: featuredArticle.tags,
+    published: featuredArticle.published,
+    featured: featuredArticle.featured,
+    image: featuredArticle.image,
+    excerpt: featuredArticle.excerpt,
+    content: featuredArticle.content,
+  };
+}
+
 // Query handler interface
 interface QueryHandler {
   name: string;
@@ -437,6 +447,13 @@ const queryHandlers: QueryHandler[] = [
     priority: 10,
     match: (q) => matchStrategies.contains(q, '_type == "sandpack"'),
     handle: async () => passthrough(),
+  },
+
+  {
+    name: "featured-article",
+    priority: 85,
+    match: (q) => matchStrategies.contains(q, "featured == true"),
+    handle: async () => handleFeaturedArticleQuery(),
   },
 ];
 

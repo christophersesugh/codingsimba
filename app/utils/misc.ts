@@ -1,8 +1,13 @@
-import { useFormAction, useNavigation } from "react-router";
+import {
+  useFormAction,
+  useNavigation,
+  type NavigateFunction,
+} from "react-router";
 import { type ClassValue, clsx } from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSpinDelay } from "spin-delay";
 import { twMerge } from "tailwind-merge";
+import type { useUser } from "~/hooks/user";
 
 /**
  * Extracts a readable error message from various error types.
@@ -513,4 +518,16 @@ export function formatTime(seconds: number): string {
   return hours > 0
     ? `${hours}:${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`
     : `${mins}:${secs.toString().padStart(2, "0")}`;
+}
+
+export function requireAuth({
+  fn,
+  user,
+  navigate,
+}: {
+  fn: (...args: unknown[]) => void;
+  user: ReturnType<typeof useUser> | null;
+  navigate: NavigateFunction;
+}) {
+  return (...args: unknown[]) => (user ? fn(...args) : navigate("/signin"));
 }

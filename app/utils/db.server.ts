@@ -3,15 +3,23 @@ import { remember } from "@epic-web/remember";
 import { styleText } from "node:util";
 import { PrismaClient } from "~/generated/prisma";
 import { invariant } from "./misc";
+import fs from "node:fs";
+import path from "node:path";
 
 const { NODE_ENV, TURSO_DATABASE_URL, TURSO_AUTH_TOKEN, DATABASE_URL } =
   process.env;
 
-const isDev = NODE_ENV === "development";
+const isDev = NODE_ENV === "development" || NODE_ENV === undefined;
 const DEV_DB = DATABASE_URL?.split("/")[1];
 invariant(DEV_DB, "Development database not found.");
-export const DEV_DB_URL = `file:${process.cwd()}/prisma/schema/${DEV_DB}`;
-invariant(DEV_DB_URL, "Development database URL not found.");
+
+const DB_DIR = path.join(process.cwd(), "prisma/schema");
+
+export const DEV_DB_URL = `file:${path.join(DB_DIR, DEV_DB)}`;
+
+if (isDev) {
+  fs.mkdirSync(DB_DIR, { recursive: true });
+}
 
 const LOCAL_DB_URL = "file:/app/data/local.db";
 

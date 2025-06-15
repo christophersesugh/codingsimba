@@ -150,15 +150,13 @@ const ComponentCodeSchema = z.object({
  * @property {string} title - Display title of the tag
  * @property {string} slug - URL-friendly identifier for the tag
  */
-const TagsSchema = z
-  .array(
-    z.object({
-      id: z.string(),
-      title: z.string().min(1),
-      slug: z.string(),
-    }),
-  )
-  .min(1, "At least one tag is required");
+const TagsSchema = z.array(
+  z.object({
+    id: z.string(),
+    title: z.string(),
+    slug: z.string(),
+  }),
+);
 
 /**
  * Schema for article category
@@ -170,7 +168,7 @@ const TagsSchema = z
  */
 const CategorySchema = z.object({
   id: z.string(),
-  title: z.string().min(1),
+  title: z.string(),
   slug: z.string(),
 });
 
@@ -225,8 +223,8 @@ export const ArticleSchema = z.object({
   title: z.string(),
   slug: z.string(),
   createdAt: z.string().datetime({ offset: true }),
+  updatedAt: z.string().datetime({ offset: true }),
   category: CategorySchema,
-  featured: z.boolean().default(false),
   tags: TagsSchema,
   image: z.string(),
   excerpt: z.string(),
