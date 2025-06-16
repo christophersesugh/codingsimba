@@ -1,10 +1,9 @@
 import type { Route } from "./+types/reset-password";
-import { z } from "zod";
 import { motion } from "framer-motion";
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { prisma } from "~/utils/db.server";
-import { getPasswordHash, requireAnonymous } from "./auh.server";
+import { getPasswordHash, requireAnonymous } from "../../utils/auth.server";
 import { data, Form, Link, redirect } from "react-router";
 import { FormError } from "~/components/form-errors";
 import { Label } from "~/components/ui/label";
@@ -24,23 +23,9 @@ import {
 } from "~/components/ui/card";
 import { verifySessionStorage } from "~/utils/verification.server";
 import { resetPasswordEmailSessionKey } from "./forgot-password";
+import { PasswordAndConfirmPasswordSchema } from "~/utils/user-validation";
 
-const PasswordSchema = z
-  .object({
-    newPassword: z
-      .string({
-        required_error: "New password is required.",
-      })
-      .min(6, "New password must be at least 6 characters"),
-    confirmPassword: z
-      .string({
-        required_error: "Confirm new password.",
-      })
-      .min(6, "Confirm password must be at least 6 characters"),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords do not match.",
-  });
+const ResetPasswordSchema = PasswordAndConfirmPasswordSchema;
 
 async function requireResetPasswordEmail(request: Request) {
   await requireAnonymous(request);
@@ -63,7 +48,7 @@ export async function action({ request }: Route.ActionArgs) {
   const userEmail = await requireResetPasswordEmail(request);
   const formData = await request.formData();
   const submission = parseWithZod(formData, {
-    schema: PasswordSchema,
+    schema: ResetPasswordSchema,
   });
   if (submission.status !== "success") {
     return data({ status: "error", ...submission.reply() } as const, {
@@ -74,14 +59,14 @@ export async function action({ request }: Route.ActionArgs) {
     });
   }
 
-  const { newPassword } = submission.value;
+  const { password } = submission.value;
   const update = await prisma.user.update({
     where: { email: userEmail },
     select: { id: true },
     data: {
       password: {
         update: {
-          hash: await getPasswordHash(newPassword),
+          hash: await getPasswordHash(password),
         },
       },
     },
@@ -108,7 +93,7 @@ export default function ResetPasswordRoute({
     id: "reset-password",
     lastResult: actionData,
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: PasswordSchema });
+      return parseWithZod(formData, { schema: ResetPasswordSchema });
     },
     shouldValidate: "onBlur",
   });
@@ -134,13 +119,13 @@ export default function ResetPasswordRoute({
             </CardHeader>
             <CardContent className="my-8 space-y-6">
               <div className="space-y-2">
-                <Label htmlFor={fields.newPassword.id}>New Password</Label>
+                <Label htmlFor={fields.password.id}>New Password</Label>
                 <Input
-                  {...getInputProps(fields.newPassword, { type: "password" })}
+                  {...getInputProps(fields.password, { type: "password" })}
                   placeholder="••••••"
                   className="h-12 border-gray-300 bg-white text-lg dark:border-gray-700 dark:bg-gray-900"
                 />
-                <FormError errors={fields.newPassword.errors} />
+                <FormError errors={fields.password.errors} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor={fields.confirmPassword.id}>

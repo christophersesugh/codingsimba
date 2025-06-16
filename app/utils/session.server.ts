@@ -1,7 +1,7 @@
 import { createCookieSessionStorage, redirect } from "react-router";
 import { safeRedirect } from "remix-utils/safe-redirect";
 import { combineResponseInits } from "./misc";
-import { sessionKey } from "~/routes/auth/auh.server";
+import { sessionKey } from "~/utils/auth.server";
 
 export const authSessionStorage = createCookieSessionStorage({
   cookie: {

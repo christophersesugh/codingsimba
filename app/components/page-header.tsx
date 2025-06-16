@@ -62,7 +62,7 @@ export function Header({
   }, [searchParams, setSearch]);
 
   return (
-    <header className="mt-13 relative isolate overflow-hidden border-b border-gray-200 py-8 dark:border-gray-800">
+    <header className="mt-13 relative isolate overflow-hidden border-b border-gray-200 py-6 dark:border-gray-800">
       {/* Background container with higher stacking context */}
       <div className="absolute inset-0 -z-10">
         {/* Base gradient background */}
@@ -106,7 +106,7 @@ export function Header({
       <div className="container relative z-10 mx-auto px-4">
         <div className="mx-auto max-w-4xl text-center">
           <motion.h1
-            className="mb-4 text-3xl font-bold capitalize md:text-4xl"
+            className="text-2xl font-bold capitalize md:text-3xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -114,7 +114,7 @@ export function Header({
             {title}
           </motion.h1>
           <motion.p
-            className="mb-8 text-lg text-gray-600 dark:text-gray-300"
+            className="mb-2 text-lg text-gray-600 dark:text-gray-300"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}

@@ -45,7 +45,7 @@ export function DetailsHeader({ item }: DetailsHeaderProps) {
   });
 
   return (
-    <div className="mt-13 relative isolate overflow-hidden border-b border-gray-200 py-8 dark:border-gray-800">
+    <div className="mt-13 relative isolate overflow-hidden border-b border-gray-200 py-4 dark:border-gray-800">
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-indigo-50 dark:from-blue-950 dark:to-indigo-950" />
         {shapes.map((shape) => (

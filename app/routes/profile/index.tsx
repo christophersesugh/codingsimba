@@ -19,7 +19,7 @@ import {
   NotificationSettingsSchema,
   UPDATE_NOTIFICATIONS_INTENT,
 } from "./components/notifications";
-import { requireUserId, sessionKey } from "../auth/auh.server";
+import { requireUserId, sessionKey } from "../../utils/auth.server";
 import { prisma } from "~/utils/db.server";
 import {
   AcccountInformationSchema,

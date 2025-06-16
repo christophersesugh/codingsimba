@@ -44,21 +44,23 @@ export function MobileNav() {
                 onClick={closeMobileNav}
               />
             ))}
-            <div className="-ml-2 mt-1">
-              <SignoutButton onClick={closeMobileNav} />
-            </div>
+            {user ? (
+              <div className="-ml-2 mt-1">
+                <SignoutButton onClick={closeMobileNav} />
+              </div>
+            ) : null}
           </nav>
           <Separator />
           <div className="flex justify-center gap-4 px-4 pb-4">
             <ThemeToggle />
             {!user ? (
-              <Button className="flex" asChild>
+              <Button onClick={closeMobileNav} className="flex" asChild>
                 <Link to={"/signin"}>Sign In</Link>
               </Button>
             ) : null}
 
             {profile ? (
-              <Link to={"/profile"}>
+              <Link to={"/profile"} onClick={closeMobileNav}>
                 <Avatar className="size-9">
                   <AvatarImage src={profile.image!} alt={profile.name!} />
                   <AvatarFallback className="border border-slate-300 dark:border-gray-800">

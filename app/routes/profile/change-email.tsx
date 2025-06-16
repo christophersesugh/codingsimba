@@ -3,7 +3,7 @@ import { z } from "zod";
 import { motion } from "framer-motion";
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
-import { requireUserId } from "../auth/auh.server";
+import { requireUserId } from "../../utils/auth.server";
 import { data, Form, Link, redirect } from "react-router";
 import { FormError } from "~/components/form-errors";
 import { Label } from "~/components/ui/label";
@@ -26,12 +26,9 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { useIsPending } from "~/utils/misc";
+import { EmailSchema } from "~/utils/user-validation";
 
-const EmailSchema = z.object({
-  email: z
-    .string({ required_error: "Email is required" })
-    .email("Invalid email"),
-});
+const ChangeEmailSchema = EmailSchema;
 
 export const newEmailAddressSessionKey = "new-email-address";
 
@@ -52,9 +49,9 @@ export async function action({ request }: Route.ActionArgs) {
   const userId = await requireUserId(request);
   const formData = await request.formData();
   const submission = await parseWithZod(formData, {
-    schema: EmailSchema.superRefine(async (data, ctx) => {
+    schema: ChangeEmailSchema.superRefine(async (email, ctx) => {
       const existingUser = await prisma.user.findUnique({
-        where: { email: data.email },
+        where: { email },
         select: { email: true },
       });
       if (existingUser) {
@@ -86,15 +83,17 @@ export async function action({ request }: Route.ActionArgs) {
     type: "change_email",
   });
 
+  const email = submission.value;
+
   const response = await sendEmail({
-    to: submission.value.email,
+    to: email,
     subject: `Coding Simba Email Change Verification`,
     react: <Verification verificationUrl={verifyUrl.toString()} code={otp} />,
   });
 
   if (response.status === "success") {
     const verifySession = await verifySessionStorage.getSession();
-    verifySession.set(newEmailAddressSessionKey, submission.value.email);
+    verifySession.set(newEmailAddressSessionKey, email);
     return redirect(redirectTo.toString(), {
       headers: {
         "set-cookie": await verifySessionStorage.commitSession(verifySession),
@@ -119,7 +118,7 @@ export default function ChangeEmail({
     id: "change-email",
     lastResult: actionData,
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: EmailSchema });
+      return parseWithZod(formData, { schema: ChangeEmailSchema });
     },
     shouldValidate: "onBlur",
   });

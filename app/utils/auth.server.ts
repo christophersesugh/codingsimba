@@ -8,11 +8,11 @@ import {
 import { redirect } from "react-router";
 import { Authenticator } from "remix-auth";
 import { safeRedirect } from "remix-utils/safe-redirect";
-import { prisma } from "~/utils/db.server";
-import type { ProviderUser } from "~/utils/providers/provider";
-import { providers } from "~/utils/connection.server";
-import { authSessionStorage } from "~/utils/session.server";
-import { combineHeaders } from "~/utils/misc";
+import { prisma } from "./db.server";
+import type { ProviderUser } from "./providers/provider";
+import { providers } from "./connection.server";
+import { authSessionStorage } from "./session.server";
+import { combineHeaders } from "./misc";
 
 export const SESSION_EXPIRATION_TIME = 14 * 24 * 60 * 60 * 1000; // 14 days
 export const getSessionExpirationDate = () =>

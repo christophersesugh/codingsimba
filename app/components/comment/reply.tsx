@@ -91,14 +91,16 @@ export function Reply({ reply }: { reply: IComment }) {
   const basicButtonClasses =
     "space-x-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300";
   return (
-    <li className="flex items-start space-x-4">
-      <Avatar className="h-8 w-8">
-        <AvatarImage src={author?.image ?? ""} alt={author?.name ?? ""} />
-        <AvatarFallback>{getInitials(author!.name!)}</AvatarFallback>
-      </Avatar>
-      <div className="flex-1 overflow-hidden">
+    <li>
+      <div className="overflow-hidden">
         <div className="mb-1 flex items-center justify-between">
-          <h5 className="text-sm font-medium">{author!.name}</h5>
+          <div className="flex items-center gap-x-4">
+            <Avatar className="size-6">
+              <AvatarImage src={author?.image ?? ""} alt={author?.name ?? ""} />
+              <AvatarFallback>{getInitials(author!.name!)}</AvatarFallback>
+            </Avatar>
+            <h5 className="text-sm font-medium">{author!.name}</h5>
+          </div>
           <span className="text-xs text-gray-500 dark:text-gray-400">
             {formatDistanceToNowStrict(new Date(reply.createdAt), {
               addSuffix: true,

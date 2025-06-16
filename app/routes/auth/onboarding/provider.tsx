@@ -6,7 +6,6 @@ import {
   data,
   Form,
   redirect,
-  useNavigation,
   useSearchParams,
   type Params,
 } from "react-router";
@@ -30,22 +29,23 @@ import {
   requireAnonymous,
   sessionKey,
   signupWithConnection,
-} from "../auh.server";
+} from "~/utils/auth.server";
 import { verifySessionStorage } from "~/utils/verification.server";
 import { safeRedirect } from "remix-utils/safe-redirect";
 import { ProviderNameSchema } from "~/components/connection-form";
 import { authSessionStorage } from "~/utils/session.server";
 import { onboardingSessionKey } from ".";
+import { RememberMeSchema } from "~/utils/user-validation";
+import { useIsPending } from "~/utils/misc";
 
 export const providerIdKey = "providerId";
 export const prefilledProfileKey = "prefilledProfile";
 
-const AuthSchema = z.object({
+const OnboardingSchema = z.object({
   imageUrl: z.string().optional(),
-  intent: z.literal("submit"),
   name: z.string(),
   redirectTo: z.string().optional(),
-  rememberMe: z.boolean().optional(),
+  rememberMe: RememberMeSchema,
 });
 
 async function requireData({
@@ -107,7 +107,6 @@ export async function action({ request, params }: Route.ActionArgs) {
     request,
     params,
   });
-  console.log({ email, providerId, providerName });
 
   const formData = await request.formData();
   const verifySession = await verifySessionStorage.getSession(
@@ -115,7 +114,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   );
 
   const submission = await parseWithZod(formData, {
-    schema: AuthSchema.transform(async (data) => {
+    schema: OnboardingSchema.transform(async (data) => {
       const session = await signupWithConnection({
         ...data,
         email,
@@ -166,23 +165,20 @@ export default function OnboardingProvider({
   actionData,
   loaderData,
 }: Route.ComponentProps) {
-  const navigation = useNavigation();
+  const isSubmitting = useIsPending();
   const [searchParams] = useSearchParams();
-
   const redirectTo = searchParams.get("redirectTo");
+  const email = loaderData.email;
 
   const [form, fields] = useForm({
     id: "onboarding-provider",
     lastResult: actionData,
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: AuthSchema });
+      return parseWithZod(formData, { schema: OnboardingSchema });
     },
     shouldValidate: "onBlur",
     defaultValue: { redirectTo },
   });
-
-  const isSubmitting = navigation.formData?.get("intent") === "submit";
-  const email = loaderData.email;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-gray-50 p-4 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
@@ -206,10 +202,6 @@ export default function OnboardingProvider({
 
           <CardContent className="space-y-6">
             <Form {...getFormProps(form)} method="post" className="space-y-4">
-              <input
-                {...getInputProps(fields.intent, { type: "hidden" })}
-                value="submit"
-              />
               <input
                 {...getInputProps(fields.redirectTo, { type: "hidden" })}
                 value={redirectTo ?? ""}

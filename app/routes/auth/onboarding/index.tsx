@@ -2,13 +2,7 @@ import type { Route } from "./+types/index";
 import { z } from "zod";
 import { motion } from "framer-motion";
 import { LoaderCircle } from "lucide-react";
-import {
-  data,
-  Form,
-  redirect,
-  useNavigation,
-  useSearchParams,
-} from "react-router";
+import { data, Form, redirect, useSearchParams } from "react-router";
 import {
   Card,
   CardContent,
@@ -24,55 +18,28 @@ import { FormError } from "~/components/form-errors";
 import { Button } from "~/components/ui/button";
 import { parseWithZod } from "@conform-to/zod";
 import { StatusCodes } from "http-status-codes";
-import { prisma } from "~/utils/db.server";
-import { requireAnonymous, sessionKey, signup } from "../auh.server";
+import { requireAnonymous, sessionKey, signup } from "~/utils/auth.server";
 import { authSessionStorage } from "~/utils/session.server";
 import { verifySessionStorage } from "~/utils/verification.server";
 import { safeRedirect } from "remix-utils/safe-redirect";
+import {
+  EmailSchema,
+  NameSchema,
+  PasswordSchema,
+  RememberMeSchema,
+} from "~/utils/user-validation";
+import { useIsPending } from "~/utils/misc";
 
-export const onboardingSessionKey = "onboardingEmail" as const;
+export const onboardingSessionKey = "onboardingEmail";
 
-const AuthSchema = z
+const OnboardingSchema = z
   .object({
-    name: z
-      .string({ required_error: "Name is required" })
-      .min(2, "First and Last name must be at least 2 characters")
-      .max(30, "Name must be less than or equal to 30 characters")
-      .trim()
-      .refine(
-        (name) => {
-          const WORD_MIN_LENGTH = 2;
-          const words = name.split(/\s+/);
-
-          if (words.length < WORD_MIN_LENGTH) {
-            return false;
-          }
-
-          return words.every((word) => word.length >= WORD_MIN_LENGTH);
-        },
-        {
-          message:
-            "Please enter your first and last name (e.g., John Doe or Kent C. Dodds)",
-        },
-      ),
-    password: z
-      .string({ required_error: "Password is required" })
-      .min(6, "Password must be at least 6 characters long")
-      .max(30, "Password must be less than or equal to 30 characters")
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
-        "Password must contain at least one uppercase letter (A), one lowercase letter (a), one number (3) and one special character (&)",
-      ),
-    confirmPassword: z
-      .string({ required_error: "Please confirm your password" })
-      .min(6, "Password must be at least 6 characters long"),
-    intent: z.literal("submit"),
-    email: z.string().email().trim().toLowerCase(),
+    name: NameSchema,
+    password: PasswordSchema,
+    confirmPassword: PasswordSchema,
+    email: EmailSchema,
     redirectTo: z.string().optional(),
-    rememberMe: z
-      .boolean()
-      .optional()
-      .transform((val) => (val ? "true" : undefined)),
+    rememberMe: RememberMeSchema,
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -101,31 +68,12 @@ export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
 
   const submission = await parseWithZod(formData, {
-    schema: AuthSchema.transform(async (data, ctx) => {
-      const { name, password, email, intent } = data;
-
-      if (intent !== "submit") {
-        return { ...data, session: null };
-      }
-
-      const existingUser = await prisma.user.findUnique({
-        where: { email },
-        select: { id: true },
-      });
-
-      if (existingUser) {
-        ctx.addIssue({
-          path: ["root"],
-          code: z.ZodIssueCode.custom,
-          message: "Email already in use, Please sign in instead.",
-        });
-        return z.NEVER;
-      }
-
+    schema: OnboardingSchema.transform(async (data, ctx) => {
+      const { name, password, email } = data;
       try {
         const session = await signup({
           email,
-          name: name.trim().replace(/\s+/g, " "),
+          name,
           password,
         });
 
@@ -141,7 +89,6 @@ export async function action({ request }: Route.ActionArgs) {
         return { ...data, session };
       } catch (e) {
         console.error(e);
-
         ctx.addIssue({
           path: ["root"],
           code: z.ZodIssueCode.custom,
@@ -200,23 +147,20 @@ export default function Onboarding({
   actionData,
   loaderData,
 }: Route.ComponentProps) {
-  const navigation = useNavigation();
+  const isSubmitting = useIsPending();
   const [searchParams] = useSearchParams();
-
   const redirectTo = searchParams.get("redirectTo");
+  const email = loaderData.email;
 
   const [form, fields] = useForm({
     id: "onboarding",
     lastResult: actionData,
     defaultValue: { redirectTo },
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: AuthSchema });
+      return parseWithZod(formData, { schema: OnboardingSchema });
     },
     shouldValidate: "onBlur",
   });
-
-  const isSubmitting = navigation.formData?.get("intent") === "submit";
-  const email = loaderData.email;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-gray-50 p-4 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
@@ -240,10 +184,6 @@ export default function Onboarding({
 
           <CardContent className="space-y-6">
             <Form {...getFormProps(form)} method="post" className="space-y-4">
-              <input
-                {...getInputProps(fields.intent, { type: "hidden" })}
-                value="submit"
-              />
               <input
                 {...getInputProps(fields.redirectTo, { type: "hidden" })}
                 value={redirectTo ?? ""}

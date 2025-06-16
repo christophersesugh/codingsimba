@@ -1,7 +1,7 @@
 import type { Route } from "./+types/signin";
 import { motion } from "framer-motion";
 import { LoaderCircle } from "lucide-react";
-import { data, Form, Link, useNavigation, useSearchParams } from "react-router";
+import { data, Form, Link, useSearchParams } from "react-router";
 import {
   Card,
   CardContent,
@@ -21,19 +21,14 @@ import { StatusCodes } from "http-status-codes";
 import { FormConsent } from "~/components/form-consent";
 import { ConnectionForm } from "~/components/connection-form";
 import { handleNewSession } from "~/utils/session.server";
-import { requireAnonymous, signin } from "./auh.server";
+import { requireAnonymous, signin } from "../../utils/auth.server";
+import { EmailSchema, PasswordSchema } from "~/utils/user-validation";
+import { useIsPending } from "~/utils/misc";
+import { GradientContainer } from "~/components/gradient-container";
 
-const AuthSchema = z.object({
-  email: z
-    .string({ required_error: "Email is required" })
-    .email("Please enter a valid email address")
-    .trim()
-    .toLowerCase(),
-  password: z
-    .string({ required_error: "Password is required" })
-    .min(6, "Password must be at least 6 characters")
-    .max(30, "Password must be less than or equal to 30 characters"),
-  intent: z.literal("submit"),
+const SigninSchema = z.object({
+  email: EmailSchema,
+  password: PasswordSchema,
   redirectTo: z.string().optional(),
   rememberMe: z
     .boolean()
@@ -50,9 +45,8 @@ export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
 
   const submission = await parseWithZod(formData, {
-    schema: AuthSchema.transform(async (data, ctx) => {
-      const { email, password, intent } = data;
-      if (intent !== "submit") return { ...data, session: null };
+    schema: SigninSchema.transform(async (data, ctx) => {
+      const { email, password } = data;
       const session = await signin({ email, password });
       if (!session) {
         ctx.addIssue({
@@ -93,9 +87,8 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function Signin({ actionData }: Route.ComponentProps) {
-  const navigation = useNavigation();
+  const isSubmitting = useIsPending();
   const [searchParams] = useSearchParams();
-
   const redirectTo = searchParams.get("redirectTo");
 
   const [form, fields] = useForm({
@@ -103,21 +96,13 @@ export default function Signin({ actionData }: Route.ComponentProps) {
     lastResult: actionData,
     defaultValue: { redirectTo },
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: AuthSchema });
+      return parseWithZod(formData, { schema: SigninSchema });
     },
     shouldValidate: "onBlur",
   });
 
-  const isSubmitting = navigation.formData?.get("intent") === "submit";
-
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-gray-50 p-4 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/4 top-1/4 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
-      </div>
-
+    <GradientContainer>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -132,10 +117,6 @@ export default function Signin({ actionData }: Route.ComponentProps) {
 
           <CardContent className="space-y-6">
             <Form {...getFormProps(form)} method="post" className="space-y-4">
-              <input
-                {...getInputProps(fields.intent, { type: "hidden" })}
-                value="submit"
-              />
               <div className="space-y-2">
                 <Label htmlFor={fields.email.id}>Email</Label>
                 <Input
@@ -216,6 +197,6 @@ export default function Signin({ actionData }: Route.ComponentProps) {
           </CardContent>
         </Card>
       </motion.div>
-    </div>
+    </GradientContainer>
   );
 }

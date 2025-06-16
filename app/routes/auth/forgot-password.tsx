@@ -3,7 +3,6 @@ import { z } from "zod";
 import { motion } from "framer-motion";
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
-// import { prisma } from "~/utils/db.server";
 import { data, Form, redirect, Link } from "react-router";
 import { FormError } from "~/components/form-errors";
 import { Label } from "~/components/ui/label";
@@ -26,12 +25,9 @@ import { sendEmail } from "~/services.server/resend";
 import { checkHoneypot } from "~/utils/honeypot.server";
 import { StatusCodes } from "http-status-codes";
 import { Verification } from "~/components/email-templates/verification";
+import { EmailSchema } from "~/utils/user-validation";
 
-const PasswordSchema = z.object({
-  email: z
-    .string({ required_error: "Email is required" })
-    .email("Invalid email"),
-});
+const ForgotPasswordSchema = EmailSchema;
 
 export const resetPasswordEmailSessionKey = "resetPasswordEmailKey";
 
@@ -39,20 +35,18 @@ export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
   await checkHoneypot(formData);
   const submission = await parseWithZod(formData, {
-    schema: PasswordSchema.superRefine(async (data, ctx) => {
+    schema: ForgotPasswordSchema.superRefine(async (email, ctx) => {
       const user = await prisma.user.findFirst({
-        where: {
-          email: data.email,
-        },
+        where: { email },
         select: { id: true },
       });
       if (!user) {
         ctx.addIssue({
-          path: ["usernameOrEmail"],
+          path: ["email"],
           code: z.ZodIssueCode.custom,
-          message: "No user exists with this username or email",
+          message: "No user exists with this email",
         });
-        return;
+        return z.NEVER;
       }
     }),
     async: true,
@@ -68,10 +62,9 @@ export async function action({ request }: Route.ActionArgs) {
       },
     );
   }
-  const { email } = submission.value;
-
+  const email = submission.value;
   const user = await prisma.user.findFirstOrThrow({
-    where: { email: email },
+    where: { email },
     select: { email: true },
   });
 
@@ -104,7 +97,7 @@ export default function ForgotPassword({ actionData }: Route.ComponentProps) {
     id: "forgot-password",
     lastResult: actionData,
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: PasswordSchema });
+      return parseWithZod(formData, { schema: ForgotPasswordSchema });
     },
     shouldValidate: "onBlur",
   });

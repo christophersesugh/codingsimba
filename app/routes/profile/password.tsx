@@ -8,7 +8,7 @@ import {
   getPasswordHash,
   requireUser,
   verifyUserPassword,
-} from "../auth/auh.server";
+} from "../../utils/auth.server";
 import { data, Form, Link } from "react-router";
 import { FormError } from "~/components/form-errors";
 import { Label } from "~/components/ui/label";
@@ -26,28 +26,28 @@ import {
   CardContent,
   CardFooter,
 } from "~/components/ui/card";
+import { PasswordSchema } from "~/utils/user-validation";
 
-const PasswordSchema = z
+export const UpdatePasswordSchema = z
   .object({
-    currentPassword: z
-      .string({
-        required_error: "Current password is required.",
-      })
-      .min(6, "Current password must be at least 6 characters"),
-    newPassword: z
-      .string({
-        required_error: "New password is required.",
-      })
-      .min(6, "New password must be at least 6 characters"),
-    confirmPassword: z
-      .string({
-        required_error: "Confirm new password.",
-      })
-      .min(6, "Confirm password must be at least 6 characters"),
+    currentPassword: PasswordSchema,
+    password: PasswordSchema,
+    confirmPassword: PasswordSchema,
   })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords do not match.",
-  });
+  .superRefine(({ confirmPassword, password }, ctx) => {
+    if (confirmPassword !== password) {
+      ctx.addIssue({
+        path: ["confirmPassword"],
+        code: z.ZodIssueCode.custom,
+        message: "The passwords must match",
+      });
+    }
+  })
+  .transform(({ password, confirmPassword, currentPassword }) => ({
+    currentPassword,
+    newPassword: password,
+    confirmPassword,
+  }));
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
@@ -58,7 +58,7 @@ export async function action({ request }: Route.ActionArgs) {
   const user = await requireUser(request);
   const formData = await request.formData();
   const submission = await parseWithZod(formData, {
-    schema: PasswordSchema.transform(async (data, ctx) => {
+    schema: UpdatePasswordSchema.transform(async (data, ctx) => {
       const isValid = await verifyUserPassword(
         { email: user.email },
         data.currentPassword,
@@ -71,7 +71,7 @@ export async function action({ request }: Route.ActionArgs) {
         });
         return z.NEVER;
       }
-      return { ...data };
+      return data;
     }),
     async: true,
   });

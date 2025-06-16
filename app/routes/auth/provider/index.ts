@@ -4,7 +4,7 @@ import { redirect } from "react-router";
 import { handleMockAction } from "~/utils/connection.server";
 import { getReferrerRoute } from "~/utils/misc";
 import { getRedirectCookieHeader } from "~/utils/redirect-cookie.server";
-import { authenticator } from "../auh.server";
+import { authenticator } from "../../../utils/auth.server";
 
 export async function loader() {
   return redirect("/");

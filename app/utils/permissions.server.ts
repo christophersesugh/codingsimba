@@ -5,7 +5,7 @@ import type { Comment, RoleName } from "~/generated/prisma/client";
 import { type PermissionString, parsePermissionString } from "./permissions";
 import type { Entity } from "~/generated/prisma/enums";
 import type { IComment } from "~/components/comment";
-import { requireUserId } from "~/routes/auth/auh.server";
+import { requireUserId } from "~/utils/auth.server";
 
 /**
  * Requires a user to have a specific permission

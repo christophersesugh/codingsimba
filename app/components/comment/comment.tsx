@@ -139,7 +139,7 @@ export function Comment({ comment }: { comment: IComment }) {
   return (
     <li className="border-b border-gray-200 pb-6 last:border-0 dark:border-gray-800">
       <div className="flex items-start space-x-2">
-        <Avatar className="-mt-0.5">
+        <Avatar className="-mt-0.5 size-8">
           {author?.image ? (
             <AvatarImage src={author.image} alt={author.name!} />
           ) : null}
@@ -264,7 +264,7 @@ export function Comment({ comment }: { comment: IComment }) {
 
           {/* Comment replies */}
           {comment.replies?.length ? (
-            <ul className="mt-4 space-y-4 pl-6 dark:border-gray-800">
+            <ul className="mt-4 space-y-4 dark:border-gray-800">
               {comment.replies.map((reply, index) => (
                 <div key={reply.id}>
                   <Reply reply={reply} />
