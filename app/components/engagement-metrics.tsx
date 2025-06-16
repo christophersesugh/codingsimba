@@ -1,5 +1,6 @@
 import React from "react";
-import { Await, useFetcher } from "react-router";
+import type { Route } from "../routes/articles/+types/article";
+import { Await, useFetcher, useLoaderData } from "react-router";
 import { Eye, Heart, MessageSquare } from "lucide-react";
 import { cn } from "~/lib/shadcn";
 import { Link } from "react-router";
@@ -7,39 +8,14 @@ import { useOptionalUser } from "~/hooks/user";
 import { AnimatePresence, motion } from "framer-motion";
 import { Skeleton } from "./ui/skeleton";
 
-/**
- * Props for the metrics data structure
- */
-type MetricsProps = {
-  id: string;
-  views: number;
-  _count: {
-    likes: number;
-    comments: number;
-  };
-  likes: {
-    count: number;
-    userId: string;
-  }[];
-} | null;
+type Like = {
+  count: number;
+  userId: string;
+};
 
-/**
- * EngagementMetrics component displays article engagement statistics
- * @param {Object} props - Component props
- * @param {Promise<MetricsProps>} props.metrics - Promise containing metrics data
- * @returns {JSX.Element} Rendered component with metrics display
- * @example
- * ```tsx
- * <EngagementMetrics metrics={articleMetrics} />
- * ```
- */
-export function EngagementMetrics({
-  metrics,
-  className,
-}: {
-  metrics: Promise<MetricsProps>;
-  className?: string;
-}) {
+export function EngagementMetrics({ className }: { className?: string }) {
+  const loaderData = useLoaderData() as Route.ComponentProps["loaderData"];
+  const metrics = loaderData.metrics;
   return (
     <React.Suspense fallback={<Loading />}>
       <Await resolve={metrics}>
@@ -49,10 +25,6 @@ export function EngagementMetrics({
   );
 }
 
-/**
- * Loading skeleton component for metrics display
- * @returns {JSX.Element} Loading skeleton UI
- */
 function Loading() {
   return (
     <div className="mb-8 flex flex-col items-start justify-between border-b border-gray-200 py-4 dark:border-gray-800">
@@ -65,22 +37,11 @@ function Loading() {
   );
 }
 
-/**
- * Metrics component displays the actual metrics data with interactive features
- * @param {Object} props - Component props
- * @param {MetricsProps} props.metrics - Metrics data
- * @returns {JSX.Element} Rendered metrics with upvote functionality
- * @description
- * - Displays likes, comments, and views
- * - Handles upvote functionality with optimistic updates
- * - Shows floating animation on upvote
- * - Enforces maximum likes limit
- */
 function Metrics({
   metrics,
   className,
 }: {
-  metrics: MetricsProps;
+  metrics: Awaited<Route.ComponentProps["loaderData"]["metrics"]>;
   className?: string;
 }) {
   const [showFloating, setShowFloating] = React.useState(false);
@@ -92,11 +53,14 @@ function Metrics({
   const LEAST_COUNT = 0;
 
   const totalLikes =
-    metrics?.likes?.reduce((total, like) => total + like.count, 0) ??
-    LEAST_COUNT;
+    metrics?.likes?.reduce(
+      (total: number, like: Like) => total + like.count,
+      0,
+    ) ?? LEAST_COUNT;
 
   const userLikes =
-    metrics?.likes.find((like) => like.userId === userId)?.count ?? LEAST_COUNT;
+    metrics?.likes.find((like: Like) => like.userId === userId)?.count ??
+    LEAST_COUNT;
 
   const [optimisticState, setOptimisticState] = React.useState({
     totalLikes,

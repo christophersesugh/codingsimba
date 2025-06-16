@@ -35,9 +35,7 @@ export const useToc = ({
         setActiveId(window.location.hash.replace("#", ""));
       }
     };
-
     handleHashChange();
-
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);

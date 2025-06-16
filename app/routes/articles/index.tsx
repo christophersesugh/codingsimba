@@ -46,10 +46,6 @@ export async function loader({ request }: Route.LoaderArgs) {
     end: safeEnd,
   });
 
-  invariantResponse(articlesData, "No articles found", {
-    status: StatusCodes.NOT_FOUND,
-  });
-
   return {
     featuredArticle,
     articles: articlesData.articles,
@@ -62,8 +58,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
   const [, setSearchParams] = useSearchParams();
-  const { featuredArticle, articles, currentPage, totalPages, categories } =
-    loaderData;
+  const { articles, currentPage } = loaderData;
 
   const PAGE = "page";
   const isIndexPage = currentPage === 1;
@@ -88,8 +83,8 @@ export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
         enableSearch
       />
       <section className="container mx-auto px-4 pb-12 pt-6">
-        <ContentFilter categories={categories} />
-        {isIndexPage ? <FeaturedArticle article={featuredArticle} /> : null}
+        <ContentFilter />
+        {isIndexPage ? <FeaturedArticle /> : null}
         <section className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {articles?.length
             ? articles.map((article, index) => (
@@ -103,7 +98,9 @@ export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
               ))
             : null}
         </section>
-        {!articles?.length ? (
+        {articles?.length ? (
+          <ContentPagination />
+        ) : (
           <EmptyState
             icon={<Search className="size-8" />}
             title="No results found"
@@ -113,13 +110,7 @@ export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
               onClick: resetFilters,
             }}
           />
-        ) : null}
-        {articles?.length ? (
-          <ContentPagination
-            totalPages={totalPages}
-            currentPage={currentPage}
-          />
-        ) : null}
+        )}
       </section>
     </>
   );

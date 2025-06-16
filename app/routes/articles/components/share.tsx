@@ -1,12 +1,14 @@
 import React from "react";
+import type { Route } from "../+types/article";
 import { Check, Copy, Linkedin, Twitter } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { Button } from "~/components/ui/button";
-import type { Article } from "~/services.server/sanity/articles/types";
 
-export function Share({ article }: { article: Article }) {
+export function Share() {
+  const loaderData = useLoaderData() as Route.ComponentProps["loaderData"];
   const [copied, setCopied] = React.useState(false);
 
+  const article = loaderData.article;
   const shareText = article.title;
 
   const shareUrl = `https://codingsimba.com/articles/${article.slug}`;

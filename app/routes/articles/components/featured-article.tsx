@@ -1,18 +1,18 @@
 import React from "react";
+import type { Route } from "../+types/index";
 import type { Article } from "~/services.server/sanity/articles/types";
-import { Await, Link, PrefetchPageLinks } from "react-router";
+import { Await, Link, PrefetchPageLinks, useLoaderData } from "react-router";
 import { format } from "date-fns";
 import { readingTime } from "reading-time-estimator";
 import { Skeleton } from "~/components/ui/skeleton";
 
-export function FeaturedArticle({
-  article,
-}: {
-  article: Promise<Article | null> | null;
-}) {
+export function FeaturedArticle() {
+  const loaderData = useLoaderData() as Route.ComponentProps["loaderData"];
   return (
-    <React.Suspense fallback={<Skeleton className="h-52 w-full rounded-lg" />}>
-      <Await resolve={article}>
+    <React.Suspense
+      fallback={<Skeleton className="mb-4 h-72 w-full rounded-lg" />}
+    >
+      <Await resolve={loaderData.featuredArticle}>
         {(article) => (article ? <Article article={article} /> : null)}
       </Await>
     </React.Suspense>

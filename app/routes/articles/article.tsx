@@ -4,7 +4,7 @@ import { DetailsHeader } from "../../components/details-header";
 import { Tags } from "./components/tags";
 import { Share } from "./components/share";
 import { Author } from "../../components/author";
-import { RelatedArticleCard } from "./components/related-article";
+import { RelatedArticles } from "./components/related-articles";
 import { TableOfContent } from "../../components/table-of-content";
 import { SubscriptionForm } from "./components/subscription-form";
 import { PopularTags } from "./components/popular-tags";
@@ -15,10 +15,7 @@ import {
 } from "~/services.server/sanity/articles/utils";
 import { EngagementMetrics } from "~/components/engagement-metrics";
 import { invariant, invariantResponse } from "~/utils/misc";
-import { EmptyState } from "~/components/empty-state";
-import { BookX } from "lucide-react";
-import { Skeleton } from "~/components/ui/skeleton";
-import { Await, useFetcher } from "react-router";
+import { useFetcher } from "react-router";
 import { Comments } from "~/components/comment";
 import { Separator } from "~/components/ui/separator";
 import { StatusCodes } from "http-status-codes";
@@ -122,7 +119,7 @@ export async function action({ request }: Route.ActionArgs) {
 export default function ArticleDetailsRoute({
   loaderData,
 }: Route.ComponentProps) {
-  const { popularTags, comments, metrics, article } = loaderData;
+  const { article } = loaderData;
   const user = useOptionalUser();
   const fetcher = useFetcher();
 
@@ -136,11 +133,8 @@ export default function ArticleDetailsRoute({
 
   usePageView({
     pageId: article.id,
-    userId: user?.id ?? undefined,
     trackOnce: true,
     trackOnceDelay: 30,
-    minTimeThreshold: 10,
-    heartbeatInterval: 30,
     onPageView: handlePageView,
   });
 
@@ -160,72 +154,36 @@ export default function ArticleDetailsRoute({
                   className="aspect-video h-full w-full object-cover"
                 />
               </div>
-              <TableOfContent
-                articleSlug={article.slug}
-                className="block lg:hidden"
-              />
+              <TableOfContent className="block lg:hidden" />
               <Markdown
                 source={article.content}
                 sandpackTemplates={article.sandpackTemplates}
               />
             </article>
-            <EngagementMetrics metrics={metrics} className="md:hidden" />
-
+            <EngagementMetrics className="md:hidden" />
             <p>
               Comment below the topics you may like me to create articles or
               tutorials on!
             </p>
             <Separator className="mb-4 mt-2" />
-
-            <Comments articleId={article.id} comments={comments} />
-            <Tags article={article} />
-            <Share article={article} />
+            <Comments />
+            <Tags />
+            <Share />
             <Author />
-
             {/* Related articles */}
             <div>
               <h2 className="mb-6 text-2xl font-bold">Related Articles</h2>
-              {!article.relatedArticles?.length ? (
-                <EmptyState
-                  icon={<BookX className="size-8" />}
-                  title="No related articles found for this article"
-                  className="mx-auto"
-                />
-              ) : null}
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {article.relatedArticles?.length
-                  ? article.relatedArticles.map((relatedArticle) => (
-                      <RelatedArticleCard
-                        key={relatedArticle.id}
-                        article={relatedArticle}
-                      />
-                    ))
-                  : null}
-              </div>
+              <RelatedArticles />
             </div>
           </main>
 
           {/* Sidebar */}
           <aside className="lg:col-span-4">
             <div className="sticky top-20">
-              <TableOfContent
-                articleSlug={article.slug}
-                className="hidden lg:block"
-              />
-              <EngagementMetrics
-                metrics={metrics}
-                className="hidden md:block"
-              />
+              <TableOfContent className="hidden lg:block" />
+              <EngagementMetrics className="hidden md:block" />
               {!user?.isSubscribed ? <SubscriptionForm /> : null}
-              <React.Suspense
-                fallback={Array.from({ length: 3 }).map((_, index) => (
-                  <Skeleton key={index} />
-                ))}
-              >
-                <Await resolve={popularTags}>
-                  {(tags) => <PopularTags popularTags={tags} />}
-                </Await>
-              </React.Suspense>
+              <PopularTags />
             </div>
           </aside>
         </div>

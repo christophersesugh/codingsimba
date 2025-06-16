@@ -1,4 +1,5 @@
 import React from "react";
+import type { Route } from "../../routes/articles/+types/article";
 import { MessageSquareOff } from "lucide-react";
 import { EmptyState } from "../empty-state";
 import { CommentForm } from "./comment-form";
@@ -6,63 +7,19 @@ import { Comment } from "./comment";
 import { useOptionalUser } from "~/hooks/user";
 import { Badge } from "../ui/badge";
 import { useCreate } from "~/hooks/content";
-import { Await, Link, useSearchParams } from "react-router";
+import { Await, Link, useLoaderData, useSearchParams } from "react-router";
 import { Button } from "../ui/button";
 import { ChevronDown } from "lucide-react";
 import { Separator } from "../ui/separator";
-import type { Action } from "~/generated/prisma";
 
-interface ILike {
-  count: number;
-  userId: string;
-}
-
-interface ICommentAuthorProfile {
-  name: string | null;
-  image: string | null;
-}
-
-interface ICommentAuthor {
-  id: string;
-  profile: ICommentAuthorProfile | null;
-}
-
-export interface IComment {
-  id: string;
-  markdown: string;
-  html: string;
-  body: string;
-  likes: ILike[];
-  createdAt: Date;
-  parentId: string | null;
-  authorId: string | null;
-  contentId: string;
-  author: ICommentAuthor | null;
-  replies?: IComment[];
-}
-
-type PermissionData = {
-  permissions: {
-    action: Action;
-    hasPermission: boolean;
-  }[];
-  isOwner: boolean;
-};
-
-export type PermissionMap = Map<string, PermissionData>;
-
-export function Comments({
-  comments,
-  articleId,
-}: {
-  comments: Promise<IComment[]>;
-  articleId: string;
-}) {
+export function Comments() {
+  const loaderData = useLoaderData() as Route.ComponentProps["loaderData"];
   const [comment, setComment] = React.useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const commentTake = Number(searchParams.get("commentTake")) || 5;
-
   const user = useOptionalUser();
+
+  const articleId = loaderData.article.id;
 
   const { submit } = useCreate({
     itemId: articleId,
@@ -90,7 +47,7 @@ export function Comments({
   return (
     <section className="mb-8" id="comments">
       <React.Suspense fallback={<div>Loading...</div>}>
-        <Await resolve={comments}>
+        <Await resolve={loaderData.comments}>
           {(comments) => (
             <>
               <div className="flex items-center justify-between">

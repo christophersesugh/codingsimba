@@ -1,7 +1,10 @@
+import type { Route } from "../+types/article";
 import { Card, CardTitle, CardContent } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
-import { Link, PrefetchPageLinks } from "react-router";
+import { Link, PrefetchPageLinks, useLoaderData } from "react-router";
 import { readingTime } from "reading-time-estimator";
+import { EmptyState } from "~/components/empty-state";
+import { BookX } from "lucide-react";
 
 export interface RelatedArticle {
   id: string;
@@ -18,15 +21,36 @@ export interface RelatedArticle {
   markdown: string;
 }
 
-export function RelatedArticleCard({ article }: { article: RelatedArticle }) {
+export function RelatedArticles() {
+  const loaderData = useLoaderData() as Route.ComponentProps["loaderData"];
+  const relatedArticles = loaderData.article.relatedArticles;
+  if (!relatedArticles?.length) {
+    return (
+      <EmptyState
+        icon={<BookX className="size-8" />}
+        title="No related articles found for this article"
+        className="mx-auto"
+      />
+    );
+  }
+  return (
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {relatedArticles.map((article) => (
+        <RelatedArticleCard key={article.id} article={article} />
+      ))}
+    </div>
+  );
+}
+
+function RelatedArticleCard({ article }: { article: RelatedArticle }) {
   const stats = readingTime(article.markdown);
+
   return (
     <Link
       prefetch="intent"
       to={`/articles/${article.slug}`}
       className="group h-full"
     >
-      {/* Prefetch article resources for instant navigation */}
       <PrefetchPageLinks page={`/articles/${article.slug}`} />
       <Card className="h-full overflow-hidden pt-0 transition-shadow hover:shadow-md">
         <div className="relative aspect-video h-[180px] max-h-[180px]">

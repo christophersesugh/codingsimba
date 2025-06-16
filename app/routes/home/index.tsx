@@ -1,5 +1,4 @@
 import React from "react";
-import type { Route } from "./+types";
 import { HeroSection } from "./hero";
 import { CoursesSection } from "./courses";
 import { ArticlesSection } from "./articles";
@@ -17,14 +16,13 @@ export async function loader() {
   return { articles, articlesCount };
 }
 
-export default function HomeRoute({ loaderData }: Route.ComponentProps) {
-  const { articles, articlesCount } = loaderData;
+export default function HomeRoute() {
   return (
     <>
       <HeroSection />
       <CoursesSection />
-      <ArticlesSection articles={articles} />
-      <About articlesCount={articlesCount} />
+      <ArticlesSection />
+      <About />
       <ContactSection />
       <NewsLetterSection />
     </>

@@ -1,5 +1,6 @@
 import React from "react";
-import { Await, useSearchParams } from "react-router";
+import type { Route } from "../routes/articles/+types/index";
+import { Await, useLoaderData, useSearchParams } from "react-router";
 import { Filter } from "lucide-react";
 import {
   Select,
@@ -8,14 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import type { Category } from "~/services.server/sanity/articles/types";
 import { Skeleton } from "./ui/skeleton";
 
-export function ContentFilter({
-  categories,
-}: {
-  categories: Promise<Category[]>;
-}) {
+export function ContentFilter() {
+  const loaderData = useLoaderData() as Route.ComponentProps["loaderData"];
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = React.useState({
     category: "",
@@ -80,7 +77,7 @@ export function ContentFilter({
         <React.Suspense
           fallback={<Skeleton className="h-12 w-full rounded-xl" />}
         >
-          <Await resolve={categories}>
+          <Await resolve={loaderData.categories}>
             {(categories) => (
               <Select
                 value={filters.category}

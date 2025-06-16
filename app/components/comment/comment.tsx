@@ -1,7 +1,7 @@
 import React from "react";
+import type { Route } from "../../routes/articles/+types/article";
 import { useNavigate, useSearchParams } from "react-router";
 import { formatDistanceToNowStrict } from "date-fns";
-import type { IComment } from ".";
 import { Separator } from "../ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
@@ -33,7 +33,11 @@ import {
 import { getInitials, requireAuth } from "~/utils/misc";
 import { userHasPermission } from "~/utils/permissions";
 
-export function Comment({ comment }: { comment: IComment }) {
+export type CommentData = NonNullable<
+  Awaited<Route.ComponentProps["loaderData"]["comments"]>
+>[0];
+
+export function Comment({ comment }: { comment: CommentData }) {
   const [editComment, setEditComment] = React.useState(false);
   const [commentBody, setCommentBody] = React.useState(comment.html);
   const [reply, setReply] = React.useState("");

@@ -1,19 +1,11 @@
-import React from "react";
-import { Link } from "react-router";
+import type { Route } from "../routes/articles/+types/article";
+import { Link, useLoaderData } from "react-router";
 import { Skeleton } from "~/components/ui/skeleton";
 import { useToc } from "~/hooks/use-toc";
 import { cn } from "~/lib/shadcn";
 
-/**
- * Memoized Table of Contents component.
- */
-function TOC({
-  className,
-  articleSlug,
-}: {
-  className?: string;
-  articleSlug: string;
-}) {
+export function TableOfContent({ className }: { className?: string }) {
+  const loaderData = useLoaderData() as Route.ComponentProps["loaderData"];
   const { headings, activeId } = useToc({
     containerId: "markdown-content",
   });
@@ -36,7 +28,7 @@ function TOC({
                 const activeItem = activeId === id;
 
                 return (
-                  <li key={`${id}-${i}-${articleSlug}`}>
+                  <li key={`${id}-${i}-${loaderData.article.slug}`}>
                     <Link
                       to={`#${id}`}
                       className={cn(
@@ -64,5 +56,3 @@ function TOC({
     </div>
   );
 }
-
-export const TableOfContent = React.memo(TOC);

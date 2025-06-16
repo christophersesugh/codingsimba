@@ -10,10 +10,10 @@ import {
   CardContent,
   CardFooter,
 } from "~/components/ui/card";
-import { CardBadge } from "../../../components/card-badge";
-import { Button } from "../../../components/ui/button";
+import { CardBadge } from "~/components/card-badge";
+import { Button } from "~/components/ui/button";
 import { format } from "date-fns";
-import type { RelatedArticle } from "./related-article";
+import type { RelatedArticle } from "./related-articles";
 import { PrefetchPageLinks } from "react-router";
 
 type ArticleCardProps = {

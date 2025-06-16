@@ -1,5 +1,4 @@
 import React from "react";
-import type { IComment } from ".";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { FilePenLine, Heart, Loader, Trash2 } from "lucide-react";
 import { cn } from "~/lib/shadcn";
@@ -21,8 +20,11 @@ import { CommentForm } from "./comment-form";
 import { useNavigate } from "react-router";
 import { getInitials, requireAuth } from "~/utils/misc";
 import { userHasPermission } from "~/utils/permissions";
+import type { CommentData } from "./comment";
 
-export function Reply({ reply }: { reply: IComment }) {
+type ReplyData = NonNullable<CommentData["replies"]>[0];
+
+export function Reply({ reply }: { reply: ReplyData }) {
   const [replyBody, setReplyBody] = React.useState(reply.html);
   const [editReply, setEditReply] = React.useState(false);
   const navigate = useNavigate();

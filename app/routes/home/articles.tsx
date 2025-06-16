@@ -1,16 +1,13 @@
 import React from "react";
+import type { Route } from "./+types";
 import { motion } from "framer-motion";
 import { Button } from "~/components/ui/button";
 import { ArticleCard } from "~/routes/articles/components/article-card";
-import { Await, Link } from "react-router";
+import { Await, Link, useLoaderData } from "react-router";
 import { Skeleton } from "~/components/ui/skeleton";
-import type { RelatedArticle } from "../articles/components/related-article";
 
-export function ArticlesSection({
-  articles,
-}: {
-  articles: Promise<RelatedArticle[]>;
-}) {
+export function ArticlesSection() {
+  const loaderData = useLoaderData() as Route.ComponentProps["loaderData"];
   return (
     <section
       id="articles"
@@ -39,7 +36,7 @@ export function ArticlesSection({
               <Skeleton key={index} className="h-48" />
             ))}
           >
-            <Await resolve={articles}>
+            <Await resolve={loaderData.articles}>
               {(articles) =>
                 articles.map((article, index) => (
                   <Link
