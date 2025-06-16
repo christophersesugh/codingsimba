@@ -1,4 +1,3 @@
-import React from "react";
 import * as E from "@react-email/components";
 import { Header } from "./header";
 import { Footer } from "./footer";

@@ -60,7 +60,7 @@ export function DataAndSecurity() {
         className="mt-4"
       >
         <Button variant="outline" asChild>
-          <Link to={"/profile/change-password"}>
+          <Link to={"/profile/password"}>
             <RectangleEllipsis className="mr-1 size-4" />
             Update
           </Link>

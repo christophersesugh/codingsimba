@@ -91,8 +91,8 @@ model Verification {
 
 enum VerificationType {
   onboarding
-  password_reset
-  email_update
+  reset_password
+  change_email
 }
 
 model Connection {

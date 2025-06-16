@@ -4,50 +4,107 @@ import { motion } from "framer-motion";
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 // import { prisma } from "~/utils/db.server";
-// import { requireUserId } from "~/utils/auth.server";
-import { Form, useNavigation } from "react-router";
+import { data, Form, redirect, Link } from "react-router";
 import { FormError } from "~/components/form-errors";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { Container } from "../profile/components/container";
 import { GradientContainer } from "~/components/gradient-container";
+import { useIsPending } from "~/utils/misc";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
+import { prisma } from "~/utils/db.server";
+import { prepareVerification } from "./verify.server";
+import { sendEmail } from "~/services.server/resend";
+import { checkHoneypot } from "~/utils/honeypot.server";
+import { StatusCodes } from "http-status-codes";
+import { Verification } from "~/components/email-templates/verification";
 
-const EmailSchema = z.object({
-  intent: z.literal("submit"),
+const PasswordSchema = z.object({
   email: z
     .string({ required_error: "Email is required" })
     .email("Invalid email"),
 });
 
-// export async function loader({ request }: Route.LoaderArgs) {
-//   const userId = await requireUserId(request);
-//   const user = await prisma.user.findUniqueOrThrow({
-//     where: { id: userId },
-//     select: { id: true, email: true },
-//   });
-//   return { user };
-// }
+export const resetPasswordEmailSessionKey = "resetPasswordEmailKey";
 
 export async function action({ request }: Route.ActionArgs) {
-  console.log(request);
-  return {};
+  const formData = await request.formData();
+  await checkHoneypot(formData);
+  const submission = await parseWithZod(formData, {
+    schema: PasswordSchema.superRefine(async (data, ctx) => {
+      const user = await prisma.user.findFirst({
+        where: {
+          email: data.email,
+        },
+        select: { id: true },
+      });
+      if (!user) {
+        ctx.addIssue({
+          path: ["usernameOrEmail"],
+          code: z.ZodIssueCode.custom,
+          message: "No user exists with this username or email",
+        });
+        return;
+      }
+    }),
+    async: true,
+  });
+  if (submission.status !== "success") {
+    return data(
+      { ...submission.reply() },
+      {
+        status:
+          submission.status === "error"
+            ? StatusCodes.BAD_REQUEST
+            : StatusCodes.OK,
+      },
+    );
+  }
+  const { email } = submission.value;
+
+  const user = await prisma.user.findFirstOrThrow({
+    where: { email: email },
+    select: { email: true },
+  });
+
+  const { verifyUrl, redirectTo, otp } = await prepareVerification({
+    period: 10 * 60,
+    request,
+    type: "reset_password",
+    target: email,
+  });
+
+  const response = await sendEmail({
+    to: user.email,
+    subject: `Coding Simba Password Reset`,
+    react: <Verification verificationUrl={verifyUrl.toString()} code={otp} />,
+  });
+
+  if (response.status === "success") {
+    return redirect(redirectTo.toString());
+  } else {
+    return data(
+      { ...submission.reply({ formErrors: [response.error] }) },
+      { status: StatusCodes.INTERNAL_SERVER_ERROR },
+    );
+  }
 }
 
-export default function ChangePassword({
-  actionData,
-  // loaderData,
-}: Route.ComponentProps) {
-  const navigation = useNavigation();
-  // const user = loaderData.user;
-  const isSubmitting = navigation.formData?.get("intent") === "submit";
-
+export default function ForgotPassword({ actionData }: Route.ComponentProps) {
+  const isSubmitting = useIsPending();
   const [form, fields] = useForm({
-    id: "update-password",
+    id: "forgot-password",
     lastResult: actionData,
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: EmailSchema });
+      return parseWithZod(formData, { schema: PasswordSchema });
     },
     shouldValidate: "onBlur",
   });
@@ -57,39 +114,50 @@ export default function ChangePassword({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="mx-auto max-w-lg"
+        className="mx-auto w-full max-w-md"
       >
-        <Container
-          title="Reset password"
-          description="Enter your email, and we’ll send you a secure link to reset your password."
-          className="w-full bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80"
-        >
+        <Card className="w-full bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
           <Form
             {...getFormProps(form)}
             method="post"
             className="mx-auto w-full space-y-6"
           >
-            <input type="hidden" name="intent" value="submit" />
-            <div className="space-y-2">
-              <Label htmlFor={fields.email.id}>Email</Label>
-              <Input
-                {...getInputProps(fields.email, { type: "email" })}
-                placeholder="johndoe@example.com"
-                className="h-12 border-gray-300 bg-white text-lg dark:border-gray-700 dark:bg-gray-900"
-              />
-              <FormError errors={fields.email.errors} />
-            </div>
-            <FormError errors={form.errors} />
-            <div className="flex justify-end">
-              <Button type="submit" disabled={isSubmitting}>
-                Reset password{" "}
-                {isSubmitting ? (
-                  <Loader2 className="ml-2 animate-spin" />
-                ) : null}
-              </Button>
-            </div>
+            <CardHeader>
+              <CardTitle>Forgot password</CardTitle>
+              <CardDescription>
+                Enter your email, and we’ll send you a secure link to reset your
+                password.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="my-8">
+              <div className="space-y-2">
+                <Label htmlFor={fields.email.id}>Email</Label>
+                <Input
+                  {...getInputProps(fields.email, { type: "email" })}
+                  placeholder="johndoe@example.com"
+                  className="h-12 border-gray-300 bg-white text-lg dark:border-gray-700 dark:bg-gray-900"
+                />
+                <FormError errors={fields.email.errors} />
+              </div>
+              <FormError errors={form.errors} />
+            </CardContent>
+            <CardFooter>
+              <div className="flex w-full justify-end">
+                <div className="flex gap-6">
+                  <Button variant={"outline"} asChild>
+                    <Link to={"/signin"}>Cancel</Link>
+                  </Button>
+                  <Button type="submit" disabled={isSubmitting}>
+                    Recover password
+                    {isSubmitting ? (
+                      <Loader2 className="ml-2 animate-spin" />
+                    ) : null}
+                  </Button>
+                </div>
+              </div>
+            </CardFooter>
           </Form>
-        </Container>
+        </Card>
       </motion.div>
     </GradientContainer>
   );

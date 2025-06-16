@@ -35,8 +35,8 @@ import { verifySessionStorage } from "~/utils/verification.server";
 import { safeRedirect } from "remix-utils/safe-redirect";
 import { ProviderNameSchema } from "~/components/connection-form";
 import { authSessionStorage } from "~/utils/session.server";
+import { onboardingSessionKey } from ".";
 
-export const onboardingSessionKey = "onboardingEmail";
 export const providerIdKey = "providerId";
 export const prefilledProfileKey = "prefilledProfile";
 

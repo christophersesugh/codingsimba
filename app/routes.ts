@@ -34,7 +34,7 @@ export default [
 
   ...prefix("profile", [
     index("routes/profile/index.tsx"),
-    route("change-password", "routes/profile/change-password.tsx"),
+    route("password", "routes/profile/password.tsx"),
     route("change-email", "routes/profile/change-email.tsx"),
     route("change-photo", "routes/profile/change-photo.tsx"),
   ]),
@@ -49,6 +49,7 @@ export default [
   ]),
 
   ...prefix("auth", [
+    route("reset-password", "routes/auth/reset-password.tsx"),
     route(":provider", "routes/auth/provider/index.ts"),
     route(":provider/callback", "routes/auth/provider/callback.ts"),
   ]),

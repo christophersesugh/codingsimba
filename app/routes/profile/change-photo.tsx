@@ -84,7 +84,7 @@ export default function ChangePhoto({
               <CardTitle>Update Profile Photo</CardTitle>
               <CardDescription>
                 Update your profile picture or delete the current one. Supported
-                formats: JPG, PNG (Max 3MB).
+                formats: JPG, PNG, WEBP (Max 3MB).
               </CardDescription>
             </CardHeader>
             <CardContent className="my-8">

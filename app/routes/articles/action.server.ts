@@ -84,19 +84,16 @@ export async function updateComment(
     select: { id: true },
   });
   invariant(comment, "Comment not found");
-
   invariantResponse(
     await requireUserWithPermission(request, "UPDATE:COMMENT:OWN"),
     "Unauthorized: You don't have permission to update this comment",
     { status: StatusCodes.FORBIDDEN },
   );
-
   const updatedComment = await prisma.comment.update({
     where: { id: itemId },
     data: { body: MarkdownConverter.toMarkdown(body) },
     select: { id: true },
   });
-
   return updatedComment;
 }
 
