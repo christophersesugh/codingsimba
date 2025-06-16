@@ -42,12 +42,7 @@ export const UpdatePasswordSchema = z
         message: "The passwords must match",
       });
     }
-  })
-  .transform(({ password, confirmPassword, currentPassword }) => ({
-    currentPassword,
-    newPassword: password,
-    confirmPassword,
-  }));
+  });
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
@@ -84,12 +79,12 @@ export async function action({ request }: Route.ActionArgs) {
     });
   }
 
-  const { newPassword } = submission.value;
+  const { password } = submission.value;
   const update = await prisma.password.update({
     where: { userId: user.id },
     select: { userId: true },
     data: {
-      hash: await getPasswordHash(newPassword),
+      hash: await getPasswordHash(password),
     },
   });
 
@@ -113,7 +108,7 @@ export default function ResetPasswordRoute({
     id: "update-password",
     lastResult: actionData,
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: PasswordSchema });
+      return parseWithZod(formData, { schema: UpdatePasswordSchema });
     },
     shouldValidate: "onBlur",
   });
@@ -145,13 +140,13 @@ export default function ResetPasswordRoute({
                 <FormError errors={fields.currentPassword.errors} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor={fields.newPassword.id}>New Password</Label>
+                <Label htmlFor={fields.password.id}>New Password</Label>
                 <Input
-                  {...getInputProps(fields.newPassword, { type: "password" })}
+                  {...getInputProps(fields.password, { type: "password" })}
                   placeholder="••••••"
                   className="h-12 border-gray-300 bg-white text-lg dark:border-gray-700 dark:bg-gray-900"
                 />
-                <FormError errors={fields.newPassword.errors} />
+                <FormError errors={fields.password.errors} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor={fields.confirmPassword.id}>
