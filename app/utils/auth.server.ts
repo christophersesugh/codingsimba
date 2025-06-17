@@ -1,10 +1,5 @@
 import bcrypt from "bcryptjs";
-import {
-  type Connection,
-  type Password,
-  type Profile,
-  type User,
-} from "~/generated/prisma";
+import { type Connection, type Password, type User } from "~/generated/prisma";
 import { redirect } from "react-router";
 import { Authenticator } from "remix-auth";
 import { safeRedirect } from "remix-utils/safe-redirect";
@@ -76,7 +71,7 @@ export async function requireUser(
   const userId = await requireUserId(request, { redirectTo });
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, email: true },
+    select: { id: true, email: true, name: true },
   });
   if (!user) {
     throw signout({ request });
@@ -116,7 +111,7 @@ export async function signup({
   name,
 }: {
   email: User["email"];
-  name: Profile["name"];
+  name: User["name"];
   password: string;
 }) {
   const hashedPassword = await getPasswordHash(password);
@@ -126,12 +121,8 @@ export async function signup({
       expirationDate: getSessionExpirationDate(),
       user: {
         create: {
+          name,
           email: email.toLowerCase(),
-          profile: {
-            create: {
-              name,
-            },
-          },
           roles: { connect: { name: "USER" } },
           password: {
             create: {
@@ -186,16 +177,17 @@ export async function signupWithConnection({
   name,
   providerId,
   providerName,
-  imageUrl,
+  // imageUrl,
 }: {
   email: User["email"];
-  name: Profile["name"];
+  name: User["name"];
   providerId: Connection["providerId"];
   providerName: Connection["providerName"];
   imageUrl?: string;
 }) {
   const user = await prisma.user.create({
     data: {
+      name,
       email: email.toLowerCase(),
       roles: { connect: { name: "USER" } },
       connections: { create: { providerId, providerName } },
@@ -204,12 +196,7 @@ export async function signupWithConnection({
           contentUpdate: true,
         },
       },
-      profile: {
-        create: {
-          name: name,
-          ...(imageUrl && { image: imageUrl }),
-        },
-      },
+      // ...(imageUrl && { image: imageUrl }),
     },
     select: { id: true },
   });

@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Send, X } from "lucide-react";
 import { Button } from "../ui/button";
@@ -23,7 +24,6 @@ export function CommentForm({
 }: CommentFormProps) {
   const hideSubmitButton = !comment.trim();
   const user = useOptionalUser();
-  const profile = user?.profile;
 
   const onSubmit = () => {
     if (hideSubmitButton || !comment.trim()) return;
@@ -35,10 +35,10 @@ export function CommentForm({
       <div className="flex w-full flex-1 flex-col items-start space-x-4 md:flex-row">
         {!isForUpdate ? (
           <Avatar className="flex items-center justify-center border border-gray-300 dark:border-gray-600">
-            {profile?.image ? (
+            {/* {profile?.image ? (
               <AvatarImage src={profile.image} alt={profile.name!} />
-            ) : null}
-            <AvatarFallback>{getInitials(profile!.name!)}</AvatarFallback>
+            ) : null} */}
+            <AvatarFallback>{getInitials(user!.name)}</AvatarFallback>
           </Avatar>
         ) : null}
         <div className="flex w-full max-w-full flex-1 flex-col">

@@ -1,4 +1,5 @@
 import React from "react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { FilePenLine, Heart, Loader, Trash2 } from "lucide-react";
 import { cn } from "~/lib/shadcn";
@@ -30,7 +31,7 @@ export function Reply({ reply }: { reply: ReplyData }) {
   const navigate = useNavigate();
   const user = useOptionalUser();
 
-  const author = reply?.author?.profile;
+  const author = reply?.author;
   const userId = user?.id;
   const isOwner = userId === reply.authorId;
 
@@ -98,7 +99,7 @@ export function Reply({ reply }: { reply: ReplyData }) {
         <div className="mb-1 flex items-center justify-between">
           <div className="flex items-center gap-x-4">
             <Avatar className="size-6">
-              <AvatarImage src={author?.image ?? ""} alt={author?.name ?? ""} />
+              {/* <AvatarImage src={author?.image ?? ""} alt={author.name} /> */}
               <AvatarFallback>{getInitials(author!.name!)}</AvatarFallback>
             </Avatar>
             <h5 className="text-sm font-medium">{author!.name}</h5>

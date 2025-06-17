@@ -53,7 +53,7 @@ export async function action({ request }: Route.ActionArgs) {
   const user = await requireUser(request);
   const formData = await request.formData();
   const submission = await parseWithZod(formData, {
-    schema: UpdatePasswordSchema.transform(async (data, ctx) => {
+    schema: UpdatePasswordSchema.superRefine(async (data, ctx) => {
       const isValid = await verifyUserPassword(
         { email: user.email },
         data.currentPassword,
@@ -135,7 +135,7 @@ export default function ResetPasswordRoute({
                     type: "password",
                   })}
                   placeholder="••••••"
-                  className="h-12 border-gray-300 bg-white text-lg dark:border-gray-700 dark:bg-gray-900"
+                  className="h-12 border-gray-300 bg-white !text-lg dark:border-gray-700 dark:bg-gray-900"
                 />
                 <FormError errors={fields.currentPassword.errors} />
               </div>
@@ -144,7 +144,7 @@ export default function ResetPasswordRoute({
                 <Input
                   {...getInputProps(fields.password, { type: "password" })}
                   placeholder="••••••"
-                  className="h-12 border-gray-300 bg-white text-lg dark:border-gray-700 dark:bg-gray-900"
+                  className="h-12 border-gray-300 bg-white !text-lg dark:border-gray-700 dark:bg-gray-900"
                 />
                 <FormError errors={fields.password.errors} />
               </div>
@@ -157,7 +157,7 @@ export default function ResetPasswordRoute({
                     type: "password",
                   })}
                   placeholder="••••••"
-                  className="h-12 border-gray-300 bg-white text-lg dark:border-gray-700 dark:bg-gray-900"
+                  className="h-12 border-gray-300 bg-white !text-lg dark:border-gray-700 dark:bg-gray-900"
                 />
                 <FormError errors={fields.confirmPassword.errors} />
               </div>

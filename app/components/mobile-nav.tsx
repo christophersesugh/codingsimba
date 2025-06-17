@@ -11,6 +11,7 @@ import { navLinks, slogan } from "~/constants/navlinks";
 import { NavLink } from "./nav-link";
 import { Separator } from "./ui/separator";
 import { Link } from "react-router";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
@@ -21,7 +22,6 @@ import { SignoutButton } from "./signout-button";
 export function MobileNav() {
   const { open, closeMobileNav } = useMobileNav();
   const user = useOptionalUser();
-  const profile = user?.profile;
 
   return (
     <aside>
@@ -59,12 +59,12 @@ export function MobileNav() {
               </Button>
             ) : null}
 
-            {profile ? (
+            {user ? (
               <Link to={"/profile"} onClick={closeMobileNav}>
                 <Avatar className="size-9">
-                  <AvatarImage src={profile.image!} alt={profile.name!} />
+                  {/* <AvatarImage src={profile.image!} alt={profile.name!} /> */}
                   <AvatarFallback className="border border-slate-300 dark:border-gray-800">
-                    {getInitials(profile.name)}
+                    {getInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
               </Link>

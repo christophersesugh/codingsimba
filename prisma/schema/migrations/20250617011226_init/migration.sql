@@ -147,6 +147,7 @@ CREATE TABLE "User" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "email" TEXT NOT NULL,
     "polarCustomerId" TEXT,
+    "name" TEXT NOT NULL,
     "isSubscribed" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
@@ -160,18 +161,14 @@ CREATE TABLE "Password" (
 );
 
 -- CreateTable
-CREATE TABLE "Profile" (
+CREATE TABLE "UserImage" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "name" TEXT NOT NULL,
-    "image" TEXT DEFAULT '',
-    "bio" TEXT DEFAULT '',
-    "location" TEXT DEFAULT '',
-    "website" TEXT DEFAULT '',
-    "github" TEXT DEFAULT '',
+    "altText" TEXT,
+    "objectKey" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
     "userId" TEXT NOT NULL,
-    CONSTRAINT "Profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "UserImage_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -393,7 +390,7 @@ CREATE INDEX "User_email_idx" ON "User"("email");
 CREATE UNIQUE INDEX "Password_userId_key" ON "Password"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Profile_userId_key" ON "Profile"("userId");
+CREATE UNIQUE INDEX "UserImage_userId_key" ON "UserImage"("userId");
 
 -- CreateIndex
 CREATE INDEX "Session_userId_idx" ON "Session"("userId");

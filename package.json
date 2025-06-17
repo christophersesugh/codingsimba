@@ -1,5 +1,6 @@
 {
   "name": "codingsimba",
+  "description": "Welcome to my personal website where I share my knowledge and experiences in software development through articles, tutorials, and courses.",
   "private": true,
   "type": "module",
   "prisma": {
@@ -76,6 +77,7 @@
     "lucide-react": "^0.484.0",
     "marked": "^15.0.12",
     "mdx-bundler": "^10.1.1",
+    "openimg": "^1.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.6.2",

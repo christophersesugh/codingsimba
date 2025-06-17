@@ -59,9 +59,9 @@ export async function loader({ request }: Route.LoaderArgs) {
     where: { id: userId },
     select: {
       id: true,
+      name: true,
       email: true,
       isSubscribed: true,
-      profile: true,
       notificationSettings: true,
       _count: {
         select: {
@@ -78,24 +78,18 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export async function action({ request }: Route.ActionArgs) {
+  const userId = await requireUserId(request);
   const formData = await request.formData();
-
   const submission = await parseWithZod(formData, {
     schema: AcccountUpdateSchema.transform(async (data, ctx) => {
       switch (data.intent) {
         case ACCOUNT_INFORMATION_INTENT: {
-          const { userId, name, bio, location, website } = data as z.infer<
-            typeof AcccountInformationSchema
-          >;
-          const updateData = { name, bio, location, website };
-          const user = await prisma.profile.update({
-            where: { userId },
+          const { name } = data as z.infer<typeof AcccountInformationSchema>;
+          const user = await prisma.user.update({
+            where: { id: userId },
             select: { id: true },
-            data: {
-              ...updateData,
-            },
+            data: { name },
           });
-
           if (!user) {
             ctx.addIssue({
               path: ["root"],

@@ -4,13 +4,9 @@ import {
   authenticator,
   getSessionExpirationDate,
   getUserId,
-} from "../../../utils/auth.server";
+} from "~/utils/auth.server";
 import { verifySessionStorage } from "~/utils/verification.server";
-import {
-  onboardingSessionKey,
-  prefilledProfileKey,
-  providerIdKey,
-} from "../onboarding/provider";
+import { prefilledProfileKey, providerIdKey } from "../onboarding/provider";
 import { combineHeaders, combineResponseInits } from "~/utils/misc";
 import { prisma } from "~/utils/db.server";
 import { providerLabels } from "~/components/connection-form";
@@ -20,6 +16,7 @@ import {
 } from "~/utils/redirect-cookie.server";
 import { handleNewSession } from "~/utils/session.server";
 import { createToastHeaders, redirectWithToast } from "~/utils/toast.server";
+import { onboardingSessionKey } from "../onboarding";
 
 const destroyRedirectTo = { "set-cookie": destroyRedirectToHeader };
 

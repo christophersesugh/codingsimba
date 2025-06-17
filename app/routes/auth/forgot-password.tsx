@@ -27,7 +27,9 @@ import { StatusCodes } from "http-status-codes";
 import { Verification } from "~/components/email-templates/verification";
 import { EmailSchema } from "~/utils/user-validation";
 
-const ForgotPasswordSchema = EmailSchema;
+const ForgotPasswordSchema = z.object({
+  email: EmailSchema,
+});
 
 export const resetPasswordEmailSessionKey = "resetPasswordEmailKey";
 
@@ -35,9 +37,9 @@ export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
   await checkHoneypot(formData);
   const submission = await parseWithZod(formData, {
-    schema: ForgotPasswordSchema.superRefine(async (email, ctx) => {
+    schema: ForgotPasswordSchema.superRefine(async (data, ctx) => {
       const user = await prisma.user.findFirst({
-        where: { email },
+        where: { email: data.email },
         select: { id: true },
       });
       if (!user) {
@@ -48,6 +50,7 @@ export async function action({ request }: Route.ActionArgs) {
         });
         return z.NEVER;
       }
+      return data;
     }),
     async: true,
   });
@@ -62,7 +65,7 @@ export async function action({ request }: Route.ActionArgs) {
       },
     );
   }
-  const email = submission.value;
+  const { email } = submission.value;
   const user = await prisma.user.findFirstOrThrow({
     where: { email },
     select: { email: true },
@@ -128,7 +131,7 @@ export default function ForgotPassword({ actionData }: Route.ComponentProps) {
                 <Input
                   {...getInputProps(fields.email, { type: "email" })}
                   placeholder="johndoe@example.com"
-                  className="h-12 border-gray-300 bg-white text-lg dark:border-gray-700 dark:bg-gray-900"
+                  className="h-12 border-gray-300 bg-white !text-lg dark:border-gray-700 dark:bg-gray-900"
                 />
                 <FormError errors={fields.email.errors} />
               </div>

@@ -19,6 +19,7 @@ export default [
   route("*", "routes/not-found.tsx"),
 
   // Resource routes
+  route("images", "routes/resources/images.tsx"),
   route("download-user-data", "routes/resources/download-user-data.ts"),
 
   // Action routes

@@ -6,6 +6,7 @@ import { Button } from "~/components/ui/button";
 
 import { cn } from "~/lib/shadcn";
 import type { TabValue } from "..";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { getInitials } from "~/utils/misc";
 
@@ -18,16 +19,15 @@ type SideNavProps = {
 export function SideNav({ tabs, activeTab, setActiveTab }: SideNavProps) {
   const loaderData = useLoaderData() as Route.ComponentProps["loaderData"];
   const user = loaderData.user;
-  const profile = user.profile;
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 shadow-sm dark:border-gray-800 dark:bg-gray-900">
       <div className="border-b border-gray-200 p-6 text-center dark:border-gray-800">
         <div className="relative mx-auto mb-4 size-24 overflow-visible">
           <Avatar className="size-24 overflow-visible">
-            {profile?.image ? (
+            {/* {profile?.image ? (
               <AvatarImage src={profile.image} alt={profile!.name!} />
-            ) : null}
-            <AvatarFallback>{getInitials(profile!.name)}</AvatarFallback>
+            ) : null} */}
+            <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
             <Link to={"/profile/change-photo"}>
               <Button
                 size={"icon"}
@@ -38,7 +38,7 @@ export function SideNav({ tabs, activeTab, setActiveTab }: SideNavProps) {
             </Link>
           </Avatar>
         </div>
-        <h2 className="text-2xl font-bold">{profile!.name!}</h2>
+        <h2 className="text-xl font-bold">{user.name}</h2>
         <p className="text-gray-500 dark:text-gray-400">{user.email}</p>
         <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
           <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">

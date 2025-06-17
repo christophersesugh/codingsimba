@@ -39,7 +39,7 @@ export async function handleVerification({
     request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip");
 
   const preUpdateUser = await prisma.user.findFirstOrThrow({
-    select: { email: true, profile: { select: { name: true } } },
+    select: { email: true, name: true },
     where: { id: submission.value.target },
   });
   const user = await prisma.user.update({
@@ -51,7 +51,7 @@ export async function handleVerification({
   const emailProps = {
     newEmail,
     oldEmail: preUpdateUser.email,
-    name: preUpdateUser.profile!.name!,
+    name: preUpdateUser.name,
     ipAddress: userIpAddress as string,
     changeDate: format(new Date(), "MMMM d, yyyy 'at' h:mm a"),
   };

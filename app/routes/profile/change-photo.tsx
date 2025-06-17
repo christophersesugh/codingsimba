@@ -12,7 +12,7 @@ import { FormError } from "~/components/form-errors";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { GradientContainer } from "~/components/gradient-container";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
@@ -25,6 +25,7 @@ import {
 } from "~/components/ui/card";
 import { getInitials, useIsPending } from "~/utils/misc";
 import { parseFormData } from "@mjackson/form-data-parser";
+import { StatusCodes } from "http-status-codes";
 
 const MAX_SIZE = 1024 * 1024 * 3; // 3MB
 
@@ -54,8 +55,9 @@ export async function loader({ request }: Route.LoaderArgs) {
     where: { id: userId },
     select: {
       id: true,
+      name: true,
       email: true,
-      profile: { select: { image: true, name: true } },
+      image: { select: { objectKey: true, altText: true } },
     },
   });
   return { user };
@@ -82,7 +84,12 @@ export async function action({ request }: Route.ActionArgs) {
   if (submission.status !== "success") {
     return data(
       { result: submission.reply() },
-      { status: submission.status === "error" ? 400 : 200 },
+      {
+        status:
+          submission.status === "error"
+            ? StatusCodes.BAD_REQUEST
+            : StatusCodes.OK,
+      },
     );
   }
 
@@ -109,7 +116,6 @@ export default function ChangePhoto({
   loaderData,
 }: Route.ComponentProps) {
   const user = loaderData.user;
-  const profile = user.profile;
   const isSubmitting = useIsPending();
 
   const [form, fields] = useForm({
@@ -150,27 +156,28 @@ export default function ChangePhoto({
             </CardHeader>
             <CardContent className="my-8">
               <Avatar className="mx-auto mt-4 size-48 overflow-visible">
-                {profile?.image ? (
-                  <AvatarImage src={profile.image} alt={profile!.name!} />
-                ) : null}
+                {/* {user.image ? (
+                  <AvatarImage src={user.image} alt={profile!.name!} />
+                ) : null} */}
                 <AvatarFallback className="text-3xl">
-                  {getInitials(profile!.name)}
+                  {getInitials(user.name)}
                 </AvatarFallback>
               </Avatar>
             </CardContent>
             <CardFooter>
-              <div className="flex w-full justify-end">
-                <div className="flex gap-6">
-                  <Button variant={"destructive"} type="submit">
-                    Delete
-                  </Button>
-                  <Button type="submit" disabled={isSubmitting}>
-                    Change{" "}
-                    {isSubmitting ? (
-                      <Loader2 className="ml-2 animate-spin" />
-                    ) : null}
-                  </Button>
-                </div>
+              <div className="flex w-full justify-evenly">
+                <Link to={"/profile"}>
+                  <Button variant={"outline"}>Cancel</Button>
+                </Link>
+                <Button variant={"destructive"} type="submit">
+                  Delete
+                </Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  Change{" "}
+                  {isSubmitting ? (
+                    <Loader2 className="ml-2 animate-spin" />
+                  ) : null}
+                </Button>
               </div>
             </CardFooter>
           </Form>

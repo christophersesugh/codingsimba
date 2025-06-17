@@ -7,6 +7,7 @@ import { NavLink } from "./nav-link";
 import { ThemeToggle } from "./theme-toggle";
 import { cn } from "~/lib/shadcn";
 import { Logo } from "./logo";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useMobileNav } from "~/contexts/mobile-nav";
 import { useOptionalUser } from "~/hooks/user";
@@ -29,7 +30,6 @@ export function Navbar() {
   const user = useOptionalUser();
   const userIsAdmin = userHasRole(user, "ADMIN");
 
-  const profile = user?.profile;
   return (
     <nav
       className={cn("pt-6", {
@@ -65,13 +65,13 @@ export function Navbar() {
               </Link>
             </Button>
           ) : null}
-          {profile ? (
+          {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger className="hidden md:block" asChild>
                 <Avatar className="size-8">
-                  <AvatarImage src={profile.image!} alt={profile.name!} />
+                  {/* <AvatarImage src={profile.image!} alt={profile.name!} /> */}
                   <AvatarFallback className="border border-slate-300 dark:border-gray-800">
-                    {getInitials(profile.name)}
+                    {getInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>

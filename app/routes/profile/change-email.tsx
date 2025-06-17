@@ -28,7 +28,9 @@ import {
 import { useIsPending } from "~/utils/misc";
 import { EmailSchema } from "~/utils/user-validation";
 
-const ChangeEmailSchema = EmailSchema;
+const ChangeEmailSchema = z.object({
+  email: EmailSchema,
+});
 
 export const newEmailAddressSessionKey = "new-email-address";
 
@@ -49,9 +51,9 @@ export async function action({ request }: Route.ActionArgs) {
   const userId = await requireUserId(request);
   const formData = await request.formData();
   const submission = await parseWithZod(formData, {
-    schema: ChangeEmailSchema.superRefine(async (email, ctx) => {
+    schema: ChangeEmailSchema.superRefine(async (data, ctx) => {
       const existingUser = await prisma.user.findUnique({
-        where: { email },
+        where: { email: data.email },
         select: { email: true },
       });
       if (existingUser) {
@@ -60,21 +62,20 @@ export async function action({ request }: Route.ActionArgs) {
           code: z.ZodIssueCode.custom,
           message: "This email is already in use.",
         });
+        return z.NEVER;
       }
+      return data;
     }),
     async: true,
   });
 
   if (submission.status !== "success") {
-    return data(
-      { ...submission.reply() },
-      {
-        status:
-          submission.status === "error"
-            ? StatusCodes.BAD_REQUEST
-            : StatusCodes.OK,
-      },
-    );
+    return data({ status: "error", ...submission.reply() } as const, {
+      status:
+        submission.status === "error"
+          ? StatusCodes.BAD_REQUEST
+          : StatusCodes.OK,
+    });
   }
   const { otp, redirectTo, verifyUrl } = await prepareVerification({
     period: 10 * 60,
@@ -83,7 +84,7 @@ export async function action({ request }: Route.ActionArgs) {
     type: "change_email",
   });
 
-  const email = submission.value;
+  const { email } = submission.value;
 
   const response = await sendEmail({
     to: email,
@@ -101,7 +102,10 @@ export async function action({ request }: Route.ActionArgs) {
     });
   } else {
     return data(
-      { ...submission.reply({ formErrors: [response.error] }) },
+      {
+        ...submission.reply(),
+        formErrors: [response.error],
+      } as const,
       { status: StatusCodes.INTERNAL_SERVER_ERROR },
     );
   }
@@ -122,6 +126,7 @@ export default function ChangeEmail({
     },
     shouldValidate: "onBlur",
   });
+
   return (
     <GradientContainer>
       <motion.div
@@ -152,7 +157,7 @@ export default function ChangeEmail({
                 <Input
                   {...getInputProps(fields.email, { type: "email" })}
                   placeholder="johndoe@example.com"
-                  className="h-12 border-gray-300 bg-white text-lg dark:border-gray-700 dark:bg-gray-900"
+                  className="h-12 border-gray-300 bg-white !text-lg dark:border-gray-700 dark:bg-gray-900"
                 />
                 <FormError errors={fields.email.errors} />
               </div>

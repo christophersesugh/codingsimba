@@ -73,12 +73,8 @@ export async function getArticleComments({
       author: {
         select: {
           id: true,
-          profile: {
-            select: {
-              name: true,
-              image: true,
-            },
-          },
+          name: true,
+          image: { select: { objectKey: true } },
         },
       },
       replies: {
@@ -95,12 +91,8 @@ export async function getArticleComments({
           author: {
             select: {
               id: true,
-              profile: {
-                select: {
-                  name: true,
-                  image: true,
-                },
-              },
+              name: true,
+              image: { select: { objectKey: true } },
             },
           },
         },

@@ -4,6 +4,7 @@ import { prisma } from "~/utils/db.server";
 
 const { ADMIN_PASSWORD } = process.env;
 const ADMIN_EMAIL = "me@codingsimba.com";
+const ADMIN_NAME = "Christopher S. Aondona";
 
 async function seed() {
   await prisma.permission.deleteMany();
@@ -60,16 +61,10 @@ async function seed() {
   await prisma.user.create({
     data: {
       email: ADMIN_EMAIL,
+      name: ADMIN_NAME,
       isSubscribed: true,
       roles: {
         connect: [{ name: "ADMIN" }, { name: "MODERATOR" }, { name: "USER" }],
-      },
-      profile: {
-        create: {
-          name: "Christopher S. Aondona",
-          image:
-            "https://cdn.sanity.io/media-libraries/ml4WNZcKpiTm/images/6749aa161e69b57e6d39b2cd430834da255e31bd-1024x1024.png",
-        },
       },
       password: { create: createPassword(ADMIN_PASSWORD) },
       notificationSettings: {
