@@ -33,8 +33,8 @@ export function MobileNav() {
             </SheetTitle>
             <SheetDescription>{slogan}</SheetDescription>
           </SheetHeader>
-          <Separator />
-          <nav className="flex flex-col items-start px-4">
+          <Separator className="-mt-4" />
+          <nav className="flex flex-col items-start gap-3 px-4">
             {navLinks.map((link, i) => (
               <NavLink
                 type="navbar"

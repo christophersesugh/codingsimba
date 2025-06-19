@@ -26,7 +26,7 @@ export function Footer() {
           <section className="grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-12">
             <div>
               <h3 className="mb-3 font-medium">Content</h3>
-              <ul className="-space-y-2">
+              <ul className="space-y-2">
                 {content.map((item) => (
                   <li key={item.name}>
                     <NavLink
@@ -41,7 +41,7 @@ export function Footer() {
 
             <div>
               <h3 className="mb-3 font-medium">Platform</h3>
-              <ul className="-space-y-2">
+              <ul className="space-y-2">
                 {platform.map((item) => (
                   <li key={item.name}>
                     <NavLink
@@ -56,7 +56,7 @@ export function Footer() {
 
             <div>
               <h3 className="mb-3 font-medium">Legal</h3>
-              <ul className="-space-y-2">
+              <ul className="space-y-2">
                 {legal.map((item) => (
                   <li key={item.name}>
                     <NavLink
@@ -71,7 +71,7 @@ export function Footer() {
 
             <div>
               <h3 className="mb-3 font-medium">Social</h3>
-              <ul className="-space-y-2">
+              <ul className="space-y-2">
                 {social.map((item) => (
                   <li key={item.name}>
                     <NavLink

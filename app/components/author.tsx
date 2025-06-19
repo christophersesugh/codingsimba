@@ -2,13 +2,14 @@ import { ArrowBigRight } from "lucide-react";
 import { Link } from "react-router";
 import { SupportMeButton } from "~/components/ui/support-me-button";
 import { Button } from "~/components/ui/button";
+import { getImgSrc } from "~/utils/misc";
 
 export function Author() {
   return (
     <div className="mb-8 rounded-xl bg-gray-50 p-6 dark:bg-gray-900">
       <div className="flex items-center gap-4">
         <img
-          src={"/favicon.png"}
+          src={getImgSrc({ path: "assets", fileKey: "cscartoon.png" })}
           alt={"Christopher S. Aondona"}
           width={80}
           height={80}

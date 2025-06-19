@@ -3,14 +3,14 @@
   "description": "Welcome to my personal website where I share my knowledge and experiences in software development through articles, tutorials, and courses.",
   "private": true,
   "type": "module",
-  "author": "",
+  "author": "Christopher S. Aondona <me@codingsimba.com> (https://codingsimba.com/)",
   "prisma": {
     "schema": "prisma/schema",
     "seed": "tsx prisma/seed.ts"
   },
   "scripts": {
     "build": "react-router build",
-    "dev": "VITE_CJS_TRACE=true cross-env MOCKS=true react-router dev",
+    "dev": "cross-env MOCKS=true react-router dev",
     "start": "react-router-serve ./build/server/index.js",
     "test:unit": "vitest --workspace=vitest.workspace.ts --project unit",
     "test:browser": "vitest --workspace=vitest.workspace.ts --project browser",
