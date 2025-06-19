@@ -18,6 +18,10 @@ export default [
   route("forgot-password", "routes/auth/forgot-password.tsx"),
   route("*", "routes/not-found.tsx"),
 
+  // SEO
+  route("robots", "routes/seo/robots[.]txt.ts"),
+  route("sitemap", "routes/seo/sitemap[.]xml.ts"),
+
   // Resource routes
   route("set-theme", "routes/resources/set-theme.ts"),
   route("unsubscribe", "routes/resources/unsubscribe.ts"),

@@ -1,4 +1,5 @@
 import type { Route } from "./+types/forgot-password";
+import type { SEOHandle } from "@nasa-gcn/remix-seo";
 import { z } from "zod";
 import { motion } from "framer-motion";
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
@@ -93,6 +94,10 @@ export async function action({ request }: Route.ActionArgs) {
     );
   }
 }
+
+export const handle: SEOHandle = {
+  getSitemapEntries: () => null,
+};
 
 export default function ForgotPassword({ actionData }: Route.ComponentProps) {
   const isSubmitting = useIsPending();
