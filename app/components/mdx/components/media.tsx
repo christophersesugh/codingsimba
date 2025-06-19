@@ -24,7 +24,7 @@ interface MDXIframeProps {
 export function Iframe({ videoId, type = "youtube" }: MDXIframeProps) {
   const srcUrls = {
     youtube: `https://www.youtube.com/embed/${videoId}?rel=0&showinfo=0&modestbranding=1&iv_load_policy=3`,
-    bunny: `https://video.bunnycdn.com/embed/${videoId}`,
+    bunny: `https://iframe.mediadelivery.net/embed/{video_library_id}/${videoId}`,
   } as const;
 
   const srcTitle = {
@@ -33,13 +33,22 @@ export function Iframe({ videoId, type = "youtube" }: MDXIframeProps) {
   };
 
   return (
-    <iframe
-      src={srcUrls[type]}
-      title={srcTitle[type]}
-      allowFullScreen
-      loading="lazy"
-      className="aspect-video w-full border-0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    />
+    <div
+      className={cn("w-full", {
+        "relative pt-[56.25%]": type === "bunny",
+      })}
+    >
+      <iframe
+        src={srcUrls[type]}
+        title={srcTitle[type]}
+        allowFullScreen
+        loading="lazy"
+        className={cn({
+          "aspect-video w-full border-0": type === "youtube",
+          "absolute top-0 h-full w-full border-none": type === "bunny",
+        })}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      />
+    </div>
   );
 }

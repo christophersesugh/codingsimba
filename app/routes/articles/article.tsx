@@ -12,7 +12,7 @@ import { Markdown } from "~/components/mdx";
 import {
   getArticleDetails,
   getPopularTags,
-} from "~/services.server/sanity/articles/utils";
+} from "~/utils/content.server/articles/utils";
 import { EngagementMetrics } from "~/components/engagement-metrics";
 import { invariant, invariantResponse } from "~/utils/misc";
 import { useFetcher } from "react-router";

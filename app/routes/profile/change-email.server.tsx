@@ -6,7 +6,7 @@ import { invariant } from "~/utils/misc";
 import { verifySessionStorage } from "~/utils/verification.server";
 import { prisma } from "~/utils/db.server";
 import { StatusCodes } from "http-status-codes";
-import { sendEmail } from "~/services.server/resend";
+import { sendEmail } from "~/utils/email.server";
 import { EmailChangeNotification } from "~/components/email-templates/email-change-notification";
 import { format } from "date-fns";
 

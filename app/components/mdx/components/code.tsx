@@ -1,6 +1,6 @@
 import React from "react";
 import ShikiHighlighter, { type Element } from "react-shiki";
-import type { SandpackTemplate } from "~/services.server/sanity/articles/types";
+import type { SandpackTemplate } from "~/utils/content.server/articles/types";
 import { Check, Codesandbox, Copy, Youtube } from "lucide-react";
 import { useTheme } from "remix-themes";
 import { cn } from "~/lib/shadcn";

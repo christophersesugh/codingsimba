@@ -163,7 +163,10 @@ export default function Signin({ actionData }: Route.ComponentProps) {
                   <LoaderCircle className="ml-2 animate-spin" />
                 ) : null}
               </Button>
-              <FormError errors={form.allErrors.root || form.errors} />
+              <FormError
+                errors={form.allErrors.root || form.errors}
+                className="-mt-3"
+              />
             </Form>
             <div className="relative">
               <div className="absolute inset-0 flex items-center">

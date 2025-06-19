@@ -21,7 +21,7 @@ import {
 } from "~/components/ui/card";
 import { prisma } from "~/utils/db.server";
 import { prepareVerification } from "./verify.server";
-import { sendEmail } from "~/services.server/resend";
+import { sendEmail } from "~/utils/email.server";
 import { checkHoneypot } from "~/utils/honeypot.server";
 import { StatusCodes } from "http-status-codes";
 import { Verification } from "~/components/email-templates/verification";

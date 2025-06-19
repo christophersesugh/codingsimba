@@ -3,11 +3,41 @@ import {
   useNavigation,
   type NavigateFunction,
 } from "react-router";
+import { createId as cuid } from "@paralleldrive/cuid2";
 import { type ClassValue, clsx } from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSpinDelay } from "spin-delay";
 import { twMerge } from "tailwind-merge";
 import type { useUser } from "~/hooks/user";
+import { intervalToDuration } from "date-fns";
+
+export function getRandomBotAvatar(seed = cuid()) {
+  return `https://api.dicebear.com/7.x/pixel-art/svg?seed=${seed}`;
+}
+
+/**
+ * Gets an image URL either from CDN or generates a random bot avatar
+ * @param {string | null | undefined} fileKey - CDN file key
+ * @param {"user" | "content"} type - Image type (affects CDN path)
+ * @returns {string} Image URL
+ */
+export function getImgSrc({
+  fileKey,
+  path = "users",
+}: {
+  fileKey?: string | null;
+  path?: "users" | "content" | "assets";
+}): string {
+  const storageZone = "https://cdn.codingsimba.com";
+  if (fileKey) {
+    if (path) {
+      return `${storageZone}/${encodeURIComponent(path)}/${encodeURIComponent(fileKey)}`;
+    } else {
+      return `${storageZone}/${encodeURIComponent(fileKey)}`;
+    }
+  }
+  return getRandomBotAvatar();
+}
 
 /**
  * Extracts a readable error message from various error types.
@@ -495,31 +525,60 @@ export function capitalizeName(name: string) {
 }
 
 /**
- * Formats a number of seconds into a time string with hours, minutes, and seconds.
- * Returns HH:MM:SS format if hours are present, otherwise MM:SS format.
- * Pads minutes and seconds with leading zeros for consistent formatting.
+ * Formats a number of seconds into a human-readable duration string.
+ * Uses date-fns for accurate duration calculations and includes appropriate unit labels.
+ * Only displays non-zero values and handles singular/plural forms correctly.
  *
  * @param seconds - The number of seconds to format
- * @returns A string in the format "HH:MM:SS" or "MM:SS"
+ * @returns A string with appropriate unit labels (e.g., "1 hr 30 mins 45 secs")
  *
  * @example
  * ```ts
- * formatTime(3665) // "1:01:05"
- * formatTime(65)   // "1:05"
- * formatTime(5)    // "0:05"
+ * formatTime(3661) // "1 hr 1 min 1 sec"
+ * formatTime(65)   // "1 min 5 secs"
+ * formatTime(45)   // "45 secs"
+ * formatTime(3600) // "1 hr"
  * ```
  */
 export function formatTime(seconds: number): string {
-  const hours = Math.floor(seconds / 3600);
-  const remainingSecondsAfterHours = seconds % 3600;
-  const mins = Math.floor(remainingSecondsAfterHours / 60);
-  const secs = remainingSecondsAfterHours % 60;
+  const duration = intervalToDuration({ start: 0, end: seconds * 1000 });
+  const parts = [];
 
-  return hours > 0
-    ? `${hours}:${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`
-    : `${mins}:${secs.toString().padStart(2, "0")}`;
+  if (duration.hours && duration.hours > 0) {
+    parts.push(`${duration.hours} hr${duration.hours === 1 ? "" : "s"}`);
+  }
+  if (duration.minutes && duration.minutes > 0) {
+    parts.push(`${duration.minutes} min${duration.minutes === 1 ? "" : "s"}`);
+  }
+  if (duration.seconds && duration.seconds > 0) {
+    parts.push(`${duration.seconds} sec${duration.seconds === 1 ? "" : "s"}`);
+  }
+
+  return parts.join(" ");
 }
 
+/**
+ * Creates a wrapper function that requires authentication before execution.
+ * If user is not authenticated, redirects to signin page instead of executing the function.
+ * Useful for protecting actions that require user authentication.
+ *
+ * @param options - Configuration options
+ * @param options.fn - The function to wrap with authentication check
+ * @param options.user - The current user object (null if not authenticated)
+ * @param options.navigate - Navigation function to redirect unauthenticated users
+ * @returns A function that checks authentication before executing the original function
+ *
+ * @example
+ * ```ts
+ * const handleDelete = requireAuth({
+ *   fn: deleteItem,
+ *   user: currentUser,
+ *   navigate: navigate
+ * });
+ *
+ * // Usage: handleDelete(itemId) will either delete the item or redirect to signin
+ * ```
+ */
 export function requireAuth({
   fn,
   user,

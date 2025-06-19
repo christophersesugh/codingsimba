@@ -9,7 +9,7 @@ import { CTA } from "./components/cta";
 import { readMdxDirectory } from "~/utils/misc.server";
 import { invariantResponse } from "~/utils/misc";
 import { StatusCodes } from "http-status-codes";
-import { countArticles } from "~/services.server/sanity/articles/utils";
+import { countArticles } from "~/utils/content.server/articles/utils";
 
 export async function loader() {
   const articlesCount = countArticles();

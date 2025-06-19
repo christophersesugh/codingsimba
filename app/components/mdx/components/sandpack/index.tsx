@@ -1,6 +1,6 @@
 import React from "react";
 import { Theme, useTheme } from "remix-themes";
-import type { SandpackTemplate } from "~/services.server/sanity/articles/types";
+import type { SandpackTemplate } from "~/utils/content.server/articles/types";
 import {
   SandpackProvider,
   SandpackCodeEditor,

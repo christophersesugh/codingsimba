@@ -19,7 +19,7 @@ import { Img } from "./components/media";
 import { Ol, Ul } from "./components/lists";
 import { Code } from "./components/code";
 import { cn } from "~/lib/shadcn";
-import type { SandpackTemplate } from "~/services.server/sanity/articles/types";
+import type { SandpackTemplate } from "~/utils/content.server/articles/types";
 import {
   Caption,
   Table,

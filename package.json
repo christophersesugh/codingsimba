@@ -3,6 +3,7 @@
   "description": "Welcome to my personal website where I share my knowledge and experiences in software development through articles, tutorials, and courses.",
   "private": true,
   "type": "module",
+  "author": "",
   "prisma": {
     "schema": "prisma/schema",
     "seed": "tsx prisma/seed.ts"

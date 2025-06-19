@@ -12,6 +12,7 @@ import {
   Link,
   Img,
 } from "@react-email/components";
+import { getImgSrc } from "~/utils/misc";
 
 export function Verification({
   code = "123456",
@@ -29,7 +30,7 @@ export function Verification({
           <Container className="mx-auto max-w-[600px] rounded-[8px] border border-gray-800 bg-[#151516] p-[40px] shadow-lg">
             <Section className="mb-4 text-center">
               <Img
-                src="https://cdn.sanity.io/media-libraries/ml4WNZcKpiTm/images/6749aa161e69b57e6d39b2cd430834da255e31bd-1024x1024.png"
+                src={getImgSrc({ path: "assets", fileKey: "icon.png" })}
                 alt="Coding Simba Logo"
                 className="mx-auto mb-4 size-12 object-cover"
               />

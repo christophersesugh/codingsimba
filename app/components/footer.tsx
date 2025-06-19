@@ -1,4 +1,4 @@
-import { content, legal, platform, social } from "~/constants/navlinks";
+import { content, legal, platform, slogan, social } from "~/constants/navlinks";
 import { NavLink } from "./nav-link";
 import { Logo } from "./logo";
 import { useLocation } from "react-router";
@@ -20,9 +20,7 @@ export function Footer() {
         <div className="flex flex-col items-center justify-between md:flex-row">
           <section className="mb-6 md:mb-0">
             <Logo />
-            <p className="mt-2 text-gray-500 dark:text-gray-400">
-              Helping developers build better software.
-            </p>
+            <p className="mt-2 text-gray-500 dark:text-gray-400">{slogan}</p>
           </section>
 
           <section className="grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-12">

@@ -2,6 +2,7 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router";
 import { useMobileNav } from "~/contexts/mobile-nav";
+import { getImgSrc } from "~/utils/misc";
 
 export function Logo() {
   const { closeMobileNav } = useMobileNav();
@@ -18,6 +19,11 @@ export function Logo() {
         to="/"
         className="relative z-10 flex items-center gap-1 text-xl font-bold md:text-2xl"
       >
+        <img
+          src={getImgSrc({ fileKey: "icon.png", path: "assets" })}
+          width={40}
+          height={40}
+        />
         <motion.span
           className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text font-extrabold text-transparent dark:from-blue-400 dark:to-purple-400"
           whileHover={{

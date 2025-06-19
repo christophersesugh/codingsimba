@@ -1,5 +1,5 @@
 import { redirect } from "react-router";
-import type { Route } from "./+types/sanity-webhook";
+import type { Route } from "../actions/+types/unsubscribe";
 
 export async function loader() {
   return redirect("/");

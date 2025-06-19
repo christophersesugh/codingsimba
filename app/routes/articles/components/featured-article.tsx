@@ -1,6 +1,6 @@
 import React from "react";
 import type { Route } from "../+types/index";
-import type { Article } from "~/services.server/sanity/articles/types";
+import type { Article } from "~/utils/content.server/articles/types";
 import { Await, Link, PrefetchPageLinks, useLoaderData } from "react-router";
 import { format } from "date-fns";
 import { readingTime } from "reading-time-estimator";

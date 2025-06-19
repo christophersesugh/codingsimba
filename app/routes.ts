@@ -19,13 +19,10 @@ export default [
   route("*", "routes/not-found.tsx"),
 
   // Resource routes
-  route("images", "routes/resources/images.tsx"),
+  route("set-theme", "routes/resources/set-theme.ts"),
+  route("unsubscribe", "routes/resources/unsubscribe.ts"),
+  route("content/webhook", "routes/resources/sanity-webhook.ts"),
   route("download-user-data", "routes/resources/download-user-data.ts"),
-
-  // Action routes
-  route("set-theme", "routes/actions/set-theme.ts"),
-  route("content/webhook", "routes/actions/sanity-webhook.ts"),
-  route("unsubscribe", "routes/actions/unsubscribe.ts"),
 
   ...prefix("contact", [
     index("routes/contact/index.tsx"),

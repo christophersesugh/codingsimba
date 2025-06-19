@@ -79,7 +79,6 @@ export async function prepareVerification({
     update: verificationData,
   });
 
-  // add the otp to the url we'll email the user.
   verifyUrl.searchParams.set(codeQueryParam, otp);
 
   return { otp, redirectTo, verifyUrl };

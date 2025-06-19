@@ -46,9 +46,9 @@ model Password {
 }
 
 model UserImage {
-  id        String  @id @default(cuid())
-  altText   String?
-  objectKey String
+  id      String  @id @default(cuid())
+  fileKey String
+  altText String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

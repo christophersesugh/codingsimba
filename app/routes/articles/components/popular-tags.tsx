@@ -1,7 +1,7 @@
 import React from "react";
 import type { Route } from "../+types/article";
 import { Await, Link, useLoaderData } from "react-router";
-import type { Tag } from "~/services.server/sanity/articles/types";
+import type { Tag } from "~/utils/content.server/articles/types";
 import { Skeleton } from "~/components/ui/skeleton";
 
 export function PopularTags() {

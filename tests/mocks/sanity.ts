@@ -5,7 +5,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
 import { StatusCodes } from "http-status-codes";
-import { SANITY_API_URL } from "~/services.server/sanity/loader";
+import { SANITY_API_URL } from "~/utils/content.server/loader";
 import {
   articleDetailsQuery,
   articlesQuery,
@@ -14,7 +14,7 @@ import {
   recentArticlesQuery,
   relatedQuery,
   tagQuery,
-} from "~/services.server/sanity/articles/queries";
+} from "~/utils/content.server/articles/queries";
 import { readMdxDirectory, readPageContent } from "~/utils/misc.server";
 
 // Types

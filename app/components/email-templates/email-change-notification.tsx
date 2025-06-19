@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Html,
   Head,
@@ -106,18 +105,8 @@ export const EmailChangeNotification = ({
             <Hr className="my-[32px] border-gray-700" />
 
             <Section>
-              <Text className="m-0 text-[12px] leading-[16px] text-gray-500">
-                SecureApp Inc.
-                <br />
-                123 Security Street
-                <br />
-                Dallas, TX 75201
-                <br />
-                United States
-              </Text>
-
               <Text className="m-0 mt-[16px] text-[12px] text-gray-500">
-                © 2025 SecureApp Inc. All rights reserved.
+                © 2025 - present Coding Simba. All rights reserved.
               </Text>
             </Section>
           </Container>

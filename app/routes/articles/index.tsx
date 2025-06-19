@@ -1,6 +1,6 @@
 import React from "react";
 import type { Route } from "./+types";
-import { UrlSchema } from "~/services.server/sanity/articles/types";
+import { UrlSchema } from "~/utils/content.server/articles/types";
 import { Link, useSearchParams } from "react-router";
 import { Search } from "lucide-react";
 import { StatusCodes } from "http-status-codes";
@@ -13,7 +13,7 @@ import {
   getAllCategories,
   getArticles,
   getFeaturedArticle,
-} from "~/services.server/sanity/articles/utils";
+} from "~/utils/content.server/articles/utils";
 import { invariantResponse } from "~/utils/misc";
 import { EmptyState } from "~/components/empty-state";
 

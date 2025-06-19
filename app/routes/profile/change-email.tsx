@@ -15,7 +15,7 @@ import { StatusCodes } from "http-status-codes";
 import { verifySessionStorage } from "~/utils/verification.server";
 import { prisma } from "~/utils/db.server";
 import { prepareVerification } from "../auth/verify.server";
-import { sendEmail } from "~/services.server/resend";
+import { sendEmail } from "~/utils/email.server";
 import { Verification } from "~/components/email-templates/verification";
 import {
   Card,

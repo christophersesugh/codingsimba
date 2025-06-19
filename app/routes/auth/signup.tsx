@@ -20,7 +20,7 @@ import { parseWithZod } from "@conform-to/zod";
 import { StatusCodes } from "http-status-codes";
 import { FormConsent } from "~/components/form-consent";
 import { onboardingSessionKey } from "./onboarding";
-import { sendEmail } from "~/services.server/resend";
+import { sendEmail } from "~/utils/email.server";
 import { verifySessionStorage } from "~/utils/verification.server";
 import { useIsPending } from "~/utils/misc";
 import { ConnectionForm } from "~/components/connection-form";

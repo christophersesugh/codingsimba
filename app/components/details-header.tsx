@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router";
 import { Calendar, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { readingTime } from "reading-time-estimator";
-import type { Article } from "~/services.server/sanity/articles/types";
+import type { Article } from "~/utils/content.server/articles/types";
 
 import {
   Breadcrumb,
