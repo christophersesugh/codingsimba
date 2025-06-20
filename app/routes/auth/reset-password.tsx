@@ -24,6 +24,7 @@ import {
 import { verifySessionStorage } from "~/utils/verification.server";
 import { resetPasswordEmailSessionKey } from "./forgot-password";
 import { PasswordAndConfirmPasswordSchema } from "~/utils/user-validation";
+import { generateMetadata } from "~/utils/meta";
 
 const ResetPasswordSchema = PasswordAndConfirmPasswordSchema;
 
@@ -88,6 +89,7 @@ export default function ResetPasswordRoute({
   actionData,
   loaderData,
 }: Route.ComponentProps) {
+  const metadata = generateMetadata({ title: "Reset Password" });
   const isUpdating = useIsPending();
   const [form, fields] = useForm({
     id: "reset-password",
@@ -98,74 +100,77 @@ export default function ResetPasswordRoute({
     shouldValidate: "onBlur",
   });
   return (
-    <GradientContainer>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="mx-auto w-full max-w-lg"
-      >
-        <Card className="w-full bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
-          <Form
-            {...getFormProps(form)}
-            method="post"
-            className="mx-auto w-full space-y-6"
-          >
-            <CardHeader>
-              <CardTitle>Password reset</CardTitle>
-              <CardDescription>
-                Reset your password {loaderData.resetPasswordEmail}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="my-8 space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor={fields.password.id}>New Password</Label>
-                <Input
-                  {...getInputProps(fields.password, { type: "password" })}
-                  placeholder="••••••"
-                  className="h-12 border-gray-300 bg-white text-lg dark:border-gray-700 dark:bg-gray-900"
-                />
-                <FormError errors={fields.password.errors} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={fields.confirmPassword.id}>
-                  Confirm new password
-                </Label>
-                <Input
-                  {...getInputProps(fields.confirmPassword, {
-                    type: "password",
-                  })}
-                  placeholder="••••••"
-                  className="h-12 border-gray-300 bg-white text-lg dark:border-gray-700 dark:bg-gray-900"
-                />
-                <FormError errors={fields.confirmPassword.errors} />
-              </div>
-              <FormError errors={form.errors} />
-            </CardContent>
-            <CardFooter>
-              <div className="flex w-full justify-end">
-                <div className="flex gap-4">
-                  <Link to={"/forgot-password"}>
-                    <Button
-                      type="button"
-                      variant={"outline"}
-                      disabled={isUpdating}
-                    >
-                      Cancel
-                    </Button>
-                  </Link>
-                  <Button type="submit" disabled={isUpdating}>
-                    Update{" "}
-                    {isUpdating ? (
-                      <Loader2 className="ml-2 animate-spin" />
-                    ) : null}
-                  </Button>
+    <>
+      {metadata}
+      <GradientContainer>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="mx-auto w-full max-w-lg"
+        >
+          <Card className="w-full bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
+            <Form
+              {...getFormProps(form)}
+              method="post"
+              className="mx-auto w-full space-y-6"
+            >
+              <CardHeader>
+                <CardTitle>Password reset</CardTitle>
+                <CardDescription>
+                  Reset your password {loaderData.resetPasswordEmail}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="my-8 space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor={fields.password.id}>New Password</Label>
+                  <Input
+                    {...getInputProps(fields.password, { type: "password" })}
+                    placeholder="••••••"
+                    className="h-12 border-gray-300 bg-white text-lg dark:border-gray-700 dark:bg-gray-900"
+                  />
+                  <FormError errors={fields.password.errors} />
                 </div>
-              </div>
-            </CardFooter>
-          </Form>
-        </Card>
-      </motion.div>
-    </GradientContainer>
+                <div className="space-y-2">
+                  <Label htmlFor={fields.confirmPassword.id}>
+                    Confirm new password
+                  </Label>
+                  <Input
+                    {...getInputProps(fields.confirmPassword, {
+                      type: "password",
+                    })}
+                    placeholder="••••••"
+                    className="h-12 border-gray-300 bg-white text-lg dark:border-gray-700 dark:bg-gray-900"
+                  />
+                  <FormError errors={fields.confirmPassword.errors} />
+                </div>
+                <FormError errors={form.errors} />
+              </CardContent>
+              <CardFooter>
+                <div className="flex w-full justify-end">
+                  <div className="flex gap-4">
+                    <Link to={"/forgot-password"}>
+                      <Button
+                        type="button"
+                        variant={"outline"}
+                        disabled={isUpdating}
+                      >
+                        Cancel
+                      </Button>
+                    </Link>
+                    <Button type="submit" disabled={isUpdating}>
+                      Update{" "}
+                      {isUpdating ? (
+                        <Loader2 className="ml-2 animate-spin" />
+                      ) : null}
+                    </Button>
+                  </div>
+                </div>
+              </CardFooter>
+            </Form>
+          </Card>
+        </motion.div>
+      </GradientContainer>
+    </>
   );
 }

@@ -26,6 +26,7 @@ import {
 import { getInitials, useIsPending } from "~/utils/misc";
 import { parseFormData } from "@mjackson/form-data-parser";
 import { StatusCodes } from "http-status-codes";
+import { generateMetadata } from "~/utils/meta";
 
 const MAX_SIZE = 1024 * 1024 * 3; // 3MB
 
@@ -57,7 +58,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       id: true,
       name: true,
       email: true,
-      image: { select: { objectKey: true, altText: true } },
+      image: { select: { fileKey: true, altText: true } },
     },
   });
   return { user };
@@ -115,11 +116,12 @@ export default function ChangePhoto({
   actionData,
   loaderData,
 }: Route.ComponentProps) {
+  const metadata = generateMetadata({ title: "Change Profile Image" });
   const user = loaderData.user;
   const isSubmitting = useIsPending();
 
   const [form, fields] = useForm({
-    id: "change-photo",
+    id: "change-image",
     // lastResult: actionData,
     onValidate({ formData }) {
       return parseWithZod(formData, { schema: PhotoFormSchema });
@@ -132,57 +134,60 @@ export default function ChangePhoto({
   const lastSubmissionIntent = fields.intent.value;
   const [newImageSrc, setNewImageSrc] = React.useState<string | null>(null);
   return (
-    <GradientContainer>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="mx-auto w-full max-w-md"
-      >
-        <Card className="w-full bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
-          <Form
-            method="POST"
-            encType="multipart/form-data"
-            onReset={() => setNewImageSrc(null)}
-            {...getFormProps(form)}
-            className="mx-auto w-full space-y-6"
-          >
-            <CardHeader>
-              <CardTitle>Update Profile Photo</CardTitle>
-              <CardDescription>
-                Update your profile picture or delete the current one. Supported
-                formats: JPG, PNG, WEBP (Max 3MB).
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="my-8">
-              <Avatar className="mx-auto mt-4 size-48 overflow-visible">
-                {/* {user.image ? (
+    <>
+      {metadata}
+      <GradientContainer>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="mx-auto w-full max-w-md"
+        >
+          <Card className="w-full bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
+            <Form
+              method="POST"
+              encType="multipart/form-data"
+              onReset={() => setNewImageSrc(null)}
+              {...getFormProps(form)}
+              className="mx-auto w-full space-y-6"
+            >
+              <CardHeader>
+                <CardTitle>Update Profile Photo</CardTitle>
+                <CardDescription>
+                  Update your profile picture or delete the current one.
+                  Supported formats: JPG, PNG, WEBP (Max 3MB).
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="my-8">
+                <Avatar className="mx-auto mt-4 size-48 overflow-visible">
+                  {/* {user.image ? (
                   <AvatarImage src={user.image} alt={profile!.name!} />
                 ) : null} */}
-                <AvatarFallback className="text-3xl">
-                  {getInitials(user.name)}
-                </AvatarFallback>
-              </Avatar>
-            </CardContent>
-            <CardFooter>
-              <div className="flex w-full justify-evenly">
-                <Link to={"/profile"}>
-                  <Button variant={"outline"}>Cancel</Button>
-                </Link>
-                <Button variant={"destructive"} type="submit">
-                  Delete
-                </Button>
-                <Button type="submit" disabled={isSubmitting}>
-                  Change{" "}
-                  {isSubmitting ? (
-                    <Loader2 className="ml-2 animate-spin" />
-                  ) : null}
-                </Button>
-              </div>
-            </CardFooter>
-          </Form>
-        </Card>
-      </motion.div>
-    </GradientContainer>
+                  <AvatarFallback className="text-3xl">
+                    {getInitials(user.name)}
+                  </AvatarFallback>
+                </Avatar>
+              </CardContent>
+              <CardFooter>
+                <div className="flex w-full justify-evenly">
+                  <Link to={"/profile"}>
+                    <Button variant={"outline"}>Cancel</Button>
+                  </Link>
+                  <Button variant={"destructive"} type="submit">
+                    Delete
+                  </Button>
+                  <Button type="submit" disabled={isSubmitting}>
+                    Change{" "}
+                    {isSubmitting ? (
+                      <Loader2 className="ml-2 animate-spin" />
+                    ) : null}
+                  </Button>
+                </div>
+              </CardFooter>
+            </Form>
+          </Card>
+        </motion.div>
+      </GradientContainer>
+    </>
   );
 }

@@ -10,6 +10,7 @@ import { readMdxDirectory } from "~/utils/misc.server";
 import { invariantResponse } from "~/utils/misc";
 import { StatusCodes } from "http-status-codes";
 import { countArticles } from "~/utils/content.server/articles/utils";
+import { generateMetadata } from "~/utils/meta";
 
 export async function loader() {
   const articlesCount = countArticles();
@@ -21,10 +22,13 @@ export async function loader() {
 }
 
 export default function AboutRoute({ loaderData }: Route.ComponentProps) {
+  const title = "Simba's Den of Nerdery";
+  const metadata = generateMetadata({ title });
   return (
     <>
+      {metadata}
       <Header
-        title="Simba's Den of Nerdery"
+        title={title}
         description="Passionate about coding, teaching, and building tools that make a difference."
       />
       <div className="container mx-auto max-w-6xl px-4 py-12">

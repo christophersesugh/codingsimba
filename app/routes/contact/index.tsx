@@ -4,6 +4,7 @@ import { ContactForm } from "~/components/contact/form";
 import { ContactInformation } from "~/components/contact/information";
 import { Markdown } from "~/components/mdx";
 import { Header } from "~/components/page-header";
+import { generateMetadata } from "~/utils/meta";
 import { invariantResponse } from "~/utils/misc";
 import { readMdxDirectory } from "~/utils/misc.server";
 
@@ -16,10 +17,13 @@ export async function loader() {
 }
 
 export default function ContactPage({ loaderData }: Route.ComponentProps) {
+  const title = "Get in Touch";
+  const metadata = generateMetadata({ title });
   return (
     <>
+      {metadata}
       <Header
-        title="Get in Touch"
+        title={title}
         description="Have a question or want to work together? I'd love to hear from you."
       />
 

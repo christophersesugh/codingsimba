@@ -4,6 +4,7 @@ import { Markdown } from "~/components/mdx";
 import { Header } from "~/components/page-header";
 import { invariantResponse } from "~/utils/misc";
 import { readMdxPageContent } from "~/utils/misc.server";
+import { generateMetadata } from "~/utils/meta";
 
 export async function loader() {
   const pageContent = await readMdxPageContent("terms");
@@ -14,8 +15,10 @@ export async function loader() {
 }
 
 export default function TermsRoute({ loaderData }: Route.ComponentProps) {
+  const metadata = generateMetadata({ title: "Terms of Use" });
   return (
     <>
+      {metadata}
       <Header
         title="Terms of Service"
         description="These Terms of Service govern your use of our website and services."

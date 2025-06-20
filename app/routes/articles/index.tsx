@@ -16,6 +16,7 @@ import {
 } from "~/utils/content.server/articles/utils";
 import { invariantResponse } from "~/utils/misc";
 import { EmptyState } from "~/components/empty-state";
+import { generateMetadata } from "~/utils/meta";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const searchParams = Object.fromEntries(
@@ -57,6 +58,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
+  const metadata = generateMetadata({ title: "Articles | Coding Simba" });
   const [, setSearchParams] = useSearchParams();
   const { articles, currentPage } = loaderData;
 
@@ -76,6 +78,7 @@ export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
 
   return (
     <>
+      {metadata}
       <Header
         title="articles"
         description="In-depth articles to help you stay ahead in software development."

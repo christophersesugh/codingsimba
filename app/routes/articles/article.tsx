@@ -37,6 +37,7 @@ import { z } from "zod";
 import { useOptionalUser } from "~/hooks/user";
 import { usePageView, type PageViewData } from "use-page-view";
 import { GeneralErrorBoundary } from "~/components/error-boundary";
+import { generateMetadata } from "~/utils/meta";
 
 const SearchParamsSchema = z.object({
   commentTake: z.coerce.number().default(5),
@@ -120,6 +121,16 @@ export default function ArticleDetailsRoute({
   loaderData,
 }: Route.ComponentProps) {
   const { article } = loaderData;
+  const metadata = generateMetadata({
+    title: article.title,
+    image: article.image,
+    imageAlt: article.title,
+    url: `articles/${article.slug}`,
+    description: article.excerpt,
+    keywords: article.tags.map((t) => t.slug).join(","),
+    type: "article",
+  });
+
   const user = useOptionalUser();
   const fetcher = useFetcher();
 
@@ -140,6 +151,7 @@ export default function ArticleDetailsRoute({
 
   return (
     <>
+      {metadata}
       <DetailsHeader item={article} />
       {/* Article content */}
       <div className="container mx-auto px-4 py-12">

@@ -10,6 +10,7 @@ import { useSpinDelay } from "spin-delay";
 import { twMerge } from "tailwind-merge";
 import type { useUser } from "~/hooks/user";
 import { intervalToDuration } from "date-fns";
+import { slogan } from "~/constants/navlinks";
 
 export function getRandomBotAvatar(seed = cuid()) {
   return `https://api.dicebear.com/7.x/pixel-art/svg?seed=${seed}`;
@@ -589,4 +590,62 @@ export function requireAuth({
   navigate: NavigateFunction;
 }) {
   return (...args: unknown[]) => (user ? fn(...args) : navigate("/signin"));
+}
+
+interface Metadata {
+  title?: string;
+  description?: string;
+  metadataBase?: URL;
+
+  openGraph?: {
+    title?: string;
+    description?: string;
+    url?: string | URL;
+    image?: string;
+    type?: string;
+  };
+
+  twitter?: {
+    card?: "summary" | "summary_large_image";
+    title?: string;
+    description?: string;
+    images?: string;
+  };
+
+  other?: Record<string, string>;
+}
+
+export function generateOpenGraphMeta({
+  title = "Coding Simba",
+  description = slogan,
+  url,
+  image = getImgSrc({ path: "assets", fileKey: "icon.png" }),
+  type = "website",
+}: {
+  title: string;
+  description?: string;
+  url: string;
+  image?: string;
+  type: "website" | "article";
+}): Metadata {
+  const metaTags: Metadata = {
+    title: title,
+    description: description,
+
+    other: {
+      "og:title": title,
+      "og:description": description,
+      "og:image": image,
+      "og:url": url,
+      "og:type": type,
+
+      "twitter:card": "summary_large_image",
+      "twitter:title": title,
+      "twitter:description": description,
+      "twitter:image": image,
+      "twitter:site": "@codingsimba_",
+    },
+  };
+
+  return metaTags;
 }

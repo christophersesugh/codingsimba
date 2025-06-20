@@ -27,6 +27,7 @@ import {
   CardFooter,
 } from "~/components/ui/card";
 import { PasswordSchema } from "~/utils/user-validation";
+import { generateMetadata } from "~/utils/meta";
 
 export const UpdatePasswordSchema = z
   .object({
@@ -103,6 +104,8 @@ export async function action({ request }: Route.ActionArgs) {
 export default function ResetPasswordRoute({
   actionData,
 }: Route.ComponentProps) {
+  const metadata = generateMetadata({ title: "Update Password" });
+
   const isUpdating = useIsPending();
   const [form, fields] = useForm({
     id: "update-password",
@@ -113,74 +116,77 @@ export default function ResetPasswordRoute({
     shouldValidate: "onBlur",
   });
   return (
-    <GradientContainer>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="mx-auto w-full max-w-lg"
-      >
-        <Card className="w-full bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
-          <Form {...getFormProps(form)} method="post">
-            <CardHeader>
-              <CardTitle>Update your password</CardTitle>
-            </CardHeader>
-            <CardContent className="my-8 space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor={fields.currentPassword.id}>
-                  Current password
-                </Label>
-                <Input
-                  {...getInputProps(fields.currentPassword, {
-                    type: "password",
-                  })}
-                  placeholder="••••••"
-                  className="h-12 border-gray-300 bg-white !text-lg dark:border-gray-700 dark:bg-gray-900"
-                />
-                <FormError errors={fields.currentPassword.errors} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={fields.password.id}>New Password</Label>
-                <Input
-                  {...getInputProps(fields.password, { type: "password" })}
-                  placeholder="••••••"
-                  className="h-12 border-gray-300 bg-white !text-lg dark:border-gray-700 dark:bg-gray-900"
-                />
-                <FormError errors={fields.password.errors} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={fields.confirmPassword.id}>
-                  Confirm new password
-                </Label>
-                <Input
-                  {...getInputProps(fields.confirmPassword, {
-                    type: "password",
-                  })}
-                  placeholder="••••••"
-                  className="h-12 border-gray-300 bg-white !text-lg dark:border-gray-700 dark:bg-gray-900"
-                />
-                <FormError errors={fields.confirmPassword.errors} />
-              </div>
-              <FormError errors={form.errors} />
-            </CardContent>
-            <CardFooter>
-              <div className="flex w-full justify-end">
-                <div className="flex gap-6">
-                  <Button variant={"outline"} asChild>
-                    <Link to={"/profile"}>Cancel</Link>
-                  </Button>
-                  <Button type="submit" disabled={isUpdating}>
-                    Change{" "}
-                    {isUpdating ? (
-                      <Loader2 className="ml-2 animate-spin" />
-                    ) : null}
-                  </Button>
+    <>
+      {metadata}
+      <GradientContainer>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="mx-auto w-full max-w-lg"
+        >
+          <Card className="w-full bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
+            <Form {...getFormProps(form)} method="post">
+              <CardHeader>
+                <CardTitle>Update your password</CardTitle>
+              </CardHeader>
+              <CardContent className="my-8 space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor={fields.currentPassword.id}>
+                    Current password
+                  </Label>
+                  <Input
+                    {...getInputProps(fields.currentPassword, {
+                      type: "password",
+                    })}
+                    placeholder="••••••"
+                    className="h-12 border-gray-300 bg-white !text-lg dark:border-gray-700 dark:bg-gray-900"
+                  />
+                  <FormError errors={fields.currentPassword.errors} />
                 </div>
-              </div>
-            </CardFooter>
-          </Form>
-        </Card>
-      </motion.div>
-    </GradientContainer>
+                <div className="space-y-2">
+                  <Label htmlFor={fields.password.id}>New Password</Label>
+                  <Input
+                    {...getInputProps(fields.password, { type: "password" })}
+                    placeholder="••••••"
+                    className="h-12 border-gray-300 bg-white !text-lg dark:border-gray-700 dark:bg-gray-900"
+                  />
+                  <FormError errors={fields.password.errors} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor={fields.confirmPassword.id}>
+                    Confirm new password
+                  </Label>
+                  <Input
+                    {...getInputProps(fields.confirmPassword, {
+                      type: "password",
+                    })}
+                    placeholder="••••••"
+                    className="h-12 border-gray-300 bg-white !text-lg dark:border-gray-700 dark:bg-gray-900"
+                  />
+                  <FormError errors={fields.confirmPassword.errors} />
+                </div>
+                <FormError errors={form.errors} />
+              </CardContent>
+              <CardFooter>
+                <div className="flex w-full justify-end">
+                  <div className="flex gap-6">
+                    <Button variant={"outline"} asChild>
+                      <Link to={"/profile"}>Cancel</Link>
+                    </Button>
+                    <Button type="submit" disabled={isUpdating}>
+                      Change{" "}
+                      {isUpdating ? (
+                        <Loader2 className="ml-2 animate-spin" />
+                      ) : null}
+                    </Button>
+                  </div>
+                </div>
+              </CardFooter>
+            </Form>
+          </Card>
+        </motion.div>
+      </GradientContainer>
+    </>
   );
 }

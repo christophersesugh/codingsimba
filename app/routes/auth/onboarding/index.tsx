@@ -29,6 +29,8 @@ import {
   RememberMeSchema,
 } from "~/utils/user-validation";
 import { useIsPending } from "~/utils/misc";
+import { GradientContainer } from "~/components/gradient-container";
+import { generateMetadata } from "~/utils/meta";
 
 export const onboardingSessionKey = "onboardingEmail";
 
@@ -147,6 +149,7 @@ export default function Onboarding({
   actionData,
   loaderData,
 }: Route.ComponentProps) {
+  const metadata = generateMetadata({ title: "Onboarding" });
   const isSubmitting = useIsPending();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirectTo");
@@ -163,91 +166,90 @@ export default function Onboarding({
   });
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-gray-50 p-4 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/4 top-1/4 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
-      </div>
+    <>
+      {metadata}
+      <GradientContainer>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="relative z-10 w-full max-w-md"
+        >
+          <Card className="border-0 bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
+            <CardHeader className="text-center">
+              <CardTitle className="text-xl">Welcome aboard {email}</CardTitle>
+              <CardDescription>Please enter your details</CardDescription>
+            </CardHeader>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="relative z-10 w-full max-w-md"
-      >
-        <Card className="border-0 bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
-          <CardHeader className="text-center">
-            <CardTitle className="text-xl">Welcome aboard {email}</CardTitle>
-            <CardDescription>Please enter your details</CardDescription>
-          </CardHeader>
-
-          <CardContent className="space-y-6">
-            <Form {...getFormProps(form)} method="post" className="space-y-4">
-              <input
-                {...getInputProps(fields.redirectTo, { type: "hidden" })}
-                value={redirectTo ?? ""}
-              />
-              <input
-                {...getInputProps(fields.email, { type: "hidden" })}
-                value={email}
-              />
-              <div className="space-y-2">
-                <Label htmlFor={fields.name.id}>Name</Label>
-                <Input
-                  {...getInputProps(fields.name, { type: "text" })}
-                  placeholder="Kent C. Dodds"
+            <CardContent className="space-y-6">
+              <Form {...getFormProps(form)} method="post" className="space-y-4">
+                <input
+                  {...getInputProps(fields.redirectTo, { type: "hidden" })}
+                  value={redirectTo ?? ""}
                 />
-                <FormError errors={fields.name.errors} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={fields.password.id}>Password</Label>
-                <Input
-                  {...getInputProps(fields.password, { type: "password" })}
-                  placeholder="••••••"
+                <input
+                  {...getInputProps(fields.email, { type: "hidden" })}
+                  value={email}
                 />
-                <FormError errors={fields.password.errors} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={fields.confirmPassword.id}>
-                  Confirm password
-                </Label>
-                <Input
-                  {...getInputProps(fields.confirmPassword, {
-                    type: "password",
-                  })}
-                  placeholder="••••••"
-                />
-                <FormError errors={fields.confirmPassword.errors} />
-              </div>
-              <div className="flex justify-between">
-                <Label
-                  htmlFor={fields.rememberMe.id}
-                  className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
-                >
-                  <input
-                    {...getInputProps(fields.rememberMe, { type: "checkbox" })}
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800"
+                <div className="space-y-2">
+                  <Label htmlFor={fields.name.id}>Name</Label>
+                  <Input
+                    {...getInputProps(fields.name, { type: "text" })}
+                    placeholder="Kent C. Dodds"
                   />
-                  Remember Me
-                </Label>
-              </div>
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isSubmitting}
-                aria-label="Create account"
-              >
-                Create account{" "}
-                {isSubmitting ? (
-                  <LoaderCircle className="ml-2 animate-spin" />
-                ) : null}
-              </Button>
-              <FormError errors={form.allErrors.root || form.errors} />
-            </Form>
-          </CardContent>
-        </Card>
-      </motion.div>
-    </div>
+                  <FormError errors={fields.name.errors} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor={fields.password.id}>Password</Label>
+                  <Input
+                    {...getInputProps(fields.password, { type: "password" })}
+                    placeholder="••••••"
+                  />
+                  <FormError errors={fields.password.errors} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor={fields.confirmPassword.id}>
+                    Confirm password
+                  </Label>
+                  <Input
+                    {...getInputProps(fields.confirmPassword, {
+                      type: "password",
+                    })}
+                    placeholder="••••••"
+                  />
+                  <FormError errors={fields.confirmPassword.errors} />
+                </div>
+                <div className="flex justify-between">
+                  <Label
+                    htmlFor={fields.rememberMe.id}
+                    className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
+                  >
+                    <input
+                      {...getInputProps(fields.rememberMe, {
+                        type: "checkbox",
+                      })}
+                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800"
+                    />
+                    Remember Me
+                  </Label>
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isSubmitting}
+                  aria-label="Create account"
+                >
+                  Create account{" "}
+                  {isSubmitting ? (
+                    <LoaderCircle className="ml-2 animate-spin" />
+                  ) : null}
+                </Button>
+                <FormError errors={form.allErrors.root || form.errors} />
+              </Form>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </GradientContainer>
+    </>
   );
 }

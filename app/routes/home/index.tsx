@@ -1,4 +1,3 @@
-import React from "react";
 import { HeroSection } from "./hero";
 import { CoursesSection } from "./courses";
 import { ArticlesSection } from "./articles";
@@ -9,6 +8,7 @@ import {
   countArticles,
   getRecentArticles,
 } from "~/utils/content.server/articles/utils";
+import { generateMetadata } from "~/utils/meta";
 
 export async function loader() {
   const articles = getRecentArticles();
@@ -19,6 +19,7 @@ export async function loader() {
 export default function HomeRoute() {
   return (
     <>
+      {generateMetadata({})}
       <HeroSection />
       <CoursesSection />
       <ArticlesSection />

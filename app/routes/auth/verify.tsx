@@ -27,6 +27,7 @@ import { FormError } from "~/components/form-errors";
 import { validateRequest } from "./verify.server";
 import { checkHoneypot } from "~/utils/honeypot.server";
 import { useIsPending } from "~/utils/misc";
+import { generateMetadata } from "~/utils/meta";
 
 export const codeQueryParam = "code";
 export const targetQueryParam = "target";
@@ -75,6 +76,7 @@ export default function VerifyPage({
   loaderData,
   actionData,
 }: Route.ComponentProps) {
+  const metadata = generateMetadata({ title: "Verify | Coding Simba" });
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isVerifying = useIsPending();
@@ -150,70 +152,78 @@ export default function VerifyPage({
   const OTP_LENGTH = 6;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4 dark:bg-gray-950">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg dark:bg-gray-900"
-      >
-        {/* Back button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="mb-6 flex items-center text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+    <>
+      {metadata}
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4 dark:bg-gray-950">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg dark:bg-gray-900"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
-        </button>
-
-        <div className="mb-8 text-center">
-          {type ? headings[type] : "Invalid type"}
-        </div>
-
-        <Form {...getFormProps(form)} method="post" className="w-full">
-          <input
-            {...getInputProps(fields[typeQueryParam], { type: "hidden" })}
-          />
-          <input
-            {...getInputProps(fields[targetQueryParam], { type: "hidden" })}
-          />
-          <input
-            {...getInputProps(fields[redirectToQueryParam], { type: "hidden" })}
-          />
-
-          <div className="mx-auto mb-6 flex w-full justify-center">
-            <InputOTP
-              {...getInputProps(fields[codeQueryParam], { type: "text" })}
-              maxLength={OTP_LENGTH}
-              autoFocus
-            >
-              <InputOTPGroup>
-                {[...Array(OTP_LENGTH)].map((_, i) => (
-                  <InputOTPSlot key={i} index={i} />
-                ))}
-              </InputOTPGroup>
-            </InputOTP>
-          </div>
-          <FormError errors={fields[codeQueryParam].errors} className="mb-6" />
-          <Button
-            type="submit"
-            className="mb-6 w-full"
-            // disabled={isVerifying}
+          {/* Back button */}
+          <button
+            onClick={() => navigate(-1)}
+            className="mb-6 flex items-center text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
           >
-            {type === "reset_password" ? "Reset Password" : "Verify Email"}
-            {isVerifying ? (
-              <RefreshCw className="mr-2 size-4 animate-spin" />
-            ) : null}
-          </Button>
-          <FormError errors={form.errors} />
-        </Form>
-        <div className="mt-6 border-t border-gray-200 pt-6 dark:border-gray-800">
-          <p className="text-center text-xs text-gray-500 dark:text-gray-500">
-            Check your spam folder if you don&apos;t see the email. The code
-            expires in 10 minutes.
-          </p>
-        </div>
-      </motion.div>
-    </div>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back
+          </button>
+
+          <div className="mb-8 text-center">
+            {type ? headings[type] : "Invalid type"}
+          </div>
+
+          <Form {...getFormProps(form)} method="post" className="w-full">
+            <input
+              {...getInputProps(fields[typeQueryParam], { type: "hidden" })}
+            />
+            <input
+              {...getInputProps(fields[targetQueryParam], { type: "hidden" })}
+            />
+            <input
+              {...getInputProps(fields[redirectToQueryParam], {
+                type: "hidden",
+              })}
+            />
+
+            <div className="mx-auto mb-6 flex w-full justify-center">
+              <InputOTP
+                {...getInputProps(fields[codeQueryParam], { type: "text" })}
+                maxLength={OTP_LENGTH}
+                autoFocus
+              >
+                <InputOTPGroup>
+                  {[...Array(OTP_LENGTH)].map((_, i) => (
+                    <InputOTPSlot key={i} index={i} />
+                  ))}
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
+            <FormError
+              errors={fields[codeQueryParam].errors}
+              className="mb-6"
+            />
+            <Button
+              type="submit"
+              className="mb-6 w-full"
+              disabled={isVerifying}
+            >
+              {type === "reset_password" ? "Reset Password" : "Verify Email"}
+              {isVerifying ? (
+                <RefreshCw className="mr-2 size-4 animate-spin" />
+              ) : null}
+            </Button>
+            <FormError errors={form.errors} />
+          </Form>
+          <div className="mt-6 border-t border-gray-200 pt-6 dark:border-gray-800">
+            <p className="text-center text-xs text-gray-500 dark:text-gray-500">
+              Check your spam folder if you don&apos;t see the email. The code
+              expires in 10 minutes.
+            </p>
+          </div>
+        </motion.div>
+      </div>
+    </>
   );
 }

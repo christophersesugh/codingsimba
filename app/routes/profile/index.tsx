@@ -36,6 +36,7 @@ import {
 } from "./components/data-and-security";
 import { authSessionStorage } from "~/utils/session.server";
 import { invariantResponse } from "~/utils/misc";
+import { generateMetadata } from "~/utils/meta";
 
 const IntentSchema = z.object({
   intent: z.enum([
@@ -191,6 +192,7 @@ export type TabValue =
   | "Notifications";
 
 export default function ProfileRoute() {
+  const metadata = generateMetadata({ title: "Profile" });
   const [activeTab, setActiveTab] = React.useState<TabValue>("Account");
 
   const tabs = [
@@ -219,28 +221,31 @@ export default function ProfileRoute() {
   }
 
   return (
-    <div className="my-20">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
-          <div className="lg:col-span-1">
-            <div className="lg:sticky lg:top-20">
-              <SideNav
-                tabs={tabs}
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-              />
+    <>
+      {metadata}
+      <div className="my-20">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+            <div className="lg:col-span-1">
+              <div className="lg:sticky lg:top-20">
+                <SideNav
+                  tabs={tabs}
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                />
+              </div>
             </div>
-          </div>
-          <div
-            className="lg:col-span-3"
-            role="tabpanel"
-            id={`tabpanel-${activeTab}`}
-            aria-labelledby={`tab-${activeTab}`}
-          >
-            {renderTab()}
+            <div
+              className="lg:col-span-3"
+              role="tabpanel"
+              id={`tabpanel-${activeTab}`}
+              aria-labelledby={`tab-${activeTab}`}
+            >
+              {renderTab()}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

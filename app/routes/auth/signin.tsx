@@ -25,6 +25,7 @@ import { requireAnonymous, signin } from "../../utils/auth.server";
 import { EmailSchema, PasswordSchema } from "~/utils/user-validation";
 import { useIsPending } from "~/utils/misc";
 import { GradientContainer } from "~/components/gradient-container";
+import { generateMetadata } from "~/utils/meta";
 
 const SigninSchema = z.object({
   email: EmailSchema,
@@ -87,6 +88,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function Signin({ actionData }: Route.ComponentProps) {
+  const metadata = generateMetadata({ title: "Signin | Coding Simba" });
   const isSubmitting = useIsPending();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirectTo");
@@ -102,104 +104,109 @@ export default function Signin({ actionData }: Route.ComponentProps) {
   });
 
   return (
-    <GradientContainer>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="relative z-10 w-full max-w-md"
-      >
-        <Card className="border-0 bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Welcome back</CardTitle>
-            <CardDescription>Please enter your credentials</CardDescription>
-          </CardHeader>
+    <>
+      {metadata}
+      <GradientContainer>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="relative z-10 w-full max-w-md"
+        >
+          <Card className="border-0 bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl">Welcome back</CardTitle>
+              <CardDescription>Please enter your credentials</CardDescription>
+            </CardHeader>
 
-          <CardContent className="space-y-6">
-            <Form {...getFormProps(form)} method="post" className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor={fields.email.id}>Email</Label>
-                <Input
-                  {...getInputProps(fields.email, { type: "email" })}
-                  placeholder="hello@example.com"
-                />
-                <FormError errors={fields.email.errors} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={fields.password.id}>Password</Label>
-                <Input
-                  {...getInputProps(fields.password, { type: "password" })}
-                  placeholder="••••••"
-                />
-                <FormError errors={fields.password.errors} />
-              </div>
-              <div className="flex justify-between">
-                <Label
-                  htmlFor={fields.rememberMe.id}
-                  className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
-                >
-                  <input
-                    {...getInputProps(fields.rememberMe, { type: "checkbox" })}
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800"
+            <CardContent className="space-y-6">
+              <Form {...getFormProps(form)} method="post" className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor={fields.email.id}>Email</Label>
+                  <Input
+                    {...getInputProps(fields.email, { type: "email" })}
+                    placeholder="hello@example.com"
                   />
-                  Remember Me
-                </Label>
+                  <FormError errors={fields.email.errors} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor={fields.password.id}>Password</Label>
+                  <Input
+                    {...getInputProps(fields.password, { type: "password" })}
+                    placeholder="••••••"
+                  />
+                  <FormError errors={fields.password.errors} />
+                </div>
+                <div className="flex justify-between">
+                  <Label
+                    htmlFor={fields.rememberMe.id}
+                    className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
+                  >
+                    <input
+                      {...getInputProps(fields.rememberMe, {
+                        type: "checkbox",
+                      })}
+                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800"
+                    />
+                    Remember Me
+                  </Label>
 
-                <Link
-                  to={"/forgot-password"}
-                  className="text-sm text-blue-700 dark:text-blue-500"
+                  <Link
+                    to={"/forgot-password"}
+                    className="text-sm text-blue-700 dark:text-blue-500"
+                  >
+                    Forgot your password?
+                  </Link>
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isSubmitting}
+                  aria-label="Sign in"
                 >
-                  Forgot your password?
-                </Link>
+                  Sign In
+                  {isSubmitting ? (
+                    <LoaderCircle className="ml-2 animate-spin" />
+                  ) : null}
+                </Button>
+                <FormError
+                  errors={form.allErrors.root || form.errors}
+                  className="-mt-3"
+                />
+              </Form>
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="bg-white px-2 text-gray-500 dark:bg-gray-900 dark:text-gray-400">
+                    Or continue with
+                  </span>
+                </div>
               </div>
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isSubmitting}
-                aria-label="Sign in"
-              >
-                Sign In
-                {isSubmitting ? (
-                  <LoaderCircle className="ml-2 animate-spin" />
-                ) : null}
-              </Button>
-              <FormError
-                errors={form.allErrors.root || form.errors}
-                className="-mt-3"
-              />
-            </Form>
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+              <div className="w-full">
+                <ConnectionForm
+                  redirectTo={redirectTo}
+                  providerName="github"
+                  type="Signin"
+                />
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-2 text-gray-500 dark:bg-gray-900 dark:text-gray-400">
-                  Or continue with
-                </span>
+              <div className="text-center">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Don&apos;t have an account?{" "}
+                  <Link
+                    to="/signup"
+                    className="font-medium text-blue-600 hover:underline dark:text-blue-400"
+                  >
+                    Signup
+                  </Link>
+                </p>
               </div>
-            </div>
-            <div className="w-full">
-              <ConnectionForm
-                redirectTo={redirectTo}
-                providerName="github"
-                type="Signin"
-              />
-            </div>
-            <div className="text-center">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Don&apos;t have an account?{" "}
-                <Link
-                  to="/signup"
-                  className="font-medium text-blue-600 hover:underline dark:text-blue-400"
-                >
-                  Signup
-                </Link>
-              </p>
-            </div>
-            <FormConsent type="signin" />
-          </CardContent>
-        </Card>
-      </motion.div>
-    </GradientContainer>
+              <FormConsent type="signin" />
+            </CardContent>
+          </Card>
+        </motion.div>
+      </GradientContainer>
+    </>
   );
 }

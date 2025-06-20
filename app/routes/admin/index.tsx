@@ -1,6 +1,7 @@
 import React from "react";
 import type { Route } from "./+types/index";
 import { requireUserWithRole } from "~/utils/permissions.server";
+import { generateMetadata } from "~/utils/meta";
 
 export async function loader({ request }: Route.LoaderArgs) {
   await requireUserWithRole(request, "ADMIN");
@@ -8,5 +9,12 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function AdminIndexRoute() {
-  return <div>index</div>;
+  const metadata = generateMetadata({ title: "Admin" });
+
+  return (
+    <>
+      {metadata}
+      <div>index</div>
+    </>
+  );
 }

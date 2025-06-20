@@ -30,6 +30,7 @@ import { EmailSchema } from "~/utils/user-validation";
 import { prepareVerification } from "./verify.server";
 import { GradientContainer } from "~/components/gradient-container";
 import { prisma } from "~/utils/db.server";
+import { generateMetadata } from "~/utils/meta";
 
 const SignupSchema = z.object({
   email: EmailSchema,
@@ -102,6 +103,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function Signup({ actionData }: Route.ComponentProps) {
+  const metadata = generateMetadata({ title: "Signup | Coding Simba" });
   const isSubmitting = useIsPending();
   const [searchParams] = useSearchParams();
 
@@ -118,80 +120,83 @@ export default function Signup({ actionData }: Route.ComponentProps) {
   });
 
   return (
-    <GradientContainer>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="relative z-10 w-full max-w-md"
-      >
-        <Card className="border-0 bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Let&apos;s Begin!</CardTitle>
-            <CardDescription>Enter your email to continue</CardDescription>
-          </CardHeader>
+    <>
+      {metadata}
+      <GradientContainer>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="relative z-10 w-full max-w-md"
+        >
+          <Card className="border-0 bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl">Let&apos;s Begin!</CardTitle>
+              <CardDescription>Enter your email to continue</CardDescription>
+            </CardHeader>
 
-          <CardContent className="space-y-6">
-            <Form {...getFormProps(form)} method="post" className="space-y-4">
-              <input
-                {...getInputProps(fields.redirectTo, { type: "hidden" })}
-                value={redirectTo ?? ""}
-              />
-              <div className="space-y-2">
-                <Label htmlFor={fields.email.id}>Email</Label>
-                <Input
-                  {...getInputProps(fields.email, { type: "email" })}
-                  placeholder="hello@example.com"
+            <CardContent className="space-y-6">
+              <Form {...getFormProps(form)} method="post" className="space-y-4">
+                <input
+                  {...getInputProps(fields.redirectTo, { type: "hidden" })}
+                  value={redirectTo ?? ""}
                 />
-                <FormError errors={fields.email.errors} />
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor={fields.email.id}>Email</Label>
+                  <Input
+                    {...getInputProps(fields.email, { type: "email" })}
+                    placeholder="hello@example.com"
+                  />
+                  <FormError errors={fields.email.errors} />
+                </div>
 
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isSubmitting}
-                aria-label="Signup"
-              >
-                Submit{" "}
-                {isSubmitting ? (
-                  <LoaderCircle className="ml-2 animate-spin" />
-                ) : null}
-              </Button>
-              <FormError errors={form.allErrors.root || form.errors} />
-            </Form>
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-2 text-gray-500 dark:bg-gray-900 dark:text-gray-400">
-                  Or continue with
-                </span>
-              </div>
-            </div>
-            <div className="w-full">
-              <ConnectionForm
-                redirectTo={redirectTo}
-                providerName="github"
-                type="Signup"
-              />
-            </div>
-
-            <div className="text-center">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Already have an account?{" "}
-                <Link
-                  to="/signin"
-                  className="font-medium text-blue-600 hover:underline dark:text-blue-400"
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isSubmitting}
+                  aria-label="Signup"
                 >
-                  Signin
-                </Link>
-              </p>
-            </div>
-            <FormConsent type="signup" />
-          </CardContent>
-        </Card>
-      </motion.div>
-    </GradientContainer>
+                  Submit{" "}
+                  {isSubmitting ? (
+                    <LoaderCircle className="ml-2 animate-spin" />
+                  ) : null}
+                </Button>
+                <FormError errors={form.allErrors.root || form.errors} />
+              </Form>
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="bg-white px-2 text-gray-500 dark:bg-gray-900 dark:text-gray-400">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+              <div className="w-full">
+                <ConnectionForm
+                  redirectTo={redirectTo}
+                  providerName="github"
+                  type="Signup"
+                />
+              </div>
+
+              <div className="text-center">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Already have an account?{" "}
+                  <Link
+                    to="/signin"
+                    className="font-medium text-blue-600 hover:underline dark:text-blue-400"
+                  >
+                    Signin
+                  </Link>
+                </p>
+              </div>
+              <FormConsent type="signup" />
+            </CardContent>
+          </Card>
+        </motion.div>
+      </GradientContainer>
+    </>
   );
 }

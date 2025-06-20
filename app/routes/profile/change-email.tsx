@@ -27,6 +27,7 @@ import {
 } from "~/components/ui/card";
 import { useIsPending } from "~/utils/misc";
 import { EmailSchema } from "~/utils/user-validation";
+import { generateMetadata } from "~/utils/meta";
 
 const ChangeEmailSchema = z.object({
   email: EmailSchema,
@@ -115,6 +116,7 @@ export default function ChangeEmail({
   actionData,
   loaderData,
 }: Route.ComponentProps) {
+  const metadata = generateMetadata({ title: "Change Email" });
   const user = loaderData.user;
   const isSubmitting = useIsPending();
 
@@ -128,59 +130,62 @@ export default function ChangeEmail({
   });
 
   return (
-    <GradientContainer>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="mx-auto w-full max-w-lg"
-      >
-        <Card className="w-full bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
-          <Form
-            {...getFormProps(form)}
-            method="post"
-            className="mx-auto w-full space-y-6"
-          >
-            <CardHeader>
-              <CardTitle>
-                A confirmation email will be sent to your{" "}
-                <strong>new email address</strong>.
-              </CardTitle>
-              <CardDescription>
-                A security notification will also be sent to your current email:{" "}
-                <strong className="font-bold">{user.email}</strong>.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="my-8">
-              <div className="space-y-2">
-                <Label htmlFor={fields.email.id}>New Email</Label>
-                <Input
-                  {...getInputProps(fields.email, { type: "email" })}
-                  placeholder="johndoe@example.com"
-                  className="h-12 border-gray-300 bg-white !text-lg dark:border-gray-700 dark:bg-gray-900"
-                />
-                <FormError errors={fields.email.errors} />
-              </div>
-              <FormError errors={form.errors} />
-            </CardContent>
-            <CardFooter>
-              <div className="flex w-full justify-end">
-                <div className="flex gap-6">
-                  <Button variant={"outline"} asChild>
-                    <Link to={"/profile"}>Cancel</Link>
-                  </Button>
-                  <Button type="submit" disabled={isSubmitting}>
-                    Send confirmation{" "}
-                    {isSubmitting ? (
-                      <Loader2 className="ml-2 animate-spin" />
-                    ) : null}
-                  </Button>
+    <>
+      {metadata}
+      <GradientContainer>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="mx-auto w-full max-w-lg"
+        >
+          <Card className="w-full bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
+            <Form
+              {...getFormProps(form)}
+              method="post"
+              className="mx-auto w-full space-y-6"
+            >
+              <CardHeader>
+                <CardTitle>
+                  A confirmation email will be sent to your{" "}
+                  <strong>new email address</strong>.
+                </CardTitle>
+                <CardDescription>
+                  A security notification will also be sent to your current
+                  email: <strong className="font-bold">{user.email}</strong>.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="my-8">
+                <div className="space-y-2">
+                  <Label htmlFor={fields.email.id}>New Email</Label>
+                  <Input
+                    {...getInputProps(fields.email, { type: "email" })}
+                    placeholder="johndoe@example.com"
+                    className="h-12 border-gray-300 bg-white !text-lg dark:border-gray-700 dark:bg-gray-900"
+                  />
+                  <FormError errors={fields.email.errors} />
                 </div>
-              </div>
-            </CardFooter>
-          </Form>
-        </Card>
-      </motion.div>
-    </GradientContainer>
+                <FormError errors={form.errors} />
+              </CardContent>
+              <CardFooter>
+                <div className="flex w-full justify-end">
+                  <div className="flex gap-6">
+                    <Button variant={"outline"} asChild>
+                      <Link to={"/profile"}>Cancel</Link>
+                    </Button>
+                    <Button type="submit" disabled={isSubmitting}>
+                      Send confirmation{" "}
+                      {isSubmitting ? (
+                        <Loader2 className="ml-2 animate-spin" />
+                      ) : null}
+                    </Button>
+                  </div>
+                </div>
+              </CardFooter>
+            </Form>
+          </Card>
+        </motion.div>
+      </GradientContainer>
+    </>
   );
 }

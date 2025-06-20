@@ -27,6 +27,7 @@ import { checkHoneypot } from "~/utils/honeypot.server";
 import { StatusCodes } from "http-status-codes";
 import { Verification } from "~/components/email-templates/verification";
 import { EmailSchema } from "~/utils/user-validation";
+import { generateMetadata } from "~/utils/meta";
 
 const ForgotPasswordSchema = z.object({
   email: EmailSchema,
@@ -100,6 +101,8 @@ export const handle: SEOHandle = {
 };
 
 export default function ForgotPassword({ actionData }: Route.ComponentProps) {
+  const metadata = generateMetadata({ title: "Forgot Password" });
+
   const isSubmitting = useIsPending();
   const [form, fields] = useForm({
     id: "forgot-password",
@@ -110,56 +113,59 @@ export default function ForgotPassword({ actionData }: Route.ComponentProps) {
     shouldValidate: "onBlur",
   });
   return (
-    <GradientContainer>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="mx-auto w-full max-w-md"
-      >
-        <Card className="w-full bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
-          <Form
-            {...getFormProps(form)}
-            method="post"
-            className="mx-auto w-full space-y-6"
-          >
-            <CardHeader>
-              <CardTitle>Forgot password</CardTitle>
-              <CardDescription>
-                Enter your email, and we’ll send you a secure link to reset your
-                password.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="my-8">
-              <div className="space-y-2">
-                <Label htmlFor={fields.email.id}>Email</Label>
-                <Input
-                  {...getInputProps(fields.email, { type: "email" })}
-                  placeholder="johndoe@example.com"
-                  className="h-12 border-gray-300 bg-white !text-lg dark:border-gray-700 dark:bg-gray-900"
-                />
-                <FormError errors={fields.email.errors} />
-              </div>
-              <FormError errors={form.errors} />
-            </CardContent>
-            <CardFooter>
-              <div className="flex w-full justify-end">
-                <div className="flex gap-6">
-                  <Button variant={"outline"} asChild>
-                    <Link to={"/signin"}>Cancel</Link>
-                  </Button>
-                  <Button type="submit" disabled={isSubmitting}>
-                    Recover password
-                    {isSubmitting ? (
-                      <Loader2 className="ml-2 animate-spin" />
-                    ) : null}
-                  </Button>
+    <>
+      {metadata}
+      <GradientContainer>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="mx-auto w-full max-w-md"
+        >
+          <Card className="w-full bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
+            <Form
+              {...getFormProps(form)}
+              method="post"
+              className="mx-auto w-full space-y-6"
+            >
+              <CardHeader>
+                <CardTitle>Forgot password</CardTitle>
+                <CardDescription>
+                  Enter your email, and we’ll send you a secure link to reset
+                  your password.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="my-8">
+                <div className="space-y-2">
+                  <Label htmlFor={fields.email.id}>Email</Label>
+                  <Input
+                    {...getInputProps(fields.email, { type: "email" })}
+                    placeholder="johndoe@example.com"
+                    className="h-12 border-gray-300 bg-white !text-lg dark:border-gray-700 dark:bg-gray-900"
+                  />
+                  <FormError errors={fields.email.errors} />
                 </div>
-              </div>
-            </CardFooter>
-          </Form>
-        </Card>
-      </motion.div>
-    </GradientContainer>
+                <FormError errors={form.errors} />
+              </CardContent>
+              <CardFooter>
+                <div className="flex w-full justify-end">
+                  <div className="flex gap-6">
+                    <Button variant={"outline"} asChild>
+                      <Link to={"/signin"}>Cancel</Link>
+                    </Button>
+                    <Button type="submit" disabled={isSubmitting}>
+                      Recover password
+                      {isSubmitting ? (
+                        <Loader2 className="ml-2 animate-spin" />
+                      ) : null}
+                    </Button>
+                  </div>
+                </div>
+              </CardFooter>
+            </Form>
+          </Card>
+        </motion.div>
+      </GradientContainer>
+    </>
   );
 }
