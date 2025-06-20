@@ -11,12 +11,12 @@ import { navLinks, slogan } from "~/constants/navlinks";
 import { NavLink } from "./nav-link";
 import { Separator } from "./ui/separator";
 import { Link } from "react-router";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { useOptionalUser } from "~/hooks/user";
-import { getInitials } from "~/utils/misc";
+import { getImgSrc, getInitials } from "~/utils/misc";
 import { SignoutButton } from "./signout-button";
 
 export function MobileNav() {
@@ -61,8 +61,15 @@ export function MobileNav() {
 
             {user ? (
               <Link to={"/profile"} onClick={closeMobileNav}>
-                <Avatar className="size-9">
-                  {/* <AvatarImage src={profile.image!} alt={profile.name!} /> */}
+                <Avatar className="size-9 border border-gray-300 dark:border-gray-600">
+                  <AvatarImage
+                    src={getImgSrc({
+                      path: "users",
+                      fileKey: user.image?.fileKey,
+                      seed: user.id,
+                    })}
+                    alt={user.name}
+                  />
                   <AvatarFallback className="border border-slate-300 dark:border-gray-800">
                     {getInitials(user.name)}
                   </AvatarFallback>

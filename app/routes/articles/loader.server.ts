@@ -74,7 +74,7 @@ export async function getArticleComments({
         select: {
           id: true,
           name: true,
-          image: { select: { objectKey: true } },
+          image: { select: { fileKey: true } },
         },
       },
       replies: {
@@ -92,7 +92,7 @@ export async function getArticleComments({
             select: {
               id: true,
               name: true,
-              image: { select: { objectKey: true } },
+              image: { select: { fileKey: true } },
             },
           },
         },

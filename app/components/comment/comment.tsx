@@ -3,7 +3,6 @@ import type { Route } from "../../routes/articles/+types/article";
 import { useNavigate, useSearchParams } from "react-router";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Separator } from "../ui/separator";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   FilePenLine,
@@ -31,7 +30,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
-import { getInitials, requireAuth } from "~/utils/misc";
+import { getImgSrc, getInitials, requireAuth } from "~/utils/misc";
 import { userHasPermission } from "~/utils/permissions";
 
 export type CommentData = NonNullable<
@@ -144,10 +143,15 @@ export function Comment({ comment }: { comment: CommentData }) {
   return (
     <li className="border-b border-gray-200 pb-6 last:border-0 dark:border-gray-800">
       <div className="flex items-start space-x-2">
-        <Avatar className="-mt-0.5 size-8">
-          {/* {author?.image ? (
-            <AvatarImage src={author.image} alt={author.name!} />
-          ) : null} */}
+        <Avatar className="-mt-0.5 size-8 border border-gray-300 dark:border-gray-600">
+          <AvatarImage
+            src={getImgSrc({
+              path: "users",
+              fileKey: author?.image?.fileKey,
+              seed: author?.id,
+            })}
+            alt={author!.name}
+          />
           <AvatarFallback>{getInitials(author!.name!)}</AvatarFallback>
         </Avatar>
 

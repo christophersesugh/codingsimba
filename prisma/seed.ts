@@ -9,7 +9,7 @@ const ADMIN_NAME = "Christopher S. Aondona";
 async function seed() {
   await prisma.permission.deleteMany();
   await prisma.role.deleteMany();
-  await prisma.comment.deleteMany();
+  // await prisma.comment.deleteMany();
   await prisma.user.deleteMany();
 
   const entities: Entity[] = ["USER", "COMMENT", "REPLY", "REVIEW", "PROFILE"];

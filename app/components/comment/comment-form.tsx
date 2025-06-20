@@ -1,10 +1,9 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Send, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { useOptionalUser } from "~/hooks/user";
 import { MDXEditor } from "../mdx/editor";
-import { getInitials } from "~/utils/misc";
+import { getImgSrc, getInitials } from "~/utils/misc";
 
 type CommentFormProps = {
   isForUpdate?: boolean;
@@ -35,9 +34,14 @@ export function CommentForm({
       <div className="flex w-full flex-1 flex-col items-start space-x-4 md:flex-row">
         {!isForUpdate ? (
           <Avatar className="flex items-center justify-center border border-gray-300 dark:border-gray-600">
-            {/* {profile?.image ? (
-              <AvatarImage src={profile.image} alt={profile.name!} />
-            ) : null} */}
+            <AvatarImage
+              src={getImgSrc({
+                path: "users",
+                fileKey: user?.image?.fileKey,
+                seed: user?.id,
+              })}
+              alt={user!.name}
+            />
             <AvatarFallback>{getInitials(user!.name)}</AvatarFallback>
           </Avatar>
         ) : null}

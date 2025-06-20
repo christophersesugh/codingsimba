@@ -127,7 +127,10 @@ export default function ArticleDetailsRoute({
     imageAlt: article.title,
     url: `articles/${article.slug}`,
     description: article.excerpt,
-    keywords: article.tags.map((t) => t.slug).join(","),
+    keywords: article.tags
+      .map((t) => t.slug)
+      .join(",")
+      .replace(/-/g, "_"),
     type: "article",
   });
 

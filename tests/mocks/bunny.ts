@@ -8,6 +8,6 @@ export const handlers: HttpHandler[] = [
     console.log(
       `Mocked file upload to Bunny - received ${body.byteLength} bytes  and returned ${imageUrl}`,
     );
-    return HttpResponse.json(imageUrl);
+    return HttpResponse.json({ ok: true });
   }),
 ];

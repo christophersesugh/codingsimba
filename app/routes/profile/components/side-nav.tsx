@@ -6,9 +6,9 @@ import { Button } from "~/components/ui/button";
 
 import { cn } from "~/lib/shadcn";
 import type { TabValue } from "..";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { getInitials } from "~/utils/misc";
+import { getImgSrc, getInitials } from "~/utils/misc";
 
 type SideNavProps = {
   tabs: { value: TabValue; Icon: LucideIcon }[];
@@ -22,20 +22,25 @@ export function SideNav({ tabs, activeTab, setActiveTab }: SideNavProps) {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 shadow-sm dark:border-gray-800 dark:bg-gray-900">
       <div className="border-b border-gray-200 p-6 text-center dark:border-gray-800">
-        <div className="relative mx-auto mb-4 size-24 overflow-visible">
-          <Avatar className="size-24 overflow-visible">
-            {/* {profile?.image ? (
-              <AvatarImage src={profile.image} alt={profile!.name!} />
-            ) : null} */}
+        <div className="relative z-20 mx-auto mb-4 size-24 overflow-visible">
+          <Link to={"/profile/change-photo"}>
+            <Button
+              size={"icon"}
+              className="absolute -top-1 right-0 size-8 rounded-full outline outline-red-500"
+            >
+              <Camera className="h-full w-full" />
+            </Button>
+          </Link>
+          <Avatar className="-z-20 size-24 border border-gray-300 dark:border-gray-600">
+            <AvatarImage
+              src={getImgSrc({
+                seed: user.id,
+                path: "users",
+                fileKey: user.image?.fileKey,
+              })}
+              alt={user.name}
+            />
             <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
-            <Link to={"/profile/change-photo"}>
-              <Button
-                size={"icon"}
-                className="absolute right-0 top-0 rounded-full outline outline-red-500"
-              >
-                <Camera className="size-6" />
-              </Button>
-            </Link>
           </Avatar>
         </div>
         <h2 className="text-xl font-bold">{user.name}</h2>

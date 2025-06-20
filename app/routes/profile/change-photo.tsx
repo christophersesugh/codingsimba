@@ -12,7 +12,7 @@ import { FormError } from "~/components/form-errors";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader, Loader2 } from "lucide-react";
 import { GradientContainer } from "~/components/gradient-container";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
@@ -23,12 +23,24 @@ import {
   CardHeader,
   CardDescription,
 } from "~/components/ui/card";
-import { getInitials, useIsPending } from "~/utils/misc";
+import { getImgSrc, getInitials, useIsPending } from "~/utils/misc";
 import { parseFormData } from "@mjackson/form-data-parser";
 import { StatusCodes } from "http-status-codes";
 import { generateMetadata } from "~/utils/meta";
+import { uploadFIleToStorage } from "~/utils/storage.server";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "~/components/ui/alert-dialog";
 
 const MAX_SIZE = 1024 * 1024 * 3; // 3MB
+const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
 const DeleteImageSchema = z.object({
   intent: z.literal("delete"),
@@ -38,6 +50,10 @@ const NewImageSchema = z.object({
   intent: z.literal("submit"),
   photoFile: z
     .instanceof(File)
+    .refine(
+      (file) => allowedTypes.includes(file.type),
+      "Only JPG, PNG, or WEBP images are allowed",
+    )
     .refine((file) => file.size > 0, "Image is required")
     .refine(
       (file) => file.size <= MAX_SIZE,
@@ -69,13 +85,28 @@ export async function action({ request }: Route.ActionArgs) {
 
   const formData = await parseFormData(request, { maxFileSize: MAX_SIZE });
   const submission = await parseWithZod(formData, {
-    schema: PhotoFormSchema.transform(async (data) => {
+    schema: PhotoFormSchema.transform(async (data, ctx) => {
       if (data.intent === "delete") return { intent: "delete" };
       if (data.photoFile.size <= 0) return z.NEVER;
+
+      const { photoFile, intent } = data;
+      const response = await uploadFIleToStorage({
+        path: "users",
+        file: data.photoFile,
+      });
+
+      if (response.status !== "success") {
+        ctx.addIssue({
+          path: ["photoFile"],
+          code: z.ZodIssueCode.custom,
+          message: response.error as string,
+        });
+        return z.NEVER;
+      }
       return {
-        intent: data.intent,
+        intent,
         image: {
-          // objectKey: await uploadProfileImage(userId, data.photoFile),
+          fileKey: photoFile.name,
         },
       };
     }),
@@ -84,7 +115,7 @@ export async function action({ request }: Route.ActionArgs) {
 
   if (submission.status !== "success") {
     return data(
-      { result: submission.reply() },
+      { ...submission.reply() },
       {
         status:
           submission.status === "error"
@@ -96,19 +127,18 @@ export async function action({ request }: Route.ActionArgs) {
 
   const { image, intent } = submission.value;
 
-  // if (intent === "delete") {
-  //   await prisma.userImage.deleteMany({ where: { userId } });
-  //   return redirect("/profile");
-  // }
+  if (intent === "delete") {
+    await prisma.userImage.deleteMany({ where: { userId } });
+    return redirect("/profile");
+  }
 
-  // await prisma.$transaction(async ($prisma) => {
-  //   await $prisma.userImage.deleteMany({ where: { userId } });
-  //   await $prisma.user.update({
-  //     where: { id: userId },
-  //     data: { image: { create: image } },
-  //   });
-  // });
-
+  await prisma.$transaction(async ($prisma) => {
+    await $prisma.userImage.deleteMany({ where: { userId } });
+    await $prisma.user.update({
+      where: { id: userId },
+      data: { image: { create: image } },
+    });
+  });
   return redirect("/profile");
 }
 
@@ -122,7 +152,7 @@ export default function ChangePhoto({
 
   const [form, fields] = useForm({
     id: "change-image",
-    // lastResult: actionData,
+    lastResult: actionData,
     onValidate({ formData }) {
       return parseWithZod(formData, { schema: PhotoFormSchema });
     },
@@ -133,6 +163,9 @@ export default function ChangePhoto({
   const pendingIntent = isPending ? navigation.formData?.get("intent") : null;
   const lastSubmissionIntent = fields.intent.value;
   const [newImageSrc, setNewImageSrc] = React.useState<string | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+
+  const closeDeleteDialog = () => setIsDeleteModalOpen(false);
   return (
     <>
       {metadata}
@@ -152,36 +185,120 @@ export default function ChangePhoto({
               className="mx-auto w-full space-y-6"
             >
               <CardHeader>
-                <CardTitle>Update Profile Photo</CardTitle>
+                <CardTitle>Update Profile Image</CardTitle>
                 <CardDescription>
                   Update your profile picture or delete the current one.
                   Supported formats: JPG, PNG, WEBP (Max 3MB).
                 </CardDescription>
               </CardHeader>
               <CardContent className="my-8">
-                <Avatar className="mx-auto mt-4 size-48 overflow-visible">
-                  {/* {user.image ? (
-                  <AvatarImage src={user.image} alt={profile!.name!} />
-                ) : null} */}
+                <Avatar className="mx-auto mt-4 size-48 border border-gray-300 dark:border-gray-600">
+                  <AvatarImage
+                    src={
+                      newImageSrc ??
+                      getImgSrc({
+                        path: "users",
+                        seed: user.id,
+                        fileKey: user.image?.fileKey,
+                      })
+                    }
+                    alt={user.name}
+                  />
                   <AvatarFallback className="text-3xl">
                     {getInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
+                <FormError errors={fields.photoFile.errors} />
+                <div className="flex gap-4">
+                  <input
+                    {...getInputProps(fields.photoFile, { type: "file" })}
+                    accept="image/*"
+                    className="peer sr-only"
+                    required
+                    tabIndex={newImageSrc ? -1 : 0}
+                    onChange={(e) => {
+                      const file = e.currentTarget.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                          setNewImageSrc(
+                            event.target?.result?.toString() ?? null,
+                          );
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                </div>
               </CardContent>
               <CardFooter>
                 <div className="flex w-full justify-evenly">
                   <Link to={"/profile"}>
                     <Button variant={"outline"}>Cancel</Button>
                   </Link>
-                  <Button variant={"destructive"} type="submit">
-                    Delete
-                  </Button>
-                  <Button type="submit" disabled={isSubmitting}>
-                    Change{" "}
-                    {isSubmitting ? (
-                      <Loader2 className="ml-2 animate-spin" />
-                    ) : null}
-                  </Button>
+                  {newImageSrc ? (
+                    <Button variant="destructive" type="reset">
+                      Reset
+                    </Button>
+                  ) : null}
+                  {user.image ? (
+                    <AlertDialog
+                      open={isDeleteModalOpen}
+                      onOpenChange={closeDeleteDialog}
+                    >
+                      <Button
+                        variant={"destructive"}
+                        disabled={isSubmitting}
+                        onClick={() => setIsDeleteModalOpen(true)}
+                      >
+                        {isSubmitting ? (
+                          <Loader className="mr-1 size-4 animate-spin" />
+                        ) : null}{" "}
+                        Delete
+                      </Button>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you sure you want to delete your profile
+                            picture?
+                          </AlertDialogTitle>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>No</AlertDialogCancel>
+                          <AlertDialogAction
+                            type="submit"
+                            name="intent"
+                            value="delete"
+                          >
+                            Yes
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  ) : null}
+                  {newImageSrc ? (
+                    <Button
+                      name="intent"
+                      value="submit"
+                      type="submit"
+                      disabled={isSubmitting}
+                    >
+                      Save{" "}
+                      {isSubmitting ? (
+                        <Loader2 className="ml-2 animate-spin" />
+                      ) : null}
+                    </Button>
+                  ) : (
+                    <Button
+                      name="intent"
+                      value="submit"
+                      type="submit"
+                      disabled={isSubmitting}
+                      asChild
+                    >
+                      <label htmlFor={fields.photoFile.id}>Change </label>
+                    </Button>
+                  )}
                 </div>
               </CardFooter>
             </Form>

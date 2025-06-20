@@ -1,5 +1,4 @@
 import type { FileUpload } from "@mjackson/form-data-parser";
-import { StatusCodes } from "http-status-codes";
 
 /**
  * Options for uploading a file to BunnyCDN storage.
@@ -10,7 +9,7 @@ import { StatusCodes } from "http-status-codes";
  * @property region - The BunnyCDN region to use (optional)
  */
 interface UploadToBunnyOptions {
-  data: File | FileUpload;
+  file: File | FileUpload;
   path?: string;
   contentType?: string;
   region?: string;
@@ -40,7 +39,7 @@ export async function uploadFIleToStorage(
   options: UploadToBunnyOptions,
 ): Promise<{ status: string; error: string | null }> {
   const {
-    data,
+    file,
     path,
     contentType = "application/octet-stream",
     region = "",
@@ -52,7 +51,7 @@ export async function uploadFIleToStorage(
   const BASE_HOSTNAME = "storage.bunnycdn.com";
 
   const HOSTNAME = region ? `${region}.${BASE_HOSTNAME}` : BASE_HOSTNAME;
-  const UPLOAD_URL = `https://${HOSTNAME}/${BUNNY_STORAGE_ZONE}/${path}`;
+  const UPLOAD_URL = `https://${HOSTNAME}/${BUNNY_STORAGE_ZONE}/${path}/${file.name}`;
 
   const response = await fetch(UPLOAD_URL, {
     method: "PUT",
@@ -60,12 +59,11 @@ export async function uploadFIleToStorage(
       AccessKey: BUNNY_ACCESS_KEY,
       "Content-Type": contentType,
     },
-    body: data,
+    body: file,
   });
 
-  const status = response.status;
-  if (status !== StatusCodes.CREATED) {
-    return { status: "error", error: "failed to upload file" } as const;
+  if (!response.ok) {
+    return { status: "error", error: "Failed to upload file" } as const;
   } else {
     return { status: "success", error: null } as const;
   }

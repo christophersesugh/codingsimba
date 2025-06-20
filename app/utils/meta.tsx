@@ -29,11 +29,10 @@ export function generateMetadata({
 
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
-      <meta property="og:type" content={type} />
-      <meta property="og:image" content={image} />
       <meta property="og:url" content={`https://codingsimba.com/${url}`} />
       <meta property="og:image" content={image} />
       <meta property="og:image:alt" content={imageAlt} />
+      <meta property="og:type" content={type} />
 
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content="@codingsimba_" />

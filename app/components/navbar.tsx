@@ -7,7 +7,7 @@ import { NavLink } from "./nav-link";
 import { ThemeToggle } from "./theme-toggle";
 import { cn } from "~/lib/shadcn";
 import { Logo } from "./logo";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useMobileNav } from "~/contexts/mobile-nav";
 import { useOptionalUser } from "~/hooks/user";
@@ -18,7 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Separator } from "./ui/separator";
-import { getInitials } from "~/utils/misc";
+import { getImgSrc, getInitials } from "~/utils/misc";
 import { SignoutButton } from "./signout-button";
 import { userHasRole } from "~/utils/permissions";
 
@@ -67,9 +67,19 @@ export function Navbar() {
           ) : null}
           {user ? (
             <DropdownMenu>
-              <DropdownMenuTrigger className="hidden md:block" asChild>
-                <Avatar className="size-8">
-                  {/* <AvatarImage src={profile.image!} alt={profile.name!} /> */}
+              <DropdownMenuTrigger
+                className="hidden cursor-pointer md:block"
+                asChild
+              >
+                <Avatar className="size-8 border border-gray-300 dark:border-gray-600">
+                  <AvatarImage
+                    src={getImgSrc({
+                      path: "users",
+                      fileKey: user.image?.fileKey,
+                      seed: user.id,
+                    })}
+                    alt={user.name}
+                  />
                   <AvatarFallback className="border border-slate-300 dark:border-gray-800">
                     {getInitials(user.name)}
                   </AvatarFallback>

@@ -3,7 +3,6 @@ import {
   useNavigation,
   type NavigateFunction,
 } from "react-router";
-import { createId as cuid } from "@paralleldrive/cuid2";
 import { type ClassValue, clsx } from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSpinDelay } from "spin-delay";
@@ -12,7 +11,7 @@ import type { useUser } from "~/hooks/user";
 import { intervalToDuration } from "date-fns";
 import { slogan } from "~/constants/navlinks";
 
-export function getRandomBotAvatar(seed = cuid()) {
+export function getRandomBotAvatar(seed: string) {
   return `https://api.dicebear.com/7.x/pixel-art/svg?seed=${seed}`;
 }
 
@@ -23,10 +22,12 @@ export function getRandomBotAvatar(seed = cuid()) {
  * @returns {string} Image URL
  */
 export function getImgSrc({
+  seed,
   fileKey,
   path = "users",
 }: {
-  fileKey?: string | null;
+  seed?: string;
+  fileKey?: string;
   path?: "users" | "content" | "assets";
 }): string {
   const storageZone = "https://cdn.codingsimba.com";
@@ -37,7 +38,7 @@ export function getImgSrc({
       return `${storageZone}/${encodeURIComponent(fileKey)}`;
     }
   }
-  return getRandomBotAvatar();
+  return getRandomBotAvatar(seed!);
 }
 
 /**

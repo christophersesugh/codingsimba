@@ -64,6 +64,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       email: true,
       isSubscribed: true,
       notificationSettings: true,
+      image: { select: { fileKey: true } },
       _count: {
         select: {
           sessions: {
