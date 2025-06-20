@@ -138,6 +138,8 @@ export function Comment({ comment }: { comment: CommentData }) {
     );
   };
 
+  const anonymous = "Anonymous";
+
   const basicButtonClasses =
     "flex items-center space-x-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300";
   return (
@@ -150,10 +152,10 @@ export function Comment({ comment }: { comment: CommentData }) {
               fileKey: author?.image?.fileKey,
               seed: author?.id,
             })}
-            alt={author?.name ?? "Anonymous"}
+            alt={author?.name ?? anonymous}
           />
           <AvatarFallback>
-            {getInitials(author?.name ?? "Anonymous")}
+            {getInitials(author?.name ?? anonymous)}
           </AvatarFallback>
         </Avatar>
 

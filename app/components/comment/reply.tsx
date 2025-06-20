@@ -90,6 +90,7 @@ export function Reply({ reply }: { reply: ReplyData }) {
     updateReply();
     setEditReply(false);
   }
+  const anonymous = "Anonymous";
 
   const basicButtonClasses =
     "space-x-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300";
@@ -105,10 +106,10 @@ export function Reply({ reply }: { reply: ReplyData }) {
                   fileKey: author?.image?.fileKey,
                   seed: author?.id,
                 })}
-                alt={author?.name ?? "Anonymous"}
+                alt={author?.name ?? anonymous}
               />
               <AvatarFallback>
-                {getInitials(author?.name ?? "Anonymous")}
+                {getInitials(author?.name ?? anonymous)}
               </AvatarFallback>
             </Avatar>
             <h5 className="text-sm font-medium">

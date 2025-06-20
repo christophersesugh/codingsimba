@@ -47,7 +47,7 @@ export function Iframe({ videoId, type = "youtube" }: MDXIframeProps) {
           "aspect-video w-full border-0": type === "youtube",
           "absolute top-0 h-full w-full border-none": type === "bunny",
         })}
-        allow="accelerometer;  clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
       />
     </div>
   );
