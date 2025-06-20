@@ -9,6 +9,7 @@ export const schema = z.object({
   DATABASE_URL: z.string().default("file:./dev.db"),
   BUNNY_STORAGE_ZONE: z.string(),
   BUNNY_ACCESS_KEY: z.string(),
+  BUNNY_LIBRARY_ID: z.string(),
   GITHUB_CLIENT_ID: z.string(),
   GITHUB_CLIENT_SECRET: z.string(),
   RESEND_API_KEY: z.string(),
@@ -39,6 +40,7 @@ export function init() {
 export function getEnv() {
   return {
     MODE: process.env.NODE_ENV,
+    LIBRARY_ID: process.env.BUNNY_LIBRARY_ID,
   };
 }
 
@@ -46,8 +48,8 @@ type ENV = ReturnType<typeof getEnv>;
 
 declare global {
   // eslint-disable-next-line no-var
-  var ENV: ENV;
+  var env: ENV;
   interface Window {
-    ENV: ENV;
+    env: ENV;
   }
 }

@@ -105,11 +105,15 @@ export function Reply({ reply }: { reply: ReplyData }) {
                   fileKey: author?.image?.fileKey,
                   seed: author?.id,
                 })}
-                alt={author!.name}
+                alt={author?.name ?? "Anonymous"}
               />
-              <AvatarFallback>{getInitials(author!.name!)}</AvatarFallback>
+              <AvatarFallback>
+                {getInitials(author?.name ?? "Anonymous")}
+              </AvatarFallback>
             </Avatar>
-            <h5 className="text-sm font-medium">{author!.name}</h5>
+            <h5 className="text-sm font-medium">
+              {author?.name ?? "Anonymous"}
+            </h5>
           </div>
           <span className="text-xs text-gray-500 dark:text-gray-400">
             {formatDistanceToNowStrict(new Date(reply.createdAt), {

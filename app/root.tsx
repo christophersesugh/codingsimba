@@ -33,6 +33,7 @@ import { getToast } from "./utils/toast.server";
 import { combineHeaders } from "./utils/misc";
 import { toast } from "sonner";
 import { authSessionStorage } from "./utils/session.server";
+import { getEnv } from "./utils/env.server";
 
 // export const meta: Route.MetaFunction = () => [];
 
@@ -51,7 +52,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     request.headers.get("cookie"),
   );
 
-  const sessionId = authSession.get(sessionKey);
+  const sessionId: string = authSession.get(sessionKey);
   const session = sessionId
     ? await prisma.session.findUnique({
         where: { id: sessionId },
@@ -80,43 +81,33 @@ export async function loader({ request }: Route.LoaderArgs) {
       })
     : null;
 
-  const dataObj = { user, toastSession, theme: getTheme() };
+  const nullUser: boolean = !!(sessionId && !user);
+  let headers = combineHeaders(toastHeaders);
 
-  /**
-   * 😜 Maybe a user is deleted in DB 🤷🏽‍♂️
-   * If we can't find the user in DB, we need to remove the userId from the cookie
-   * session and return null user.
-   * This will prevent the user from being signed in and will automatically sign them out
-   */
-  if (sessionId && !user) {
-    return data(
-      { ...dataObj, user: null },
-      {
-        headers: combineHeaders(
-          {
-            "set-cookie": await authSessionStorage.destroySession(authSession),
-          },
-          toastHeaders,
-        ),
-      },
-    );
+  if (nullUser) {
+    const destroyCookie = await authSessionStorage.destroySession(authSession);
+    headers = combineHeaders(headers, { "set-cookie": destroyCookie });
   }
 
-  return data(dataObj, {
-    headers: combineHeaders(
-      // csrfCookieHeader ? { "set-cookie": csrfCookieHeader } : null,
-      toastHeaders,
-    ),
-  });
+  return data(
+    {
+      toastSession,
+      theme: getTheme(),
+      env: getEnv(),
+      user: !nullUser ? user : null,
+    },
+    { headers },
+  );
 }
 
 type DocumentProps = {
   children: React.ReactNode;
   currentTheme?: Theme | null;
   theme?: Route.ComponentProps["loaderData"]["theme"];
+  env?: Record<string, string | undefined>;
 };
 
-function Document({ children, currentTheme, theme }: DocumentProps) {
+function Document({ children, currentTheme, theme, env }: DocumentProps) {
   return (
     <html lang="en" data-theme={currentTheme ?? ""}>
       <head>
@@ -128,6 +119,11 @@ function Document({ children, currentTheme, theme }: DocumentProps) {
       </head>
       <body className="min-h-screen antialiased">
         {children}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.env = ${JSON.stringify(env)}`,
+          }}
+        />
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -137,7 +133,7 @@ function Document({ children, currentTheme, theme }: DocumentProps) {
 
 function App() {
   const [currentTheme] = useTheme();
-  const { theme, toastSession } =
+  const { theme, toastSession, env } =
     useLoaderData() as Route.ComponentProps["loaderData"];
 
   React.useEffect(() => {
@@ -150,7 +146,7 @@ function App() {
   }, [toastSession]);
 
   return (
-    <Document currentTheme={currentTheme} theme={theme}>
+    <Document currentTheme={currentTheme} theme={theme} env={env}>
       <OptionalNavbar />
       <MobileNav />
       <Outlet />

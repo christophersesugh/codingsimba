@@ -150,14 +150,16 @@ export function Comment({ comment }: { comment: CommentData }) {
               fileKey: author?.image?.fileKey,
               seed: author?.id,
             })}
-            alt={author!.name}
+            alt={author?.name ?? "Anonymous"}
           />
-          <AvatarFallback>{getInitials(author!.name!)}</AvatarFallback>
+          <AvatarFallback>
+            {getInitials(author?.name ?? "Anonymous")}
+          </AvatarFallback>
         </Avatar>
 
         <div className="flex-1 overflow-hidden">
           <div className="mb-1 flex items-center justify-between">
-            <h4 className="font-medium">{author!.name}</h4>
+            <h4 className="font-medium">{author?.name ?? "Anonymous"}</h4>
             <div className="flex gap-2 text-sm">
               {comment.replies?.length ? (
                 <Badge>
