@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Route } from "./+types/change-photo";
 import React from "react";
 import { z } from "zod";
@@ -6,13 +5,11 @@ import { motion } from "framer-motion";
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { prisma } from "~/utils/db.server";
-import { requireUserId } from "../../utils/auth.server";
-import { data, Form, Link, redirect, useNavigation } from "react-router";
+import { requireUserId } from "~/utils/auth.server";
+import { data, Form, Link, redirect } from "react-router";
 import { FormError } from "~/components/form-errors";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
-import { ArrowLeft, Loader, Loader2 } from "lucide-react";
+import { Loader, Loader2 } from "lucide-react";
 import { GradientContainer } from "~/components/gradient-container";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
@@ -27,17 +24,10 @@ import { getImgSrc, getInitials, useIsPending } from "~/utils/misc";
 import { parseFormData } from "@mjackson/form-data-parser";
 import { StatusCodes } from "http-status-codes";
 import { generateMetadata } from "~/utils/meta";
-import { uploadFIleToStorage } from "~/utils/storage.server";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
+  deleteFileFromStorage,
+  uploadFIleToStorage,
+} from "~/utils/storage.server";
 
 const MAX_SIZE = 1024 * 1024 * 3; // 3MB
 const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
@@ -86,9 +76,26 @@ export async function action({ request }: Route.ActionArgs) {
   const formData = await parseFormData(request, { maxFileSize: MAX_SIZE });
   const submission = await parseWithZod(formData, {
     schema: PhotoFormSchema.transform(async (data, ctx) => {
-      if (data.intent === "delete") return { intent: "delete" };
+      if (data.intent === "delete") {
+        const file = await prisma.userImage.findFirst({
+          where: { userId },
+          select: { fileKey: true },
+        });
+        const response = await deleteFileFromStorage({
+          path: "users",
+          fileKey: file!.fileKey,
+        });
+        if (response.status !== "success") {
+          ctx.addIssue({
+            path: ["photoFile"],
+            code: z.ZodIssueCode.custom,
+            message: response.error as string,
+          });
+          return z.NEVER;
+        }
+        return { intent: "delete" };
+      }
       if (data.photoFile.size <= 0) return z.NEVER;
-
       const { photoFile, intent } = data;
       const response = await uploadFIleToStorage({
         path: "users",
@@ -158,14 +165,8 @@ export default function ChangePhoto({
     },
     shouldValidate: "onBlur",
   });
-  const isPending = useIsPending();
-  const navigation = useNavigation();
-  const pendingIntent = isPending ? navigation.formData?.get("intent") : null;
-  const lastSubmissionIntent = fields.intent.value;
   const [newImageSrc, setNewImageSrc] = React.useState<string | null>(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
 
-  const closeDeleteDialog = () => setIsDeleteModalOpen(false);
   return (
     <>
       {metadata}
@@ -241,40 +242,20 @@ export default function ChangePhoto({
                       Reset
                     </Button>
                   ) : null}
+
                   {user.image ? (
-                    <AlertDialog
-                      open={isDeleteModalOpen}
-                      onOpenChange={closeDeleteDialog}
+                    <Button
+                      variant={"destructive"}
+                      type="submit"
+                      name="intent"
+                      value="delete"
+                      disabled={isSubmitting}
                     >
-                      <Button
-                        variant={"destructive"}
-                        disabled={isSubmitting}
-                        onClick={() => setIsDeleteModalOpen(true)}
-                      >
-                        {isSubmitting ? (
-                          <Loader className="mr-1 size-4 animate-spin" />
-                        ) : null}{" "}
-                        Delete
-                      </Button>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Are you sure you want to delete your profile
-                            picture?
-                          </AlertDialogTitle>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>No</AlertDialogCancel>
-                          <AlertDialogAction
-                            type="submit"
-                            name="intent"
-                            value="delete"
-                          >
-                            Yes
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                      {isSubmitting ? (
+                        <Loader className="mr-1 size-4 animate-spin" />
+                      ) : null}{" "}
+                      Delete
+                    </Button>
                   ) : null}
                   {newImageSrc ? (
                     <Button

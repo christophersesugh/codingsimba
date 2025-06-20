@@ -11,6 +11,8 @@ import type { useUser } from "~/hooks/user";
 import { intervalToDuration } from "date-fns";
 import { slogan } from "~/constants/navlinks";
 
+export type FilePath = "users" | "content" | "assets";
+
 export function getRandomBotAvatar(seed: string) {
   return `https://api.dicebear.com/7.x/pixel-art/svg?seed=${seed}`;
 }
@@ -28,7 +30,7 @@ export function getImgSrc({
 }: {
   seed?: string;
   fileKey?: string;
-  path?: "users" | "content" | "assets";
+  path?: FilePath;
 }): string {
   const storageZone = "https://cdn.codingsimba.com";
   if (fileKey) {
