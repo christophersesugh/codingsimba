@@ -24,16 +24,18 @@ import { Navbar } from "./components/navbar";
 import { Footer } from "./components/footer";
 import { themeSessionResolver } from "~/utils/theme.server";
 import { GeneralErrorBoundary } from "./components/error-boundary";
+import { HoneypotProvider } from "remix-utils/honeypot/react";
 import { MobileNavProvider } from "./contexts/mobile-nav";
 import { MobileNav } from "./components/mobile-nav";
 import { prisma } from "./utils/db.server";
-import { sessionKey } from "./utils/auth.server";
+import { sessionKey, signout } from "./utils/auth.server";
 import { Toaster } from "./components/ui/sonner";
 import { getToast } from "./utils/toast.server";
 import { combineHeaders } from "./utils/misc";
 import { authSessionStorage } from "./utils/session.server";
 import { getEnv } from "./utils/env.server";
 import { useToast } from "./hooks/use-toast";
+import { honeypot } from "./utils/honeypot.server";
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/favicon.png" },
@@ -43,6 +45,7 @@ export const links: Route.LinksFunction = () => [
 
 export async function loader({ request }: Route.LoaderArgs) {
   const { getTheme } = await themeSessionResolver(request);
+  const honeyProps = await honeypot.getInputProps();
   const { toast: toastSession, headers: toastHeaders } =
     await getToast(request);
 
@@ -83,6 +86,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   let headers = combineHeaders(toastHeaders);
 
   if (nullUser) {
+    await signout({ request, redirectTo: "/" });
     const destroyCookie = await authSessionStorage.destroySession(authSession);
     headers = combineHeaders(headers, { "set-cookie": destroyCookie });
   }
@@ -93,6 +97,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       theme: getTheme(),
       env: getEnv(),
       user: !nullUser ? user : null,
+      honeyProps,
     },
     { headers },
   );
@@ -153,14 +158,15 @@ function OptionalNavbar() {
 }
 
 export default function AppWithProviders({ loaderData }: Route.ComponentProps) {
-  const { theme } = loaderData;
-
+  const { theme, honeyProps } = loaderData;
   return (
-    <ThemedApp theme={theme}>
+    <HoneypotProvider {...honeyProps}>
       <MobileNavProvider>
-        <App />
+        <ThemedApp theme={theme}>
+          <App />
+        </ThemedApp>
       </MobileNavProvider>
-    </ThemedApp>
+    </HoneypotProvider>
   );
 }
 
