@@ -18,7 +18,7 @@ export function Author() {
         <div>
           <h3 className="mb-2 text-lg font-black">
             <span className="text-gray-500"> Written by</span> Christopher S.
-            Aondona <span className="text-gray-500">(Coding Simba)</span>
+            Aondona
           </h3>
           <p className="text-gray-600 dark:text-gray-300">
             Rust/JavaScript software engineer. Building open-source tools for

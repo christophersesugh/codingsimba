@@ -30,13 +30,13 @@ export function HeroCard() {
                 <div className="h-4 w-4/6 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
                 <div className="mt-6 h-10 w-1/3 rounded-md bg-blue-600 dark:bg-blue-500" />
               </div>
-              <img
-                src="https://cdn.sanity.io/media-libraries/ml4WNZcKpiTm/images/811117a7575625abea691b4c9e21ac5d8aaa8f49-400x400.png"
-                width={200}
-                height={300}
-                alt="Hero Image"
-                className="mx-auto"
-              />
+              <div className="mt-4 space-y-4">
+                <div className="h-6 w-3/4 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+                <div className="h-4 w-4/6 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+                <div className="h-4 w-5/6 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+                <div className="h-4 w-full animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+                <div className="mt-6 h-10 w-1/3 rounded-md bg-blue-600 dark:bg-blue-500" />
+              </div>
             </div>
           </div>
           <div className="absolute -right-12 top-[60%] h-40 w-40 rotate-6 transform rounded-lg border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-800 dark:bg-gray-900">

@@ -1,4 +1,3 @@
-import React from "react";
 import {
   ExploreButton,
   HeroText,
@@ -8,14 +7,9 @@ import {
 import { Navbar } from "~/components/navbar";
 
 export function HeroSection() {
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
   return (
     <header className="relative flex min-h-screen flex-col items-start justify-start overflow-hidden">
-      {mounted ? <HeroBackground /> : null}
+      <HeroBackground />
       <div className="z-20 mb-12 w-full md:mb-20">
         <Navbar />
       </div>
