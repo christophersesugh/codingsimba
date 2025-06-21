@@ -4,6 +4,8 @@ export const schema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"] as const),
   SESSION_SECRET: z.string(),
   ADMIN_PASSWORD: z.string(),
+  POLAR_ACCESS_TOKEN: z.string(),
+  POLAR_WEBHOOK_SECRET: z.string(),
   TURSO_DATABASE_URL: z.string(),
   TURSO_AUTH_TOKEN: z.string(),
   DATABASE_URL: z.string().default("file:./dev.db"),

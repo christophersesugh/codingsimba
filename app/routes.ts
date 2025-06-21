@@ -28,6 +28,14 @@ export default [
   route("content/webhook", "routes/resources/sanity-webhook.ts"),
   route("download-user-data", "routes/resources/download-user-data.ts"),
 
+  //Subscription
+  ...prefix("subscription", [
+    route("checkout", "routes/subscription/checkout.ts"),
+    route("portal", "routes/subscription/customer-portal.ts"),
+    route("success", "routes/subscription/success.tsx"),
+    route("webhook", "routes/subscription/webhook.ts"),
+  ]),
+
   ...prefix("contact", [
     index("routes/contact/index.tsx"),
     route("success", "routes/contact/success.tsx"),

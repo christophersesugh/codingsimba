@@ -3,18 +3,12 @@ model Content {
   sanityId String      @unique
   type     ContentType
   views    Int         @default(0)
-  isCourse Boolean     @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  likes           Like[]
-  comments        Comment[]
-  reviews         Review[]
-  enrollments     Enrollment[]
-  courseProgress  CourseProgress[]
-  programProgress ProgramProgress[]
-  timeSpent       TimeSpent[]
+  likes    Like[]
+  comments Comment[]
 
   @@unique([sanityId, type])
 }
@@ -22,97 +16,134 @@ model Content {
 enum ContentType {
   ARTICLE
   TUTORIAL
-  COURSE
-  PROGRAM
 }
 
-model ProgramProgress {
-  id String @id @default(ulid())
+enum ContentStatus {
+  LOCKED
+  IN_PROGRESS
+  COMPLETED
+}
+
+/**
+ * Time spent programs will be a summation of time spent on it courses
+ */
+model Program {
+  id         String @id @default(ulid())
+  sanityId   String @unique
+  sanitySlug String @unique
+
+  progress    Int           @default(0)
+  unlockeddAt DateTime      @default(now())
+  completedAt DateTime?
+  status      ContentStatus @default(LOCKED)
+  courses     Course[]
+  reviews     Review[]
+  enrollments Enrollment[]
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  content   Content @relation(fields: [contentId], references: [id])
-  contentId String
+  @@index([userId])
+  @@index([userId, status])
+}
 
-  currentCourse    String?
-  currentModule    String? // Active module ID
-  currentLesson    String? // Active lesson ID
-  completedLessons Json? // List of completed lesson IDs
-  completedModules Json? // List of completed module IDs
-  completedCourses Json?
+/**
+ * Time spent courses will be a summation of time spent on it modules
+ */
+model Course {
+  id         String @id @default(ulid())
+  sanityId   String @unique
+  sanitySlug String @unique
 
-  courses CourseProgress[]
-
-  // Progress metrics
-  progress    Int         @default(0) // 0-100
-  isCompleted Boolean     @default(false)
+  progress    Int           @default(0)
+  unlockedAt  DateTime      @default(now())
   completedAt DateTime?
-  startedAt   DateTime    @default(now())
-  lastActive  DateTime    @default(now())
+  status      ContentStatus @default(LOCKED)
+  modules     Module[]
+  reviews     Review[]
+  enrollments Enrollment[]
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  program   Program? @relation(fields: [programId], references: [id])
+  programId String?
+
+  @@index([userId])
+  @@index([programId])
+  @@index([userId, status])
+}
+
+/**
+ * Time spent modules will be a summation of time spent on it sub-modules
+ */
+model Module {
+  id         String @id @default(ulid())
+  sanityId   String @unique
+  sanitySlug String @unique
+
+  progress    Int           @default(0)
+  unlockedAt  DateTime      @default(now())
+  completedAt DateTime?
+  status      ContentStatus @default(LOCKED)
+  subModules  SubModule[]
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId String
+
+  @@index([userId])
+  @@index([courseId])
+  @@index([userId, status])
+}
+
+/**
+ * Time spent sub modules will be a summation of time spent on it lessons
+ */
+model SubModule {
+  id         String @id @default(ulid())
+  sanityId   String @unique
+  sanitySlug String @unique
+
+  progress    Int           @default(0)
+  unlockedAt  DateTime      @default(now())
+  completedAt DateTime?
+  status      ContentStatus @default(LOCKED)
+  lessons     Lesson[]
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  modules  Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  moduleId String
+
+  @@index([userId])
+  @@index([moduleId])
+  @@index([userId, status])
+}
+
+model Lesson {
+  id         String @id @default(ulid())
+  sanityId   String @unique
+  sanitySlug String @unique
+
+  progress    Int           @default(0)
+  unlockedAt  DateTime      @default(now())
+  completedAt DateTime?
+  status      ContentStatus @default(LOCKED)
   timeSpent   TimeSpent[]
 
-  @@unique([userId, contentId])
-  @@index([userId, isCompleted])
-  @@index([userId])
-  @@index([contentId])
-}
-
-model CourseProgress {
-  id String @id @default(ulid())
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
-
-  content   Content @relation(fields: [contentId], references: [id])
-  contentId String
-
-  currentModule    String? // Active module ID
-  currentLesson    String? // Active lesson ID
-  completedLessons Json? // List of completed lesson IDs
-  completedModules Json? // List of completed module IDs
-
-  modules ModuleProgress[]
-
-  // Progress metrics
-  progress          Int              @default(0) // 0-100
-  isCompleted       Boolean          @default(false)
-  completedAt       DateTime?
-  startedAt         DateTime         @default(now())
-  lastActive        DateTime         @default(now())
-  timeSpent         TimeSpent[]
-  ProgramProgress   ProgramProgress? @relation(fields: [programProgressId], references: [id])
-  programProgressId String?
-
-  @@unique([userId, contentId])
-  @@index([userId, isCompleted])
-  @@index([userId])
-  @@index([contentId])
-}
-
-model ModuleProgress {
-  id       String @id @default(ulid())
-  sanityId String @unique
-
-  startedAt   DateTime?
-  completedAt DateTime?
-  progress    Int       @default(0) // 0–100
-  isCompleted Boolean   @default(false)
-
-  currentLesson    String? // Active lesson ID
-  completedLessons Json? // List of completed lesson IDs
-
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  courseProgress   CourseProgress @relation(fields: [courseProgressId], references: [id], onDelete: Cascade)
-  courseProgressId String
-  timeSpent        TimeSpent[]
+  subModule   SubModule @relation(fields: [subModuleId], references: [id], onDelete: Cascade)
+  subModuleId String
 
   @@index([userId])
-  @@index([courseProgressId])
-  @@index([userId, isCompleted])
-  @@index([courseProgressId, userId])
+  @@index([subModuleId])
+  @@index([userId, status])
 }
 
 model Like {
@@ -157,6 +188,12 @@ model Comment {
   @@index([createdAt])
 }
 
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Review {
   id       String       @id @default(ulid())
   rating   Int
@@ -170,75 +207,54 @@ model Review {
   authorId String
   author   User   @relation(fields: [authorId], references: [id])
 
-  contentId String
-  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  programId String?
+  program   Program? @relation(fields: [programId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  @@unique([authorId, contentId])
+  courseId String?
+  course   Course? @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   @@index([authorId])
-  @@index([contentId])
+  @@index([courseId])
+  @@index([programId])
   @@index([createdAt])
 }
 
-enum ReviewStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
-
 model Enrollment {
-  id        String  @id @default(ulid())
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
-  contentId String
+  id String @id @default(ulid())
 
   subscription   Subscription? @relation(fields: [subscriptionId], references: [subscriptionId])
   subscriptionId String?
 
-  enrolledAt DateTime  @default(now())
-  expiresAt  DateTime? // Null = access follows subscription
+  enrolledAt DateTime @default(now())
 
-  @@unique([userId, contentId])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  programId String?
+  program   Program? @relation(fields: [programId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  courseId String?
+  course   Course? @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([userId, courseId])
+  @@unique([userId, programId])
   @@index([subscriptionId])
-  @@index([expiresAt])
 }
 
 model TimeSpent {
-  id        String   @id @default(ulid())
-  timeSpent Int // Time spent in milliseconds
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(ulid())
+  duration   Int      @default(0) // Duration in milliseconds
+  lastActive DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  contentId String?
-  content   Content? @relation(fields: [contentId], references: [id], onDelete: Cascade)
-
-  courseProgressId String?
-  courseProgress   CourseProgress? @relation(fields: [courseProgressId], references: [id], onDelete: Cascade)
-
-  moduleProgressId String?
-  moduleProgress   ModuleProgress? @relation(fields: [moduleProgressId], references: [id], onDelete: Cascade)
-
-  pageType          PageType
-  lastActive        DateTime         @default(now())
-  ProgramProgress   ProgramProgress? @relation(fields: [programProgressId], references: [id])
-  programProgressId String?
+  lesson   Lesson? @relation(fields: [lessonId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  lessonId String?
 
   @@index([userId])
-  @@index([contentId])
-  @@index([courseProgressId])
-  @@index([moduleProgressId])
+  @@index([lessonId])
   @@index([lastActive])
-}
-
-enum PageType {
-  ARTICLE
-  TUTORIAL
-  PROGRAM
-  COURSE
-  MODULE
-  LESSON
 }

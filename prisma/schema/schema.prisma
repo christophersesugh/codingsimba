@@ -13,29 +13,30 @@ datasource db {
 model User {
   id                   String               @id @default(ulid())
   email                String               @unique
-  polarCustomerId      String?              @unique
   name                 String
   isSubscribed         Boolean              @default(false)
+  lastSeenAt           DateTime?
+  timezone             String?
   createdAt            DateTime             @default(now())
   updatedAt            DateTime             @updatedAt
   image                UserImage?
   password             Password?
+  subscription         Subscription?
+  notificationSettings NotificationSetting?
   roles                Role[]
   sessions             Session[]
   connections          Connection[]
-  notificationSettings NotificationSetting?
   likes                Like[]
   comments             Comment[]
   reviews              Review[]
-  programProgress      ProgramProgress[]
-  courseProgress       CourseProgress[]
-  moduleProgress       ModuleProgress[]
+  programs             Program[]
+  courses              Course[]
+  modules              Module[]
+  subModules           SubModule[]
+  lessons              Lesson[]
   enrollments          Enrollment[]
-  subscription         Subscription?
   certificates         Certificate[]
   timeSpent            TimeSpent[]
-
-  @@index([email])
 }
 
 model Password {
