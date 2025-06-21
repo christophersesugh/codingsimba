@@ -1,10 +1,8 @@
 import { data } from "react-router";
 import { StatusCodes } from "http-status-codes";
 import { prisma } from "./db.server";
-import type { Comment, RoleName } from "~/generated/prisma/client";
+import type { RoleName } from "~/generated/prisma/client";
 import { type PermissionString, parsePermissionString } from "./permissions";
-import type { Entity } from "~/generated/prisma/enums";
-import type { IComment } from "~/components/comment";
 import { requireUserId } from "~/utils/auth.server";
 
 /**
@@ -80,57 +78,4 @@ export async function requireUserWithRole(request: Request, name: RoleName) {
     );
   }
   return user.id;
-}
-
-/**
- * Determines permissions for comments and replies
- * @param {Object} params - The parameters for determining permissions
- * @param {string} params.userId - The ID of the user to check permissions for
- * @param {Entity} params.entity - The type of entity (e.g., "COMMENT")
- * @param {Array<Comment | IComment>} params.entityArray - Array of comments or replies to check permissions for
- * @returns {Promise<Array<{commentId: string, isOwner: boolean, permissions: Array<{action: string, hasPermission: boolean}>}>>} Array of permission objects containing commentId, isOwner, and permissions array
- * @description Checks both ownership and role-based permissions for each entity.
- * For owners, checks both OWN and ANY access types.
- * For non-owners, only checks ANY access type.
- * Returns an array of permission objects with:
- * - commentId: The ID of the comment/reply
- * - isOwner: Whether the user owns the entity
- * - permissions: Array of permission objects with action and hasPermission
- */
-export async function determinePermissions({
-  userId,
-  entity,
-  entityArray,
-}: {
-  userId: string;
-  entity: Entity;
-  entityArray: (Comment | IComment)[];
-}) {
-  if (!userId || !entityArray?.length) {
-    return [];
-  }
-  return Promise.all(
-    entityArray.map(async (item) => {
-      const isOwner = item.authorId === userId;
-      const permissions = await prisma.permission.findMany({
-        select: { id: true, action: true },
-        where: {
-          entity,
-          roles: { some: { users: { some: { id: userId } } } },
-          action: {
-            in: ["CREATE", "READ", "UPDATE", "DELETE"],
-          },
-          access: isOwner ? "OWN" : "ANY",
-        },
-      });
-      return {
-        commentId: item.id,
-        isOwner,
-        permissions: permissions.map((p) => ({
-          action: p.action,
-          hasPermission: true,
-        })),
-      };
-    }),
-  );
 }

@@ -31,11 +31,9 @@ import { sessionKey } from "./utils/auth.server";
 import { Toaster } from "./components/ui/sonner";
 import { getToast } from "./utils/toast.server";
 import { combineHeaders } from "./utils/misc";
-import { toast } from "sonner";
 import { authSessionStorage } from "./utils/session.server";
 import { getEnv } from "./utils/env.server";
-
-// export const meta: Route.MetaFunction = () => [];
+import { useToast } from "./hooks/use-toast";
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/favicon.png" },
@@ -135,15 +133,7 @@ function App() {
   const [currentTheme] = useTheme();
   const { theme, toastSession, env } =
     useLoaderData() as Route.ComponentProps["loaderData"];
-
-  React.useEffect(() => {
-    if (toastSession) {
-      toast[toastSession.type](toastSession.title, {
-        id: toastSession.id,
-        description: toastSession.description,
-      });
-    }
-  }, [toastSession]);
+  useToast(toastSession);
 
   return (
     <Document currentTheme={currentTheme} theme={theme} env={env}>
