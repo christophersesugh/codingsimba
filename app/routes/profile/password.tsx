@@ -28,6 +28,8 @@ import {
 } from "~/components/ui/card";
 import { PasswordSchema } from "~/utils/user-validation";
 import { generateMetadata } from "~/utils/meta";
+import { HoneypotInputs } from "remix-utils/honeypot/react";
+import { checkHoneypot } from "~/utils/honeypot.server";
 
 export const UpdatePasswordSchema = z
   .object({
@@ -53,6 +55,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 export async function action({ request }: Route.ActionArgs) {
   const user = await requireUser(request);
   const formData = await request.formData();
+  await checkHoneypot(formData);
   const submission = await parseWithZod(formData, {
     schema: UpdatePasswordSchema.superRefine(async (data, ctx) => {
       const isValid = await verifyUserPassword(
@@ -127,6 +130,7 @@ export default function ResetPasswordRoute({
         >
           <Card className="w-full bg-white/80 shadow-xl backdrop-blur-sm dark:bg-gray-900/80">
             <Form {...getFormProps(form)} method="post">
+              <HoneypotInputs />
               <CardHeader>
                 <CardTitle>Update your password</CardTitle>
               </CardHeader>

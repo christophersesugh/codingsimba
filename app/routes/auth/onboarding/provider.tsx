@@ -39,6 +39,8 @@ import { RememberMeSchema } from "~/utils/user-validation";
 import { useIsPending } from "~/utils/misc";
 import { generateMetadata } from "~/utils/meta";
 import { GradientContainer } from "~/components/gradient-container";
+import { HoneypotInputs } from "remix-utils/honeypot/react";
+import { checkHoneypot } from "~/utils/honeypot.server";
 
 export const providerIdKey = "providerId";
 export const prefilledProfileKey = "prefilledProfile";
@@ -111,6 +113,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   });
 
   const formData = await request.formData();
+  await checkHoneypot(formData);
   const verifySession = await verifySessionStorage.getSession(
     request.headers.get("cookie"),
   );
@@ -205,6 +208,7 @@ export default function OnboardingProvider({
                   {...getInputProps(fields.redirectTo, { type: "hidden" })}
                   value={redirectTo ?? ""}
                 />
+                <HoneypotInputs />
                 <div className="space-y-2">
                   <Label htmlFor={fields.name.id}>Name</Label>
                   <Input

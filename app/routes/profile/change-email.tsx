@@ -28,6 +28,8 @@ import {
 import { useIsPending } from "~/utils/misc";
 import { EmailSchema } from "~/utils/user-validation";
 import { generateMetadata } from "~/utils/meta";
+import { checkHoneypot } from "~/utils/honeypot.server";
+import { HoneypotInputs } from "remix-utils/honeypot/react";
 
 const ChangeEmailSchema = z.object({
   email: EmailSchema,
@@ -51,6 +53,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 export async function action({ request }: Route.ActionArgs) {
   const userId = await requireUserId(request);
   const formData = await request.formData();
+  await checkHoneypot(formData);
   const submission = await parseWithZod(formData, {
     schema: ChangeEmailSchema.superRefine(async (data, ctx) => {
       const existingUser = await prisma.user.findUnique({
@@ -145,6 +148,7 @@ export default function ChangeEmail({
               method="post"
               className="mx-auto w-full space-y-6"
             >
+              <HoneypotInputs />
               <CardHeader>
                 <CardTitle>
                   A confirmation email will be sent to your{" "}

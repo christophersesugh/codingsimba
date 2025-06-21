@@ -31,6 +31,8 @@ import {
 import { useIsPending } from "~/utils/misc";
 import { GradientContainer } from "~/components/gradient-container";
 import { generateMetadata } from "~/utils/meta";
+import { HoneypotInputs } from "remix-utils/honeypot/react";
+import { checkHoneypot } from "~/utils/honeypot.server";
 
 export const onboardingSessionKey = "onboardingEmail";
 
@@ -68,6 +70,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
+  await checkHoneypot(formData);
 
   const submission = await parseWithZod(formData, {
     schema: OnboardingSchema.transform(async (data, ctx) => {
@@ -183,6 +186,7 @@ export default function Onboarding({
 
             <CardContent className="space-y-6">
               <Form {...getFormProps(form)} method="post" className="space-y-4">
+                <HoneypotInputs />
                 <input
                   {...getInputProps(fields.redirectTo, { type: "hidden" })}
                   value={redirectTo ?? ""}

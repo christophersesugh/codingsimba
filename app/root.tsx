@@ -36,6 +36,7 @@ import { authSessionStorage } from "./utils/session.server";
 import { getEnv } from "./utils/env.server";
 import { useToast } from "./hooks/use-toast";
 import { honeypot } from "./utils/honeypot.server";
+import { DiscordBadge } from "./components/discord-badge";
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/favicon.png" },
@@ -83,23 +84,20 @@ export async function loader({ request }: Route.LoaderArgs) {
     : null;
 
   const nullUser: boolean = !!(sessionId && !user);
-  let headers = combineHeaders(toastHeaders);
 
   if (nullUser) {
     await signout({ request, redirectTo: "/" });
-    const destroyCookie = await authSessionStorage.destroySession(authSession);
-    headers = combineHeaders(headers, { "set-cookie": destroyCookie });
   }
 
   return data(
     {
+      user,
       toastSession,
       theme: getTheme(),
       env: getEnv(),
-      user: !nullUser ? user : null,
       honeyProps,
     },
-    { headers },
+    { headers: combineHeaders(toastHeaders) },
   );
 }
 
@@ -146,6 +144,7 @@ function App() {
       <MobileNav />
       <Outlet />
       <Footer />
+      <DiscordBadge />
       <Toaster position="top-center" richColors />
     </Document>
   );
@@ -190,7 +189,7 @@ function ThemedApp({
 
 export function ErrorBoundary() {
   return (
-    <ThemedApp theme={null}>
+    <ThemedApp theme={"dark" as Theme}>
       <Document>
         <GeneralErrorBoundary />
       </Document>

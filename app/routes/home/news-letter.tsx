@@ -1,5 +1,5 @@
 import React from "react";
-import { NewsLetterForm } from "~/components/news-letter-form";
+import { SubscriptionForm } from "~/components/email-subscription-form";
 
 export function NewsLetterSection() {
   return (
@@ -8,7 +8,7 @@ export function NewsLetterSection() {
 
       <div className="container relative z-10 mx-auto px-4">
         <div className="mx-auto max-w-3xl text-center">
-          <NewsLetterForm />
+          <SubscriptionForm />
         </div>
       </div>
     </section>

@@ -3,8 +3,9 @@ import { motion } from "framer-motion";
 import { Button } from "./ui/button";
 import { Form } from "react-router";
 import { Input } from "./ui/input";
+import { HoneypotInputs } from "remix-utils/honeypot/react";
 
-export function NewsLetterForm() {
+export function SubscriptionForm() {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -15,10 +16,11 @@ export function NewsLetterForm() {
     >
       <h2 className="mb-4 text-3xl font-bold">Stay Updated</h2>
       <p className="mb-8 text-lg text-gray-600 dark:text-gray-300">
-        Subscribe to get notified about new articles and courses.
+        Subscribe to get notified about new content.
       </p>
 
       <Form className="mx-auto flex max-w-md flex-col gap-4 sm:flex-row">
+        <HoneypotInputs />
         <Input
           type="email"
           placeholder="Enter your email"

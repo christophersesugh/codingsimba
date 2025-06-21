@@ -1,7 +1,7 @@
 import { HeroSection } from "./hero";
 import { CoursesSection } from "./courses";
 import { ArticlesSection } from "./articles";
-import { About } from "./about";
+// import { About } from "./about";
 import { ContactSection } from "./contact";
 import { NewsLetterSection } from "./news-letter";
 import {
@@ -23,7 +23,7 @@ export default function HomeRoute() {
       <HeroSection />
       <CoursesSection />
       <ArticlesSection />
-      <About />
+      {/* <About /> */}
       <ContactSection />
       <NewsLetterSection />
     </>

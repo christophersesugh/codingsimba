@@ -38,8 +38,8 @@ export function HeroText() {
         transition={{ delay: 0.4, duration: 0.8 }}
         className="mb-8 text-xl text-gray-600 dark:text-gray-300"
       >
-        Practical tutorials, in-depth courses, and real-world insights to help
-        you become a better developer.
+        Accelerate your career with structured programs, in-depth courses, and
+        practical tutorials designed for real-world success.
       </motion.p>
 
       <motion.div

@@ -4,6 +4,7 @@ export const content = [
   { name: "articles", path: "articles" },
   { name: "tutorials", path: "tutorials" },
   { name: "courses", path: "courses" },
+  { name: "programs", path: "programs" },
 ];
 
 export const platform = [
@@ -30,4 +31,4 @@ export const social = [
 export const navLinks = [
   ...content,
   ...platform.filter((link) => link.path !== "contact#faqs"),
-];
+].filter((item) => !item.path.includes("contact"));

@@ -41,7 +41,7 @@ export function Navbar() {
     >
       <div className="container mx-auto flex items-center justify-between px-4 py-2">
         <Logo />
-        <div className="hidden items-center gap-6 md:flex">
+        <div className="hidden items-center gap-6 lg:flex">
           {navLinks.map((link) => (
             <NavLink
               type="navbar"
@@ -54,7 +54,7 @@ export function Navbar() {
         <div className="flex items-center gap-4">
           <ThemeToggle />
           {!user ? (
-            <Button className="hidden md:flex" asChild>
+            <Button className="hidden lg:flex" asChild>
               <Link to={"/signin"}>Sign In</Link>
             </Button>
           ) : null}
@@ -67,11 +67,8 @@ export function Navbar() {
           ) : null}
           {user ? (
             <DropdownMenu>
-              <DropdownMenuTrigger
-                className="hidden cursor-pointer md:block"
-                asChild
-              >
-                <Avatar className="size-8 border border-gray-300 dark:border-gray-600">
+              <DropdownMenuTrigger className="hidden lg:block" asChild>
+                <Avatar className="size-8 cursor-pointer border border-gray-300 dark:border-gray-600">
                   <AvatarImage
                     src={getImgSrc({
                       path: "users",
@@ -86,7 +83,7 @@ export function Navbar() {
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
-                <DropdownMenuItem className="font-bold" asChild>
+                <DropdownMenuItem asChild>
                   <Link to={"/profile"} prefetch="intent" className="font-bold">
                     <UserPen className="mr-2 size-4" /> Profile
                   </Link>
@@ -98,10 +95,9 @@ export function Navbar() {
           ) : null}
 
           <Button
-            asChild
             size={"icon"}
             variant={"ghost"}
-            className="block md:hidden"
+            className="block lg:hidden"
             onClick={openMobileNav}
           >
             <Menu />

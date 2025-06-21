@@ -26,6 +26,8 @@ import { EmailSchema, PasswordSchema } from "~/utils/user-validation";
 import { useIsPending } from "~/utils/misc";
 import { GradientContainer } from "~/components/gradient-container";
 import { generateMetadata } from "~/utils/meta";
+import { HoneypotInputs } from "remix-utils/honeypot/react";
+import { checkHoneypot } from "~/utils/honeypot.server";
 
 const SigninSchema = z.object({
   email: EmailSchema,
@@ -44,6 +46,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
+  await checkHoneypot(formData);
 
   const submission = await parseWithZod(formData, {
     schema: SigninSchema.transform(async (data, ctx) => {
@@ -121,6 +124,7 @@ export default function Signin({ actionData }: Route.ComponentProps) {
 
             <CardContent className="space-y-6">
               <Form {...getFormProps(form)} method="post" className="space-y-4">
+                <HoneypotInputs />
                 <div className="space-y-2">
                   <Label htmlFor={fields.email.id}>Email</Label>
                   <Input

@@ -25,6 +25,8 @@ import { verifySessionStorage } from "~/utils/verification.server";
 import { resetPasswordEmailSessionKey } from "./forgot-password";
 import { PasswordAndConfirmPasswordSchema } from "~/utils/user-validation";
 import { generateMetadata } from "~/utils/meta";
+import { HoneypotInputs } from "remix-utils/honeypot/react";
+import { checkHoneypot } from "~/utils/honeypot.server";
 
 const ResetPasswordSchema = PasswordAndConfirmPasswordSchema;
 
@@ -48,6 +50,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 export async function action({ request }: Route.ActionArgs) {
   const userEmail = await requireResetPasswordEmail(request);
   const formData = await request.formData();
+  await checkHoneypot(formData);
   const submission = parseWithZod(formData, {
     schema: ResetPasswordSchema,
   });
@@ -115,6 +118,7 @@ export default function ResetPasswordRoute({
               method="post"
               className="mx-auto w-full space-y-6"
             >
+              <HoneypotInputs />
               <CardHeader>
                 <CardTitle>Password reset</CardTitle>
                 <CardDescription>

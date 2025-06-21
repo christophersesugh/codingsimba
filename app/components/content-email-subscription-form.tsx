@@ -4,7 +4,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 // import { useForm } from "@conform-to/react";
 
-export function SubscriptionForm() {
+export function ContentEmailSubscriptionForm() {
   const fetcher = useFetcher();
   // const [form, fields] = useForm({
   //   id: "subscription-form",

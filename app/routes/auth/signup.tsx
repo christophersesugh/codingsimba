@@ -31,6 +31,8 @@ import { prepareVerification } from "./verify.server";
 import { GradientContainer } from "~/components/gradient-container";
 import { prisma } from "~/utils/db.server";
 import { generateMetadata } from "~/utils/meta";
+import { checkHoneypot } from "~/utils/honeypot.server";
+import { HoneypotInputs } from "remix-utils/honeypot/react";
 
 const SignupSchema = z.object({
   email: EmailSchema,
@@ -45,7 +47,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
-
+  await checkHoneypot(formData);
   const submission = await parseWithZod(formData, {
     schema: SignupSchema.superRefine(async (data, ctx) => {
       const user = await prisma.user.findFirst({
@@ -137,6 +139,7 @@ export default function Signup({ actionData }: Route.ComponentProps) {
 
             <CardContent className="space-y-6">
               <Form {...getFormProps(form)} method="post" className="space-y-4">
+                <HoneypotInputs />
                 <input
                   {...getInputProps(fields.redirectTo, { type: "hidden" })}
                   value={redirectTo ?? ""}

@@ -28,6 +28,8 @@ import {
   deleteFileFromStorage,
   uploadFIleToStorage,
 } from "~/utils/storage.server";
+import { HoneypotInputs } from "remix-utils/honeypot/react";
+import { checkHoneypot } from "~/utils/honeypot.server";
 
 const MAX_SIZE = 1024 * 1024 * 3; // 3MB
 const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
@@ -74,6 +76,7 @@ export async function action({ request }: Route.ActionArgs) {
   const userId = await requireUserId(request);
 
   const formData = await parseFormData(request, { maxFileSize: MAX_SIZE });
+  await checkHoneypot(formData);
   const submission = await parseWithZod(formData, {
     schema: PhotoFormSchema.transform(async (data, ctx) => {
       if (data.intent === "delete") {
@@ -185,6 +188,7 @@ export default function ChangePhoto({
               {...getFormProps(form)}
               className="mx-auto w-full space-y-6"
             >
+              <HoneypotInputs />
               <CardHeader>
                 <CardTitle>Update Profile Image</CardTitle>
                 <CardDescription>

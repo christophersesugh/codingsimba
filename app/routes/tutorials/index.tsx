@@ -6,7 +6,7 @@ export default function TutorialsRoute() {
   return (
     <div>
       <Header
-        title="tutorials"
+        title="Tutorials"
         description="Practical, hands-on tutorials to help you master specific technologies and concepts."
         placeholder="Search for tutorials..."
         enableSearch
@@ -14,8 +14,8 @@ export default function TutorialsRoute() {
       <div className="container mx-auto my-20 w-full max-w-3xl">
         <EmptyState
           icon={<ArrowDownAZ className="size-8" />}
-          title="Coming soon!"
-          description="Tutorials section is under construction"
+          title="New Tutorials Coming Soon!"
+          description="We're currently developing new tutorials. While you wait, feel free to explore our articles and courses."
         />
       </div>
     </div>

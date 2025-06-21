@@ -66,6 +66,11 @@ export default [
     route(":articleSlug", "routes/articles/article.tsx"),
   ]),
 
+  ...prefix("programs", [
+    index("routes/programs/index.tsx"),
+    route(":programId", "routes/programs/program.tsx"),
+  ]),
+
   ...prefix("tutorials", [
     index("routes/tutorials/index.tsx"),
     layout("routes/tutorials/layout.tsx", [
@@ -85,15 +90,4 @@ export default [
       ]),
     ]),
   ]),
-
-  // ...prefix("programs", [
-  //   index("routes/courses/index.tsx"),
-  //   layout("routes/courses/layout.tsx", [
-  //     route(":courseId", "routes/courses/course.tsx", [
-  //       route("modules/:moduleId", "routes/courses/module.tsx", [
-  //         route("lessons/:lessonId", "routes/courses/lesson.tsx"),
-  //       ]),
-  //     ]),
-  //   ]),
-  // ]),
 ] satisfies RouteConfig;

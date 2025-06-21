@@ -28,6 +28,7 @@ import { validateRequest } from "./verify.server";
 import { checkHoneypot } from "~/utils/honeypot.server";
 import { useIsPending } from "~/utils/misc";
 import { generateMetadata } from "~/utils/meta";
+import { HoneypotInputs } from "remix-utils/honeypot/react";
 
 export const codeQueryParam = "code";
 export const targetQueryParam = "target";
@@ -175,6 +176,7 @@ export default function VerifyPage({
           </div>
 
           <Form {...getFormProps(form)} method="post" className="w-full">
+            <HoneypotInputs />
             <input
               {...getInputProps(fields[typeQueryParam], { type: "hidden" })}
             />

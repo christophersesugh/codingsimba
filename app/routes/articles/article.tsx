@@ -6,7 +6,7 @@ import { Share } from "./components/share";
 import { Author } from "../../components/author";
 import { RelatedArticles } from "./components/related-articles";
 import { TableOfContent } from "../../components/table-of-content";
-import { SubscriptionForm } from "./components/subscription-form";
+import { ContentEmailSubscriptionForm } from "~/components/content-email-subscription-form";
 import { PopularTags } from "./components/popular-tags";
 import { Markdown } from "~/components/mdx";
 import {
@@ -197,7 +197,7 @@ export default function ArticleDetailsRoute({
             <div className="sticky top-20">
               <TableOfContent className="hidden lg:block" />
               <EngagementMetrics className="hidden md:block" />
-              {!user?.isSubscribed ? <SubscriptionForm /> : null}
+              {!user?.isSubscribed ? <ContentEmailSubscriptionForm /> : null}
               <PopularTags />
             </div>
           </aside>

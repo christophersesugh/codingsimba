@@ -28,6 +28,7 @@ import { StatusCodes } from "http-status-codes";
 import { Verification } from "~/components/email-templates/verification";
 import { EmailSchema } from "~/utils/user-validation";
 import { generateMetadata } from "~/utils/meta";
+import { HoneypotInputs } from "remix-utils/honeypot/react";
 
 const ForgotPasswordSchema = z.object({
   email: EmailSchema,
@@ -128,6 +129,7 @@ export default function ForgotPassword({ actionData }: Route.ComponentProps) {
               method="post"
               className="mx-auto w-full space-y-6"
             >
+              <HoneypotInputs />
               <CardHeader>
                 <CardTitle>Forgot password</CardTitle>
                 <CardDescription>
