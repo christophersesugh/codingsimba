@@ -7,7 +7,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const user = await prisma.user.findUniqueOrThrow({
     where: { id: userId },
     include: {
-      profile: true,
+      image: true,
       password: false,
       roles: true,
       sessions: true,

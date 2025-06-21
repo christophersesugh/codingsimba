@@ -15,6 +15,7 @@ export const schema = z.object({
   RESEND_API_KEY: z.string(),
   SANITY_STUDIO_PROJECT_ID: z.string(),
   SANITY_STUDIO_DATASET: z.string(),
+  ALLOW_INDEXING: z.enum(["true", "false"]).optional(),
 });
 
 declare global {
@@ -41,6 +42,7 @@ export function getEnv() {
   return {
     MODE: process.env.NODE_ENV,
     LIBRARY_ID: process.env.BUNNY_LIBRARY_ID,
+    ALLOW_INDEXING: process.env.ALLOW_INDEXING,
   };
 }
 

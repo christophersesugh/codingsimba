@@ -37,6 +37,7 @@ import { getEnv } from "./utils/env.server";
 import { useToast } from "./hooks/use-toast";
 import { honeypot } from "./utils/honeypot.server";
 import { DiscordBadge } from "./components/discord-badge";
+import { useNonce } from "./utils/nonce-provider";
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/favicon.png" },
@@ -104,11 +105,19 @@ export async function loader({ request }: Route.LoaderArgs) {
 type DocumentProps = {
   children: React.ReactNode;
   currentTheme?: Theme | null;
+  nonce: string;
   theme?: Route.ComponentProps["loaderData"]["theme"];
   env?: Record<string, string | undefined>;
 };
 
-function Document({ children, currentTheme, theme, env }: DocumentProps) {
+function Document({
+  children,
+  currentTheme,
+  theme,
+  env,
+  nonce,
+}: DocumentProps) {
+  const allowIndexing = env?.ALLOW_INDEXING !== "false";
   return (
     <html lang="en" data-theme={currentTheme ?? ""}>
       <head>
@@ -116,17 +125,21 @@ function Document({ children, currentTheme, theme, env }: DocumentProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <PreventFlashOnWrongTheme ssrTheme={!!theme} />
+        {allowIndexing ? null : (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
         <Links />
       </head>
       <body className="min-h-screen antialiased">
         {children}
         <script
+          nonce={nonce}
           dangerouslySetInnerHTML={{
             __html: `window.env = ${JSON.stringify(env)}`,
           }}
         />
-        <ScrollRestoration />
-        <Scripts />
+        <ScrollRestoration nonce={nonce} />
+        <Scripts nonce={nonce} />
       </body>
     </html>
   );
@@ -134,12 +147,13 @@ function Document({ children, currentTheme, theme, env }: DocumentProps) {
 
 function App() {
   const [currentTheme] = useTheme();
+  const nonce = useNonce();
   const { theme, toastSession, env } =
     useLoaderData() as Route.ComponentProps["loaderData"];
   useToast(toastSession);
 
   return (
-    <Document currentTheme={currentTheme} theme={theme} env={env}>
+    <Document currentTheme={currentTheme} theme={theme} env={env} nonce={nonce}>
       <OptionalNavbar />
       <MobileNav />
       <Outlet />
@@ -188,9 +202,10 @@ function ThemedApp({
 }
 
 export function ErrorBoundary() {
+  const nonce = useNonce();
   return (
     <ThemedApp theme={"dark" as Theme}>
-      <Document>
+      <Document nonce={nonce}>
         <GeneralErrorBoundary />
       </Document>
     </ThemedApp>
