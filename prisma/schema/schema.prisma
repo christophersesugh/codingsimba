@@ -145,7 +145,8 @@ model Connection {
   userId String
 
   @@unique([providerName, providerId])
-  @@unique([userId])
+  @@unique([providerName, userId])
+  @@index([userId])
 }
 
 /// Defines a specific permission in the system, combining an action, entity, and access level.

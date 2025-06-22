@@ -46,7 +46,7 @@ model Program {
   /// The user's completion progress percentage for the program.
   progress    Int           @default(0)
   /// The timestamp when the user unlocked the program.
-  unlockeddAt DateTime      @default(now())
+  unlockedAt  DateTime      @default(now())
   /// The timestamp when the user completed the program.
   completedAt DateTime?
   /// The user's current status in the program.
