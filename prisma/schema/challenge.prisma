@@ -1,0 +1,244 @@
+/// Represents a container for a month's worth of coding challenges.
+model MonthlyChallenge {
+  id       String  @id @default(ulid())
+  /// The title of the monthly challenge set (e.g., "June 2024 Code Challenge").
+  title    String
+  /// The month of the challenge (1-12).
+  month    Int
+  /// The year of the challenge.
+  year     Int
+  /// An optional theme for the month's challenges.
+  theme    String?
+  /// Whether this set of challenges is currently active and accepting submissions.
+  isActive Boolean @default(false)
+
+  challenges Challenge[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([month, year])
+}
+
+/// Represents an individual coding challenge.
+model Challenge {
+  id          String              @id @default(ulid())
+  /// The title of the challenge.
+  title       String
+  /// A unique, URL-friendly identifier for the challenge.
+  slug        String              @unique
+  /// A detailed description of the challenge, in Markdown format.
+  description String
+  /// The difficulty level of the challenge.
+  difficulty  ChallengeDifficulty @default(MEDIUM)
+  /// The number of points awarded for successfully completing the challenge.
+  points      Int                 @default(100)
+  /// A JSON object containing boilerplate code for different languages.
+  template    Json?
+  /// A JSON array of hints to help the user.
+  hints       Json?
+  /// A detailed explanation of the optimal solution.
+  solution    String?
+
+  monthlyChallengeId String
+  monthlyChallenge   MonthlyChallenge @relation(fields: [monthlyChallengeId], references: [id], onDelete: Cascade)
+
+  submissions    ChallengeSubmission[]
+  testCases      ChallengeTestCase[]
+  userChallenges UserChallenge[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([monthlyChallengeId])
+}
+
+/// The difficulty level of a challenge.
+enum ChallengeDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+/// Represents a test case for a challenge, used to validate user submissions.
+model ChallengeTestCase {
+  id             String  @id @default(ulid())
+  /// The input data for the test case.
+  input          String
+  /// The expected output for the given input.
+  expectedOutput String
+  /// Whether this test case is hidden from the user during testing.
+  isHidden       Boolean @default(false)
+  /// Whether this is an example test case shown in the challenge description.
+  isExample      Boolean @default(false)
+
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@index([challengeId])
+}
+
+/// Represents a user's attempt to solve a challenge.
+model ChallengeSubmission {
+  id            String           @id @default(ulid())
+  /// The code submitted by the user.
+  code          String
+  /// The programming language of the submitted code.
+  language      String
+  /// The result of the submission (e.g., PENDING, ACCEPTED, WRONG_ANSWER).
+  status        SubmissionStatus @default(PENDING)
+  /// The score awarded for this submission.
+  score         Int              @default(0)
+  /// The execution time of the submission in milliseconds.
+  executionTime Int?
+  /// The memory used by the submission in kilobytes.
+  memoryUsage   Int?
+  /// A JSON object containing detailed results, such as stdout, stderr, and test case outcomes.
+  result        Json?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  submittedAt        DateTime            @default(now())
+  userChallengeBadge UserChallengeBadge?
+
+  @@index([userId])
+  @@index([challengeId])
+  @@index([userId, challengeId])
+  @@index([status])
+}
+
+/// The status of a code submission.
+enum SubmissionStatus {
+  PENDING
+  RUNNING
+  ACCEPTED // All tests passed
+  WRONG_ANSWER
+  TIME_LIMIT_EXCEEDED
+  MEMORY_LIMIT_EXCEEDED
+  RUNTIME_ERROR
+  COMPILE_ERROR
+}
+
+/// Represents a user's state and progress for a specific challenge.
+model UserChallenge {
+  id               String              @id @default(ulid())
+  /// The user's current status for this challenge (e.g., NOT_STARTED, IN_PROGRESS).
+  status           UserChallengeStatus @default(NOT_STARTED)
+  /// The timestamp when the user first started the challenge.
+  startedAt        DateTime?
+  /// The timestamp when the user successfully completed the challenge.
+  completedAt      DateTime?
+  /// The user's last saved code for this challenge.
+  currentCode      String?
+  /// The user's last selected language for this challenge.
+  currentLanguage  String?
+  /// The timestamp when the user viewed the solution.
+  viewedSolutionAt DateTime?
+
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, challengeId])
+  @@index([userId])
+  @@index([challengeId])
+}
+
+/// The user's progress status on a specific challenge.
+enum UserChallengeStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+/// Represents an unlockable badge that can be earned by users.
+model Badge {
+  id          String  @id @default(ulid())
+  /// The name of the badge.
+  name        String  @unique
+  /// A description of the badge and how to earn it.
+  description String
+  /// A URL to the badge's image.
+  imageUrl    String?
+  /// A JSON object defining the criteria for earning the badge (e.g., points, challenges completed).
+  criteria    Json
+
+  users UserChallengeBadge[]
+
+  createdAt DateTime @default(now())
+}
+
+/// Represents an instance of a badge that has been awarded to a user.
+model UserChallengeBadge {
+  id       String   @id @default(ulid())
+  /// The timestamp when the badge was earned.
+  earnedAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  badgeId String
+  badge   Badge  @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  // Optionally link to the submission that earned the badge
+  submissionId String?              @unique
+  submission   ChallengeSubmission? @relation(fields: [submissionId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+  @@index([badgeId])
+}
+
+/// Represents a leaderboard for ranking users.
+model Leaderboard {
+  id    String          @id @default(ulid())
+  /// The type of leaderboard (e.g., GLOBAL, MONTHLY).
+  type  LeaderboardType @default(GLOBAL)
+  /// The month for a monthly leaderboard.
+  month Int?
+  /// The year for a monthly leaderboard.
+  year  Int?
+
+  entries LeaderboardEntry[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([type, month, year])
+}
+
+/// The type of a leaderboard.
+enum LeaderboardType {
+  GLOBAL
+  MONTHLY
+}
+
+/// Represents a user's entry on a leaderboard.
+model LeaderboardEntry {
+  id    String @id @default(ulid())
+  /// The user's rank on the leaderboard.
+  rank  Int
+  /// The user's score on the leaderboard.
+  score Int
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  leaderboardId String
+  leaderboard   Leaderboard @relation(fields: [leaderboardId], references: [id], onDelete: Cascade)
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([leaderboardId, userId])
+  @@index([leaderboardId])
+  @@index([userId])
+  @@index([score])
+}

@@ -26,7 +26,7 @@ import {
   ACCOUNT_INFORMATION_INTENT,
 } from "./components/account-information";
 import { parseWithZod } from "@conform-to/zod";
-import { data, redirect } from "react-router";
+import { data } from "react-router";
 import { StatusCodes } from "http-status-codes";
 import {
   DELETE_USER_INTENT,
@@ -37,6 +37,7 @@ import {
 import { authSessionStorage } from "~/utils/session.server";
 import { invariantResponse } from "~/utils/misc";
 import { generateMetadata } from "~/utils/meta";
+import { redirectWithToast } from "~/utils/toast.server";
 
 const IntentSchema = z.object({
   intent: z.enum([
@@ -158,12 +159,12 @@ export async function action({ request }: Route.ActionArgs) {
 
         case DELETE_USER_INTENT: {
           const { userId } = data;
-          await prisma.user.delete({
-            where: {
-              id: userId,
-            },
+          await prisma.user.delete({ where: { id: userId } });
+          throw redirectWithToast("/", {
+            title: "Delete success",
+            description: "Account delete success",
+            type: "success",
           });
-          throw redirect("/");
         }
 
         default:

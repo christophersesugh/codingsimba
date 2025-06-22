@@ -1,26 +1,42 @@
+/// Represents a subscription to the platform's services.
+/// A subscription can be associated with either an individual user or a team, but not both.
 model Subscription {
   id String @id @default(ulid())
 
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @unique
+  // A subscription can belong to a single user or a single team
+  /// The user account associated with this subscription. Null if it's a team subscription.
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String?
 
+  /// The team account associated with this subscription. Null if it's an individual subscription.
+  team   Team?   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId String? @unique
+
+  /// The unique identifier for the subscription from the payment provider (e.g., Stripe, Polar).
   subscriptionId   String             @unique
+  /// The current status of the subscription.
   status           SubscriptionStatus @default(active)
+  /// The timestamp when the current subscription period ends.
   currentPeriodEnd DateTime
 
   // Webhook metadata
+  /// The timestamp of the last webhook received for this subscription.
   lastWebhookAt   DateTime?
+  /// The type of the last webhook received.
   lastWebhookType String?
 
+  /// A list of all enrollments granted by this subscription.
   enrollments Enrollment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+  @@index([teamId])
   @@index([currentPeriodEnd])
 }
 
+/// The status of a subscription, typically synced from the payment provider.
 enum SubscriptionStatus {
   active
   trialing

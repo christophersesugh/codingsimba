@@ -1,7 +1,12 @@
+/// Represents a generic piece of content that can be liked or commented on.
+/// This is used to abstract content types like articles and tutorials for engagement features.
 model Content {
   id       String      @id @default(ulid())
+  /// The unique identifier from the headless CMS (e.g., Sanity).
   sanityId String      @unique
+  /// The type of content (e.g., ARTICLE, TUTORIAL).
   type     ContentType
+  /// The number of views this content has received.
   views    Int         @default(0)
 
   createdAt DateTime @default(now())
@@ -13,11 +18,13 @@ model Content {
   @@unique([sanityId, type])
 }
 
+/// The type of content.
 enum ContentType {
   ARTICLE
   TUTORIAL
 }
 
+/// The user's progress status on a piece of content.
 enum ContentStatus {
   LOCKED
   IN_PROGRESS
@@ -27,14 +34,22 @@ enum ContentStatus {
 /**
  * Time spent programs will be a summation of time spent on it courses
  */
+/// Represents a learning program, which is a collection of courses.
+/// User-specific progress is tracked directly on this model.
 model Program {
   id         String @id @default(ulid())
+  /// The unique identifier from the headless CMS.
   sanityId   String @unique
+  /// The unique slug from the headless CMS.
   sanitySlug String @unique
 
+  /// The user's completion progress percentage for the program.
   progress    Int           @default(0)
+  /// The timestamp when the user unlocked the program.
   unlockeddAt DateTime      @default(now())
+  /// The timestamp when the user completed the program.
   completedAt DateTime?
+  /// The user's current status in the program.
   status      ContentStatus @default(LOCKED)
   courses     Course[]
   reviews     Review[]
@@ -50,18 +65,28 @@ model Program {
 /**
  * Time spent courses will be a summation of time spent on it modules
  */
+/// Represents a course, which is a collection of modules.
+/// User-specific progress is tracked on this model.
 model Course {
   id         String @id @default(ulid())
+  /// The unique identifier from the headless CMS.
   sanityId   String @unique
+  /// The unique slug from the headless CMS.
   sanitySlug String @unique
 
-  progress    Int           @default(0)
-  unlockedAt  DateTime      @default(now())
-  completedAt DateTime?
-  status      ContentStatus @default(LOCKED)
-  modules     Module[]
-  reviews     Review[]
-  enrollments Enrollment[]
+  /// The user's completion progress percentage for the course.
+  progress          Int                      @default(0)
+  /// The timestamp when the user unlocked the course.
+  unlockedAt        DateTime                 @default(now())
+  /// The timestamp when the user completed the course.
+  completedAt       DateTime?
+  /// The user's current status in the course.
+  status            ContentStatus            @default(LOCKED)
+  modules           Module[]
+  reviews           Review[]
+  enrollments       Enrollment[]
+  teamLearningPaths TeamLearningPathCourse[]
+  auditLogs         AuditLog[]
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
@@ -77,14 +102,22 @@ model Course {
 /**
  * Time spent modules will be a summation of time spent on it sub-modules
  */
+/// Represents a module within a course, which is a collection of sub-modules.
+/// User-specific progress is tracked on this model.
 model Module {
   id         String @id @default(ulid())
+  /// The unique identifier from the headless CMS.
   sanityId   String @unique
+  /// The unique slug from the headless CMS.
   sanitySlug String @unique
 
+  /// The user's completion progress percentage for the module.
   progress    Int           @default(0)
+  /// The timestamp when the user unlocked the module.
   unlockedAt  DateTime      @default(now())
+  /// The timestamp when the user completed the module.
   completedAt DateTime?
+  /// The user's current status in the module.
   status      ContentStatus @default(LOCKED)
   subModules  SubModule[]
 
@@ -102,14 +135,22 @@ model Module {
 /**
  * Time spent sub modules will be a summation of time spent on it lessons
  */
+/// Represents a sub-module within a module, which is a collection of lessons.
+/// User-specific progress is tracked on this model.
 model SubModule {
   id         String @id @default(ulid())
+  /// The unique identifier from the headless CMS.
   sanityId   String @unique
+  /// The unique slug from the headless CMS.
   sanitySlug String @unique
 
+  /// The user's completion progress percentage for the sub-module.
   progress    Int           @default(0)
+  /// The timestamp when the user unlocked the sub-module.
   unlockedAt  DateTime      @default(now())
+  /// The timestamp when the user completed the sub-module.
   completedAt DateTime?
+  /// The user's current status in the sub-module.
   status      ContentStatus @default(LOCKED)
   lessons     Lesson[]
 
@@ -124,14 +165,22 @@ model SubModule {
   @@index([userId, status])
 }
 
+/// Represents a lesson, the smallest unit of educational content.
+/// User-specific progress is tracked on this model.
 model Lesson {
   id         String @id @default(ulid())
+  /// The unique identifier from the headless CMS.
   sanityId   String @unique
+  /// The unique slug from the headless CMS.
   sanitySlug String @unique
 
+  /// The user's completion progress percentage for the lesson.
   progress    Int           @default(0)
+  /// The timestamp when the user unlocked the lesson.
   unlockedAt  DateTime      @default(now())
+  /// The timestamp when the user completed the lesson.
   completedAt DateTime?
+  /// The user's current status in the lesson.
   status      ContentStatus @default(LOCKED)
   timeSpent   TimeSpent[]
 
@@ -146,8 +195,10 @@ model Lesson {
   @@index([userId, status])
 }
 
+/// Represents a "like" action from a user on a piece of content or a comment.
 model Like {
   id        String   @id @default(ulid())
+  /// The number of likes (typically 1, but allows for future flexibility).
   count     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -165,13 +216,16 @@ model Like {
   @@unique([commentId, userId])
 }
 
+/// Represents a comment made by a user on a piece of content. Supports nested replies.
 model Comment {
   id        String   @id @default(ulid())
+  /// The body of the comment.
   body      String
   likes     Like[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  /// The ID of the parent comment, for creating threaded replies.
   parentId String?
   parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies  Comment[] @relation("CommentReplies")
@@ -188,17 +242,23 @@ model Comment {
   @@index([createdAt])
 }
 
+/// The moderation status of a user-submitted review.
 enum ReviewStatus {
   PENDING
   APPROVED
   REJECTED
 }
 
+/// Represents a review submitted by a user for a course or program.
 model Review {
   id       String       @id @default(ulid())
+  /// The numerical rating given by the user (e.g., 1-5).
   rating   Int
+  /// The text content of the review.
   body     String
+  /// Whether the review is featured on the platform.
   featured Boolean      @default(false)
+  /// The moderation status of the review.
   status   ReviewStatus @default(PENDING)
 
   createdAt DateTime @default(now())
@@ -219,16 +279,24 @@ model Review {
   @@index([createdAt])
 }
 
+/// Represents a user's enrollment in a course or program, granting them access.
+/// This can be linked to a subscription or a team purchase.
 model Enrollment {
   id String @id @default(ulid())
 
+  /// The subscription that grants this enrollment.
   subscription   Subscription? @relation(fields: [subscriptionId], references: [subscriptionId])
   subscriptionId String?
 
   enrolledAt DateTime @default(now())
 
+  /// The user who is enrolled. This is always required.
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
+
+  /// The team through which the user is enrolled (if applicable).
+  team   Team?   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId String?
 
   programId String?
   program   Program? @relation(fields: [programId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -239,11 +307,15 @@ model Enrollment {
   @@unique([userId, courseId])
   @@unique([userId, programId])
   @@index([subscriptionId])
+  @@index([teamId])
 }
 
+/// Tracks the amount of time a user has spent on a specific lesson.
 model TimeSpent {
   id         String   @id @default(ulid())
-  duration   Int      @default(0) // Duration in milliseconds
+  /// The total duration spent on the lesson in milliseconds.
+  duration   Int      @default(0)
+  /// The timestamp of the user's last activity on the lesson.
   lastActive DateTime @default(now())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

@@ -1,0 +1,358 @@
+/// Generic Audit Logging Models
+///
+/// The AuditLog model provides a generic and extensible system for tracking significant events
+/// and changes across the entire application. It is designed to be used by various modules,
+/// including Admin, Team, User, and System, to ensure accountability and traceability.
+model AuditLog {
+  id            String        @id @default(ulid())
+  /// The specific action that was performed (e.g., USER_CREATED, TEAM_UPDATED).
+  action        AuditAction
+  /// The severity level of the event (e.g., INFO, WARNING, CRITICAL).
+  severity      AuditSeverity @default(INFO)
+  /// A high-level category for the event (e.g., USER_MANAGEMENT, SECURITY).
+  category      AuditCategory
+  /// The application module where the event originated (e.g., ADMIN, TEAM).
+  module        AuditModule
+  /// A human-readable description of the event.
+  description   String
+  /// The number of days this log entry should be retained. Null means forever.
+  retentionDays Int?
+  /// A JSON object for storing additional, unstructured context about the event.
+  metadata      Json? // Additional context data
+  /// The IP address from which the action was initiated.
+  ipAddress     String?
+  /// The user agent string of the client that initiated the action.
+  userAgent     String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+
+  // Actor (who performed the action)
+  /// The user who performed the action. Can be null for system-generated events.
+  actorId String?
+  actor   User?   @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  // Target entities (what was affected)
+  /// The user account that was the target of the action (e.g., the user being modified).
+  targetUserId String?
+  targetUser   User?   @relation("TargetUserAuditLogs", fields: [targetUserId], references: [id], onDelete: SetNull)
+
+  // Team-specific relations (optional)
+  /// The team associated with this audit log entry.
+  teamId String?
+  team   Team?   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  /// The team member who was the target of the action.
+  targetMemberId String?
+  targetMember   TeamMember? @relation(fields: [targetMemberId], references: [id], onDelete: SetNull)
+
+  /// The course that was the target of the action.
+  targetCourseId String?
+  targetCourse   Course? @relation(fields: [targetCourseId], references: [id], onDelete: SetNull)
+
+  // Admin-specific relations (optional)
+  /// The admin user who was the target of the action.
+  targetAdminId String?
+  targetAdmin   User?   @relation("TargetAdminAuditLogs", fields: [targetAdminId], references: [id], onDelete: SetNull)
+
+  // Generic entity tracking
+  /// The type of the primary entity affected by the action (e.g., "user", "team", "system").
+  entityType String? // e.g., "user", "team", "course", "admin", "system"
+  /// The unique identifier of the primary entity affected.
+  entityId   String? // ID of the affected entity
+
+  // Audit details
+  /// A list of detailed changes associated with this log entry (e.g., field-level updates).
+  auditDetails AuditLogDetail[]
+
+  @@index([module])
+  @@index([action])
+  @@index([category])
+  @@index([actorId])
+  @@index([teamId])
+  @@index([entityType])
+  @@index([entityId])
+  @@index([createdAt])
+  @@index([module, createdAt])
+  @@index([teamId, createdAt])
+}
+
+/// Identifies the application module from which an audit log event originated.
+enum AuditModule {
+  ADMIN
+  TEAM
+  SYSTEM
+  USER
+  CONTENT
+  BILLING
+  SECURITY
+}
+
+/// Defines the severity level of an audit log event.
+enum AuditSeverity {
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
+
+/// A comprehensive list of specific actions that can be logged.
+enum AuditAction {
+  // Generic Actions
+  CREATED
+  UPDATED
+  DELETED
+  ACTIVATED
+  DEACTIVATED
+  ENABLED
+  DISABLED
+  LOGGED_IN
+  LOGGED_OUT
+  LOGIN_ATTEMPT
+  LOGIN_SUCCESS
+  LOGIN_FAILED
+  PASSWORD_CHANGED
+  PASSWORD_RESET
+  TWO_FACTOR_ENABLED
+  TWO_FACTOR_DISABLED
+
+  // Team Management
+  TEAM_CREATED
+  TEAM_UPDATED
+  TEAM_DELETED
+  TEAM_ACTIVATED
+  TEAM_DEACTIVATED
+  MEMBER_ADDED
+  MEMBER_REMOVED
+  MEMBER_ROLE_CHANGED
+  MEMBER_ACTIVATED
+  MEMBER_DEACTIVATED
+  INVITE_SENT
+  INVITE_ACCEPTED
+  INVITE_DECLINED
+  INVITE_EXPIRED
+  INVITE_CANCELLED
+
+  // Learning Management
+  LEARNING_PATH_CREATED
+  LEARNING_PATH_UPDATED
+  LEARNING_PATH_DELETED
+  LEARNING_PATH_ACTIVATED
+  LEARNING_PATH_DEACTIVATED
+  COURSE_ADDED_TO_PATH
+  COURSE_REMOVED_FROM_PATH
+  ENROLLMENT_CREATED
+  ENROLLMENT_UPDATED
+  ENROLLMENT_CANCELLED
+  ENROLLMENT_COMPLETED
+  CERTIFICATE_CREATED
+  CERTIFICATE_UPDATED
+  CERTIFICATE_DELETED
+  CERTIFICATE_AWARDED
+  CERTIFICATE_REVOKED
+
+  // Admin Management
+  ADMIN_CREATED
+  ADMIN_UPDATED
+  ADMIN_DELETED
+  ADMIN_ROLE_CHANGED
+  ADMIN_PERMISSIONS_UPDATED
+  ADMIN_ACCESS_GRANTED
+  ADMIN_ACCESS_REVOKED
+  ADMIN_LOGIN
+  ADMIN_LOGOUT
+  ADMIN_ACTION_PERFORMED
+
+  // Content Management
+  CONTENT_CREATED
+  CONTENT_UPDATED
+  CONTENT_DELETED
+  CONTENT_PUBLISHED
+  CONTENT_UNPUBLISHED
+  CONTENT_APPROVED
+  CONTENT_REJECTED
+  CONTENT_MODERATED
+
+  // User Management
+  USER_CREATED
+  USER_UPDATED
+  USER_DELETED
+  USER_ACTIVATED
+  USER_DEACTIVATED
+  USER_SUSPENDED
+  USER_UNSUSPENDED
+  USER_VERIFIED
+  USER_UNVERIFIED
+
+  // Settings & Configuration
+  SETTINGS_UPDATED
+  PRIVACY_SETTINGS_CHANGED
+  NOTIFICATION_SETTINGS_CHANGED
+  SYSTEM_SETTINGS_UPDATED
+  FEATURE_TOGGLED
+  CONFIGURATION_CHANGED
+
+  // Integrations
+  INTEGRATION_ADDED
+  INTEGRATION_UPDATED
+  INTEGRATION_REMOVED
+  INTEGRATION_ACTIVATED
+  INTEGRATION_DEACTIVATED
+  WEBHOOK_CREATED
+  WEBHOOK_UPDATED
+  WEBHOOK_DELETED
+
+  // Security
+  SESSION_CREATED
+  SESSION_DESTROYED
+  API_KEY_CREATED
+  API_KEY_REVOKED
+  ACCESS_DENIED
+  SUSPICIOUS_ACTIVITY
+
+  // Data Management
+  DATA_EXPORTED
+  DATA_IMPORTED
+  DATA_DELETED
+  DATA_BACKED_UP
+  DATA_RESTORED
+  DATA_ANONYMIZED
+  DATA_ENCRYPTED
+  DATA_DECRYPTED
+
+  // Billing & Payments
+  SUBSCRIPTION_CREATED
+  SUBSCRIPTION_UPDATED
+  SUBSCRIPTION_CANCELLED
+  PAYMENT_PROCESSED
+  PAYMENT_FAILED
+  PAYMENT_REFUNDED
+  INVOICE_GENERATED
+  INVOICE_PAID
+
+  // System & Maintenance
+  SYSTEM_BACKUP
+  SYSTEM_RESTORE
+  MAINTENANCE_MODE_ENABLED
+  MAINTENANCE_MODE_DISABLED
+  CACHE_CLEARED
+  DATABASE_MIGRATION
+  SYSTEM_UPDATE
+  ERROR_LOGGED
+}
+
+/// A high-level categorization of audit log events.
+enum AuditCategory {
+  TEAM_MANAGEMENT
+  ADMIN_MANAGEMENT
+  USER_MANAGEMENT
+  CONTENT_MANAGEMENT
+  LEARNING_MANAGEMENT
+  SECURITY
+  BILLING
+  DATA_MANAGEMENT
+  INTEGRATIONS
+  SETTINGS
+  SYSTEM
+  MAINTENANCE
+}
+
+/// Records the fine-grained details of a change, such as the modification of a single field.
+/// Each AuditLog entry can have multiple AuditLogDetail entries.
+model AuditLogDetail {
+  id         String     @id @default(ulid())
+  /// The name of the field that was changed.
+  field      String // Name of the field that changed
+  /// The value of the field before the change.
+  oldValue   String? // Previous value
+  /// The value of the field after the change.
+  newValue   String? // New value
+  /// The type of change that occurred (e.g., CREATED, UPDATED, DELETED).
+  changeType ChangeType
+
+  // Relations
+  auditLogId String
+  auditLog   AuditLog @relation(fields: [auditLogId], references: [id], onDelete: Cascade)
+
+  @@index([auditLogId])
+  @@index([field])
+}
+
+/// The type of change that occurred in an AuditLogDetail.
+enum ChangeType {
+  CREATED
+  UPDATED
+  DELETED
+  ADDED
+  REMOVED
+  ENABLED
+  DISABLED
+  ACTIVATED
+  DEACTIVATED
+  CHANGED
+  SET
+  CLEARED
+}
+
+/// Represents a request to export a set of audit logs, typically for compliance or analysis.
+model AuditLogExport {
+  id          String       @id @default(ulid())
+  /// The name of the generated export file.
+  fileName    String
+  /// The size of the export file in bytes.
+  fileSize    Int
+  /// The format of the export (e.g., CSV, JSON, PDF).
+  format      ExportFormat
+  /// The current status of the export process.
+  status      ExportStatus @default(PENDING)
+  /// The URL from which the export file can be downloaded.
+  downloadUrl String?
+  /// The timestamp when the download URL expires.
+  expiresAt   DateTime?
+
+  // Filter criteria
+  /// The start date for the logs to be included in the export.
+  startDate  DateTime?
+  /// The end date for the logs to be included in the export.
+  endDate    DateTime?
+  /// A JSON array of AuditModule values to filter the export.
+  modules    Json? // Array of AuditModule values as JSON
+  /// A JSON array of AuditAction values to filter the export.
+  actions    Json? // Array of AuditAction values as JSON
+  /// A JSON array of AuditCategory values to filter the export.
+  categories Json? // Array of AuditCategory values as JSON
+
+  // Relations
+  /// The team for which the export was generated. Can be null for system-wide exports.
+  teamId String?
+  team   Team?   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  /// The user who requested the export.
+  requestedById String
+  requestedBy   User   @relation(fields: [requestedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([teamId])
+  @@index([status])
+  @@index([requestedById])
+  @@index([createdAt])
+}
+
+/// The file format for an audit log export.
+enum ExportFormat {
+  CSV
+  JSON
+  PDF
+  EXCEL
+}
+
+/// The status of an audit log export process.
+enum ExportStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  EXPIRED
+}

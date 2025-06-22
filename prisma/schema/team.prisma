@@ -1,0 +1,359 @@
+/// Represents a team account, which acts as a container for members, settings, and shared resources.
+model Team {
+  id          String  @id @default(ulid())
+  /// The display name of the team.
+  name        String
+  /// A unique, URL-friendly identifier for the team.
+  slug        String  @unique
+  /// A short description of the team.
+  description String?
+  /// A URL to the team's logo image.
+  logo        String?
+  /// The team's official website URL.
+  website     String?
+
+  // Team settings
+  /// The maximum number of members allowed in the team.
+  maxMembers      Int     @default(10)
+  /// Whether the team is currently active.
+  isActive        Boolean @default(true)
+  /// Whether team members can invite others to the team.
+  allowInvites    Boolean @default(true)
+  /// Whether new members require approval from an admin before joining.
+  requireApproval Boolean @default(false)
+
+  // Billing & subscription
+  /// The subscription plan for the team (e.g., FREE, PRO, ENTERPRISE).
+  plan         TeamPlan      @default(FREE)
+  /// The team's active subscription.
+  subscription Subscription?
+
+  // Analytics & tracking
+  /// The overall progress of the team, aggregated from its members.
+  totalProgress   Int       @default(0)
+  /// The average progress percentage across all team members.
+  averageProgress Float     @default(0)
+  /// The timestamp of the last recorded activity from any team member.
+  lastActivityAt  DateTime?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  /// The user who owns the team account.
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  members               TeamMember[]
+  invites               TeamInvite[]
+  learningPaths         TeamLearningPath[]
+  enrollments           Enrollment[]
+  certificates          TeamCertificate[]
+  analytics             TeamAnalytics[]
+  integrations          TeamIntegration[]
+  settings              TeamSettings?
+  auditLogs             AuditLog[]
+  auditLogExports       AuditLogExport[]
+  teamMemberCertificate TeamMemberCertificate[]
+
+  @@index([ownerId])
+  @@index([slug])
+  @@index([isActive])
+}
+
+/// Defines the subscription plans available for teams.
+enum TeamPlan {
+  FREE
+  BASIC
+  PRO
+  ENTERPRISE
+}
+
+/// Represents the membership of a user within a team, including their role and progress.
+model TeamMember {
+  id       String   @id @default(ulid())
+  /// The role of the member within the team (e.g., OWNER, ADMIN, MEMBER).
+  role     TeamRole @default(MEMBER)
+  /// The timestamp when the user joined the team.
+  joinedAt DateTime @default(now())
+  /// Whether the team member's account is currently active.
+  isActive Boolean  @default(true)
+
+  // Progress tracking
+  /// The total progress of the member, aggregated across all their enrollments.
+  totalProgress      Int       @default(0)
+  /// The number of courses the member has completed.
+  coursesCompleted   Int       @default(0)
+  /// The number of certificates the member has earned.
+  certificatesEarned Int       @default(0)
+  /// The timestamp of the member's last recorded activity.
+  lastActivityAt     DateTime?
+
+  // Relations
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Learning progress
+  certificates TeamMemberCertificate[]
+  analytics    TeamMemberAnalytics[]
+
+  // Audit logs
+  auditLogs AuditLog[]
+
+  @@unique([teamId, userId])
+  @@index([teamId])
+  @@index([userId])
+  @@index([role])
+}
+
+/// Defines the roles a user can have within a team.
+enum TeamRole {
+  OWNER
+  ADMIN
+  MANAGER
+  MEMBER
+  VIEWER
+}
+
+/// Represents a pending invitation for a user to join a team.
+model TeamInvite {
+  id        String       @id @default(ulid())
+  /// The email address of the user being invited.
+  email     String
+  /// The role the user will be assigned upon accepting the invitation.
+  role      TeamRole     @default(MEMBER)
+  /// The current status of the invitation.
+  status    InviteStatus @default(PENDING)
+  /// The timestamp when the invitation expires.
+  expiresAt DateTime
+  /// The timestamp when the invitation was sent.
+  invitedAt DateTime     @default(now())
+
+  // Relations
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  invitedById String
+  invitedBy   User   @relation(fields: [invitedById], references: [id])
+
+  @@unique([teamId, email])
+  @@index([teamId])
+  @@index([email])
+  @@index([status])
+}
+
+/// The status of a team invitation.
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+/// Represents a custom learning path created by a team.
+model TeamLearningPath {
+  id          String  @id @default(ulid())
+  /// The name of the learning path.
+  name        String
+  /// A description of the learning path.
+  description String?
+  /// Whether the learning path is currently active and assignable.
+  isActive    Boolean @default(true)
+  /// The display order of the learning path.
+  order       Int     @default(0)
+
+  // Relations
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  courses TeamLearningPathCourse[]
+
+  @@index([teamId])
+  @@index([order])
+}
+
+/// A join table that associates courses with a team's custom learning path.
+model TeamLearningPathCourse {
+  id         String  @id @default(ulid())
+  /// The order of the course within the learning path.
+  order      Int     @default(0)
+  /// Whether the course is required for completing the learning path.
+  isRequired Boolean @default(true)
+
+  // Relations
+  learningPathId String
+  learningPath   TeamLearningPath @relation(fields: [learningPathId], references: [id], onDelete: Cascade)
+
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([learningPathId, courseId])
+  @@index([learningPathId])
+  @@index([order])
+}
+
+/// Represents a custom certificate that can be awarded to team members.
+model TeamCertificate {
+  id          String  @id @default(ulid())
+  /// The name of the certificate.
+  name        String
+  /// A description of the certificate.
+  description String?
+  /// A URL to the certificate's image or template.
+  imageUrl    String?
+  /// Whether the certificate is currently active and awardable.
+  isActive    Boolean @default(true)
+
+  // Relations
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  members TeamMemberCertificate[]
+
+  @@index([teamId])
+}
+
+/// Represents an instance of a team certificate that has been awarded to a team member.
+model TeamMemberCertificate {
+  id        String    @id @default(ulid())
+  /// The timestamp when the certificate was earned.
+  earnedAt  DateTime  @default(now())
+  /// The timestamp when the certificate expires (if applicable).
+  expiresAt DateTime?
+
+  // Relations
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  memberId String
+  member   TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  certificateId String
+  certificate   TeamCertificate @relation(fields: [certificateId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, memberId, certificateId])
+  @@index([teamId])
+  @@index([memberId])
+}
+
+/// Stores aggregated analytics data for a team.
+model TeamAnalytics {
+  id       String   @id @default(ulid())
+  /// The date for which the analytics data is recorded.
+  date     DateTime
+  /// The specific metric being tracked (e.g., "active_users", "course_completions").
+  metric   String
+  /// The value of the metric.
+  value    Float
+  /// A JSON object for storing additional metadata related to the metric.
+  metadata Json?
+
+  // Relations
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([teamId])
+  @@index([date])
+  @@index([metric])
+}
+
+/// Stores analytics data for an individual team member.
+model TeamMemberAnalytics {
+  id       String   @id @default(ulid())
+  /// The date for which the analytics data is recorded.
+  date     DateTime
+  /// The specific metric being tracked (e.g., "time_spent", "lessons_completed").
+  metric   String
+  /// The value of the metric.
+  value    Float
+  /// A JSON object for storing additional metadata related to the metric.
+  metadata Json?
+
+  // Relations
+  memberId String
+  member   TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId])
+  @@index([date])
+  @@index([metric])
+}
+
+/// Represents a third-party integration (e.g., Slack, Google Workspace) for a team.
+model TeamIntegration {
+  id         String          @id @default(ulid())
+  /// The type of integration.
+  type       IntegrationType
+  /// The display name of the integration.
+  name       String
+  /// Whether the integration is currently active.
+  isActive   Boolean         @default(true)
+  /// A JSON object for storing configuration details and API keys.
+  config     Json
+  /// The timestamp of the last successful data sync with the integration.
+  lastSyncAt DateTime?
+
+  // Relations
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([teamId])
+  @@index([type])
+}
+
+/// Defines the types of third-party integrations available.
+enum IntegrationType {
+  SLACK
+  MICROSOFT_TEAMS
+  GOOGLE_WORKSPACE
+  ZOOM
+  CALENDAR
+  SSO
+  API
+}
+
+/// Stores various settings and preferences for a team.
+model TeamSettings {
+  id String @id @default(ulid())
+
+  // Notification settings
+  /// Whether to send email notifications for team activities.
+  emailNotifications Boolean @default(true)
+  /// Whether to send Slack notifications (if integrated).
+  slackNotifications Boolean @default(false)
+  /// Whether to send weekly progress reports.
+  weeklyReports      Boolean @default(true)
+
+  // Learning settings
+  /// Whether to automatically enroll new members in default learning paths.
+  autoEnrollNewMembers Boolean @default(false)
+  /// The ID of the default learning path to assign to new members.
+  defaultLearningPath  String?
+  /// Whether members are required to complete assigned courses.
+  requireCompletion    Boolean @default(false)
+
+  // Privacy settings
+  /// Whether the team's profile is public.
+  publicProfile      Boolean @default(false)
+  /// Whether members can see each other's progress.
+  showMemberProgress Boolean @default(true)
+  /// Whether members are allowed to invite new members to the team.
+  allowMemberInvites Boolean @default(true)
+
+  // Custom branding
+  /// A URL to the team's custom logo.
+  customLogo   String?
+  /// A JSON object for storing custom color theme settings.
+  customColors Json?
+  /// A custom domain associated with the team's portal.
+  customDomain String?
+
+  // Relations
+  teamId String @unique
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([teamId])
+}
