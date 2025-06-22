@@ -37,11 +37,9 @@ enum ContentStatus {
 /// Represents a learning program, which is a collection of courses.
 /// User-specific progress is tracked directly on this model.
 model Program {
-  id         String @id @default(ulid())
+  id       String @id @default(ulid())
   /// The unique identifier from the headless CMS.
-  sanityId   String @unique
-  /// The unique slug from the headless CMS.
-  sanitySlug String @unique
+  sanityId String @unique
 
   /// The user's completion progress percentage for the program.
   progress    Int           @default(0)
@@ -68,11 +66,9 @@ model Program {
 /// Represents a course, which is a collection of modules.
 /// User-specific progress is tracked on this model.
 model Course {
-  id         String @id @default(ulid())
+  id       String @id @default(ulid())
   /// The unique identifier from the headless CMS.
-  sanityId   String @unique
-  /// The unique slug from the headless CMS.
-  sanitySlug String @unique
+  sanityId String @unique
 
   /// The user's completion progress percentage for the course.
   progress          Int                      @default(0)
@@ -105,11 +101,9 @@ model Course {
 /// Represents a module within a course, which is a collection of sub-modules.
 /// User-specific progress is tracked on this model.
 model Module {
-  id         String @id @default(ulid())
+  id       String @id @default(ulid())
   /// The unique identifier from the headless CMS.
-  sanityId   String @unique
-  /// The unique slug from the headless CMS.
-  sanitySlug String @unique
+  sanityId String @unique
 
   /// The user's completion progress percentage for the module.
   progress    Int           @default(0)
@@ -138,11 +132,9 @@ model Module {
 /// Represents a sub-module within a module, which is a collection of lessons.
 /// User-specific progress is tracked on this model.
 model SubModule {
-  id         String @id @default(ulid())
+  id       String @id @default(ulid())
   /// The unique identifier from the headless CMS.
-  sanityId   String @unique
-  /// The unique slug from the headless CMS.
-  sanitySlug String @unique
+  sanityId String @unique
 
   /// The user's completion progress percentage for the sub-module.
   progress    Int           @default(0)
@@ -168,11 +160,9 @@ model SubModule {
 /// Represents a lesson, the smallest unit of educational content.
 /// User-specific progress is tracked on this model.
 model Lesson {
-  id         String @id @default(ulid())
+  id       String @id @default(ulid())
   /// The unique identifier from the headless CMS.
-  sanityId   String @unique
-  /// The unique slug from the headless CMS.
-  sanitySlug String @unique
+  sanityId String @unique
 
   /// The user's completion progress percentage for the lesson.
   progress    Int           @default(0)

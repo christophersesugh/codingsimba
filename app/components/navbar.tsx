@@ -28,6 +28,7 @@ export function Navbar() {
   const isHomePage = location.pathname === "/";
 
   const user = useOptionalUser();
+  const image = user?.image;
   const userIsAdmin = userHasRole(user, "ADMIN");
 
   return (
@@ -72,7 +73,7 @@ export function Navbar() {
                   <AvatarImage
                     src={getImgSrc({
                       path: "users",
-                      fileKey: user.image?.fileKey,
+                      fileKey: image?.fileKey,
                       seed: user.id,
                     })}
                     alt={user.name}

@@ -96,7 +96,7 @@ enum AuditSeverity {
   CRITICAL
 }
 
-/// A comprehensive list of specific actions that can be logged.
+/// A comprehensive list of specific actions that can be SIGNED.
 enum AuditAction {
   // Generic Actions
   CREATED
@@ -106,11 +106,11 @@ enum AuditAction {
   DEACTIVATED
   ENABLED
   DISABLED
-  LOGGED_IN
-  LOGGED_OUT
-  LOGIN_ATTEMPT
-  LOGIN_SUCCESS
-  LOGIN_FAILED
+  SIGNED_IN
+  SIGNED_OUT
+  SIGN_IN_ATTEMPT
+  SIGN_IN_SUCCESS
+  SIGN_IN_FAILED
   PASSWORD_CHANGED
   PASSWORD_RESET
   TWO_FACTOR_ENABLED
@@ -159,7 +159,7 @@ enum AuditAction {
   ADMIN_PERMISSIONS_UPDATED
   ADMIN_ACCESS_GRANTED
   ADMIN_ACCESS_REVOKED
-  ADMIN_LOGIN
+  ADMIN_SIGN_IN
   ADMIN_LOGOUT
   ADMIN_ACTION_PERFORMED
 
@@ -238,7 +238,7 @@ enum AuditAction {
   CACHE_CLEARED
   DATABASE_MIGRATION
   SYSTEM_UPDATE
-  ERROR_LOGGED
+  ERROR_SIGNED
 }
 
 /// A high-level categorization of audit log events.

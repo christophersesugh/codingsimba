@@ -7,6 +7,9 @@ export async function loader({ request }: Route.LoaderArgs) {
   const user = await prisma.user.findUniqueOrThrow({
     where: { id: userId },
     include: {
+      teams: true,
+      teamInvites: true,
+      teamMembers: true,
       image: true,
       password: false,
       roles: true,
@@ -16,8 +19,9 @@ export async function loader({ request }: Route.LoaderArgs) {
       likes: true,
       comments: true,
       reviews: true,
-      courseProgress: true,
-      moduleProgress: true,
+      courses: true,
+      modules: true,
+      subModules: true,
       enrollments: true,
       subscription: true,
       certificates: true,

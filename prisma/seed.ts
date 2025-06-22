@@ -9,10 +9,23 @@ const ADMIN_NAME = "Christopher S. Aondona";
 async function seed() {
   await prisma.permission.deleteMany();
   await prisma.role.deleteMany();
-  // await prisma.comment.deleteMany();
   await prisma.user.deleteMany();
 
-  const entities: Entity[] = ["USER", "COMMENT", "REPLY", "REVIEW", "PROFILE"];
+  const entities: Entity[] = [
+    "USER",
+    "COMMENT",
+    "REPLY",
+    "REVIEW",
+    "SETTINGS",
+    "TEAM",
+    "TEAM_MEMBER",
+    "TEAM_INVITE",
+    "TEAM_LEARNING_PATH",
+    "TEAM_CERTIFICATE",
+    "TEAM_ANALYTICS",
+    "TEAM_INTEGRATION",
+    "TEAM_SETTINGS",
+  ];
   const actions: Action[] = ["CREATE", "READ", "UPDATE", "DELETE"];
   const accesses: string[] = ["OWN", "ANY"] as const;
 

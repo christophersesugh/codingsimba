@@ -3,21 +3,14 @@
 model Subscription {
   id String @id @default(ulid())
 
-  // A subscription can belong to a single user or a single team
-  /// The user account associated with this subscription. Null if it's a team subscription.
-  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String?
-
-  /// The team account associated with this subscription. Null if it's an individual subscription.
-  team   Team?   @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  teamId String? @unique
-
   /// The unique identifier for the subscription from the payment provider (e.g., Stripe, Polar).
   subscriptionId   String             @unique
   /// The current status of the subscription.
   status           SubscriptionStatus @default(active)
   /// The timestamp when the current subscription period ends.
   currentPeriodEnd DateTime
+
+  plan Plan @default(BASIC)
 
   // Webhook metadata
   /// The timestamp of the last webhook received for this subscription.
@@ -30,6 +23,15 @@ model Subscription {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // A subscription can belong to a single user or a single team
+  /// The user account associated with this subscription. Null if it's a team subscription.
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String? @unique
+
+  /// The team account associated with this subscription. Null if it's an individual subscription.
+  team   Team?   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId String? @unique
 
   @@index([userId])
   @@index([teamId])
@@ -45,4 +47,17 @@ enum SubscriptionStatus {
   past_due
   incomplete
   incomplete_expired
+}
+
+/// Defines the subscription plans available for temas and users.
+enum Plan {
+  // User plans (PRO for Teams too)
+  BASIC
+  PREMIUM
+  PRO
+
+  // Team plans
+  STARTER
+  // PRO
+  ENTERPRISE
 }

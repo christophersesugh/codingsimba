@@ -160,13 +160,13 @@ enum UserChallengeStatus {
 
 /// Represents an unlockable badge that can be earned by users.
 model Badge {
-  id          String  @id @default(ulid())
+  id          String @id @default(ulid())
   /// The name of the badge.
-  name        String  @unique
+  name        String @unique
   /// A description of the badge and how to earn it.
   description String
-  /// A URL to the badge's image.
-  imageUrl    String?
+  /// The badge's image.
+  image       Image?
   /// A JSON object defining the criteria for earning the badge (e.g., points, challenges completed).
   criteria    Json
 

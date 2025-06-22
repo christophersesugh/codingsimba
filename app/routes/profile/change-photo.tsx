@@ -81,7 +81,7 @@ export async function action({ request }: Route.ActionArgs) {
   const submission = await parseWithZod(formData, {
     schema: PhotoFormSchema.transform(async (data, ctx) => {
       if (data.intent === "delete") {
-        const file = await prisma.userImage.findFirst({
+        const file = await prisma.image.findFirst({
           where: { userId },
           select: { fileKey: true },
         });
@@ -141,7 +141,7 @@ export async function action({ request }: Route.ActionArgs) {
 
   if (intent === "delete") {
     if (!MOCKS) {
-      await prisma.userImage.deleteMany({ where: { userId } });
+      await prisma.image.deleteMany({ where: { userId } });
     }
     return redirectWithToast("/profile", {
       title: `Profile picture removed`,
@@ -152,7 +152,7 @@ export async function action({ request }: Route.ActionArgs) {
 
   if (!MOCKS) {
     await prisma.$transaction(async ($prisma) => {
-      await $prisma.userImage.deleteMany({ where: { userId } });
+      await $prisma.image.deleteMany({ where: { userId } });
       await $prisma.user.update({
         where: { id: userId },
         data: { image: { create: image } },

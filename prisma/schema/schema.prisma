@@ -26,9 +26,9 @@ model User {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
-  image                UserImage?
+  image                Image?
   password             Password?
-  subscriptions        Subscription[]
+  subscription         Subscription?
   notificationSettings NotificationSetting?
   roles                Role[]
   sessions             Session[]
@@ -70,17 +70,36 @@ model Password {
 }
 
 /// Represents a user's profile image.
-model UserImage {
-  id      String  @id @default(cuid())
-  /// The key or path to the image file in the storage service (e.g., S3, Cloudinary).
-  fileKey String
-  altText String?
+model Image {
+  id       String    @id @default(cuid())
+  /// The key or path to the image file in the storage service (Bunny CDN).
+  fileKey  String
+  filePath ImagePath @default(users)
+  altText  String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   user   User?  @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
+
+  team   Team?  @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  teamId String @unique
+
+  teamCertificate   TeamCertificate? @relation(fields: [teamCertificateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  teamCertificateId String           @unique
+
+  teamSetting    TeamSettings? @relation(fields: [teamSettingsId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  teamSettingsId String        @unique
+
+  challengeBadge Badge? @relation(fields: [badgeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  badgeId        String @unique
+}
+
+enum ImagePath {
+  assets
+  users
+  content
 }
 
 /// Represents a user's login session.
@@ -128,6 +147,7 @@ enum VerificationType {
   onboarding
   reset_password
   change_email
+  two_fa
 }
 
 /// Represents a connection to a third-party OAuth provider (e.g., GitHub, Google).
@@ -182,7 +202,15 @@ enum Entity {
   COMMENT
   REPLY
   REVIEW
-  PROFILE
+  SETTINGS
+  TEAM
+  TEAM_MEMBER
+  TEAM_INVITE
+  TEAM_LEARNING_PATH
+  TEAM_CERTIFICATE
+  TEAM_ANALYTICS
+  TEAM_INTEGRATION
+  TEAM_SETTINGS
 }
 
 /// Represents a role that can be assigned to users, granting them a set of permissions.
@@ -194,6 +222,7 @@ model Role {
   updatedAt   DateTime @updatedAt
 
   users       User[]
+  teamMembers TeamMember[]
   permissions Permission[]
 
   @@index([name])
@@ -204,6 +233,9 @@ enum RoleName {
   ADMIN
   MODERATOR
   USER
+  TEAM_OWNER
+  TEAM_ADMIN
+  TEAM_MEMBER
 }
 
 /// Stores a user's notification preferences.

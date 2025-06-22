@@ -8,7 +8,7 @@ model Team {
   /// A short description of the team.
   description String?
   /// A URL to the team's logo image.
-  logo        String?
+  logo        Image?
   /// The team's official website URL.
   website     String?
 
@@ -23,8 +23,6 @@ model Team {
   requireApproval Boolean @default(false)
 
   // Billing & subscription
-  /// The subscription plan for the team (e.g., FREE, PRO, ENTERPRISE).
-  plan         TeamPlan      @default(FREE)
   /// The team's active subscription.
   subscription Subscription?
 
@@ -62,19 +60,9 @@ model Team {
   @@index([isActive])
 }
 
-/// Defines the subscription plans available for teams.
-enum TeamPlan {
-  FREE
-  BASIC
-  PRO
-  ENTERPRISE
-}
-
 /// Represents the membership of a user within a team, including their role and progress.
 model TeamMember {
   id       String   @id @default(ulid())
-  /// The role of the member within the team (e.g., OWNER, ADMIN, MEMBER).
-  role     TeamRole @default(MEMBER)
   /// The timestamp when the user joined the team.
   joinedAt DateTime @default(now())
   /// Whether the team member's account is currently active.
@@ -101,22 +89,15 @@ model TeamMember {
   certificates TeamMemberCertificate[]
   analytics    TeamMemberAnalytics[]
 
+  // Roles
+  roles Role[]
+
   // Audit logs
   auditLogs AuditLog[]
 
   @@unique([teamId, userId])
   @@index([teamId])
   @@index([userId])
-  @@index([role])
-}
-
-/// Defines the roles a user can have within a team.
-enum TeamRole {
-  OWNER
-  ADMIN
-  MANAGER
-  MEMBER
-  VIEWER
 }
 
 /// Represents a pending invitation for a user to join a team.
@@ -124,8 +105,6 @@ model TeamInvite {
   id        String       @id @default(ulid())
   /// The email address of the user being invited.
   email     String
-  /// The role the user will be assigned upon accepting the invitation.
-  role      TeamRole     @default(MEMBER)
   /// The current status of the invitation.
   status    InviteStatus @default(PENDING)
   /// The timestamp when the invitation expires.
@@ -204,7 +183,7 @@ model TeamCertificate {
   /// A description of the certificate.
   description String?
   /// A URL to the certificate's image or template.
-  imageUrl    String?
+  image       Image?
   /// Whether the certificate is currently active and awardable.
   isActive    Boolean @default(true)
 
@@ -345,7 +324,7 @@ model TeamSettings {
 
   // Custom branding
   /// A URL to the team's custom logo.
-  customLogo   String?
+  customLogo   Image?
   /// A JSON object for storing custom color theme settings.
   customColors Json?
   /// A custom domain associated with the team's portal.
