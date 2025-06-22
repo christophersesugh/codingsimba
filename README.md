@@ -8,7 +8,7 @@ Visit the website at [codingsimba.com](https://codingsimba.com)
 
 ## About
 
-This is our platform for sharing insights about programming, software development best practices, and technical tutorials. We're dedicated to making quality education accessible to developers at all levels.
+This is a platform for sharing insights about programming, software development best practices, and technical tutorials. We're dedicated to making quality education accessible to developers at all levels.
 
 ## Features
 
