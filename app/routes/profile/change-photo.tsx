@@ -6,7 +6,7 @@ import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { prisma } from "~/utils/db.server";
 import { requireUserId } from "~/utils/auth.server";
-import { data, Form, Link, redirect } from "react-router";
+import { data, Form, Link } from "react-router";
 import { FormError } from "~/components/form-errors";
 import { Button } from "~/components/ui/button";
 import { Loader, Loader2 } from "lucide-react";
@@ -30,6 +30,7 @@ import {
 } from "~/utils/storage.server";
 import { HoneypotInputs } from "remix-utils/honeypot/react";
 import { checkHoneypot } from "~/utils/honeypot.server";
+import { redirectWithToast } from "~/utils/toast.server";
 
 const MAX_SIZE = 1024 * 1024 * 3; // 3MB
 const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
@@ -135,21 +136,34 @@ export async function action({ request }: Route.ActionArgs) {
     );
   }
 
+  const MOCKS = process.env.MOCKS;
   const { image, intent } = submission.value;
 
   if (intent === "delete") {
-    await prisma.userImage.deleteMany({ where: { userId } });
-    return redirect("/profile");
+    if (!MOCKS) {
+      await prisma.userImage.deleteMany({ where: { userId } });
+    }
+    return redirectWithToast("/profile", {
+      title: `Profile picture removed`,
+      description: "You have successfully deleted your profile picture",
+      type: "success",
+    });
   }
 
-  await prisma.$transaction(async ($prisma) => {
-    await $prisma.userImage.deleteMany({ where: { userId } });
-    await $prisma.user.update({
-      where: { id: userId },
-      data: { image: { create: image } },
+  if (!MOCKS) {
+    await prisma.$transaction(async ($prisma) => {
+      await $prisma.userImage.deleteMany({ where: { userId } });
+      await $prisma.user.update({
+        where: { id: userId },
+        data: { image: { create: image } },
+      });
     });
+  }
+  return redirectWithToast("/profile", {
+    title: `Profile picture update`,
+    description: "You have successfully updated your profile picture",
+    type: "success",
   });
-  return redirect("/profile");
 }
 
 export default function ChangePhoto({

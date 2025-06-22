@@ -31,11 +31,8 @@ export function HeroCard() {
                 <div className="mt-6 h-10 w-1/3 rounded-md bg-blue-600 dark:bg-blue-500" />
               </div>
               <div className="mt-4 space-y-4">
-                <div className="h-6 w-3/4 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+                <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
                 <div className="h-4 w-4/6 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
-                <div className="h-4 w-5/6 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
-                <div className="h-4 w-full animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
-                <div className="mt-6 h-10 w-1/3 rounded-md bg-blue-600 dark:bg-blue-500" />
               </div>
             </div>
           </div>
