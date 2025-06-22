@@ -5,8 +5,8 @@ export function Values() {
   return (
     <section className="mb-24">
       <SectionHeader
-        title="My Values"
-        description="These core principles guide everything I do in my work and teaching."
+        title="Our Values"
+        description="These core principles guide everything we do in our work and teaching."
       />
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {values.map((value, index) => (
@@ -32,7 +32,7 @@ const values = [
   {
     title: "Quality Education",
     description:
-      "I'm committed to providing the highest quality educational content that is both comprehensive and easy to understand.",
+      "We're committed to providing the highest quality educational content that is both comprehensive and easy to understand.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -54,7 +54,7 @@ const values = [
   {
     title: "Practical Learning",
     description:
-      "I believe in learning by doing. My courses focus on practical, real-world applications of concepts.",
+      "We believe in learning by doing. Our courses focus on practical, real-world applications of concepts.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -75,7 +75,7 @@ const values = [
   {
     title: "Inclusivity",
     description:
-      "I strive to make my content accessible to everyone, regardless of their background or experience level.",
+      "We strive to make our content accessible to everyone, regardless of their background or experience level.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -99,7 +99,7 @@ const values = [
   {
     title: "Community",
     description:
-      "I foster a supportive community where developers can learn from each other and grow together.",
+      "We foster a supportive community where developers can learn from each other and grow together.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -121,7 +121,7 @@ const values = [
   {
     title: "Innovation",
     description:
-      "I stay at the forefront of technology, constantly updating my content to reflect the latest developments.",
+      "We stay at the forefront of technology, constantly updating our content to reflect the latest developments.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -149,7 +149,7 @@ const values = [
   {
     title: "Excellence",
     description:
-      "I strive for excellence in everything I do, from the quality of my courses to the support I provide my students.",
+      "We strive for excellence in everything we do, from the quality of our courses to the support we provide our students.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"

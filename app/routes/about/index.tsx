@@ -3,8 +3,8 @@ import { Header } from "~/components/page-header";
 import { Mission } from "./components/mission";
 import { Impact } from "./components/impact";
 import { Values } from "./components/values";
-import { Journey } from "./components/journey";
-import { Skills } from "./components/skills";
+// import { Journey } from "./components/journey";
+// import { Skills } from "./components/skills";
 import { CTA } from "./components/cta";
 import { readMdxDirectory } from "~/utils/misc.server";
 import { invariantResponse } from "~/utils/misc";
@@ -22,20 +22,20 @@ export async function loader() {
 }
 
 export default function AboutRoute({ loaderData }: Route.ComponentProps) {
-  const title = "Simba's Den of Nerdery";
+  const title = "About Coding Simba";
   const metadata = generateMetadata({ title });
   return (
     <>
       {metadata}
       <Header
         title={title}
-        description="Passionate about coding, teaching, and building tools that make a difference."
+        description="We are passionate about coding, teaching, and building tools that make a difference."
       />
       <div className="container mx-auto max-w-6xl px-4 py-12">
         <Mission />
-        <Journey journeyData={loaderData.journeyData} />
+        {/* <Journey journeyData={loaderData.journeyData} /> */}
         <Impact articlesCount={loaderData.articlesCount} />
-        <Skills />
+        {/* <Skills /> */}
         <Values />
         <CTA />
       </div>

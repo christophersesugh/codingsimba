@@ -8,9 +8,9 @@ export function Impact({ articlesCount }: { articlesCount: Promise<number> }) {
   return (
     <section className="mb-24 rounded-2xl bg-gray-50 p-8 md:p-12 dark:bg-gray-900">
       <SectionHeader
-        title="My Impact"
-        description=" I'm proud of the impact I've had on the developer community.
-          a glimpse of my journey so far."
+        title="Our Impact"
+        description="We're proud of the impact we've had on the developer community.
+          Here's a glimpse of our journey so far."
       />
       <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
         <Item icon={<Users className="h-8 w-8" />} count="1k+">

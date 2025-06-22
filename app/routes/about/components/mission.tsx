@@ -1,23 +1,24 @@
 import React from "react";
 import { CheckCircle } from "lucide-react";
+import { getImgSrc } from "~/utils/misc";
 
 export function Mission() {
   return (
     <section>
       <div className="mb-24 grid items-center gap-12 md:grid-cols-2">
         <div className="text-lg text-gray-800 dark:text-gray-300">
-          <h2 className="mb-6 text-3xl font-bold">My Mission</h2>
+          <h2 className="mb-6 text-3xl font-bold">Our Mission</h2>
           <p className="mb-6">
-            I believe that programming knowledge should be accessible to
-            everyone. My goal is to break down complex concepts into
+            We believe that programming knowledge should be accessible to
+            everyone. Our goal is to break down complex concepts into
             understandable pieces that anyone can learn, regardless of their
             background.
           </p>
           <p className="mb-6">
-            Through my courses, tutorials, and articles, I&apos;ve helped
-            thousands of developers improve their skills and build amazing
-            projects. I focus on practical, real-world applications so you can
-            apply what you learn immediately in your own work.
+            Through our courses, tutorials, articles, and programs, we&apos;ve
+            helped thousands of developers improve their skills and build
+            amazing projects. We focus on practical, real-world applications so
+            you can apply what you learn immediately in your own work.
           </p>
           <div className="space-y-4">
             <ListItem>
@@ -37,11 +38,11 @@ export function Mission() {
           <div className="relative mx-auto aspect-square w-full max-w-md">
             <div className="relative h-full w-full overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800">
               <img
-                src="https://cdn.sanity.io/media-libraries/ml4WNZcKpiTm/images/6749aa161e69b57e6d39b2cd430834da255e31bd-1024x1024.png"
-                alt="Christopher S. Aondona"
-                width={500}
-                height={500}
-                className="h-full w-full object-cover"
+                src={getImgSrc({ path: "assets", fileKey: "icon.png" })}
+                alt="Coding Simba"
+                // width={500}
+                // height={500}
+                className="h-full w-full object-contain"
               />
             </div>
             <div className="absolute -bottom-6 -right-6 h-32 w-32 rotate-6 transform rounded-lg border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-800 dark:bg-gray-900">

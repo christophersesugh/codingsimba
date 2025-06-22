@@ -204,11 +204,11 @@ export function GeneralErrorBoundary({
                 whileTap="tap"
               >
                 <Link
-                  to="mailto:me@codingsimba.com"
+                  to="mailto:support@codingsimba.com"
                   className="inline-flex items-center gap-2 font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                 >
                   <Mail className="size-4" />
-                  me@codingsimba.com
+                  support@codingsimba.com
                 </Link>
               </motion.div>
             </motion.div>

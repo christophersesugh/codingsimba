@@ -1,6 +1,6 @@
 # Coding Simba 🦁
 
-Welcome to my personal website where I share my knowledge and experiences in software development through articles, tutorials, and courses.
+Welcome to our learning platform where we share knowledge and experiences in software development through articles, tutorials, courses, and structured learning programs.
 
 ## Live Site
 
@@ -8,19 +8,21 @@ Visit the website at [codingsimba.com](https://codingsimba.com)
 
 ## About
 
-This is my personal space for sharing insights about programming, software development best practices, and technical tutorials. While this is primarily a personal project, I'm happy to have you explore the content.
+This is our platform for sharing insights about programming, software development best practices, and technical tutorials. We're dedicated to making quality education accessible to developers at all levels.
 
 ## Features
 
 - 📚 Technical articles and tutorials
 - 🎓 Software engineering courses
+- 🚀 Structured learning programs
 - 💡 Development tips and tricks
 - 🔍 Code examples and explanations
+- 👥 Community-driven learning
 
 ## Contact
 
-Feel free to reach out to me through the contact form on the website.
+Feel free to reach out to us through the contact form on the website.
 
 ---
 
-*Note: This is a personal project and not accepting contributions at this time.*
+*Note: This is our company's learning platform focused on developer education and community building.*
