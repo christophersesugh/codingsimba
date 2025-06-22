@@ -25,4 +25,4 @@ Feel free to reach out to us through the contact form on the website.
 
 ---
 
-*Note: This is our company's learning platform focused on developer education and community building.*
+*Note: This is Coding Simba's learning platform focused on developer education and community building.*
