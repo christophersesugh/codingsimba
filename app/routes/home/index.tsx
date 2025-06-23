@@ -9,6 +9,8 @@ import {
   getRecentArticles,
 } from "~/utils/content.server/articles/utils";
 import { generateMetadata } from "~/utils/meta";
+import { Subscription } from "./subscription";
+import { FAQs } from "./faqs";
 
 export async function loader() {
   const articles = getRecentArticles();
@@ -23,6 +25,8 @@ export default function HomeRoute() {
       <HeroSection />
       <CoursesSection />
       <ArticlesSection />
+      <Subscription />
+      <FAQs />
       {/* <About /> */}
       <ContactSection />
       <NewsLetterSection />

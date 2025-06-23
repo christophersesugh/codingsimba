@@ -2,6 +2,18 @@
 
 Welcome to our learning platform where we share knowledge and experiences in software development through articles, tutorials, courses, and structured learning programs.
 
+## ⚠️ Important Notice
+
+This repository is public for transparency and educational purposes. While we do not accept code contributions from external contributors, we welcome issues for bug reports, feature requests, and discussions. Please note:
+
+- ❌ Pull requests will not be accepted
+- ✅ Issues are welcome for:
+  - Bug reports
+  - Feature requests
+  - Questions and discussions
+  - Documentation improvements
+- ❌ No external code contributions will be reviewed
+
 ## Live Site
 
 Visit the website at [codingsimba.com](https://codingsimba.com)
@@ -19,9 +31,35 @@ This is a platform for sharing insights about programming, software development 
 - 🔍 Code examples and explanations
 - 👥 Community-driven learning
 
+## Community
+
+Join our community to discuss software development, share experiences, and learn together:
+
+- 💬 [Discord Community](https://discord.gg/7uZ6PWf4Xv)
+- 📝 [GitHub Issues](https://github.com/codingsimba/codingsimba/issues) for bug reports and feature requests
+- 🌐 [Website](https://codingsimba.com) for articles, tutorials, courses, programs and other modules.
+
+## Contributing
+
+While we don't accept code contributions, we encourage community engagement through GitHub Issues. See our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to effectively report bugs, request features, or start discussions.
+
 ## Contact
 
-Feel free to reach out to us through the contact form on the website.
+Feel free to reach out to us through:
+- 💬 [Discord Community](https://discord.gg/7uZ6PWf4Xv)
+- 📝 GitHub Issues for bug reports and feature requests
+- 📧 The contact form on our website for other inquiries
+
+## License
+
+Copyright © 2024 Coding Simba. All rights reserved.
+
+This repository and its contents are protected under copyright law. While the repository is public for viewing and educational purposes, no license is granted for:
+- Copying, distributing, or modifying the code
+- Using the code in commercial or non-commercial projects
+- Creating derivative works
+
+For any inquiries about licensing or usage, please contact us through our website.
 
 ---
 
