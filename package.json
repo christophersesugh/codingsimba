@@ -1,13 +1,37 @@
 {
   "name": "codingsimba",
-  "description": "Welcome to my personal website where I share my knowledge and experiences in software development through articles, tutorials, and courses.",
+  "description": "Coding Simba is a community-driven learning platform for sharing knowledge, tutorials, articles, courses, and structured programs in software development. Join our community to learn, share, and grow together.",
   "private": true,
   "type": "module",
+  "version": "1.0.0",
   "author": "Christopher S. Aondona <me@codingsimba.com> (https://codingsimba.com/)",
-  "imports": {
-    "~app/*": "./app/*",
-    "~tests/*": "./tests/*"
+  "homepage": "https://codingsimba.com",
+  "bugs": {
+    "url": "https://github.com/codingsimba-dev/codingsimba/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codingsimba-dev/codingsimba"
+  },
+  "keywords": [
+    "education",
+    "programming",
+    "tutorials",
+    "courses",
+    "learning platform",
+    "software development"
+  ],
+  "files": [
+    "app/",
+    "content/",
+    "public/",
+    "prisma/",
+    "LICENSE",
+    "README.md",
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md"
+  ],
   "prisma": {
     "schema": "prisma/schema",
     "seed": "tsx prisma/seed.ts"
