@@ -1,7 +1,7 @@
 import React from "react";
 import { SandpackConsole, SandpackPreview } from "@codesandbox/sandpack-react";
 import { RefreshButton, RunButton, ShowConsole } from "./sandpack-components";
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
 
 /**
  * Props for the Preview component

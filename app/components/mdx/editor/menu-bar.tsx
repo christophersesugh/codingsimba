@@ -14,7 +14,8 @@ import {
   Heading5,
 } from "lucide-react";
 import { Skeleton } from "~/components/ui/skeleton";
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
+
 import type { MenuBarProps } from ".";
 
 export function MenuBar({ editor }: MenuBarProps) {

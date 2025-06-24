@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
 
 export function Container({
   title,

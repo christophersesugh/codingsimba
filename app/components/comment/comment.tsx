@@ -19,7 +19,7 @@ import { useOptionalUser } from "~/hooks/user";
 import { useUpvote, useDelete, useCreate, useUpdate } from "~/hooks/content";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
 import {
   AlertDialog,
   AlertDialogAction,

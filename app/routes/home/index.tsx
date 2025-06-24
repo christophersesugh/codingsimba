@@ -10,12 +10,14 @@ import {
 } from "~/utils/content.server/articles/utils";
 import { generateMetadata } from "~/utils/meta";
 import { Subscription } from "./subscription";
-import { FAQs } from "./faqs";
+import { FAQSection } from "./faqs";
+import { readMdxDirectory } from "~/utils/misc.server";
 
 export async function loader() {
   const articles = getRecentArticles();
   const articlesCount = countArticles();
-  return { articles, articlesCount };
+  const faqs = readMdxDirectory("faqs");
+  return { articles, articlesCount, faqs };
 }
 
 export default function HomeRoute() {
@@ -26,7 +28,7 @@ export default function HomeRoute() {
       <CoursesSection />
       <ArticlesSection />
       <Subscription />
-      <FAQs />
+      <FAQSection />
       {/* <About /> */}
       <ContactSection />
       <NewsLetterSection />

@@ -19,7 +19,7 @@ export function ContactSection() {
         >
           <h2 className="mb-4 text-3xl font-bold md:text-4xl">Get In Touch</h2>
           <p className="text-lg text-gray-600 dark:text-gray-300">
-            Have a question or want to get in touch? Drop me a message!
+            Have a question or want to get in touch? Leave us a message!
           </p>
         </motion.div>
 

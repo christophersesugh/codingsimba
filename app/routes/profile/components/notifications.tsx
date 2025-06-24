@@ -5,7 +5,8 @@ import { motion } from "framer-motion";
 import { useActionData, useFetcher, useLoaderData } from "react-router";
 import { getInputProps, useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
+
 import { Container } from "./container";
 
 export const UPDATE_NOTIFICATIONS_INTENT = "update-notifications";

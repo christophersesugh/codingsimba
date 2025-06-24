@@ -1,6 +1,6 @@
 import type React from "react";
 import { AlertTriangle, Info, XCircle } from "lucide-react";
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
 
 interface CalloutProps {
   variant?: "tip" | "caution" | "danger";

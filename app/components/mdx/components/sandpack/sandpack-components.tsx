@@ -18,7 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
 
 /**
  * Available view modes for the Sandpack editor

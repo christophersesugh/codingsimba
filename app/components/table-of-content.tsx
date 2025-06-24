@@ -2,7 +2,7 @@ import type { Route } from "../routes/articles/+types/article";
 import { Link, useLoaderData } from "react-router";
 import { Skeleton } from "~/components/ui/skeleton";
 import { useToc } from "~/hooks/use-toc";
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
 
 export function TableOfContent({ className }: { className?: string }) {
   const loaderData = useLoaderData() as Route.ComponentProps["loaderData"];

@@ -2,7 +2,8 @@ import React from "react";
 import { Quote } from "lucide-react";
 import { Link, type LinkProps } from "react-router";
 import { Separator } from "~/components/ui/separator";
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
+
 import { Callout } from "~/components/ui/callout";
 
 export function H1({

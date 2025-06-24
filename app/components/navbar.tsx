@@ -1,12 +1,12 @@
 import { Link, useLocation } from "react-router";
 import { DoorClosed } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "~/components/ui/button";
 import { navLinks } from "~/constants/navlinks";
 import { Menu, UserPen } from "lucide-react";
 import { NavLink } from "./nav-link";
-import { ThemeToggle } from "./theme-toggle";
-import { cn } from "~/lib/shadcn";
-import { Logo } from "./logo";
+import { ThemeToggle } from "~/components/theme-toggle";
+import { cn } from "~/utils/misc";
+import { Logo } from "~/components/logo";
 
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useMobileNav } from "~/contexts/mobile-nav";

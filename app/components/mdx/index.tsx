@@ -18,7 +18,8 @@ import {
 import { Img } from "./components/media";
 import { Ol, Ul } from "./components/lists";
 import { Code } from "./components/code";
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
+
 import type { SandpackTemplate } from "~/utils/content.server/articles/types";
 import {
   Caption,

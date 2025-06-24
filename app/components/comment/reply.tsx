@@ -2,7 +2,7 @@ import React from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { FilePenLine, Heart, Loader, Trash2 } from "lucide-react";
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Markdown } from "../mdx";
 import { useOptionalUser } from "~/hooks/user";

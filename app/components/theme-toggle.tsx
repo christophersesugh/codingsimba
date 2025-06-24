@@ -4,10 +4,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Button } from "./ui/button";
+} from "~/components/ui/dropdown-menu";
+import { Button } from "~/components/ui/button";
 import { Loader, Monitor, Moon, Sun } from "lucide-react";
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
 import { useNavigation } from "react-router";
 
 export function ThemeToggle() {

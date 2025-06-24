@@ -2,7 +2,7 @@ import React from "react";
 import type { Route } from "../routes/articles/+types/article";
 import { Await, useFetcher, useLoaderData } from "react-router";
 import { Eye, Heart, MessageSquare } from "lucide-react";
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
 import { Link } from "react-router";
 import { useOptionalUser } from "~/hooks/user";
 import { AnimatePresence, motion } from "framer-motion";

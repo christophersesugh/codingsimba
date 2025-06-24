@@ -3,7 +3,7 @@ import ShikiHighlighter, { type Element } from "react-shiki";
 import type { SandpackTemplate } from "~/utils/content.server/articles/types";
 import { Check, Codesandbox, Copy, Youtube } from "lucide-react";
 import { useTheme } from "remix-themes";
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
 import { Sandpack } from "./sandpack";
 import { Iframe } from "./media";
 import { EmptyState } from "~/components/empty-state";

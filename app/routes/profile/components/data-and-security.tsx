@@ -21,7 +21,7 @@ import {
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { Container } from "./container";
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
 
 export const SIGNOUT_SESSIONS_INTENT = "signout-other-sessions";
 export const DELETE_USER_INTENT = "delete-user";

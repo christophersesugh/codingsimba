@@ -4,7 +4,8 @@ import React from "react";
 import { Form, Link, useLoaderData } from "react-router";
 import { Button } from "~/components/ui/button";
 
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
+
 import type { TabValue } from "..";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";

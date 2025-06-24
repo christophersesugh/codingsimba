@@ -1,5 +1,5 @@
-import { NavLink as NLink } from "react-router";
-import { cn } from "~/lib/shadcn";
+import { NavLink as RouterNavLink } from "react-router";
+import { cn } from "~/utils/misc";
 
 type NavLinkProps = {
   name: string;
@@ -15,11 +15,11 @@ export function NavLink({
   onClick,
 }: NavLinkProps) {
   return (
-    <NLink
+    <RouterNavLink
       prefetch="intent"
       to={path}
       onClick={onClick}
-      className={({ isActive }) =>
+      className={({ isActive }: { isActive: boolean }) =>
         cn(
           "m-0 p-0 capitalize text-gray-700 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white",
           { "text-lg": type === "navbar" },
@@ -28,6 +28,6 @@ export function NavLink({
       }
     >
       {name}
-    </NLink>
+    </RouterNavLink>
   );
 }

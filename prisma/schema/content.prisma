@@ -113,7 +113,13 @@ model Module {
   completedAt DateTime?
   /// The user's current status in the module.
   status      ContentStatus @default(LOCKED)
+  /// The type of module (default is CONTENT; use EXERCISE for exercise modules).
+  type        ModuleType    @default(CONTENT)
   subModules  SubModule[]
+
+  /// The test this module belongs to (each module must have one test).
+  test   Test   @relation(fields: [testId], references: [id], onDelete: Cascade)
+  testId String
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -124,6 +130,12 @@ model Module {
   @@index([userId])
   @@index([courseId])
   @@index([userId, status])
+}
+
+/// The type of module (e.g., CONTENT, EXERCISE).
+enum ModuleType {
+  CONTENT
+  EXERCISE
 }
 
 /**
@@ -164,8 +176,6 @@ model Lesson {
   /// The unique identifier from the headless CMS.
   sanityId String @unique
 
-  /// The user's completion progress percentage for the lesson.
-  progress    Int           @default(0)
   /// The timestamp when the user unlocked the lesson.
   unlockedAt  DateTime      @default(now())
   /// The timestamp when the user completed the lesson.
@@ -183,6 +193,43 @@ model Lesson {
   @@index([userId])
   @@index([subModuleId])
   @@index([userId, status])
+}
+
+/// Represents a test tied to a module.
+model Test {
+  id        String         @id @default(ulid())
+  sanityId  String         @unique
+  /// The modules that belong to this test (one test can have many modules).
+  modules   Module[]
+  questions TestQuestion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Represents a question in a test.
+model TestQuestion {
+  id       String           @id @default(ulid())
+  sanityId String           @unique
+  /// The type of question (e.g., MULTIPLE_CHOICE, TRUE_FALSE, SHORT_ANSWER).
+  type     TestQuestionType @default(MULTIPLE_CHOICE)
+  /// JSON array of options (for multiple choice, etc.)
+  options  Json?
+  /// JSON array or string for correct answer(s).
+  answer   Json
+
+  testId String
+  test   Test   @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// The type of test question.
+enum TestQuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  SHORT_ANSWER
 }
 
 /// Represents a "like" action from a user on a piece of content or a comment.

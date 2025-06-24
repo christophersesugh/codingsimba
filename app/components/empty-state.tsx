@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Button } from "~/components/ui/button";
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
 
 interface EmptyStateProps {
   icon?: ReactNode;

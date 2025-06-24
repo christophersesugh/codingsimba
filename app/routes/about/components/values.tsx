@@ -32,7 +32,7 @@ const values = [
   {
     title: "Quality Education",
     description:
-      "We're committed to providing the highest quality educational content that is both comprehensive and easy to understand.",
+      "We're committed to providing the highest quality educational content that is both comprehensive and easy to understand for learners at all levels.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -54,7 +54,7 @@ const values = [
   {
     title: "Practical Learning",
     description:
-      "We believe in learning by doing. Our courses focus on practical, real-world applications of concepts.",
+      "We believe in learning by doing. Our courses focus on practical, real-world applications that can be immediately applied in professional environments.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -75,7 +75,7 @@ const values = [
   {
     title: "Inclusivity",
     description:
-      "We strive to make our content accessible to everyone, regardless of their background or experience level.",
+      "We strive to make our content accessible to everyone, regardless of their background, experience level, or organizational role.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -99,7 +99,7 @@ const values = [
   {
     title: "Community",
     description:
-      "We foster a supportive community where developers can learn from each other and grow together.",
+      "We foster a supportive community where developers can learn from each other and grow together, both individually and as teams.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -121,7 +121,7 @@ const values = [
   {
     title: "Innovation",
     description:
-      "We stay at the forefront of technology, constantly updating our content to reflect the latest developments.",
+      "We stay at the forefront of technology, constantly updating our content and programs to reflect the latest developments and industry needs.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -149,7 +149,7 @@ const values = [
   {
     title: "Excellence",
     description:
-      "We strive for excellence in everything we do, from the quality of our courses to the support we provide our students.",
+      "We strive for excellence in everything we do, from the quality of our courses to the support we provide our students and organizational clients.",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -164,6 +164,56 @@ const values = [
         className="h-6 w-6"
       >
         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+      </svg>
+    ),
+  },
+  {
+    title: "Scalability",
+    description:
+      "We design our learning solutions to scale with your organization's growth, from individual learners to enterprise-wide training programs.",
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-6 w-6"
+      >
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+        <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+        <path d="M9 14h6" />
+        <path d="M9 18h6" />
+        <path d="M9 10h6" />
+      </svg>
+    ),
+  },
+  {
+    title: "Collaboration",
+    description:
+      "We believe in the power of collaborative learning and provide tools that enable teams to learn together and achieve shared objectives.",
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-6 w-6"
+      >
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        <path d="M12 12l3 3 6-6" />
       </svg>
     ),
   },

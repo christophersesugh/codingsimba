@@ -153,7 +153,7 @@ export async function getPopularTags(limit = 10) {
  * const recentArticles = await getRecentArticles(3);
  * recentArticles.forEach(article => console.log(article.title));
  */
-export async function getRecentArticles(limit = 4) {
+export async function getRecentArticles(limit = 2) {
   const articles =
     (await client.fetch<RelatedArticles>(recentArticlesQuery(), { limit })) ??
     [];

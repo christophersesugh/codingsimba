@@ -10,26 +10,34 @@ export function Mission() {
           <h2 className="mb-6 text-3xl font-bold">Our Mission</h2>
           <p className="mb-6">
             We believe that programming knowledge should be accessible to
-            everyone. Our goal is to break down complex concepts into
-            understandable pieces that anyone can learn, regardless of their
-            background.
+            everyone, from individual learners to entire organizations. Our goal
+            is to break down complex concepts into understandable pieces that
+            anyone can learn, regardless of their background or experience
+            level.
           </p>
           <p className="mb-6">
-            Through our courses, tutorials, articles, and programs, we&apos;ve
-            helped thousands of developers improve their skills and build
-            amazing projects. We focus on practical, real-world applications so
-            you can apply what you learn immediately in your own work.
+            Through our courses, tutorials, articles, and structured programs,
+            we&apos;ve helped thousands of developers improve their skills and
+            build amazing projects. We focus on practical, real-world
+            applications so you can apply what you learn immediately in your own
+            work or team environment.
           </p>
           <div className="space-y-4">
             <ListItem>
               Making complex concepts accessible to learners of all levels
             </ListItem>
             <ListItem>
-              Creating high-quality, up-to-date educational content
+              Creating high-quality, up-to-date educational content for
+              individuals and teams
             </ListItem>
-            <ListItem>Building a supportive community of developers</ListItem>
             <ListItem>
-              Empowering students to build real-world projects
+              Building structured learning programs for organizational growth
+            </ListItem>
+            <ListItem>
+              Empowering students and teams to build real-world projects
+            </ListItem>
+            <ListItem>
+              Providing scalable learning solutions for growing organizations
             </ListItem>
           </div>
         </div>

@@ -19,14 +19,14 @@ export function ContactInformation() {
           label="Email"
           href="mailto:me@codingsimba.com"
         >
-          me@codingsimba.com
+          support@codingsimba.com
         </ContactElement>
         <ContactElement
           icon={<Github className="h-5 w-5" />}
           label="GitHub"
           href="https://github.com/christophersesugh"
         >
-          github.com/christophersesugh
+          github.com/codingsimba-dev
         </ContactElement>
         <div className="flex items-start gap-4">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">

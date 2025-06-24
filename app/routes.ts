@@ -11,6 +11,7 @@ export default [
   route("terms", "routes/terms.tsx"),
   route("about", "routes/about/index.tsx"),
   route("privacy", "routes/privacy.tsx"),
+  route("support", "routes/support.tsx"),
   route("verify", "routes/auth/verify.tsx"),
   route("signup", "routes/auth/signup.tsx"),
   route("signin", "routes/auth/signin.tsx"),
@@ -77,6 +78,11 @@ export default [
   ...prefix("programs", [
     index("routes/programs/index.tsx"),
     route(":programId", "routes/programs/program.tsx"),
+  ]),
+
+  ...prefix("challenges", [
+    index("routes/challenges/index.tsx"),
+    // route(":programId", "routes/programs/program.tsx"),
   ]),
 
   ...prefix("tutorials", [

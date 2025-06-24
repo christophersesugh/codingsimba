@@ -10,7 +10,7 @@ import { atomDark, ecoLight } from "@codesandbox/sandpack-themes";
 import { Code, Maximize, Minimize } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { useMobile } from "~/hooks/use-mobile";
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
 import {
   CopyCode,
   SandpackTabs,

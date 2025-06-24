@@ -1,7 +1,10 @@
-import { cn } from "~/lib/shadcn";
+import { cn } from "~/utils/misc";
 import { SectionHeader } from "./section-header";
 import { Badge } from "~/components/ui/badge";
-import { ArrowRight, Calendar } from "lucide-react";
+import { Calendar, ChevronRight, MapPin } from "lucide-react";
+import { Suspense } from "react";
+import { Await } from "react-router";
+import { Skeleton } from "~/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -20,103 +23,156 @@ type JourneyProps = {
   };
 } | null;
 
-export function Journey({ journeyData }: { journeyData: JourneyProps[] }) {
-  if (!journeyData) return;
+export function Journey({
+  journeyData,
+}: {
+  journeyData: Promise<JourneyProps[]>;
+}) {
   return (
     <section className="mb-24">
       <SectionHeader
-        title="My Journey"
-        description=" Key moments and milestones that have shaped my path as a developer and
-          educator."
+        title="Our Journey"
+        description="Key moments and milestones that have shaped our path as developers and educators."
       />
-      <div className="mx-auto grid auto-rows-auto grid-cols-1 gap-3 md:grid-cols-3">
-        {journeyData
-          ? journeyData.map((item, index) => (
-              <GridItem key={item?.slug} index={index} journeyItem={item} />
-            ))
-          : null}
-      </div>
+      <Suspense fallback={<JourneySkeleton />}>
+        <Await resolve={journeyData}>
+          {(resolvedJourneyData: JourneyProps[]) => (
+            <div className="relative">
+              {/* Timeline line */}
+              <div className="absolute left-4 top-0 h-full w-0.5 bg-gradient-to-b from-blue-500 via-purple-500 to-green-500 md:left-1/2 md:-translate-x-px" />
+
+              <div className="space-y-8">
+                {resolvedJourneyData
+                  ? resolvedJourneyData.map(
+                      (item: JourneyProps, index: number) => (
+                        <TimelineItem
+                          key={item?.slug}
+                          index={index}
+                          journeyItem={item}
+                        />
+                      ),
+                    )
+                  : null}
+              </div>
+            </div>
+          )}
+        </Await>
+      </Suspense>
     </section>
   );
 }
 
-function GridItem({
+function JourneySkeleton() {
+  return (
+    <div className="relative">
+      <div className="absolute left-4 top-0 h-full w-0.5 bg-gradient-to-b from-blue-500 via-purple-500 to-green-500 md:left-1/2 md:-translate-x-px" />
+      <div className="space-y-8">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="flex items-start gap-4 md:gap-8">
+            <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-blue-500 bg-white dark:border-blue-400 dark:bg-gray-900">
+              <Skeleton className="h-4 w-4 rounded-full" />
+            </div>
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-6 w-48" />
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-20 w-full" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TimelineItem({
   index,
   journeyItem,
 }: {
   index: number;
   journeyItem: JourneyProps;
 }) {
-  const layoutPattern = [
-    "col-span-2 md:col-span-1",
-    "col-span-2 md:col-span-1",
-    "col-span-2 md:col-span-1 md:row-span-2",
-    "col-span-2 md:col-span-2",
-    "col-span-2 md:col-span-1 lg:row-span-3",
-    "col-span-2 md:col-span-2",
-    "col-span-2 md:col-span-1 md:row-span-2",
-    "col-span-2 md:col-span-1 md:row-span-2",
-  ];
-
-  const gridClasses = layoutPattern[index % layoutPattern.length] || "";
+  const isEven = index % 2 === 0;
   const frontmatter = journeyItem ? journeyItem.frontmatter : {};
+
   return (
-    <Dialog>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{frontmatter.title}</DialogTitle>
-        </DialogHeader>
-        <div className="-my-6">
-          <Markdown source={journeyItem!.content} />
-        </div>
-      </DialogContent>
-      <DialogTrigger
+    <div
+      className={cn(
+        "flex items-start gap-4 md:gap-8",
+        isEven ? "md:flex-row" : "md:flex-row-reverse",
+      )}
+    >
+      {/* Timeline dot */}
+      <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-blue-500 bg-white shadow-lg dark:border-blue-400 dark:bg-gray-900">
+        <div className="h-3 w-3 rounded-full bg-blue-500 dark:bg-blue-400" />
+      </div>
+
+      {/* Content card */}
+      <div
         className={cn(
-          gridClasses,
-          "transform text-left transition-all duration-300 hover:scale-105 hover:shadow-lg",
+          "max-w-md flex-1",
+          isEven ? "md:text-left" : "md:text-right",
         )}
       >
-        <div className="flex h-full cursor-pointer flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow dark:border-gray-800 dark:bg-gray-900">
-          {frontmatter?.hasImage && (
-            <div className="w-full">
-              {" "}
-              <img
-                src={frontmatter.image}
-                alt={frontmatter.title}
-                className="aspect-video h-36 w-full object-fill"
-              />
+        <Dialog>
+          <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-blue-500" />
+                {frontmatter.title}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="-my-6">
+              <Markdown source={journeyItem!.content} />
             </div>
-          )}
+          </DialogContent>
+          <DialogTrigger asChild>
+            <div className="group cursor-pointer">
+              <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300 hover:border-blue-200 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-blue-700">
+                {/* Header */}
+                <div className="mb-3 flex items-start justify-between">
+                  <Badge
+                    variant="outline"
+                    className="border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300"
+                  >
+                    {frontmatter.category}
+                  </Badge>
+                  <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                    <Calendar className="mr-1 h-3 w-3" />
+                    {frontmatter.year}
+                  </div>
+                </div>
 
-          <div className="flex flex-grow flex-col p-3">
-            {" "}
-            <div className="mb-1 flex items-start justify-between">
-              {" "}
-              <Badge
-                variant="outline"
-                className="border-blue-200 bg-blue-50 px-1.5 py-0 text-xs text-blue-700 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300" /* Smaller badge */
-              >
-                {frontmatter.category}
-              </Badge>
-              <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                {" "}
-                <Calendar className="mr-1 h-2.5 w-2.5" />
-                {frontmatter.year}
+                {/* Title */}
+                <h3 className="mb-2 text-lg font-semibold text-gray-900 transition-colors group-hover:text-blue-600 dark:text-gray-100 dark:group-hover:text-blue-400">
+                  {frontmatter.title}
+                </h3>
+
+                {/* Description */}
+                <p className="mb-4 line-clamp-3 text-sm text-gray-600 dark:text-gray-300">
+                  {frontmatter.description}
+                </p>
+
+                {/* Image preview */}
+                {frontmatter?.hasImage && (
+                  <div className="mb-4 overflow-hidden rounded-md">
+                    <img
+                      src={frontmatter.image}
+                      alt={frontmatter.title}
+                      className="h-32 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
+                )}
+
+                {/* Read more indicator */}
+                <div className="flex items-center text-sm font-medium text-blue-600 transition-colors group-hover:text-blue-700 dark:text-blue-400 dark:group-hover:text-blue-300">
+                  Read more
+                  <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </div>
               </div>
             </div>
-            <h3 className="mb-1 text-base font-bold">{frontmatter.title}</h3>{" "}
-            <p className="flex-grow text-sm text-gray-600 dark:text-gray-400">
-              {frontmatter.description}
-            </p>{" "}
-            <div className="mt-2 flex justify-end">
-              {" "}
-              <div className="flex h-auto items-center p-0 text-xs text-blue-600 dark:text-blue-400">
-                Read more <ArrowRight className="ml-1 h-2.5 w-2.5" />{" "}
-              </div>
-            </div>
-          </div>
-        </div>
-      </DialogTrigger>
-    </Dialog>
+          </DialogTrigger>
+        </Dialog>
+      </div>
+    </div>
   );
 }

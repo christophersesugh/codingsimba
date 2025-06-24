@@ -15,7 +15,7 @@ export default function TutorialsRoute() {
         <EmptyState
           icon={<ArrowDownAZ className="size-8" />}
           title="New Tutorials Coming Soon!"
-          description="We're currently developing new tutorials. While you wait, feel free to explore our articles and courses."
+          description="We're currently developing new tutorials. While you wait, feel free to explore our articles."
         />
       </div>
     </div>
