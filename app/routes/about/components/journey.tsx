@@ -114,7 +114,7 @@ function TimelineItem({
         )}
       >
         <Dialog>
-          <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto">
+          <DialogContent className="scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400 dark:scrollbar-track-gray-800 dark:scrollbar-thumb-gray-600 dark:hover:scrollbar-thumb-gray-500 max-h-[80vh] !max-w-3xl overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-blue-500" />

@@ -38,6 +38,30 @@ cd my-next-app
 npm run dev
 ```
 
+```mermaid
+graph LR
+    Start --> Stop
+```
+
+```mermaid
+classDiagram
+Class01 <|-- AveryLongClass : Cool
+<<Interface>> Class01
+Class09 --> C2 : Where am I?
+Class09 --* C3
+Class09 --|> Class07
+Class07 : equals()
+Class07 : Object[] elementData
+Class01 : size()
+Class01 : int chimp
+Class01 : int gorilla
+class Class10 {
+  <<service>>
+  int id
+  size()
+}
+```
+
 This will create a new Next.js project with all the necessary dependencies and start the development server on `http://localhost:3000`.
 
 ## Project Structure
@@ -80,9 +104,10 @@ import { useRouter } from "next/router";
 
 export default function BlogPost() {
   const router = useRouter();
-  const { slug } = router.query;
+  const { slug } = router.queries; // [\!code --]
+  const { slug } = router.query; // [\!code ++]
 
-  return <h1>Blog post: {slug}</h1>;
+  return <h1>Blog post: {slug}</h1>; // [\!code highlight]
 }
 ```
 
@@ -93,7 +118,7 @@ Next.js allows you to create API endpoints within your application:
 ```javascript
 // pages/api/hello.js
 export default function handler(req, res) {
-  res.status(200).json({ message: "Hello from Next.js API!" });
+  res.status(200).json({ message: "Hello from Next.js API!" }); // [\!code focus]
 }
 ```
 

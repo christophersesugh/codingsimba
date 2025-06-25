@@ -52,7 +52,7 @@ Feel free to reach out to us through:
 
 ## License
 
-Copyright © 2024 Coding Simba. All rights reserved.
+Copyright © 2025 Coding Simba. All rights reserved.
 
 This repository and its contents are protected under copyright law. While the repository is public for viewing and educational purposes, no license is granted for:
 - Copying, distributing, or modifying the code

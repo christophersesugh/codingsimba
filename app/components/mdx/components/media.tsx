@@ -29,12 +29,12 @@ export function Iframe({ videoId, type = "youtube" }: MDXIframeProps) {
 
   const srcTitle = {
     youtube: `YouTube video player`,
-    bunny: `Bunny video player`,
+    bunny: `Bunny CDN video player`,
   };
 
   return (
     <div
-      className={cn("w-full", {
+      className={cn("no-pre w-full", {
         "relative pt-[56.25%]": type === "bunny",
       })}
     >

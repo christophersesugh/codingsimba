@@ -17,6 +17,7 @@ import { Input } from "~/components/ui/input";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { generateMetadata } from "~/utils/meta";
+import { Header } from "~/components/page-header";
 
 interface FAQItem {
   question: string;
@@ -296,27 +297,11 @@ export default function SupportPage() {
       })}
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        {/* Header */}
-        <section className="bg-white py-16 dark:bg-gray-900">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="mx-auto max-w-3xl text-center"
-            >
-              <h1 className="mb-4 text-4xl font-bold md:text-5xl">
-                How Can We Help?
-              </h1>
-              <p className="text-xl text-gray-600 dark:text-gray-300">
-                Get the support you need to make the most of your learning
-                journey
-              </p>
-            </motion.div>
-          </div>
-        </section>
+        <Header
+          title="How Can We Help?"
+          description="Get the support you need to make the most of your learning journey"
+        />
 
-        {/* Support Options */}
         <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="grid gap-8 md:grid-cols-3">
@@ -394,7 +379,6 @@ export default function SupportPage() {
           </div>
         </section>
 
-        {/* FAQ Section */}
         <section className="py-16">
           <div className="container mx-auto px-4">
             <motion.div
@@ -417,7 +401,6 @@ export default function SupportPage() {
           </div>
         </section>
 
-        {/* Contact Form */}
         <section className="bg-white py-16 dark:bg-gray-900">
           <div className="container mx-auto px-4">
             <motion.div

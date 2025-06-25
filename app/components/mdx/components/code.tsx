@@ -1,5 +1,6 @@
 import React from "react";
 import ShikiHighlighter, { type Element } from "react-shiki";
+import { transformerNotationDiff } from "@shikijs/transformers";
 import type { SandpackTemplate } from "~/utils/content.server/articles/types";
 import { Check, Codesandbox, Copy, Youtube } from "lucide-react";
 import { useTheme } from "remix-themes";
@@ -7,6 +8,7 @@ import { cn } from "~/utils/misc";
 import { Sandpack } from "./sandpack";
 import { Iframe } from "./media";
 import { EmptyState } from "~/components/empty-state";
+import { Mermaid } from "./mermaid";
 
 /**
  * Available theme options for code highlighting
@@ -103,6 +105,7 @@ export function Code({
   const language = match?.[1]?.toLowerCase();
 
   // Content type detection
+  const isMermaid = language?.startsWith("mermaid");
   const isYoutube = language?.startsWith("youtube") ?? null;
   const isBunny = language?.startsWith("bunny") ?? null;
   const isValidLanguage = !!isYoutube || !!isBunny;
@@ -123,6 +126,11 @@ export function Code({
 
   if (!mounted) {
     return <span />;
+  }
+
+  if (isMermaid) {
+    const chart = code;
+    return chart ? <Mermaid chart={chart} /> : <span />;
   }
 
   // Handle iframe content
@@ -167,6 +175,7 @@ export function Code({
     <div className={cn("relative text-sm", className)}>
       <CopyButton code={code} />
       <ShikiHighlighter
+        transformers={[transformerNotationDiff({ matchAlgorithm: "v3" })]}
         language={language}
         theme={currentTheme}
         langClassName="left-2 !top-[3px] capitalize"

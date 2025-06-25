@@ -120,6 +120,20 @@ export function Pre({
   children,
   ...props
 }: React.HTMLAttributes<HTMLPreElement>) {
+  if (React.isValidElement(children)) {
+    const childType = children.type;
+    const childProps = children.props as { className?: string };
+
+    if (
+      childType === "iframe" ||
+      (typeof childProps.className === "string" &&
+        childProps.className.includes("mermaid")) ||
+      (childType === "div" && childProps.className?.includes("no-pro"))
+    ) {
+      return <>{children}</>;
+    }
+  }
+
   return (
     <pre className={cn("p-0", className)} {...props}>
       {children}
