@@ -1,7 +1,6 @@
 # Coding Simba 🦁
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/codingsimba/codingsimba/actions)
-[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](https://github.com/codingsimba/codingsimba/actions)
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](https://github.com/codingsimba-dev/codingsimba/actions)
 [![License: AGPL v3](https://img.shields.io/badge/license-AGPL%20v3-blue)](./LICENSE)
 [![Code Style: Prettier](https://img.shields.io/badge/code%20style-prettier-ff69b4.svg)](https://prettier.io/)
 
