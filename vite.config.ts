@@ -8,8 +8,15 @@ const MODE = process.env.NODE_ENV;
 
 export default defineConfig({
   build: {
+    target: "es2022",
     cssMinify: MODE === "production",
+    rollupOptions: {
+      external: [/node:.*/],
+    },
     sourcemap: true,
+  },
+  server: {
+    watch: { ignored: ["**/playwright-report/**"] },
   },
   plugins: [
     // reactRouterDevTools({}),

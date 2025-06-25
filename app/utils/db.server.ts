@@ -8,8 +8,11 @@ import path from "node:path";
 
 const { NODE_ENV, TURSO_DATABASE_URL, TURSO_AUTH_TOKEN, DATABASE_URL } =
   process.env;
+console.log(process.env.MOCKS);
 
-const isDev = NODE_ENV === "development" || NODE_ENV === undefined;
+const isDev =
+  NODE_ENV !== "production" ||
+  (NODE_ENV === "production" && process.env.MOCKS === "true");
 const DEV_DB = DATABASE_URL?.split("/")[1];
 invariant(DEV_DB, "Development database not found.");
 

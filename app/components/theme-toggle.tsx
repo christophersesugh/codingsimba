@@ -1,3 +1,4 @@
+import React from "react";
 import { Theme, useTheme } from "remix-themes";
 import {
   DropdownMenu,
@@ -11,13 +12,14 @@ import { cn } from "~/utils/misc";
 import { useNavigation } from "react-router";
 
 export function ThemeToggle() {
+  const [dropDown, setDropDown] = React.useState(false);
   const navigation = useNavigation();
   const [theme, setTheme, { definedBy }] = useTheme();
 
   const isNavigating = navigation.state === "loading";
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={dropDown} onOpenChange={setDropDown}>
       <DropdownMenuTrigger asChild>
         {isNavigating ? (
           <Button

@@ -37,7 +37,6 @@ export function Navbar() {
         "bg-transparent": isHomePage,
         "fixed left-0 right-0 top-0 z-50 border-b border-gray-200 bg-white/80 pt-0 backdrop-blur-md dark:border-gray-800 dark:bg-gray-950/80":
           !isHomePage,
-        // "p hidden": hideNavbar,
       })}
     >
       <div className="container mx-auto flex items-center justify-between px-4 py-2">

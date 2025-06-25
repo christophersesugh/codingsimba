@@ -5,13 +5,13 @@ const PORT = process.env.PORT || "5173";
 
 export default defineConfig({
   testDir: "./tests/e2e",
-  timeout: 15 * 1000,
+  timeout: 120 * 1000, // 15 seconds should be enough but because of cold starts
   expect: {
     timeout: 5 * 1000,
   },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   use: {
@@ -29,7 +29,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: "npm run dev",
+    command: process.env.CI ? "npm run start:mocks" : "npm run dev",
     port: Number(PORT),
     reuseExistingServer: true,
     stdout: "pipe",
