@@ -57,14 +57,7 @@ Feel free to reach out to us through:
 
 ## License
 
-Copyright © 2025 Coding Simba. All rights reserved.
-
-This repository and its contents are protected under copyright law. While the repository is public for viewing and educational purposes, no license is granted for:
-- Copying, distributing, or modifying the code
-- Using the code in commercial or non-commercial projects
-- Creating derivative works
-
-For any inquiries about licensing or usage, please contact us through our website.
+This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0-only). See the [LICENSE](./LICENSE) file for details.
 
 ---
 
