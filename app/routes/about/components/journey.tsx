@@ -39,7 +39,7 @@ export function Journey({
           {(resolvedJourneyData: JourneyProps[]) => (
             <div className="relative">
               {/* Timeline line */}
-              <div className="absolute left-4 top-0 h-full w-0.5 bg-gradient-to-b from-blue-500 via-purple-500 to-green-500 md:left-1/2 md:-translate-x-px" />
+              <div className="absolute top-0 left-4 h-full w-0.5 bg-gradient-to-b from-blue-500 via-purple-500 to-green-500 md:left-1/2 md:-translate-x-px" />
 
               <div className="space-y-8">
                 {resolvedJourneyData
@@ -65,7 +65,7 @@ export function Journey({
 function JourneySkeleton() {
   return (
     <div className="relative">
-      <div className="absolute left-4 top-0 h-full w-0.5 bg-gradient-to-b from-blue-500 via-purple-500 to-green-500 md:left-1/2 md:-translate-x-px" />
+      <div className="absolute top-0 left-4 h-full w-0.5 bg-gradient-to-b from-blue-500 via-purple-500 to-green-500 md:left-1/2 md:-translate-x-px" />
       <div className="space-y-8">
         {[...Array(5)].map((_, i) => (
           <div key={i} className="flex items-start gap-4 md:gap-8">

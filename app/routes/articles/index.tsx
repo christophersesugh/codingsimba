@@ -85,7 +85,7 @@ export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
         placeholder="search for articles..."
         enableSearch
       />
-      <section className="container mx-auto px-4 pb-12 pt-6">
+      <section className="container mx-auto px-4 pt-6 pb-12">
         <ContentFilter />
         {isIndexPage ? <FeaturedArticle /> : null}
         <section className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">

@@ -8,8 +8,8 @@ export function ContactSection() {
       id="contact"
       className="relative overflow-hidden bg-gray-100/30 py-24 dark:bg-gray-800/10"
     >
-      <div className="absolute left-1/2 top-1/2 h-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 transform rounded-full bg-blue-500/5 blur-3xl" />
-      <div className="container relative z-10 mx-auto px-4">
+      <div className="absolute top-1/2 left-1/2 h-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 transform rounded-full bg-blue-500/5 blur-3xl" />
+      <div className="relative z-10 container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

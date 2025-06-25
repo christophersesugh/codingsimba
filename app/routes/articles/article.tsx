@@ -180,7 +180,7 @@ export default function ArticleDetailsRoute({
               Comment below the topics you may like me to create articles or
               tutorials on!
             </p>
-            <Separator className="mb-4 mt-2" />
+            <Separator className="mt-2 mb-4" />
             <Comments />
             <Tags />
             <Share />

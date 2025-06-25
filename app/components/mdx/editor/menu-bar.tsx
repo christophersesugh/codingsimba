@@ -23,7 +23,7 @@ export function MenuBar({ editor }: MenuBarProps) {
     return <Skeleton className="h-32" />;
   }
   return (
-    <div className="flex flex-wrap items-center gap-1 rounded-lg rounded-bl-none rounded-br-none border-b border-gray-200 bg-white p-1 dark:border-gray-800 dark:bg-gray-900">
+    <div className="flex flex-wrap items-center gap-1 rounded-lg rounded-br-none rounded-bl-none border-b border-gray-200 bg-white p-1 dark:border-gray-800 dark:bg-gray-900">
       <button
         onClick={() => editor.chain().focus().toggleBold().run()}
         className={cn(

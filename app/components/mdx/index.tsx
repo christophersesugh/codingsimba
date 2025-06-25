@@ -52,7 +52,7 @@ export function Markdown({
   return (
     <div
       className={cn(
-        "prose dark:prose-invert mx-auto max-w-4xl rounded-md py-8",
+        "mx-auto prose max-w-4xl rounded-md py-8 dark:prose-invert",
         className,
       )}
       id="markdown-content"

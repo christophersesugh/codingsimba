@@ -45,7 +45,7 @@ export function MobileNav() {
               />
             ))}
             {user ? (
-              <div className="-ml-2 mt-1">
+              <div className="mt-1 -ml-2">
                 <SignoutButton onClick={closeMobileNav} />
               </div>
             ) : null}

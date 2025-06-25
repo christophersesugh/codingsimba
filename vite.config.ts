@@ -21,7 +21,7 @@ export default defineConfig({
   plugins: [
     reactRouterDevTools({}),
     tailwindcss(),
-    ...(process.env.VITEST ? [] : [reactRouter()]),
+    process.env.VITEST ? null : reactRouter(),
     tsconfigPaths(),
   ],
   test: {

@@ -98,7 +98,7 @@ function TabItem({ value, Icon, activeTab, setActiveTab }: TabItemProps) {
         tabIndex={isActive ? 0 : -1}
         onClick={() => setActiveTab(value)}
         className={cn(
-          "flex w-full items-center rounded-lg px-4 py-2 capitalize text-gray-700 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-300 dark:hover:bg-gray-800",
+          "flex w-full items-center rounded-lg px-4 py-2 text-gray-700 capitalize hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-gray-300 dark:hover:bg-gray-800",
           {
             "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400":
               isActive,

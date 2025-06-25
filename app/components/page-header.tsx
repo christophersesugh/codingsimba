@@ -62,7 +62,7 @@ export function Header({
   }, [searchParams, setSearch]);
 
   return (
-    <header className="mt-13 relative isolate overflow-hidden border-b border-gray-200 py-6 dark:border-gray-800">
+    <header className="relative isolate mt-13 overflow-hidden border-b border-gray-200 py-6 dark:border-gray-800">
       {/* Background container with higher stacking context */}
       <div className="absolute inset-0 -z-10">
         {/* Base gradient background */}
@@ -103,7 +103,7 @@ export function Header({
         />
       </div>
 
-      <div className="container relative z-10 mx-auto px-4">
+      <div className="relative z-10 container mx-auto px-4">
         <div className="mx-auto max-w-4xl text-center">
           <motion.h1
             className="text-2xl font-bold capitalize md:text-3xl"
@@ -129,7 +129,7 @@ export function Header({
               transition={{ duration: 0.6, delay: 0.4 }}
             >
               <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400"
+                className="absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-400"
                 size={20}
               />
               <Input

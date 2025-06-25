@@ -13,7 +13,7 @@ export function H1({
   return (
     <h1
       className={cn(
-        "mb-6 mt-10 scroll-m-20 text-3xl font-bold tracking-normal lg:text-4xl",
+        "mt-10 mb-6 scroll-m-20 text-3xl font-bold tracking-normal lg:text-4xl",
         className,
       )}
       {...props}
@@ -29,7 +29,7 @@ export function H2({
     <h2
       className={cn(
         "scroll-m-20 text-3xl font-semibold tracking-tight text-gray-800 dark:text-gray-200",
-        "mb-4 mt-8 dark:border-gray-800",
+        "mt-8 mb-4 dark:border-gray-800",
         className,
       )}
       {...props}
@@ -44,7 +44,7 @@ export const H3 = ({
   <h3
     className={cn(
       "scroll-m-20 text-2xl font-semibold tracking-tight text-gray-800 dark:text-gray-200",
-      "mb-4 mt-8 dark:border-gray-800",
+      "mt-8 mb-4 dark:border-gray-800",
       className,
     )}
     {...props}
@@ -58,7 +58,7 @@ export const H4 = ({
   <h4
     className={cn(
       "scroll-m-20 text-xl font-semibold tracking-tight text-gray-800 dark:text-gray-200",
-      "mb-4 mt-8 dark:border-gray-800",
+      "mt-8 mb-4 dark:border-gray-800",
       className,
     )}
     {...props}
@@ -72,7 +72,7 @@ export const H5 = ({
   <h5
     className={cn(
       "scroll-m-20 text-lg font-semibold tracking-tight text-gray-800 dark:text-gray-200",
-      "mb-4 mt-8 dark:border-gray-800",
+      "mt-8 mb-4 dark:border-gray-800",
       className,
     )}
     {...props}
@@ -86,7 +86,7 @@ export const H6 = ({
   <h6
     className={cn(
       "scroll-m-20 text-lg font-semibold tracking-tight text-gray-800 dark:text-gray-200",
-      "mb-4 mt-8 dark:border-gray-800",
+      "mt-8 mb-4 dark:border-gray-800",
       className,
     )}
     {...props}
@@ -105,7 +105,7 @@ export function P({
   return (
     <p
       className={cn(
-        "leading-7.5 text-[1.05em] tracking-wide text-gray-700 dark:text-gray-300 [&:not(:first-child)]:mt-6",
+        "text-[1.05em] leading-7.5 tracking-wide text-gray-700 dark:text-gray-300 [&:not(:first-child)]:mt-6",
         className,
       )}
       {...props}
@@ -212,7 +212,7 @@ export function Blockquote({
       <Quote className="absolute -top-2 left-2 size-4 text-gray-300 dark:text-gray-600" />
       <blockquote
         className={cn(
-          "pl-8 italic text-gray-600 dark:text-gray-400",
+          "pl-8 text-gray-600 italic dark:text-gray-400",
           "border-l-4 border-gray-200 dark:border-gray-700",
           "relative overflow-visible",
           className,

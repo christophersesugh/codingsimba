@@ -8,7 +8,7 @@ export function ExploreButton() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 1, duration: 0.8 }}
-      className="absolute bottom-8 left-0 right-0 flex justify-center"
+      className="absolute right-0 bottom-8 left-0 flex justify-center"
     >
       <Link
         to="#courses"

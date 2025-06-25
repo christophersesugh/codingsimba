@@ -32,7 +32,7 @@ export default function NotFound() {
                 <div className="relative">
                   <Search className="h-24 w-24 text-blue-600 dark:text-blue-500" />
                   <motion.div
-                    className="absolute left-1/2 top-1/2 h-32 w-32 rounded-full border-2 border-blue-600 dark:border-blue-500"
+                    className="absolute top-1/2 left-1/2 h-32 w-32 rounded-full border-2 border-blue-600 dark:border-blue-500"
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: [0, 0.5, 0], scale: [0.8, 1.2, 1.5] }}
                     transition={{
@@ -101,7 +101,7 @@ function NavLink({ name, path }: { name: string; path: string }) {
   return (
     <Link
       to={path}
-      className="capitalize text-blue-600 hover:underline dark:text-blue-400"
+      className="text-blue-600 capitalize hover:underline dark:text-blue-400"
     >
       {name}
     </Link>

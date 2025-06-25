@@ -41,8 +41,8 @@ export function ThemeToggle() {
               className={cn(
                 "absolute h-[1.2rem] w-[1.2rem] transition-all",
                 definedBy === "SYSTEM"
-                  ? "rotate-0 scale-100"
-                  : "rotate-90 scale-0",
+                  ? "scale-100 rotate-0"
+                  : "scale-0 rotate-90",
               )}
               aria-hidden="true"
             />
@@ -50,7 +50,7 @@ export function ThemeToggle() {
             <Sun
               className={cn(
                 "absolute h-[1.2rem] w-[1.2rem] transition-all",
-                theme === "light" ? "rotate-0 scale-100" : "-rotate-90 scale-0",
+                theme === "light" ? "scale-100 rotate-0" : "scale-0 -rotate-90",
               )}
               aria-hidden="true"
             />
@@ -59,8 +59,8 @@ export function ThemeToggle() {
               className={cn(
                 "absolute h-[1.2rem] w-[1.2rem] transition-all",
                 theme === "dark" && definedBy !== "SYSTEM"
-                  ? "rotate-0 scale-100"
-                  : "rotate-90 scale-0",
+                  ? "scale-100 rotate-0"
+                  : "scale-0 rotate-90",
               )}
               aria-hidden="true"
             />

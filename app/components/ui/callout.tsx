@@ -65,7 +65,7 @@ export function Callout({
       {/* Accent line */}
       <div
         className={cn(
-          "absolute left-0 top-0 h-full w-1 transition-all duration-300 group-hover:w-1.5",
+          "absolute top-0 left-0 h-full w-1 transition-all duration-300 group-hover:w-1.5",
           styles.accent,
         )}
       />
@@ -97,7 +97,7 @@ export function Callout({
             {title && (
               <h5
                 className={cn(
-                  "mb-3 text-lg font-semibold capitalize leading-tight tracking-tight transition-colors duration-300",
+                  "mb-3 text-lg leading-tight font-semibold tracking-tight capitalize transition-colors duration-300",
                   styles.title,
                 )}
               >
@@ -106,7 +106,7 @@ export function Callout({
             )}
             <div
               className={cn(
-                "text-sm leading-relaxed transition-colors duration-300 [&_code]:rounded [&_code]:bg-black/5 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-xs dark:[&_code]:bg-white/10 [&_p:last-child]:mb-0 [&_p]:mb-2 [&_strong]:font-semibold",
+                "text-sm leading-relaxed transition-colors duration-300 [&_code]:rounded [&_code]:bg-black/5 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-xs dark:[&_code]:bg-white/10 [&_p]:mb-2 [&_p:last-child]:mb-0 [&_strong]:font-semibold",
                 styles.content,
               )}
             >

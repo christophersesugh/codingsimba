@@ -3,7 +3,7 @@ import { Link } from "react-router";
 
 export function DiscordBadge() {
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed right-6 bottom-6 z-50">
       <Link
         to="https://discord.gg/7uZ6PWf4Xv"
         target="_blank"

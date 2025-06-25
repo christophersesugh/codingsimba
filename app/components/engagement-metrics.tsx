@@ -145,7 +145,7 @@ function Metrics({
                   duration: 1,
                   ease: "easeOut",
                 }}
-                className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 -translate-y-2"
+                className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2"
               >
                 <span className="text-lg font-bold text-red-500">+1</span>
               </motion.div>

@@ -71,7 +71,7 @@ const CopyButton = React.memo(function CopyButton({ code }: CopyButtonProps) {
   return (
     <button
       onClick={copyToClipboard}
-      className="absolute right-2 top-2 z-10 rounded-md bg-gray-200/80 p-2 text-red-500 transition-colors hover:bg-gray-300 dark:bg-[#112630] dark:hover:bg-[#1d3b47]"
+      className="absolute top-2 right-2 z-10 rounded-md bg-gray-200/80 p-2 text-red-500 transition-colors hover:bg-gray-300 dark:bg-[#112630] dark:hover:bg-[#1d3b47]"
       aria-label="Copy code"
       disabled={copied}
     >

@@ -1,5 +1,19 @@
-.react-router
-build
-node_modules
-README.md
 .DS_Store
+.env
+/node_modules/
+/app/generated/
+
+# React Router
+/.react-router/
+/build/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/tests-examples/
+
+# Vitest
+/vitest-example/
+/coverage/
