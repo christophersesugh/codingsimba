@@ -138,7 +138,14 @@ const matchStrategies = {
   },
 };
 
-// Mock data handlers
+// handleArticlesQuery supports the following search params:
+// $search: string (search term)
+// $category: string (category slug)
+// $tag: string (tag slug)
+// $start: number (pagination start)
+// $end: number (pagination end)
+// $order: string (sort order, e.g., 'createdAt desc')
+// $filters: string (additional filter logic, e.g., 'published == true')
 async function handleArticlesQuery(url: URL, query: string) {
   const search = url.searchParams.get("$search")?.replace(/\*/g, "");
   const category = url.searchParams.get("$category");
@@ -146,6 +153,8 @@ async function handleArticlesQuery(url: URL, query: string) {
   const start = Math.max(0, Number(url.searchParams.get("$start") ?? 0));
   const end = Number(url.searchParams.get("$end") ?? start + 6);
   const pageSize = end - start;
+  const order = url.searchParams.get("$order") || "createdAt desc";
+  const filters = url.searchParams.get("$filters");
 
   const articles = await getArticles();
   let filteredArticles = articles.filter((a) => a.published && !a.featured);
@@ -175,11 +184,21 @@ async function handleArticlesQuery(url: URL, query: string) {
     );
   }
 
-  filteredArticles.sort((a, b) => {
-    const dateA = new Date(a.createdAt).getTime();
-    const dateB = new Date(b.createdAt).getTime();
-    return dateB - dateA; // desc order
-  });
+  // Apply $order (basic support for 'createdAt desc' or 'createdAt asc')
+  if (/createdAt\s+desc/i.test(order)) {
+    filteredArticles.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA;
+    });
+  } else if (/createdAt\s+asc/i.test(order)) {
+    filteredArticles.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateA - dateB;
+    });
+  }
+  // Add more order logic as needed
 
   const paginatedArticles = filteredArticles.slice(start, start + pageSize);
 

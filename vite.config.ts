@@ -24,4 +24,14 @@ export default defineConfig({
     ...(process.env.VITEST ? [] : [reactRouter()]),
     tsconfigPaths(),
   ],
+  test: {
+    exclude: ["**/tests/e2e/**/*.{test,spec}.{ts,tsx}"],
+    coverage: {
+      enabled: true,
+      provider: "v8",
+      reporter: ["html"],
+      include: ["**/app/**"],
+      exclude: ["**/app/generated/**", "**/.react-router/**"],
+    },
+  },
 });

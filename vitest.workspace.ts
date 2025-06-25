@@ -11,11 +11,8 @@ export default defineWorkspace([
       env: {
         TESTING: "true",
       },
-      include: ["**/__tests__/unit/**/*.{test,spec}.{ts,tsx}"],
-      exclude: [
-        "**/__tests__/browser/**/*.{test,spec}.{ts,tsx}",
-        "**/tests/e2e/**/*.{test,spec}.{ts,tsx}",
-      ],
+      include: ["**/*.unit.{test,spec}.{ts,tsx}"],
+      exclude: ["**/*.browser.{test,spec}.{ts,tsx}"],
     },
   },
   {
@@ -31,11 +28,8 @@ export default defineWorkspace([
       env: {
         TESTING: "true",
       },
-      include: ["**/__tests__/browser/**/*.{test,spec}.{ts,tsx}"],
-      exclude: [
-        "**/__tests__/unit/**/*.{test,spec}.{ts,tsx}",
-        "**/tests/e2e/**/*.{test,spec}.{ts,tsx}",
-      ],
+      include: ["**/*.browser.{test,spec}.{ts,tsx}"],
+      exclude: ["**/*.unit.{test,spec}.{ts,tsx}"],
     },
   },
 ]);
