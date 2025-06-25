@@ -1,5 +1,10 @@
 # Coding Simba 🦁
 
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/codingsimba/codingsimba/actions)
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](https://github.com/codingsimba/codingsimba/actions)
+[![License: AGPL v3](https://img.shields.io/badge/license-AGPL%20v3-blue)](./LICENSE)
+[![Code Style: Prettier](https://img.shields.io/badge/code%20style-prettier-ff69b4.svg)](https://prettier.io/)
+
 Welcome to our learning platform where we share knowledge and experiences in software development through articles, tutorials, courses, and structured learning programs.
 
 ## ⚠️ Important Notice
