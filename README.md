@@ -32,7 +32,7 @@ This is a platform for sharing insights about programming, software development 
 - 🎓 Software engineering courses
 - 🚀 Structured learning programs
 - 💡 Development tips and tricks
-- 🔍 Code examples and explanations
+- 🔍 Monthly coding challenges
 - 👥 Community-driven learning
 
 ## Community
