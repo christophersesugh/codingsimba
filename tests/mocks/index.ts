@@ -6,9 +6,11 @@ import { handlers as resendHandlers } from "./resend";
 import { handlers as bunnyHandlers } from "./bunny";
 import { handlers as githubHandlers } from "./github";
 
-const miscHandlers: HttpHandler[] = process.env.REACTR_ROUTER_DEV_ORIGIN
-  ? [http.post(`${process.env.REACTR_ROUTER_DEV_ORIGIN}ping`, passthrough)]
-  : [];
+// React Router Dev Tools
+const miscHandlers: HttpHandler[] =
+  process.env.NODE_ENV === "development"
+    ? [http.post(/http:\/\/localhost:5173\/.*/, passthrough)]
+    : [];
 
 export const server = setupServer(
   ...miscHandlers,

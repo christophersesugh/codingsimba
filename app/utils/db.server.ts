@@ -8,7 +8,6 @@ import path from "node:path";
 
 const { NODE_ENV, TURSO_DATABASE_URL, TURSO_AUTH_TOKEN, DATABASE_URL } =
   process.env;
-console.log(process.env.MOCKS);
 
 const isDev =
   NODE_ENV !== "production" ||
