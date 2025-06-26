@@ -105,7 +105,7 @@ function LiveChat() {
     return (
       <Button
         onClick={() => setIsOpen(true)}
-        className="fixed right-6 bottom-6 z-50 h-14 w-14 rounded-full bg-blue-600 p-0 shadow-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+        className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-blue-600 p-0 shadow-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
       >
         <MessageCircle className="h-6 w-6" />
       </Button>
@@ -113,7 +113,7 @@ function LiveChat() {
   }
 
   return (
-    <div className="fixed right-6 bottom-6 z-50 w-80">
+    <div className="fixed bottom-6 right-6 z-50 w-80">
       <Card className="shadow-2xl">
         <CardHeader className="bg-blue-600 text-white dark:bg-blue-500">
           <div className="flex items-center justify-between">

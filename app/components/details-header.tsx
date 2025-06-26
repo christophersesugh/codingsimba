@@ -45,7 +45,7 @@ export function DetailsHeader({ item }: DetailsHeaderProps) {
   });
 
   return (
-    <div className="relative isolate mt-13 overflow-hidden border-b border-gray-200 py-4 dark:border-gray-800">
+    <div className="mt-13 relative isolate overflow-hidden border-b border-gray-200 py-4 dark:border-gray-800">
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-indigo-50 dark:from-blue-950 dark:to-indigo-950" />
         {shapes.map((shape) => (
@@ -82,7 +82,7 @@ export function DetailsHeader({ item }: DetailsHeaderProps) {
         />
       </div>
 
-      <div className="relative z-10 container mx-auto px-4">
+      <div className="container relative z-10 mx-auto px-4">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -110,7 +110,7 @@ export function DetailsHeader({ item }: DetailsHeaderProps) {
           </motion.div>
 
           <motion.h1
-            className="mt-2 mb-3 text-2xl font-bold md:text-3xl"
+            className="mb-3 mt-2 text-2xl font-bold md:text-3xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}

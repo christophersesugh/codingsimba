@@ -120,9 +120,10 @@ model TeamInvite {
   invitedBy   User   @relation(fields: [invitedById], references: [id])
 
   @@unique([teamId, email])
-  @@index([teamId])
+  @@index([teamId, status])
+  @@index([email, status])
   @@index([email])
-  @@index([status])
+  @@index([status, expiresAt])
 }
 
 /// The status of a team invitation.

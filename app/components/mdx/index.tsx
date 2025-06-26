@@ -1,5 +1,7 @@
 import * as React from "react";
 import { getMDXComponent } from "mdx-bundler/client";
+import { motion } from "framer-motion";
+import { cn } from "~/utils/misc";
 import {
   A,
   Blockquote,
@@ -18,7 +20,6 @@ import {
 import { Img } from "./components/media";
 import { Ol, Ul } from "./components/lists";
 import { Code } from "./components/code";
-import { cn } from "~/utils/misc";
 
 import type { SandpackTemplate } from "~/utils/content.server/articles/types";
 import {
@@ -31,6 +32,26 @@ import {
   Tr,
   Tfoot,
 } from "./components/table";
+import { Button } from "~/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "~/components/ui/card";
+import { Badge } from "~/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
+import { Callout } from "~/components/ui/callout";
+import { Separator } from "~/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "~/components/ui/accordion";
 
 export function Markdown({
   source,
@@ -41,7 +62,35 @@ export function Markdown({
   className?: string;
   sandpackTemplates?: SandpackTemplate[];
 }) {
-  const Component = React.useMemo(() => getMDXComponent(source), [source]);
+  const Component = React.useMemo(
+    () =>
+      getMDXComponent(source, {
+        motion,
+        cn,
+        Button,
+        Card,
+        CardContent,
+        CardHeader,
+        CardTitle,
+        CardDescription,
+        CardFooter,
+        Badge,
+        Alert,
+        AlertDescription,
+        AlertTitle,
+        Callout,
+        Separator,
+        Tabs,
+        TabsContent,
+        TabsList,
+        TabsTrigger,
+        Accordion,
+        AccordionContent,
+        AccordionItem,
+        AccordionTrigger,
+      }),
+    [source],
+  );
 
   const CodeWithSandpack = React.useCallback(
     (props: React.ComponentProps<typeof Code>) => (
@@ -52,7 +101,7 @@ export function Markdown({
   return (
     <div
       className={cn(
-        "mx-auto prose max-w-4xl rounded-md py-8 dark:prose-invert",
+        "prose dark:prose-invert mx-auto max-w-4xl rounded-md py-8",
         className,
       )}
       id="markdown-content"

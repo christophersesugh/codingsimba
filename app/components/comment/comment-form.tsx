@@ -30,7 +30,7 @@ export function CommentForm({
   };
 
   return (
-    <div className="mt-2 mb-4">
+    <div className="mb-4 mt-2">
       <div className="flex w-full flex-1 flex-col items-start space-x-4 md:flex-row">
         {!isForUpdate ? (
           <Avatar className="flex items-center justify-center border border-gray-300 dark:border-gray-600">

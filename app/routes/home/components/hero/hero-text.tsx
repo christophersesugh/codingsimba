@@ -38,15 +38,15 @@ export function HeroText() {
         transition={{ delay: 0.4, duration: 0.8 }}
         className="mb-8 text-xl text-gray-600 dark:text-gray-300"
       >
-        Accelerate your career with structured programs, in-depth courses, and
-        practical tutorials designed for real-world success.
+        Accelerate your career with structured programs, monthly coding
+        challenges, and practical tutorials designed for real-world success.
       </motion.p>
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.6, duration: 0.8 }}
-        className="flex flex-col gap-4 sm:flex-row"
+        className="flex flex-col gap-4 sm:flex-row sm:flex-wrap"
       >
         <Button
           asChild
@@ -63,8 +63,16 @@ export function HeroText() {
           className="rounded-full border-blue-200 px-8 hover:bg-blue-50 dark:border-blue-800 dark:hover:bg-blue-900/20"
         >
           <Link to={"/articles"} prefetch="intent">
-            {" "}
             Read Articles
+          </Link>
+        </Button>
+        <Button
+          size="lg"
+          variant="outline"
+          className="rounded-full border-green-200 px-8 hover:bg-green-50 dark:border-green-800 dark:hover:bg-green-900/20"
+        >
+          <Link to={"/challenges"} prefetch="intent">
+            Join Challenges
           </Link>
         </Button>
       </motion.div>

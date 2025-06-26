@@ -66,7 +66,7 @@ export function ArticleCard({ article, index }: ArticleCardProps) {
           </CardDescription>
         </CardContent>
 
-        <CardFooter className="mt-auto -mb-4 flex justify-between pt-0 pl-3">
+        <CardFooter className="-mb-4 mt-auto flex justify-between pl-3 pt-0">
           <Button
             variant={"link"}
             className="flex w-full items-center justify-start font-medium text-blue-600 dark:text-blue-600"

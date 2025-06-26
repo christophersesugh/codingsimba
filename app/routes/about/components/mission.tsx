@@ -53,7 +53,7 @@ export function Mission() {
                 className="h-full w-full object-contain"
               />
             </div>
-            <div className="absolute -right-6 -bottom-6 h-32 w-32 rotate-6 transform rounded-lg border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-800 dark:bg-gray-900">
+            <div className="absolute -bottom-6 -right-6 h-32 w-32 rotate-6 transform rounded-lg border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-800 dark:bg-gray-900">
               <div className="mb-2 h-4 w-3/4 rounded bg-blue-600 dark:bg-blue-500" />
               <div className="mb-2 h-3 w-full rounded bg-gray-200 dark:bg-gray-700" />
               <div className="h-3 w-5/6 rounded bg-gray-200 dark:bg-gray-700" />
@@ -68,7 +68,7 @@ export function Mission() {
 function ListItem({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-start">
-      <CheckCircle className="mt-0.5 mr-3 h-5 w-5 flex-shrink-0 text-green-500" />
+      <CheckCircle className="mr-3 mt-0.5 h-5 w-5 flex-shrink-0 text-green-500" />
       <p className="text-gray-800 dark:text-gray-300">{children}</p>
     </div>
   );

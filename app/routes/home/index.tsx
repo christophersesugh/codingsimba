@@ -1,6 +1,6 @@
 import { HeroSection } from "./hero";
-import { CoursesSection } from "./courses";
-import { ArticlesSection } from "./articles";
+// import { CoursesSection } from "./courses";
+// import { ArticlesSection } from "./articles";
 // import { About } from "./about";
 import { ContactSection } from "./contact";
 import { NewsLetterSection } from "./news-letter";
@@ -25,10 +25,10 @@ export default function HomeRoute() {
     <>
       {generateMetadata({})}
       <HeroSection />
-      <CoursesSection />
-      <ArticlesSection />
-      <Subscription />
+      {/* <CoursesSection /> */}
+      {/* <ArticlesSection /> */}
       <FAQSection />
+      <Subscription />
       {/* <About /> */}
       <ContactSection />
       <NewsLetterSection />

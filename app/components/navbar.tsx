@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router";
 import { DoorClosed } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { navLinks } from "~/constants/navlinks";
-import { Menu, UserPen } from "lucide-react";
+import * as Icons from "lucide-react";
 import { NavLink } from "./nav-link";
 import { ThemeToggle } from "~/components/theme-toggle";
 import { cn } from "~/utils/misc";
@@ -35,7 +35,7 @@ export function Navbar() {
     <nav
       className={cn("pt-6", {
         "bg-transparent": isHomePage,
-        "fixed top-0 right-0 left-0 z-50 border-b border-gray-200 bg-white/80 pt-0 backdrop-blur-md dark:border-gray-800 dark:bg-gray-950/80":
+        "fixed left-0 right-0 top-0 z-50 border-b border-gray-200 bg-white/80 pt-0 backdrop-blur-md dark:border-gray-800 dark:bg-gray-950/80":
           !isHomePage,
       })}
     >
@@ -85,7 +85,7 @@ export function Navbar() {
               <DropdownMenuContent align="start">
                 <DropdownMenuItem asChild>
                   <Link to={"/profile"} prefetch="intent" className="font-bold">
-                    <UserPen className="mr-2 size-4" /> Profile
+                    <Icons.UserPen className="mr-2 size-4" /> Profile
                   </Link>
                 </DropdownMenuItem>
                 <Separator className="my-1" />
@@ -100,7 +100,7 @@ export function Navbar() {
             className="block lg:hidden"
             onClick={openMobileNav}
           >
-            <Menu />
+            <Icons.Menu />
           </Button>
         </div>
       </div>

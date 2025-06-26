@@ -84,9 +84,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       })
     : null;
 
-  const nullUser: boolean = !!(sessionId && !user);
-
-  if (nullUser) {
+  if (sessionId && !user) {
     await signout({ request, redirectTo: "/" });
   }
 
@@ -159,7 +157,7 @@ function App() {
       <Outlet />
       <Footer />
       <DiscordBadge />
-      <Toaster position="top-center" richColors />
+      <Toaster position="top-right" richColors />
     </Document>
   );
 }
@@ -204,7 +202,7 @@ function ThemedApp({
 export function ErrorBoundary() {
   const nonce = useNonce();
   return (
-    <ThemedApp theme={"dark" as Theme}>
+    <ThemedApp theme={null}>
       <Document nonce={nonce}>
         <GeneralErrorBoundary />
       </Document>

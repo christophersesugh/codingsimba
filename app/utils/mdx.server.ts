@@ -73,5 +73,63 @@ export async function bundleMDX({
       ];
       return options;
     },
+    globals: {
+      // Animation and utilities
+      "framer-motion": "motion",
+      cn: "cn",
+
+      // Core UI components
+      Button: "Button",
+      Badge: "Badge",
+      Card: "Card",
+      CardHeader: "CardHeader",
+      CardTitle: "CardTitle",
+      CardDescription: "CardDescription",
+      CardContent: "CardContent",
+      CardFooter: "CardFooter",
+
+      // Form components
+      Input: "Input",
+      Label: "Label",
+      Textarea: "Textarea",
+      Select: "Select",
+      SelectContent: "SelectContent",
+      SelectItem: "SelectItem",
+      SelectTrigger: "SelectTrigger",
+      SelectValue: "SelectValue",
+
+      // Layout components
+      Separator: "Separator",
+      AspectRatio: "AspectRatio",
+
+      // Feedback components
+      Alert: "Alert",
+      AlertDialog: "AlertDialog",
+      AlertDialogAction: "AlertDialogAction",
+      AlertDialogCancel: "AlertDialogCancel",
+      AlertDialogContent: "AlertDialogContent",
+      AlertDialogTitle: "AlertDialogTitle",
+      AlertDialogTrigger: "AlertDialogTrigger",
+
+      // Navigation components
+      Tabs: "Tabs",
+      TabsContent: "TabsContent",
+      TabsList: "TabsList",
+      TabsTrigger: "TabsTrigger",
+
+      // Overlay components
+      Dialog: "Dialog",
+      DialogContent: "DialogContent",
+      DialogDescription: "DialogDescription",
+      DialogFooter: "DialogFooter",
+      DialogHeader: "DialogHeader",
+      DialogTitle: "DialogTitle",
+      DialogTrigger: "DialogTrigger",
+
+      // Data display
+      Avatar: "Avatar",
+      AvatarFallback: "AvatarFallback",
+      AvatarImage: "AvatarImage",
+    },
   });
 }

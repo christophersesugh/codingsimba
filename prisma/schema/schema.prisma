@@ -59,6 +59,9 @@ model User {
   challengeBadges      UserChallengeBadge[]
   leaderboardEntries   LeaderboardEntry[]
   userChallenges       UserChallenge[]
+
+  @@index([lastSeenAt])
+  @@index([createdAt])
 }
 
 /// Stores the hashed password for a user who signs up with email and password.

@@ -265,7 +265,7 @@ export function Comment({ comment }: { comment: CommentData }) {
               </AlertDialog>
             ) : null}
           </div>
-          {comment.replies?.length ? <Separator className="mt-4 mb-6" /> : null}
+          {comment.replies?.length ? <Separator className="mb-6 mt-4" /> : null}
           {showReplyForm ? (
             <CommentForm
               comment={reply}

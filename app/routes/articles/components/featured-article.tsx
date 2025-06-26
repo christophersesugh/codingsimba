@@ -36,7 +36,7 @@ function Article({ article }: { article: Article }) {
             alt={article.title}
             className="h-full min-h-full w-full object-fill transition-transform duration-500 group-hover:scale-105"
           />
-          <div className="absolute top-4 left-4">
+          <div className="absolute left-4 top-4">
             <span className="rounded-full bg-blue-600 px-3 py-1 text-sm font-medium text-white">
               Featured
             </span>

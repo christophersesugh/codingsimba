@@ -51,7 +51,6 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",
     "test:e2e:install": "playwright install --with-deps chromium",
-    "prebundle": "vite --force --optimize-deps",
     "typecheck": "react-router typegen && tsc",
     "lint": "eslint .",
     "lint:fix": "eslint --fix",

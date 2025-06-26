@@ -131,8 +131,57 @@ export async function readMdxDirectory(directory: string) {
 }
 
 /**
+ * Validates and sanitizes component code for security
+ * @param code - The component code to validate
+ * @returns {boolean} Whether the code is safe to execute
+ */
+function validateComponentCode(code: string): boolean {
+  // Block dangerous patterns
+  const dangerousPatterns = [
+    /eval\s*\(/,
+    /Function\s*\(/,
+    /setTimeout\s*\([^,]*,\s*[^)]*\)/,
+    /setInterval\s*\([^,]*,\s*[^)]*\)/,
+    /fetch\s*\(/,
+    /XMLHttpRequest/,
+    /localStorage/,
+    /sessionStorage/,
+    /document\.cookie/,
+    /window\./,
+    /process\./,
+    /require\s*\(/,
+    /import\s*\(/,
+    /__dirname/,
+    /__filename/,
+  ];
+
+  return !dangerousPatterns.some((pattern) => pattern.test(code));
+}
+
+/**
+ * Sanitizes component code by removing potentially dangerous code
+ * @param code - The component code to sanitize
+ * @returns {string} Sanitized code
+ */
+function sanitizeComponentCode(code: string): string {
+  // Remove any eval-like patterns
+  return code
+    .replace(/eval\s*\([^)]*\)/g, "// eval() removed for security")
+    .replace(/Function\s*\([^)]*\)/g, "// Function() removed for security")
+    .replace(
+      /setTimeout\s*\([^,]*,\s*[^)]*\)/g,
+      "// setTimeout() removed for security",
+    )
+    .replace(
+      /setInterval\s*\([^,]*,\s*[^)]*\)/g,
+      "// setInterval() removed for security",
+    );
+}
+
+/**
  * Bundles React components into a format suitable for MDX bundling.
  * Transforms an array of component objects into a record of file paths and their code content.
+ * Includes security validation and sanitization.
  *
  * @param {Array<{ file: { filename: string; code: string } }>} components - Array of component objects
  * @returns {Record<string, string>} Object mapping file paths to their code content
@@ -160,9 +209,20 @@ export function bundleComponents(
       .join("");
     const fileKey = `./${component.file.filename}.tsx`;
 
+    // Security validation
+    if (!validateComponentCode(component.file.code)) {
+      console.warn(
+        `Component ${componentName} contains potentially dangerous code and will be skipped`,
+      );
+      return acc;
+    }
+
+    // Sanitize the code
+    const sanitizedCode = sanitizeComponentCode(component.file.code);
+
     acc[fileKey] = `
     import React, { useState } from 'react';
-    ${component.file.code}
+    ${sanitizedCode}
     export default function Embedded(props) {
       return (
         <div className="mdx-embedded-wrapper">
