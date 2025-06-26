@@ -7,10 +7,7 @@ export default defineWorkspace([
     test: {
       name: "unit",
       environment: "node",
-      setupFiles: ["./tests/setup-tests.ts"],
-      env: {
-        TESTING: "true",
-      },
+      setupFiles: ["./tests/setup/setup-env.unit.ts"],
       include: ["**/*.unit.{test,spec}.{ts,tsx}"],
       exclude: ["**/*.browser.{test,spec}.{ts,tsx}"],
     },
@@ -24,10 +21,7 @@ export default defineWorkspace([
         provider: "playwright",
         instances: [{ browser: "chromium" }],
       },
-      setupFiles: ["./tests/setup-tests.ts"],
-      env: {
-        TESTING: "true",
-      },
+      setupFiles: ["./tests/setup/setup-env.browser.ts"],
       include: ["**/*.browser.{test,spec}.{ts,tsx}"],
       exclude: ["**/*.unit.{test,spec}.{ts,tsx}"],
     },

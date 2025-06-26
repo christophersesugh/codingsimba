@@ -25,8 +25,14 @@ export default defineConfig({
     tsconfigPaths(),
   ],
   test: {
+    restoreMocks: true,
+    setupFiles: ["./tests/setup/setup-env.ts"],
     exclude: ["**/tests/e2e/**/*.{test,spec}.{ts,tsx}"],
+    env: {
+      TESTING: "true",
+    },
     coverage: {
+      all: true,
       enabled: true,
       provider: "v8",
       reporter: ["html"],

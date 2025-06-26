@@ -43,6 +43,7 @@
     "dev:no-mocks": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
     "start:mocks": "cross-env MOCKS=true react-router-serve ./build/server/index.js",
+    "test:all": "vitest --workspace=vitest.workspace.ts --project unit --project browser",
     "test:unit": "vitest --workspace=vitest.workspace.ts --project unit --ui",
     "test:browser": "vitest --workspace=vitest.workspace.ts --project browser",
     "test:coverage": "vitest run --coverage",
