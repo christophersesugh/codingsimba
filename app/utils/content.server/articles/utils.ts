@@ -11,9 +11,26 @@ import {
   relatedQuery,
   tagQuery,
   featuredArticleQuery,
+  articleIdQuery,
 } from "./queries";
 import { bundleMDX } from "~/utils/mdx.server";
 import { bundleComponents, MarkdownConverter } from "~/utils/misc.server";
+
+/**
+ * Retrieves the ID of an article by its slug
+ * @param {string} slug - The slug of the article to retrieve
+ * @returns {Promise<string | undefined>} The ID of the article or undefined if not found
+ * @example
+ * // Get the ID of an article about React hooks
+ * const id = await getArticleIdBySlug("react-hooks-guide");
+ * console.log(id); // "1234567890"
+ */
+export async function getArticleIdBySlug(slug: string) {
+  return client
+    .fetch<{ id: string }>(articleIdQuery, { slug })
+    .then((article) => article.id)
+    .catch(() => undefined);
+}
 
 /**
  * Retrieves a list of articles based on specified filtering criteria

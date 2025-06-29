@@ -15,14 +15,18 @@ type Like = {
 
 export function EngagementMetrics({ className }: { className?: string }) {
   const loaderData = useLoaderData() as Route.ComponentProps["loaderData"];
+
   return (
-    <React.Suspense fallback={<Loading />}>
-      <Await resolve={loaderData.metrics}>
+    <React.Suspense fallback={<MetricsSkeleton className={className} />}>
+      <Await
+        resolve={loaderData.metrics}
+        errorElement={<MetricsError className={className} />}
+      >
         {(metrics) =>
           metrics ? (
-            <Metrics metrics={metrics} className={className} />
+            <MetricsContent metrics={metrics} className={className} />
           ) : (
-            <Loading />
+            <NoMetrics className={className} />
           )
         }
       </Await>
@@ -30,9 +34,14 @@ export function EngagementMetrics({ className }: { className?: string }) {
   );
 }
 
-function Loading() {
+function MetricsSkeleton({ className }: { className?: string }) {
   return (
-    <div className="mb-8 flex flex-col items-start justify-between border-b border-gray-200 py-4 dark:border-gray-800">
+    <div
+      className={cn(
+        "mb-8 flex flex-col items-start justify-between border-b border-gray-200 py-4 dark:border-gray-800",
+        className,
+      )}
+    >
       <div className="flex items-center space-x-6">
         <Skeleton className="h-4 w-8 rounded-xl" />
         <Skeleton className="h-4 w-8 rounded-xl" />
@@ -42,11 +51,45 @@ function Loading() {
   );
 }
 
-function Metrics({
+function NoMetrics({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn(
+        "mb-8 flex flex-col items-start justify-between border-b border-gray-200 py-4 dark:border-gray-800",
+        className,
+      )}
+    >
+      <div className="flex items-center space-x-6">
+        <span className="text-sm text-gray-500 dark:text-gray-400">
+          No metrics
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function MetricsError({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn(
+        "mb-8 flex flex-col items-start justify-between border-b border-gray-200 py-4 dark:border-gray-800",
+        className,
+      )}
+    >
+      <div className="flex items-center space-x-6">
+        <span className="text-sm text-gray-500 dark:text-gray-400">
+          Failed to load metrics
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function MetricsContent({
   metrics,
   className,
 }: {
-  metrics: Awaited<Route.ComponentProps["loaderData"]["metrics"]>;
+  metrics: Awaited<Route.ComponentProps["loaderData"]["metrics"]> | null;
   className?: string;
 }) {
   const [showFloating, setShowFloating] = React.useState(false);
@@ -100,6 +143,9 @@ function Metrics({
       { method: "post" },
     );
   }
+
+  if (!metrics) return <MetricsSkeleton className={className} />;
+
   return (
     <div
       className={cn(

@@ -1,6 +1,14 @@
 import groq from "groq";
 
 /**
+ * GROQ query to fetch the ID of an article by its slug
+ * @returns {string} GROQ query string that returns the ID of the article
+ */
+export const articleIdQuery = groq`*[_type == "article" && slug.current == $slug][0] {
+  "id": _id,
+}`;
+
+/**
  * Generates a GROQ query for fetching articles with filtering, search, and pagination
  * @param {Object} params - Query parameters
  * @param {string} params.search - Search term to filter articles by title, excerpt, or content
@@ -45,6 +53,13 @@ export function articlesQuery({
         title,
         "slug": slug.current
       },
+      "author": author->{
+        "id": _id,
+        name,
+        "slug": slug.current,
+        "image": image.asset->url,
+        bio
+      },
       "image": image.asset->url,
       excerpt,
       content,
@@ -85,6 +100,17 @@ export const articleDetailsQuery = groq`*[_type == "article" && slug.current == 
     "id": _id,
     title,
     "slug": slug.current
+  },
+  "author": author->{
+    "id": _id,
+    name,
+    "slug": slug.current,
+    "image": image.asset->url,
+    skills,
+    socialLinks,
+    isActive,
+    createdAt,
+    bio
   },
   "image": image.asset->url,
   excerpt,
@@ -170,6 +196,13 @@ export function recentArticlesQuery() {
       title,
       "slug": slug.current
     },
+    "author": author->{
+      "id": _id,
+      name,
+      "slug": slug.current,
+      "image": image.asset->url,
+      bio
+    },
     "image": image.asset->url,
     excerpt,
     content
@@ -202,6 +235,13 @@ export const featuredArticleQuery = `*[_type == "article" && published == true &
   "tags": tags[]->{
     title,
     slug
+  },
+  "author": author->{
+    "id": _id,
+    name,
+    "slug": slug.current,
+    "image": image.asset->url,
+    bio
   },
   "image": image.asset->url
 }`;

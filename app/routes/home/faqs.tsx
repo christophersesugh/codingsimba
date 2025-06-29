@@ -22,8 +22,7 @@ function FaqSkeleton() {
 }
 
 export function FAQSection() {
-  const loaderData = useLoaderData() as Route.ComponentProps["loaderData"];
-
+  const loaderData = useLoaderData<Route.ComponentProps["loaderData"]>();
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   const toggleExpanded = (index: number) => {

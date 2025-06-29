@@ -12,7 +12,7 @@ export function PopularTags() {
         <Skeleton key={index} />
       ))}
     >
-      <Await resolve={loaderData.popularTags}>
+      <Await resolve={loaderData.tags}>
         {(tags) => (tags?.length ? <Tags tags={tags} /> : null)}
       </Await>
     </React.Suspense>

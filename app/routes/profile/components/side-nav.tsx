@@ -1,6 +1,5 @@
 import type { Route } from "../+types/index";
 import { Camera, LogOut, type LucideIcon } from "lucide-react";
-import React from "react";
 import { Form, Link, useLoaderData } from "react-router";
 import { Button } from "~/components/ui/button";
 

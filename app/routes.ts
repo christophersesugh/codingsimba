@@ -17,6 +17,7 @@ export default [
   route("signin", "routes/auth/signin.tsx"),
   route("signout", "routes/auth/signout.ts"),
   route("forgot-password", "routes/auth/forgot-password.tsx"),
+  route("authors/:authorSlug", "routes/article-author.tsx"),
   route("*", "routes/not-found.tsx"),
 
   // SEO

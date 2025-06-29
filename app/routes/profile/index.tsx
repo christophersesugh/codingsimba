@@ -38,6 +38,7 @@ import { authSessionStorage } from "~/utils/session.server";
 import { invariantResponse } from "~/utils/misc";
 import { generateMetadata } from "~/utils/meta";
 import { redirectWithToast } from "~/utils/toast.server";
+import { useSearchParams } from "react-router";
 
 const IntentSchema = z.object({
   intent: z.enum([
@@ -195,7 +196,7 @@ export type TabValue =
 
 export default function ProfileRoute() {
   const metadata = generateMetadata({ title: "Profile" });
-  const [activeTab, setActiveTab] = React.useState<TabValue>("Account");
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const tabs = [
     { value: "Account", Icon: User },
@@ -204,6 +205,33 @@ export default function ProfileRoute() {
     { value: "Subscription", Icon: CreditCard },
     { value: "Notifications", Icon: Bell },
   ] as { value: TabValue; Icon: LucideIcon }[];
+
+  const tabValues = tabs.map((tab) => tab.value);
+  const tabFromUrl = searchParams.get("tab") as TabValue;
+
+  const [activeTab, setActiveTab] = React.useState<TabValue>(
+    tabFromUrl && tabValues.includes(tabFromUrl) ? tabFromUrl : tabValues[0],
+  );
+
+  const handleTabChange = React.useCallback(
+    (newTab: TabValue) => {
+      setActiveTab(newTab);
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set("tab", newTab);
+        return newParams;
+      });
+    },
+    [setSearchParams],
+  );
+
+  // Sync with URL params when they change externally
+  React.useEffect(() => {
+    const tabFromUrl = searchParams.get("tab") as TabValue;
+    if (tabFromUrl && tabValues.includes(tabFromUrl)) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [searchParams, tabValues]);
 
   function renderTab() {
     switch (activeTab) {
@@ -233,7 +261,7 @@ export default function ProfileRoute() {
                 <SideNav
                   tabs={tabs}
                   activeTab={activeTab}
-                  setActiveTab={setActiveTab}
+                  setActiveTab={handleTabChange}
                 />
               </div>
             </div>

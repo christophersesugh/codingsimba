@@ -43,6 +43,7 @@
     "dev:no-mocks": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
     "start:mocks": "cross-env MOCKS=true react-router-serve ./build/server/index.js",
+    "test:run": "cross-env CI=true vitest run",
     "test:all": "vitest --workspace=vitest.workspace.ts --project unit --project browser",
     "test:unit": "vitest --workspace=vitest.workspace.ts --project unit --ui",
     "test:browser": "vitest --workspace=vitest.workspace.ts --project browser",
@@ -183,7 +184,7 @@
     "vitest-browser-react": "^0.1.1"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "msw": {
     "workerDirectory": [

@@ -50,32 +50,29 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     new URL(request.url).searchParams.entries(),
   );
   const parsedParams = await SearchParamsSchema.safeParseAsync(searchParams);
-
-  invariant(params.articleSlug, "Article slug is required");
-
   invariantResponse(parsedParams.success, "Invalid comment search params", {
     status: StatusCodes.BAD_REQUEST,
   });
 
-  const popularTags = getPopularTags();
-  const article = await getArticleDetails(params.articleSlug);
-  invariantResponse(article, `Article with slug: '${article.slug}' not found`, {
+  invariant(params.articleSlug, "Article slug is required");
+
+  const articleSlug = params.articleSlug;
+
+  const tags = getPopularTags();
+  const metrics = getArticleMetrics({ articleSlug });
+  const comments = getArticleComments({
+    articleSlug,
+    ...parsedParams.data,
+  });
+  const article = await getArticleDetails(articleSlug);
+  invariantResponse(article, `Article with title: '${articleSlug}' not found`, {
     status: StatusCodes.NOT_FOUND,
   });
 
-  const metrics = getArticleMetrics({
-    articleId: article.id,
-  });
-
-  const articleComments = getArticleComments({
-    articleId: article.id,
-    ...parsedParams.data,
-  });
-
   return {
-    popularTags,
+    tags,
     metrics,
-    comments: articleComments,
+    comments,
     article,
   };
 }

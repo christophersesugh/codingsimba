@@ -7,7 +7,9 @@ import { readMdxPageContent } from "~/utils/misc.server";
 import { generateMetadata } from "~/utils/meta";
 
 export async function loader() {
-  const pageContent = await readMdxPageContent("terms");
+  const pageContent = await readMdxPageContent({
+    pageName: "terms",
+  });
   invariantResponse(pageContent, "Page content not found", {
     status: StatusCodes.NOT_FOUND,
   });

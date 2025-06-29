@@ -6,14 +6,21 @@ import { describe, expect, test } from "vitest";
 describe("FormError", () => {
   test("renders a single error message", async () => {
     render(<FormError errors="This is an error" />);
-    await expect.element(page.getByText("This is an error")).toBeVisible();
+    await page.screenshot({
+      path: "screenshot.png",
+      element: page.getByRole("alert"),
+    });
+    expect(page.getByText("This is an error")).toBeVisible();
   });
 
   test("renders multiple error messages", async () => {
     const errors = ["This is an error", "This is another error"];
     render(<FormError errors={errors} />);
-    await expect.element(page.getByText(errors[0])).toBeVisible();
-    await expect.element(page.getByText(errors[1])).toBeVisible();
+    const listElements = await page.getByRole("listitem").all();
+    expect(listElements).toHaveLength(errors.length);
+    errors.forEach((error) => {
+      expect(page.getByText(error)).toBeVisible();
+    });
   });
 
   test("renders a single error message with a custom class name", async () => {

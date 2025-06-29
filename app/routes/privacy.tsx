@@ -7,7 +7,9 @@ import { invariantResponse } from "~/utils/misc";
 import { readMdxPageContent } from "~/utils/misc.server";
 
 export async function loader() {
-  const pageContent = await readMdxPageContent("privacy");
+  const pageContent = await readMdxPageContent({
+    pageName: "privacy",
+  });
   invariantResponse(pageContent, "Page content not found", {
     status: StatusCodes.NOT_FOUND,
   });

@@ -1,17 +1,25 @@
+import { getArticleIdBySlug } from "~/utils/content.server/articles/utils";
 import { prisma } from "~/utils/db.server";
 import { bundleMDX } from "~/utils/mdx.server";
 import { MarkdownConverter } from "~/utils/misc.server";
 
 /**
  * Retrieves metrics for a specific article including views, likes, and comment counts
- * @param articleId - The Sanity.io document ID of the article
+ * @param articleSlug - The slug of the article
  * @returns Object containing article metrics and likes, or undefined if article not found
  */
-export async function getArticleMetrics({ articleId }: { articleId: string }) {
+export async function getArticleMetrics({
+  articleSlug,
+}: {
+  articleSlug: string;
+}) {
+  const articleId = await getArticleIdBySlug(articleSlug);
+  if (!articleId) {
+    return null;
+  }
   return await prisma.content.findUnique({
     where: {
-      sanityId: articleId,
-      type: "ARTICLE",
+      id: articleId,
     },
     select: {
       id: true,
@@ -34,30 +42,28 @@ export async function getArticleMetrics({ articleId }: { articleId: string }) {
 
 /**
  * Retrieves comments and their replies for a specific article
- * @param articleId - The content ID of the article
+ * @param articleSlug - The slug of the article
  * @param commentTake - Number of comments to retrieve
  * @param replyTake - Number of replies to retrieve per comment
  * @returns Array of comments with their associated replies and author information
  */
 export async function getArticleComments({
-  articleId,
+  articleSlug,
   commentTake,
   replyTake,
 }: {
-  articleId: string;
+  articleSlug: string;
   commentTake: number;
   replyTake: number;
 }) {
-  const content = await prisma.content.findUnique({
-    where: { sanityId: articleId },
-    select: { id: true },
-  });
-  if (!content) {
+  const articleId = await getArticleIdBySlug(articleSlug);
+  if (!articleId) {
     return [];
   }
+
   const comments = await prisma.comment.findMany({
     where: {
-      contentId: content.id,
+      contentId: articleId,
       parentId: null,
     },
     select: {

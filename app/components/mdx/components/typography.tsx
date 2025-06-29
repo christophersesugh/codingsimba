@@ -126,9 +126,10 @@ export function Pre({
 
     if (
       childType === "iframe" ||
+      childType === "img" ||
       (typeof childProps.className === "string" &&
         childProps.className.includes("mermaid")) ||
-      (childType === "div" && childProps.className?.includes("no-pro"))
+      (childType === "div" && childProps.className?.includes("no-pre"))
     ) {
       return <>{children}</>;
     }

@@ -19,7 +19,6 @@ export const server = setupServer(
   ...sanityHandlers,
   ...githubHandlers,
 );
-
 server.listen({ onUnhandledRequest: "warn" });
 console.info("🔶 Mock server installed");
 

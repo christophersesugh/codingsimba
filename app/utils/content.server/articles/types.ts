@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { z } from "zod";
+import { AuthorSchema } from "../authors/types";
 
 /**
  * Schema for a single file in a Sandpack template
@@ -137,6 +137,7 @@ const ComponentSchema = z.object({
  * @property {string} filename - The name of the file
  * @property {string} code - The actual code content
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ComponentCodeSchema = z.object({
   filename: z.string(),
   code: z.string(),
@@ -207,12 +208,12 @@ const RelatedArticlesSchema = z
  * @property {string} slug - URL-friendly identifier for the article
  * @property {string} createdAt - Creation timestamp
  * @property {CategorySchema} category - The article's category
- * @property {boolean} featured - Whether the article is featured
+ * @property {Author} [author] - The article's author (optional for backward compatibility)
  * @property {TagsSchema} tags - Array of tags associated with the article
  * @property {string} image - URL of the article's main image
  * @property {string} excerpt - Short description of the article
  * @property {string} content - The mdx bundled content of the article
- * @property {string} rmarkdown - The markdown content before processing
+ * @property {string} markdown - The markdown content before processing
  * @property {string} html - The processed html content before processing
  * @property {RelatedArticlesSchema} relatedArticles - Array of related articles
  * @property {SandpackTemplateSchema[]} sandpackTemplates - Array of associated Sandpack templates
@@ -226,6 +227,7 @@ export const ArticleSchema = z.object({
   updatedAt: z.string().datetime({ offset: true }),
   category: CategorySchema,
   tags: TagsSchema,
+  author: AuthorSchema,
   image: z.string(),
   excerpt: z.string(),
   content: z.string(),
@@ -265,6 +267,7 @@ export const UrlSchema = z.object({
  * @property {number} [start] - Start index for pagination (defaults to 0)
  * @property {number} [end] - End index for pagination (defaults to 6)
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ArgsSchema = UrlSchema.extend({
   start: z.number().min(0).default(0),
   end: z.number().min(1).default(6),

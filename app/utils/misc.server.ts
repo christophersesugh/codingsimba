@@ -20,12 +20,16 @@ import { bundleMDX } from "./mdx.server";
  * }
  * ```
  */
-export async function readPageContent(
-  pageName: string,
-): Promise<string | null> {
+export async function readPageContent({
+  basePath = "content/pages",
+  pageName,
+}: {
+  basePath?: string;
+  pageName: string;
+}): Promise<string | null> {
   try {
     const data = await fs.readFile(
-      path.join(process.cwd(), "content/pages", `${pageName}.mdx`),
+      path.join(process.cwd(), basePath, `${pageName}.mdx`),
       "utf-8",
     );
     if (!data) return null;
@@ -53,9 +57,15 @@ export async function readPageContent(
  * }
  * ```
  */
-export async function readMdxPageContent(pageName: string) {
+export async function readMdxPageContent({
+  basePath = "content/pages",
+  pageName,
+}: {
+  basePath?: string;
+  pageName: string;
+}) {
   try {
-    const data = await readPageContent(pageName);
+    const data = await readPageContent({ basePath, pageName });
     if (!data) return null;
     return await bundleMDX({ source: data });
   } catch (error) {
