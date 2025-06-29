@@ -374,34 +374,27 @@ export function filterContent(
 }
 
 /**
- * Extracts unique tags from content with usage counts
+ * Extracts unique tags from content
  * @param content - Array of content items
- * @returns Array of tags with counts, sorted by popularity
+ * @returns Array of unique tags
  */
-export function getUniqueTags(content: SanityContent[]): SanityTag[] {
-  const tagCounts = new Map<string, number>();
-
+export async function getUniqueTags(
+  content: SanityContent[],
+): Promise<SanityTag[]> {
+  const uniqueTags = new Map<string, SanityTag>();
+  const tags = await QueryHandlers.getTags();
   content
     .filter((item) => item.published)
     .forEach((item) => {
       item.tags.forEach((tag) => {
-        const count = tagCounts.get(tag.id) || 0;
-        tagCounts.set(tag.id, count + 1);
+        const foundTag = tags.find((t) => t.id === tag.id);
+        if (foundTag && !uniqueTags.has(foundTag.id)) {
+          uniqueTags.set(foundTag.id, foundTag);
+        }
       });
     });
 
-  return Array.from(
-    new Map(
-      content.flatMap((item) => item.tags).map((tag) => [tag.id, tag]),
-    ).values(),
-  )
-    .map((tag) => ({
-      id: tag.id,
-      title: tag.title,
-      slug: tag.slug,
-      count: tagCounts.get(tag.id) || 0,
-    }))
-    .sort((a, b) => (b.count || 0) - (a.count || 0));
+  return Array.from(uniqueTags.values());
 }
 
 // ============================================================================
@@ -538,7 +531,7 @@ class QueryHandlers {
   static async handleTagQuery(url: URL) {
     const limit = Number(url.searchParams.get("$limit") ?? 10);
     const articles = await QueryHandlers.getArticles();
-    const tagsWithCount = getUniqueTags(articles).slice(0, limit);
+    const tagsWithCount = (await getUniqueTags(articles)).slice(0, limit);
     return tagsWithCount;
   }
 

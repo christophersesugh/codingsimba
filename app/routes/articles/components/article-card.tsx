@@ -15,6 +15,8 @@ import { Button } from "~/components/ui/button";
 import { format } from "date-fns";
 import type { RelatedArticle } from "./related-articles";
 import { PrefetchPageLinks } from "react-router";
+import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";
+import { getInitials } from "~/utils/misc";
 
 type ArticleCardProps = {
   article: Article | RelatedArticle;
@@ -66,13 +68,24 @@ export function ArticleCard({ article, index }: ArticleCardProps) {
           </CardDescription>
         </CardContent>
 
-        <CardFooter className="-mb-4 mt-auto flex justify-between pl-3 pt-0">
+        <CardFooter className="-mb-4 mt-auto flex justify-between pt-0">
+          {"author" in article && article.author ? (
+            <div className="flex items-center gap-2">
+              <Avatar className="size-6">
+                <AvatarImage src={article.author.image} />
+                <AvatarFallback>
+                  {getInitials(article.author.name)}
+                </AvatarFallback>
+              </Avatar>
+              <p className="text-sm font-medium">{article.author.name}</p>
+            </div>
+          ) : null}
           <Button
             variant={"link"}
-            className="flex w-full items-center justify-start font-medium text-blue-600 dark:text-blue-600"
+            className="flex items-center font-medium text-blue-600 dark:text-blue-600"
           >
             Read Article
-            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            <ArrowRight className="ml-1 size-4 transition-transform group-hover:translate-x-1" />
           </Button>
         </CardFooter>
       </Card>

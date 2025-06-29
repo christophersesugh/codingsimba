@@ -14,7 +14,7 @@ type Like = {
 };
 
 export function EngagementMetrics({ className }: { className?: string }) {
-  const loaderData = useLoaderData() as Route.ComponentProps["loaderData"];
+  const loaderData = useLoaderData<Route.ComponentProps["loaderData"]>();
 
   return (
     <React.Suspense fallback={<MetricsSkeleton className={className} />}>
@@ -89,7 +89,7 @@ function MetricsContent({
   metrics,
   className,
 }: {
-  metrics: Awaited<Route.ComponentProps["loaderData"]["metrics"]> | null;
+  metrics: Awaited<Route.ComponentProps["loaderData"]["metrics"]>;
   className?: string;
 }) {
   const [showFloating, setShowFloating] = React.useState(false);

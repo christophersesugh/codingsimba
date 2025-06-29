@@ -20,6 +20,8 @@ export function PopularTags() {
 }
 
 function Tags({ tags }: { tags: Tag[] }) {
+  console.log(tags);
+
   return (
     <section className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
       <h3 className="mb-4 text-lg font-bold">Popular Tags</h3>

@@ -12,6 +12,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { getInitials } from "~/utils/misc";
 
 type DetailsHeaderProps = {
   item: Article; // | Tutorial | Course
@@ -139,27 +141,42 @@ export function DetailsHeader({ item }: DetailsHeaderProps) {
             >
               {item.category.title}
             </motion.span>
-
             {item.createdAt ? (
-              <motion.div
-                className="flex items-center text-gray-600 dark:text-gray-300"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              >
-                <Calendar className="mr-1 h-4 w-4" />
-                <span>{format(item.createdAt, "MMMM dd, yyyy")}</span>
-              </motion.div>
+              <>
+                <span className="text-gray-500 dark:text-gray-400">•</span>
+                <motion.div
+                  className="flex items-center text-gray-600 dark:text-gray-300"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
+                  <Calendar className="mr-1 h-4 w-4" />
+                  <span>{format(item.createdAt, "MMMM dd, yyyy")}</span>
+                </motion.div>
+              </>
             ) : null}
 
             {isArticle ? (
-              <motion.div
-                className="flex items-center text-gray-600 dark:text-gray-300"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              >
-                <Clock className="mr-1 h-4 w-4" />
-                <span>{stats?.text}</span>
-              </motion.div>
+              <>
+                <span className="text-gray-500 dark:text-gray-400">•</span>
+                <motion.div
+                  className="flex items-center text-gray-600 dark:text-gray-300"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
+                  <Clock className="mr-1 h-4 w-4" />
+                  <span>{stats?.text}</span>
+                </motion.div>
+                <span className="text-gray-500 dark:text-gray-400">•</span>
+                <div className="flex items-center gap-2">
+                  <Avatar className="size-6">
+                    <AvatarImage src={item.author.image} />
+                    <AvatarFallback>
+                      {getInitials(item.author.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <p className="text-sm font-medium">{item.author.name}</p>
+                </div>
+              </>
             ) : null}
           </motion.div>
         </div>

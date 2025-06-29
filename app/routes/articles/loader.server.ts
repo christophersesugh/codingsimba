@@ -19,7 +19,7 @@ export async function getArticleMetrics({
   }
   return await prisma.content.findUnique({
     where: {
-      id: articleId,
+      sanityId: articleId,
     },
     select: {
       id: true,
@@ -61,9 +61,18 @@ export async function getArticleComments({
     return [];
   }
 
+  const content = await prisma.content.findUnique({
+    where: { sanityId: articleId },
+    select: { id: true },
+  });
+
+  if (!content) {
+    return [];
+  }
+
   const comments = await prisma.comment.findMany({
     where: {
-      contentId: articleId,
+      contentId: content.id,
       parentId: null,
     },
     select: {

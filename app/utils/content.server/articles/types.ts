@@ -82,7 +82,7 @@ const SandpackCustomSetupSchema = z.object({
  * @property {SandpackOptionsSchema} [options] - Optional editor configuration
  * @property {SandpackCustomSetupSchema} [customSetup] - Optional dependency configuration
  */
-const SandpackTemplateSchema = z.object({
+export const SandpackTemplateSchema = z.object({
   id: z.string(),
   title: z.string(),
   slug: z.string(),
@@ -109,7 +109,7 @@ const SandpackTemplateSchema = z.object({
  * @property {string} filename - The name of the file
  * @property {string} code - The actual code content
  */
-const SanityCodeFieldSchema = z.object({
+export const SanityCodeFieldSchema = z.object({
   _type: z.literal("code"),
   language: z.enum(["tsx", "jsx", "typescript", "javascript"]),
   filename: z.string(),
@@ -124,7 +124,7 @@ const SanityCodeFieldSchema = z.object({
  * @property {string} title - Display title of the component
  * @property {SanityCodeFieldSchema} file - The component's code file
  */
-const ComponentSchema = z.object({
+export const ComponentSchema = z.object({
   id: z.string(),
   title: z.string(),
   file: SanityCodeFieldSchema,
@@ -137,8 +137,8 @@ const ComponentSchema = z.object({
  * @property {string} filename - The name of the file
  * @property {string} code - The actual code content
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ComponentCodeSchema = z.object({
+
+export const ComponentCodeSchema = z.object({
   filename: z.string(),
   code: z.string(),
 });
@@ -151,7 +151,7 @@ const ComponentCodeSchema = z.object({
  * @property {string} title - Display title of the tag
  * @property {string} slug - URL-friendly identifier for the tag
  */
-const TagsSchema = z.array(
+export const TagsSchema = z.array(
   z.object({
     id: z.string(),
     title: z.string(),
@@ -167,7 +167,7 @@ const TagsSchema = z.array(
  * @property {string} title - Display title of the category
  * @property {string} slug - URL-friendly identifier for the category
  */
-const CategorySchema = z.object({
+export const CategorySchema = z.object({
   id: z.string(),
   title: z.string(),
   slug: z.string(),
@@ -192,6 +192,7 @@ const RelatedArticlesSchema = z
       slug: z.string(),
       createdAt: z.string(),
       category: CategorySchema,
+      author: AuthorSchema,
       image: z.string().url(),
       excerpt: z.string(),
       content: z.string(),
@@ -267,8 +268,7 @@ export const UrlSchema = z.object({
  * @property {number} [start] - Start index for pagination (defaults to 0)
  * @property {number} [end] - End index for pagination (defaults to 6)
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ArgsSchema = UrlSchema.extend({
+export const ArgsSchema = UrlSchema.extend({
   start: z.number().min(0).default(0),
   end: z.number().min(1).default(6),
 }).omit({ page: true });
