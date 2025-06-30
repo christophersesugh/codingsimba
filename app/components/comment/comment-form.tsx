@@ -3,7 +3,7 @@ import { Send, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { useOptionalUser } from "~/hooks/user";
 import { MDXEditor } from "../mdx/editor";
-import { getImgSrc, getInitials } from "~/utils/misc";
+import { getImgSrc, getInitials, getSeed } from "~/utils/misc";
 
 type CommentFormProps = {
   isForUpdate?: boolean;
@@ -38,7 +38,7 @@ export function CommentForm({
               src={getImgSrc({
                 path: "users",
                 fileKey: user?.image?.fileKey,
-                seed: user?.id,
+                seed: getSeed(user?.name ?? ""),
               })}
               alt={user!.name}
             />

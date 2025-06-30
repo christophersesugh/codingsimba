@@ -4,13 +4,13 @@ import { Link, useLoaderData } from "react-router";
 import { SupportMeButton } from "~/components/ui/support-me-button";
 import { Button } from "~/components/ui/button";
 import { Badge } from "./ui/badge";
+import { getImgSrc, getSeed } from "~/utils/misc";
 
 export function Author() {
   const loaderData = useLoaderData<Route.ComponentProps["loaderData"]>();
   const {
     article: { author },
   } = loaderData;
-  console.log(author);
 
   if (!author) {
     return <div>No Author</div>;
@@ -21,10 +21,16 @@ export function Author() {
         <div className="hidden flex-col sm:flex">
           <div className="flex h-24 w-24 items-center justify-center">
             <img
-              src={author.image}
+              src={
+                env.MODE === "development"
+                  ? getImgSrc({
+                      path: "users",
+                      seed: getSeed(author.name),
+                    })
+                  : author.image
+              }
               alt={author.name}
               width={96}
-              height={96}
               className="min-h-24 min-w-24 rounded-full"
               loading="lazy"
             />

@@ -5,7 +5,7 @@ import { Await, Link, PrefetchPageLinks, useLoaderData } from "react-router";
 import { format } from "date-fns";
 import { readingTime } from "reading-time-estimator";
 import { Skeleton } from "~/components/ui/skeleton";
-import { getInitials } from "~/utils/misc";
+import { getImgSrc, getInitials } from "~/utils/misc";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 
 export function FeaturedArticle() {
@@ -69,7 +69,15 @@ function Article({ article }: { article: Article }) {
           {"author" in article && article.author ? (
             <div className="flex items-center gap-2">
               <Avatar className="size-6">
-                <AvatarImage src={article.author.image} />
+                <AvatarImage
+                  src={
+                    env.MODE === "development"
+                      ? getImgSrc({
+                          seed: article.author.name.split(" ")[0],
+                        })
+                      : article.author.image
+                  }
+                />
                 <AvatarFallback>
                   {getInitials(article.author.name)}
                 </AvatarFallback>

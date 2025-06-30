@@ -19,7 +19,7 @@ import { useOptionalUser } from "~/hooks/user";
 import { useUpvote, useDelete, useCreate, useUpdate } from "~/hooks/content";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { cn } from "~/utils/misc";
+import { cn, getSeed } from "~/utils/misc";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -150,7 +150,7 @@ export function Comment({ comment }: { comment: CommentData }) {
             src={getImgSrc({
               path: "users",
               fileKey: author?.image?.fileKey,
-              seed: author?.id,
+              seed: getSeed(author?.name ?? anonymous),
             })}
             alt={author?.name ?? anonymous}
           />

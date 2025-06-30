@@ -73,7 +73,7 @@ export function Navbar() {
                     src={getImgSrc({
                       path: "users",
                       fileKey: image?.fileKey,
-                      seed: user.id,
+                      seed: user.name.split(" ")[0],
                     })}
                     alt={user.name}
                   />

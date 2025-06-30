@@ -16,7 +16,7 @@ import { format } from "date-fns";
 import type { RelatedArticle } from "./related-articles";
 import { PrefetchPageLinks } from "react-router";
 import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";
-import { getInitials } from "~/utils/misc";
+import { getImgSrc, getInitials } from "~/utils/misc";
 
 type ArticleCardProps = {
   article: Article | RelatedArticle;
@@ -72,7 +72,15 @@ export function ArticleCard({ article, index }: ArticleCardProps) {
           {"author" in article && article.author ? (
             <div className="flex items-center gap-2">
               <Avatar className="size-6">
-                <AvatarImage src={article.author.image} />
+                <AvatarImage
+                  src={
+                    env.MODE === "development"
+                      ? getImgSrc({
+                          seed: article.author.name.split(" ")[0],
+                        })
+                      : article.author.image
+                  }
+                />
                 <AvatarFallback>
                   {getInitials(article.author.name)}
                 </AvatarFallback>

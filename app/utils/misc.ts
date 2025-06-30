@@ -13,8 +13,38 @@ import { slogan } from "~/constants/navlinks";
 
 export type FilePath = "users" | "content" | "assets";
 
+/**
+ * Generates a random bot avatar URL using the DiceBear API.
+ * Creates consistent avatars based on a seed string.
+ *
+ * @param seed - The seed string to generate the avatar from
+ * @returns A URL to the generated avatar image
+ *
+ * @example
+ * ```ts
+ * const avatarUrl = getRandomBotAvatar("john-doe");
+ * // Returns: "https://api.dicebear.com/9.x/avataaars/svg?seed=john-doe"
+ * ```
+ */
 export function getRandomBotAvatar(seed: string) {
-  return `https://api.dicebear.com/7.x/pixel-art/svg?seed=${seed}`;
+  return `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}`;
+}
+
+/**
+ * Extracts the first word from a name string to use as a seed.
+ * Useful for generating consistent avatars or other seeded content.
+ *
+ * @param name - The full name to extract the seed from
+ * @returns The first word of the name
+ *
+ * @example
+ * ```ts
+ * const seed = getSeed("John Doe Smith"); // "John"
+ * const singleName = getSeed("John"); // "John"
+ * ```
+ */
+export function getSeed(name: string) {
+  return name.split(" ")[0];
 }
 
 /**
@@ -230,17 +260,23 @@ export function useDelayedIsPending({
 
 /**
  * Creates a debounced version of a function.
- * Prevents function from being called too frequently.
+ * Prevents function from being called too frequently by delaying execution
+ * and cancelling previous calls if a new call is made within the delay period.
  *
  * @param fn - Function to debounce
- * @param delay - Delay in milliseconds
- * @returns Debounced function
+ * @param delay - Delay in milliseconds before executing the function
+ * @returns Debounced function that delays execution
  *
  * @example
  * ```ts
  * const debouncedSearch = debounce((query) => {
  *   searchAPI(query);
  * }, 300);
+ *
+ * // Multiple rapid calls will only execute the last one after 300ms
+ * debouncedSearch("a");
+ * debouncedSearch("ab");
+ * debouncedSearch("abc"); // Only this call will execute
  * ```
  */
 function debounce<Callback extends (...args: Parameters<Callback>) => void>(
@@ -258,10 +294,11 @@ function debounce<Callback extends (...args: Parameters<Callback>) => void>(
 
 /**
  * Calls all provided functions with the same arguments.
- * Useful for combining multiple event handlers.
+ * Useful for combining multiple event handlers or callbacks.
+ * Safely handles undefined functions by filtering them out.
  *
- * @param fns - Array of functions to call
- * @returns Function that calls all provided functions
+ * @param fns - Array of functions to call (undefined functions are ignored)
+ * @returns Function that calls all provided functions with the same arguments
  *
  * @example
  * ```ts
@@ -270,6 +307,8 @@ function debounce<Callback extends (...args: Parameters<Callback>) => void>(
  *   props.onBlur,
  *   () => console.log('blurred')
  * );
+ *
+ * // Usage: combinedHandler(event) will call all three functions with event
  * ```
  */
 function callAll<Args extends Array<unknown>>(

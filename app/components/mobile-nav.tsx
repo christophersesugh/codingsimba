@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { useOptionalUser } from "~/hooks/user";
-import { getImgSrc, getInitials } from "~/utils/misc";
+import { getImgSrc, getInitials, getSeed } from "~/utils/misc";
 import { SignoutButton } from "./signout-button";
 
 export function MobileNav() {
@@ -66,7 +66,7 @@ export function MobileNav() {
                     src={getImgSrc({
                       path: "users",
                       fileKey: user.image?.fileKey,
-                      seed: user.id,
+                      seed: getSeed(user.name),
                     })}
                     alt={user.name}
                   />

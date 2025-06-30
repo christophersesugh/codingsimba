@@ -2,7 +2,7 @@ import React from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { FilePenLine, Heart, Loader, Trash2 } from "lucide-react";
-import { cn } from "~/utils/misc";
+import { cn, getSeed } from "~/utils/misc";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Markdown } from "../mdx";
 import { useOptionalUser } from "~/hooks/user";
@@ -104,7 +104,7 @@ export function Reply({ reply }: { reply: ReplyData }) {
                 src={getImgSrc({
                   path: "users",
                   fileKey: author?.image?.fileKey,
-                  seed: author?.id,
+                  seed: getSeed(author?.name ?? anonymous),
                 })}
                 alt={author?.name ?? anonymous}
               />

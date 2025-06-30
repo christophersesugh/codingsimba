@@ -13,7 +13,7 @@ import {
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { getInitials } from "~/utils/misc";
+import { getImgSrc, getInitials, getSeed } from "~/utils/misc";
 
 type DetailsHeaderProps = {
   item: Article; // | Tutorial | Course
@@ -169,7 +169,15 @@ export function DetailsHeader({ item }: DetailsHeaderProps) {
                 <span className="text-gray-500 dark:text-gray-400">•</span>
                 <div className="flex items-center gap-2">
                   <Avatar className="size-6">
-                    <AvatarImage src={item.author.image} />
+                    <AvatarImage
+                      src={
+                        env.MODE === "development"
+                          ? getImgSrc({
+                              seed: getSeed(item.author.name),
+                            })
+                          : item.author.image
+                      }
+                    />
                     <AvatarFallback>
                       {getInitials(item.author.name)}
                     </AvatarFallback>

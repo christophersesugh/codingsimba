@@ -20,7 +20,7 @@ import {
   CardHeader,
   CardDescription,
 } from "~/components/ui/card";
-import { getImgSrc, getInitials, useIsPending } from "~/utils/misc";
+import { getImgSrc, getInitials, getSeed, useIsPending } from "~/utils/misc";
 import { parseFormData } from "@mjackson/form-data-parser";
 import { StatusCodes } from "http-status-codes";
 import { generateMetadata } from "~/utils/meta";
@@ -217,7 +217,7 @@ export default function ChangePhoto({
                       newImageSrc ??
                       getImgSrc({
                         path: "users",
-                        seed: user.id,
+                        seed: getSeed(user.name),
                         fileKey: user.image?.fileKey,
                       })
                     }
