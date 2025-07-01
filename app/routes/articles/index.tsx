@@ -59,9 +59,10 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
   const metadata = generateMetadata({ title: "Articles | Coding Simba" });
-  const [, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { articles, currentPage } = loaderData;
 
+  const search = searchParams.get("search");
   const PAGE = "page";
   const isIndexPage = currentPage === 1;
 
@@ -87,7 +88,7 @@ export default function ArticlesRoute({ loaderData }: Route.ComponentProps) {
       />
       <section className="container mx-auto px-4 pb-12 pt-6">
         <ContentFilter />
-        {isIndexPage ? <FeaturedArticle /> : null}
+        {isIndexPage && !search ? <FeaturedArticle /> : null}
         <section className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {articles?.length
             ? articles.map((article, index) => (

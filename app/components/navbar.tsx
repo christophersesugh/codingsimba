@@ -1,7 +1,15 @@
 import { Link, useLocation } from "react-router";
-import { DoorClosed } from "lucide-react";
+import {
+  DoorClosed,
+  FileText,
+  Play,
+  GraduationCap,
+  Target,
+  Trophy,
+  ChevronDown,
+} from "lucide-react";
 import { Button } from "~/components/ui/button";
-import { navLinks } from "~/constants/navlinks";
+import { content, learning } from "~/constants/navlinks";
 import * as Icons from "lucide-react";
 import { NavLink } from "./nav-link";
 import { ThemeToggle } from "~/components/theme-toggle";
@@ -31,6 +39,15 @@ export function Navbar() {
   const image = user?.image;
   const userIsAdmin = userHasRole(user, "ADMIN");
 
+  // Icon mapping for learning links
+  const learningIcons = {
+    articles: FileText,
+    tutorials: Play,
+    courses: GraduationCap,
+    programs: Target,
+    challenges: Trophy,
+  };
+
   return (
     <nav
       className={cn("pt-6", {
@@ -42,7 +59,31 @@ export function Navbar() {
       <div className="container mx-auto flex items-center justify-between px-4 py-2">
         <Logo />
         <div className="hidden items-center gap-6 lg:flex">
-          {navLinks.map((link) => (
+          <DropdownMenu>
+            <DropdownMenuTrigger className="hidden items-center gap-1 px-2 py-1 font-semibold lg:flex">
+              Learning
+              <ChevronDown className="size-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              {learning.map((link) => {
+                const IconComponent =
+                  learningIcons[link.name as keyof typeof learningIcons];
+                return (
+                  <DropdownMenuItem asChild key={link.name}>
+                    <Link
+                      to={link.path}
+                      prefetch="intent"
+                      className="flex items-center gap-2 font-bold capitalize"
+                    >
+                      {IconComponent && <IconComponent className="size-4" />}
+                      {link.name}
+                    </Link>
+                  </DropdownMenuItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {content.map((link) => (
             <NavLink
               type="navbar"
               key={link.name}

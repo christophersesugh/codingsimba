@@ -7,7 +7,12 @@ import {
 } from "./ui/sheet";
 import { Logo } from "./logo";
 import { useMobileNav } from "~/contexts/mobile-nav";
-import { navLinks, slogan } from "~/constants/navlinks";
+import {
+  navLinks,
+  learning,
+  slogan,
+  learningIcons,
+} from "~/constants/navlinks";
 import { NavLink } from "./nav-link";
 import { Separator } from "./ui/separator";
 import { Link } from "react-router";
@@ -35,6 +40,31 @@ export function MobileNav() {
           </SheetHeader>
           <Separator className="-mt-4" />
           <nav className="flex flex-col items-start gap-3 px-4">
+            {/* Learning Links */}
+            <div className="w-full">
+              <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-gray-500">
+                Learning
+              </h3>
+              <div className="flex flex-col gap-2">
+                {learning.map((link) => {
+                  const IconComponent =
+                    learningIcons[link.name as keyof typeof learningIcons];
+                  return (
+                    <Link
+                      key={link.name}
+                      to={link.path}
+                      onClick={closeMobileNav}
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium capitalize text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
+                    >
+                      {IconComponent && <IconComponent className="size-4" />}
+                      {link.name}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Other Navigation Links */}
             {navLinks.map((link, i) => (
               <NavLink
                 type="navbar"

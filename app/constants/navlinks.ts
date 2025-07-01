@@ -1,17 +1,27 @@
+import { FileText, Play, GraduationCap, Target, Trophy } from "lucide-react";
+
 export const slogan = "Elevate Your Code from Functional to Exceptional";
 
+export const learningIcons = {
+  articles: FileText,
+  tutorials: Play,
+  courses: GraduationCap,
+  programs: Target,
+  challenges: Trophy,
+};
+
 export const learning = [
-  { name: "articles", path: "articles" },
-  { name: "tutorials", path: "tutorials" },
-  { name: "courses", path: "courses" },
-  { name: "programs", path: "programs" },
-  { name: "challenges", path: "challenges" },
+  { name: "articles", path: "articles", icon: learningIcons.articles },
+  { name: "tutorials", path: "tutorials", icon: learningIcons.tutorials },
+  { name: "courses", path: "courses", icon: learningIcons.courses },
+  { name: "programs", path: "programs", icon: learningIcons.programs },
+  { name: "challenges", path: "challenges", icon: learningIcons.challenges },
 ];
 
 export const content = [
-  ...learning,
-  { name: "roadmap", path: "roadmap" },
+  // ...learning,
   { name: "support", path: "support" },
+  { name: "roadmap", path: "roadmap" },
   { name: "job board", path: "job-board" },
 ];
 
