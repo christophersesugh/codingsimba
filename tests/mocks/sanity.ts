@@ -6,7 +6,10 @@ import { http, HttpHandler, HttpResponse } from "msw";
 import { SANITY_API_URL } from "~/utils/content.server/loader";
 import { authorArticlesQuery } from "~/utils/content.server/authors/queries";
 import { authorDetailsQuery } from "~/utils/content.server/authors/queries";
-import { recentArticlesQuery } from "~/utils/content.server/articles/queries";
+import {
+  countQuery,
+  recentArticlesQuery,
+} from "~/utils/content.server/articles/queries";
 import { articleDetailsQuery } from "~/utils/content.server/articles/queries";
 import { articleIdQuery } from "~/utils/content.server/articles/queries";
 import { categoryQuery } from "~/utils/content.server/articles/queries";
@@ -382,7 +385,7 @@ export async function getUniqueTags(
   content: SanityContent[],
 ): Promise<SanityTag[]> {
   const uniqueTags = new Map<string, SanityTag>();
-  const tags = await QueryHandlers.getTags();
+  const tags = await ArticleQueryResolver.getTags();
   content
     .filter((item) => item.published)
     .forEach((item) => {
@@ -420,7 +423,7 @@ export interface QueryHandler {
  * Handles resolution of references for content items
  * Converts raw SanityContent to fully resolved Article objects
  */
-class QueryHandlers {
+class ArticleQueryResolver {
   /**
    * Loads all authors from the fixtures
    */
@@ -456,6 +459,14 @@ class QueryHandlers {
   }
 
   /**
+   * Counts all articles
+   */
+  static async countArticles() {
+    const articles = await ArticleQueryResolver.getArticles();
+    return articles.length;
+  }
+
+  /**
    * Resolves references for a single article
    * Converts SanityContent to Article with populated author, category, and tags
    */
@@ -463,9 +474,9 @@ class QueryHandlers {
     article: SanityContent,
   ): Promise<Article> {
     const [authors, categories, tags] = await Promise.all([
-      QueryHandlers.getAuthors(),
-      QueryHandlers.getCategories(),
-      QueryHandlers.getTags(),
+      ArticleQueryResolver.getAuthors(),
+      ArticleQueryResolver.getCategories(),
+      ArticleQueryResolver.getTags(),
     ]);
 
     const author = authors.find((a) => a.id === article.authorId);
@@ -492,7 +503,9 @@ class QueryHandlers {
   static async resolveArticlesReferences(
     articles: SanityContent[],
   ): Promise<Article[]> {
-    return Promise.all(articles.map(QueryHandlers.resolveArticleReferences));
+    return Promise.all(
+      articles.map(ArticleQueryResolver.resolveArticleReferences),
+    );
   }
 
   // ============================================================================
@@ -504,7 +517,7 @@ class QueryHandlers {
    */
   static async handleRelatedQuery(url: URL) {
     const slug = url.searchParams.get("$slug");
-    const articles = await QueryHandlers.getArticles();
+    const articles = await ArticleQueryResolver.getArticles();
     const currentArticle = articles.find(
       (a) => a.slug === slug?.replace(/["']/g, ""),
     );
@@ -522,7 +535,7 @@ class QueryHandlers {
         return hasSharedTags || sameCategory;
       })
       .slice(0, 3);
-    return QueryHandlers.resolveArticlesReferences(relatedArticles);
+    return ArticleQueryResolver.resolveArticlesReferences(relatedArticles);
   }
 
   /**
@@ -530,7 +543,7 @@ class QueryHandlers {
    */
   static async handleTagQuery(url: URL) {
     const limit = Number(url.searchParams.get("$limit") ?? 10);
-    const articles = await QueryHandlers.getArticles();
+    const articles = await ArticleQueryResolver.getArticles();
     const tagsWithCount = (await getUniqueTags(articles)).slice(0, limit);
     return tagsWithCount;
   }
@@ -539,7 +552,7 @@ class QueryHandlers {
    * Handles queries for all categories
    */
   static async handleCategoryQuery() {
-    return QueryHandlers.getCategories();
+    return ArticleQueryResolver.getCategories();
   }
 
   /**
@@ -547,7 +560,7 @@ class QueryHandlers {
    */
   static async handleRecentArticlesQuery(url: URL) {
     const limit = Number(url.searchParams.get("$limit") ?? 4);
-    const articles = await QueryHandlers.getArticles();
+    const articles = await ArticleQueryResolver.getArticles();
     const recentArticles = articles
       .filter((a) => a.published)
       .sort(
@@ -555,28 +568,28 @@ class QueryHandlers {
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       )
       .slice(0, limit);
-    return QueryHandlers.resolveArticlesReferences(recentArticles);
+    return ArticleQueryResolver.resolveArticlesReferences(recentArticles);
   }
 
   /**
    * Handles queries for featured articles
    */
   static async handleFeaturedArticleQuery() {
-    const articles = await QueryHandlers.getArticles();
+    const articles = await ArticleQueryResolver.getArticles();
     const featuredArticle = articles.find(
       (article) => article.featured && article.published,
     );
 
     if (!featuredArticle) return null;
 
-    return QueryHandlers.resolveArticleReferences(featuredArticle);
+    return ArticleQueryResolver.resolveArticleReferences(featuredArticle);
   }
 
   /**
    * Handles queries for article count
    */
   static async handleCountQuery() {
-    const articles = await QueryHandlers.getArticles();
+    const articles = await ArticleQueryResolver.getArticles();
     return articles.filter((a) => a.published).length;
   }
 
@@ -585,12 +598,12 @@ class QueryHandlers {
    */
   static async handleArticleIdQuery(url: URL) {
     const slug = url.searchParams.get("$slug");
-    const articles = await QueryHandlers.getArticles();
+    const articles = await ArticleQueryResolver.getArticles();
     const article = articles.find((a) => a.slug === slug?.replace(/["']/g, ""));
     if (!article) {
       throw new Error("Article not found");
     }
-    return QueryHandlers.resolveArticleReferences(article);
+    return ArticleQueryResolver.resolveArticleReferences(article);
   }
 
   /**
@@ -605,11 +618,11 @@ class QueryHandlers {
     const start = Math.max(0, Number(url.searchParams.get("$start") ?? 0));
     const end = Number(url.searchParams.get("$end") ?? start + 6);
     const pageSize = end - start;
-    const articles = await QueryHandlers.getArticles();
+    const articles = await ArticleQueryResolver.getArticles();
 
     // Resolve all articles first
     const resolvedArticles =
-      await QueryHandlers.resolveArticlesReferences(articles);
+      await ArticleQueryResolver.resolveArticlesReferences(articles);
 
     const result = filterContent(resolvedArticles, {
       search,
@@ -632,13 +645,13 @@ class QueryHandlers {
    */
   static async handleArticleDetailsQuery(url: URL) {
     const slug = url.searchParams.get("$slug");
-    const articles = await QueryHandlers.getArticles();
+    const articles = await ArticleQueryResolver.getArticles();
     const article = articles.find((a) => a.slug === slug?.replace(/["']/g, ""));
 
     if (!article) {
       throw new Error("Article not found");
     }
-    return QueryHandlers.resolveArticleReferences(article);
+    return ArticleQueryResolver.resolveArticleReferences(article);
   }
 
   // ============================================================================
@@ -650,7 +663,7 @@ class QueryHandlers {
    */
   static async handleAuthorDetailsQuery(url: URL) {
     const slug = url.searchParams.get("$slug");
-    const authors = await QueryHandlers.getAuthors();
+    const authors = await ArticleQueryResolver.getAuthors();
     const author = authors.find((a) => a.slug === slug?.replace(/["']/g, ""));
     if (!author) {
       throw new Error("Author not found");
@@ -667,7 +680,7 @@ class QueryHandlers {
       throw new Error("Author slug parameter is required");
     }
 
-    const authors = await QueryHandlers.getAuthors();
+    const authors = await ArticleQueryResolver.getAuthors();
     const author = authors.find(
       (a) => a.slug === authorSlug.replace(/["']/g, ""),
     );
@@ -675,12 +688,12 @@ class QueryHandlers {
       throw new Error("Author not found");
     }
 
-    const articles = await QueryHandlers.getArticles();
+    const articles = await ArticleQueryResolver.getArticles();
     const authorArticles = articles.filter(
       (article) => article.authorId === author.id,
     );
 
-    return QueryHandlers.resolveArticlesReferences(authorArticles);
+    return ArticleQueryResolver.resolveArticlesReferences(authorArticles);
   }
 
   // ============================================================================
@@ -745,19 +758,21 @@ class QueryHandlers {
  * Registry of all query handlers organized by content type
  * Handlers are matched in order of priority (highest first)
  */
-export const queryHandlers: QueryHandler[] = [
+export const articleQueryHandler: QueryHandler[] = [
   // Author handlers (highest priority)
   {
     name: "author-details-query",
     priority: 100,
     match: (q: string) => matchStrategies.pattern(q, authorDetailsQuery),
-    handle: async (url: URL) => QueryHandlers.handleAuthorDetailsQuery(url),
+    handle: async (url: URL) =>
+      ArticleQueryResolver.handleAuthorDetailsQuery(url),
   },
   {
     name: "author-articles-query",
     priority: 95,
     match: (q: string) => matchStrategies.pattern(q, authorArticlesQuery),
-    handle: async (url: URL) => QueryHandlers.handleAuthorArticlesQuery(url),
+    handle: async (url: URL) =>
+      ArticleQueryResolver.handleAuthorArticlesQuery(url),
   },
 
   // Article handlers
@@ -765,7 +780,7 @@ export const queryHandlers: QueryHandler[] = [
     name: "article-id-query",
     priority: 95,
     match: (q: string) => matchStrategies.pattern(q, articleIdQuery),
-    handle: async (url: URL) => QueryHandlers.handleArticleIdQuery(url),
+    handle: async (url: URL) => ArticleQueryResolver.handleArticleIdQuery(url),
   },
   {
     name: "articles-query",
@@ -778,45 +793,54 @@ export const queryHandlers: QueryHandler[] = [
         q.includes('"total": count(*')
       );
     },
-    handle: async (url: URL) => QueryHandlers.handleArticlesQuery(url),
+    handle: async (url: URL) => ArticleQueryResolver.handleArticlesQuery(url),
+  },
+  {
+    name: "count-query",
+    priority: 50,
+    match: (q: string) => matchStrategies.exact(q, countQuery),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    handle: async (_: URL) => ArticleQueryResolver.handleCountQuery(),
   },
   {
     name: "article-details-query",
     priority: 95,
     match: (q: string) => matchStrategies.pattern(q, articleDetailsQuery),
-    handle: async (url: URL) => QueryHandlers.handleArticleDetailsQuery(url),
+    handle: async (url: URL) =>
+      ArticleQueryResolver.handleArticleDetailsQuery(url),
   },
   {
     name: "related-query",
     priority: 90,
     match: (q: string) => matchStrategies.pattern(q, relatedQuery),
-    handle: async (url: URL) => QueryHandlers.handleRelatedQuery(url),
+    handle: async (url: URL) => ArticleQueryResolver.handleRelatedQuery(url),
   },
   {
     name: "tag-query",
     priority: 85,
     match: (q: string) => matchStrategies.pattern(q, tagQuery),
-    handle: async (url: URL) => QueryHandlers.handleTagQuery(url),
+    handle: async (url: URL) => ArticleQueryResolver.handleTagQuery(url),
   },
   {
     name: "category-query",
     priority: 80,
     match: (q: string) => matchStrategies.exact(q, categoryQuery),
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    handle: async (_: URL) => QueryHandlers.handleCategoryQuery(),
+    handle: async (_: URL) => ArticleQueryResolver.handleCategoryQuery(),
   },
   {
     name: "recent-articles-query",
     priority: 75,
     match: (q: string) => matchStrategies.pattern(q, recentArticlesQuery()),
-    handle: async (url: URL) => QueryHandlers.handleRecentArticlesQuery(url),
+    handle: async (url: URL) =>
+      ArticleQueryResolver.handleRecentArticlesQuery(url),
   },
   {
     name: "featured-article",
     priority: 85,
     match: (q: string) => matchStrategies.contains(q, "featured == true"),
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    handle: async (_: URL) => QueryHandlers.handleFeaturedArticleQuery(),
+    handle: async (_: URL) => ArticleQueryResolver.handleFeaturedArticleQuery(),
   },
 
   // TODO: Add tutorial handlers
@@ -849,7 +873,7 @@ export const handlers: HttpHandler[] = [
     }
 
     console.log("🔍 Sanity handler received query:", query);
-    const handler = queryHandlers.find((h) => {
+    const handler = articleQueryHandler.find((h) => {
       const matches = h.match(query);
       console.log(`📋 Checking handler ${h.name}: ${matches}`);
       return matches;

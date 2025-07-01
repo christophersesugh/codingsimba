@@ -1,6 +1,6 @@
 export const slogan = "Elevate Your Code from Functional to Exceptional";
 
-export const content = [
+export const learning = [
   { name: "articles", path: "articles" },
   { name: "tutorials", path: "tutorials" },
   { name: "courses", path: "courses" },
@@ -8,10 +8,16 @@ export const content = [
   { name: "challenges", path: "challenges" },
 ];
 
+export const content = [
+  ...learning,
+  { name: "roadmap", path: "roadmap" },
+  { name: "support", path: "support" },
+  { name: "job board", path: "job-board" },
+];
+
 export const platform = [
   { name: "about", path: "about" },
   { name: "contact", path: "contact" },
-  { name: "support", path: "support" },
   { name: "FAQs", path: "#faqs" },
 ];
 

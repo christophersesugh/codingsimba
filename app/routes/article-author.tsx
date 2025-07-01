@@ -16,11 +16,12 @@ import {
   ArrowLeft,
   ExternalLink,
 } from "lucide-react";
-import { invariant, invariantResponse } from "~/utils/misc";
+import { getImgSrc, getSeed, invariant, invariantResponse } from "~/utils/misc";
 import { StatusCodes } from "http-status-codes";
 import { generateMetadata } from "~/utils/meta";
 import { ArticleCard } from "~/routes/articles/components/article-card";
 import { GeneralErrorBoundary } from "~/components/error-boundary";
+import { format } from "date-fns";
 
 export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.authorSlug, "Author slug is required");
@@ -53,14 +54,6 @@ export default function AuthorDetailsRoute({
     type: "website",
   });
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
   return (
     <>
       {metadata}
@@ -79,7 +72,13 @@ export default function AuthorDetailsRoute({
         <div className="mb-8 rounded-xl bg-gray-50 p-8 dark:bg-gray-900">
           <div className="flex flex-col items-center text-center md:flex-row md:items-start md:text-left">
             <img
-              src={author.image}
+              src={
+                env.MODE === "development"
+                  ? getImgSrc({
+                      seed: getSeed(author.name),
+                    })
+                  : author.image
+              }
               alt={author.name}
               className="mb-6 size-32 rounded-full object-cover md:mb-0 md:mr-8"
             />
@@ -156,7 +155,9 @@ export default function AuthorDetailsRoute({
               {/* Member Since */}
               <div className="mt-4 flex items-center gap-2 text-sm text-gray-500">
                 <Calendar className="size-4" />
-                <span>Member since {formatDate(author.createdAt)}</span>
+                <span>
+                  Member since {format(author.createdAt, "MMMM yyyy")}
+                </span>
               </div>
             </div>
           </div>

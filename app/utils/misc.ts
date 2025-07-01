@@ -23,11 +23,12 @@ export type FilePath = "users" | "content" | "assets";
  * @example
  * ```ts
  * const avatarUrl = getRandomBotAvatar("john-doe");
- * // Returns: "https://api.dicebear.com/9.x/avataaars/svg?seed=john-doe"
+ * // Returns: "https://api.dicebear.com/9.x/avataaars/svg?seed=john-doe&backgroundColor=b6e3f4,c0aede"
  * ```
  */
+
 export function getRandomBotAvatar(seed: string) {
-  return `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}`;
+  return `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede`;
 }
 
 /**
