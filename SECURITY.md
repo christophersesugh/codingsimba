@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-At Coding Simba, we take security seriously. If you discover a security vulnerability, please follow these steps for responsible disclosure:
+At TekBreed, we take security seriously. If you discover a security vulnerability, please follow these steps for responsible disclosure:
 
 ### DO NOT:
 
@@ -37,7 +37,7 @@ At Coding Simba, we take security seriously. If you discover a security vulnerab
 This security policy applies to:
 
 - The main repository code
-- Our website (codingsimba.com)
+- Our website (tekbreed.com)
 - Associated APIs and services
 - Official integrations
 
@@ -56,4 +56,4 @@ When using our platform:
 - Security patches are given highest priority
 - Critical updates are announced through our Discord channel
 
-Thank you for helping keep Coding Simba secure!
+Thank you for helping keep TekBreed secure!

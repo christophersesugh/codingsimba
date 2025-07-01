@@ -12,11 +12,11 @@ interface MetadataProps {
 }
 
 export function generateMetadata({
-  title = "Coding Simba",
+  title = "TekBreed",
   description = slogan,
-  url = "https://codingsimba.com",
+  url = "https://tekbreed.com",
   image = getImgSrc({ path: "assets", fileKey: "icon.png" }),
-  imageAlt = "Coding Simba",
+  imageAlt = "TekBreed",
   type = "website",
   keywords,
 }: MetadataProps) {
@@ -25,17 +25,17 @@ export function generateMetadata({
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
-      <meta name="author" content="Christopher S. Aondona (The Coding Simba)" />
+      <meta name="author" content="Christopher S. Aondona (The TekBreed)" />
 
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
-      <meta property="og:url" content={`https://codingsimba.com/${url}`} />
+      <meta property="og:url" content={`https://tekbreed.com/${url}`} />
       <meta property="og:image" content={image} />
       <meta property="og:image:alt" content={imageAlt} />
       <meta property="og:type" content={type} />
 
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:site" content="@codingsimba_" />
+      <meta name="twitter:site" content="@tekbreed" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />

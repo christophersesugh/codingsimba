@@ -20,11 +20,15 @@ export function Logo() {
         className="relative z-10 flex items-center gap-1 text-xl font-bold md:text-2xl"
       >
         <img
-          src={getImgSrc({ fileKey: "icon.png", path: "assets" })}
+          src={getImgSrc({ fileKey: "tekbreedlogo.png", path: "assets" })}
           width={40}
-          height={40}
         />
-        <motion.span
+        <img
+          src={getImgSrc({ fileKey: "tekbreedtext.png", path: "assets" })}
+          width={100}
+          // height={100}
+        />
+        {/* <motion.span
           className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text font-extrabold text-transparent dark:from-blue-400 dark:to-purple-400"
           whileHover={{
             scale: [1, 1.2, 1],
@@ -42,7 +46,7 @@ export function Logo() {
           }}
         >
           Simba
-        </motion.span>
+        </motion.span> */}
       </Link>
 
       {/* Explosion particles */}

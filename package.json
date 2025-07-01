@@ -1,18 +1,18 @@
 {
-  "name": "codingsimba",
-  "description": "Coding Simba is a community-driven learning platform for sharing knowledge, tutorials, articles, courses, and structured programs in software development. Join our community to learn, share, and grow together.",
+  "name": "tekbreed",
+  "description": "TekBreed is a community-driven learning platform for sharing knowledge, tutorials, articles, courses, and structured programs in software development. Join our community to learn, share, and grow together.",
   "private": true,
   "type": "module",
   "version": "1.0.0",
   "license": "AGPL-3.0-only",
-  "author": "Christopher S. Aondona <me@codingsimba.com> (https://codingsimba.com/)",
-  "homepage": "https://codingsimba.com",
+  "author": "Christopher S. Aondona <me@tekbreed.com> (https://tekbreed.com/)",
+  "homepage": "https://tekbreed.com",
   "bugs": {
-    "url": "https://github.com/codingsimba-dev/codingsimba/issues"
+    "url": "https://github.com/tekbreed-dev/tekbreed/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/codingsimba-dev/codingsimba"
+    "url": "https://github.com/tekbreed/tekbreed"
   },
   "keywords": [
     "education",

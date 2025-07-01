@@ -659,7 +659,7 @@ interface Metadata {
 }
 
 export function generateOpenGraphMeta({
-  title = "Coding Simba",
+  title = "TekBreed",
   description = slogan,
   url,
   image = getImgSrc({ path: "assets", fileKey: "icon.png" }),
@@ -686,7 +686,7 @@ export function generateOpenGraphMeta({
       "twitter:title": title,
       "twitter:description": description,
       "twitter:image": image,
-      "twitter:site": "@codingsimba_",
+      "twitter:site": "@tekbreed",
     },
   };
 

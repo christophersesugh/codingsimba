@@ -1,6 +1,6 @@
 import { FileText, Play, GraduationCap, Target, Trophy } from "lucide-react";
 
-export const slogan = "Elevate Your Code from Functional to Exceptional";
+export const slogan = "Breeding the next generation of software developers";
 
 export const learningIcons = {
   articles: FileText,
@@ -37,13 +37,13 @@ export const legal = [
 ];
 
 export const social = [
-  { name: "X (formerly twitter)", path: "https://twitter.com/codingsimba_" },
+  { name: "X (formerly twitter)", path: "https://twitter.com/tekbreed" },
   {
     name: "LinkedIn",
     path: "https://www.linkedin.com/in/christopher-sesugh-265332176/",
   },
-  { name: "Github", path: "https://github.com/codingsimba-dev" },
-  { name: "YouTube", path: "https://www.youtube.com/@codingsimba" },
+  { name: "Github", path: "https://github.com/tekbreed" },
+  { name: "YouTube", path: "https://www.youtube.com/@tekbreed" },
 ];
 
 export const navLinks = [

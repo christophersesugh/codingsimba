@@ -1,6 +1,6 @@
-# Contributing to Coding Simba
+# Contributing to TekBreed
 
-Thank you for your interest in Coding Simba. While we do not accept external code contributions, we welcome community engagement through GitHub Issues and our Discord community.
+Thank you for your interest in TekBreed. While we do not accept external code contributions, we welcome community engagement through GitHub Issues and our Discord community.
 
 ## Code Contributions
 
@@ -79,7 +79,7 @@ You can connect with us and the community through:
 
 - 💬 [Join our Discord community](https://discord.gg/7uZ6PWf4Xv)
 - 📝 Create GitHub Issues for bugs and features
-- 🌐 Visit our website at [codingsimba.com](https://codingsimba.com)
+- 🌐 Visit our website at [tekbreed.com](https://tekbreed.com)
 - 📧 Contact us through our website
 
 Our Discord community is a great place to:
@@ -90,4 +90,4 @@ Our Discord community is a great place to:
 - Connect with other developers
 - Stay updated on platform news
 
-Thank you for helping make Coding Simba better!
+Thank you for helping make TekBreed better!

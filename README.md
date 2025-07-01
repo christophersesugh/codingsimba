@@ -1,4 +1,4 @@
-# Coding Simba 🦁
+# TekBreed 🚀
 
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](https://github.com/codingsimba-dev/codingsimba/actions)
 [![License: AGPL v3](https://img.shields.io/badge/license-AGPL%20v3-blue)](./LICENSE)
@@ -20,7 +20,7 @@ This repository is public for transparency and educational purposes. While we do
 
 ## Live Site
 
-Visit the website at [codingsimba.com](https://codingsimba.com)
+Visit the website at [tekbreed.com](https://tekbreed.com)
 
 ## About
 
@@ -40,8 +40,8 @@ This is a platform for sharing insights about programming, software development 
 Join our community to discuss software development, share experiences, and learn together:
 
 - 💬 [Discord Community](https://discord.gg/7uZ6PWf4Xv)
-- 📝 [GitHub Issues](https://github.com/codingsimba/codingsimba/issues) for bug reports and feature requests
-- 🌐 [Website](https://codingsimba.com) for articles, tutorials, courses, programs and other modules.
+- 📝 [GitHub Issues](https://github.com/tekbreed/website/issues) for bug reports and feature requests
+- 🌐 [Website](https://tekbreed.com) for articles, tutorials, courses, programs and other modules.
 
 ## Contributing
 
@@ -60,4 +60,4 @@ This project is licensed under the GNU Affero General Public License v3.0 (AGPL-
 
 ---
 
-*Note: This is Coding Simba's learning platform focused on developer education and community building.*
+*Note: This is TekBreed's learning platform focused on developer education and community building.*
