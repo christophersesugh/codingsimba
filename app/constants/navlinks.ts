@@ -28,7 +28,7 @@ export const content = [
 export const platform = [
   { name: "about", path: "about" },
   { name: "contact", path: "contact" },
-  { name: "FAQs", path: "#faqs" },
+  { name: "FAQs", path: "support#faqs" },
 ];
 
 export const legal = [

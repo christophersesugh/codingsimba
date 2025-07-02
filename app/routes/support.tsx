@@ -1,17 +1,14 @@
 import { useState, Suspense } from "react";
+import { readMdxDirectory } from "~/utils/misc.server";
 import { motion } from "framer-motion";
 import {
-  MessageCircle,
   Mail,
   Phone,
   Clock,
   ChevronDown,
   ChevronUp,
-  Send,
-  X,
-  Minimize2,
-  Maximize2,
   Search,
+  MessageCircle,
 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -22,6 +19,7 @@ import { Header } from "~/components/page-header";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Markdown } from "~/components/mdx";
 import { Await, useLoaderData } from "react-router";
+import { DiscordSupport } from "~/components/discord-support";
 
 interface FAQData {
   frontmatter: {
@@ -31,136 +29,8 @@ interface FAQData {
 }
 
 export async function loader() {
-  const { readMdxDirectory } = await import("~/utils/misc.server");
   const faqs = readMdxDirectory("faqs");
   return { faqs };
-}
-
-function LiveChat() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: "Hi! How can I help you today?",
-      sender: "agent",
-      time: "Just now",
-    },
-  ]);
-  const [newMessage, setNewMessage] = useState("");
-
-  const sendMessage = () => {
-    if (newMessage.trim()) {
-      const message = {
-        id: messages.length + 1,
-        text: newMessage,
-        sender: "user",
-        time: "Just now",
-      };
-      setMessages([...messages, message]);
-      setNewMessage("");
-
-      // Simulate agent response
-      setTimeout(() => {
-        const agentResponse = {
-          id: messages.length + 2,
-          text: "Thanks for your message! Our team will get back to you shortly.",
-          sender: "agent",
-          time: "Just now",
-        };
-        setMessages((prev) => [...prev, agentResponse]);
-      }, 1000);
-    }
-  };
-
-  if (!isOpen) {
-    return (
-      <Button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-blue-600 p-0 shadow-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
-      >
-        <MessageCircle className="h-6 w-6" />
-      </Button>
-    );
-  }
-
-  return (
-    <div className="fixed bottom-6 right-6 z-50 w-80">
-      <Card className="shadow-2xl">
-        <CardHeader className="bg-blue-600 text-white dark:bg-blue-500">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <MessageCircle className="h-5 w-5" />
-              <CardTitle className="text-lg">Live Chat</CardTitle>
-            </div>
-            <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsMinimized(!isMinimized)}
-                className="h-8 w-8 p-0 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
-              >
-                {isMinimized ? (
-                  <Maximize2 className="h-4 w-4" />
-                ) : (
-                  <Minimize2 className="h-4 w-4" />
-                )}
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsOpen(false)}
-                className="h-8 w-8 p-0 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-
-        {!isMinimized && (
-          <CardContent className="p-0">
-            <div className="flex h-80 flex-col">
-              <div className="flex-1 space-y-3 overflow-y-auto p-4">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
-                  >
-                    <div
-                      className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
-                        message.sender === "user"
-                          ? "bg-blue-600 text-white dark:bg-blue-500"
-                          : "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
-                      }`}
-                    >
-                      <p>{message.text}</p>
-                      <p className="mt-1 text-xs opacity-70">{message.time}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="border-t p-4">
-                <div className="flex gap-2">
-                  <Input
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Type your message..."
-                    onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-                    className="flex-1"
-                  />
-                  <Button onClick={sendMessage} size="sm">
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        )}
-      </Card>
-    </div>
-  );
 }
 
 function FaqSkeleton() {
@@ -190,7 +60,7 @@ function FAQSection() {
   const faqs = loaderData.faqs;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" id="faqs">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex-1">
           <div className="relative max-w-md">
@@ -364,6 +234,20 @@ export default function SupportPage() {
           </div>
         </section>
 
+        <section className="bg-gray-100 py-16 dark:bg-gray-800">
+          <div className="container mx-auto px-4">
+            <DiscordSupport
+              showStats={true}
+              stats={{
+                memberCount: 1200,
+                onlineCount: 150,
+                channelCount: 25,
+                responseTime: "< 5 minutes",
+              }}
+            />
+          </div>
+        </section>
+
         <section className="py-16">
           <div className="container mx-auto px-4">
             <motion.div
@@ -415,7 +299,7 @@ export default function SupportPage() {
                         </div>
                         <div className="flex items-center gap-3">
                           <MessageCircle className="h-5 w-5 text-gray-500" />
-                          <span>Live Chat (Bottom Right)</span>
+                          <span>Live Chat (For Authenticated Users)</span>
                         </div>
                       </div>
                     </div>
@@ -445,8 +329,6 @@ export default function SupportPage() {
           </div>
         </section>
       </div>
-
-      <LiveChat />
     </>
   );
 }

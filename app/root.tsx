@@ -37,6 +37,7 @@ import { getEnv } from "./utils/env.server";
 import { useToast } from "./hooks/use-toast";
 import { honeypot } from "./utils/honeypot.server";
 import { DiscordBadge } from "./components/discord-badge";
+import { AuthenticatedLiveChat } from "./components/authenticated-live-chat";
 import { useNonce } from "./utils/nonce-provider";
 
 export const links: Route.LinksFunction = () => [
@@ -156,9 +157,18 @@ function App() {
       <MobileNav />
       <Outlet />
       <Footer />
-      <DiscordBadge />
+      <BottomContainer />
       <Toaster position="top-right" richColors />
     </Document>
+  );
+}
+
+function BottomContainer() {
+  return (
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+      <AuthenticatedLiveChat />
+      <DiscordBadge />
+    </div>
   );
 }
 

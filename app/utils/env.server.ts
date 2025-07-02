@@ -18,6 +18,9 @@ export const schema = z.object({
   SANITY_STUDIO_PROJECT_ID: z.string(),
   SANITY_STUDIO_DATASET: z.string(),
   ALLOW_INDEXING: z.enum(["true", "false"]).optional(),
+  DISCORD_WEBHOOK_URL: z.string().optional(),
+  DISCORD_BOT_TOKEN: z.string().optional(),
+  DISCORD_GUILD_ID: z.string().optional(),
 });
 
 declare global {
