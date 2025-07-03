@@ -1,65 +1,76 @@
 import React from "react";
+import type { Route } from "./+types/index";
 import { Link, useSearchParams } from "react-router";
 import { Search } from "lucide-react";
 import { Header } from "~/components/page-header";
-// import { ContentFilter } from "~/components/content-filter";
-// import { ContentPagination } from "~/components/content-pagination";
+import { ContentFilter } from "~/components/content-filter";
+import { ContentPagination } from "~/components/content-pagination";
 import { EmptyState } from "~/components/empty-state";
 import { TutorialCard } from "./components/tutorial-card";
-import { tutorials, type Tutorial } from "./data";
 import { generateMetadata } from "~/utils/meta";
+import { UrlSchema } from "~/utils/content.server/shared-types";
+import { StatusCodes } from "http-status-codes";
+import { invariantResponse } from "~/utils/misc";
+import { getAllCategories } from "~/utils/content.server/shared-utils";
+import { getTutorials } from "~/utils/content.server/turorials/utils";
 
-export default function TutorialsRoute() {
-  const [searchParams] = useSearchParams();
-  const page = parseInt(searchParams.get("page") || "1");
-  const search = searchParams.get("search") || "";
-  const category = searchParams.get("category") || "";
-  const tag = searchParams.get("tag") || "";
+export async function loader({ request }: Route.LoaderArgs) {
+  const searchParams = Object.fromEntries(
+    new URL(request.url).searchParams.entries(),
+  );
+  const parsedParams = UrlSchema.safeParse(searchParams);
+
+  invariantResponse(parsedParams.success, "Invalid parameters", {
+    status: StatusCodes.BAD_REQUEST,
+  });
+
+  const { search, tag, order, category, page } = parsedParams.data;
 
   const PAGE_SIZE = 6;
-  const safePage = Math.max(1, page);
-  const start = (safePage - 1) * PAGE_SIZE;
-  const end = start + PAGE_SIZE;
 
-  // Filter tutorials based on search params
-  let filteredTutorials = tutorials;
+  const safePage = Math.max(0, page);
+  const safeStart = (safePage - 1) * PAGE_SIZE;
+  const safeEnd = safeStart + PAGE_SIZE;
 
-  if (search) {
-    filteredTutorials = filteredTutorials.filter(
-      (tutorial: Tutorial) =>
-        tutorial.title.toLowerCase().includes(search.toLowerCase()) ||
-        tutorial.description.toLowerCase().includes(search.toLowerCase()) ||
-        tutorial.tags.some((tag: string) =>
-          tag.toLowerCase().includes(search.toLowerCase()),
-        ),
-    );
-  }
+  const categories = getAllCategories();
+  const tutorialsData = await getTutorials({
+    search,
+    tag,
+    order,
+    category,
+    start: safeStart,
+    end: safeEnd,
+  });
 
-  if (category) {
-    filteredTutorials = filteredTutorials.filter((tutorial: Tutorial) =>
-      tutorial.tags.some(
-        (tag: string) => tag.toLowerCase() === category.toLowerCase(),
-      ),
-    );
-  }
+  return {
+    tutorials: tutorialsData.tutorials,
+    total: tutorialsData.total,
+    currentPage: safePage,
+    totalPages: Math.ceil(tutorialsData.total / PAGE_SIZE),
+    categories,
+  };
+}
 
-  if (tag) {
-    filteredTutorials = filteredTutorials.filter((tutorial: Tutorial) =>
-      tutorial.tags.some((t: string) => t.toLowerCase() === tag.toLowerCase()),
-    );
-  }
-
-  const currentTutorials = filteredTutorials.slice(start, end);
+export default function TutorialsRoute({ loaderData }: Route.ComponentProps) {
+  const metadata = generateMetadata({ title: "Tutorials" });
+  const [, setSearchParams] = useSearchParams();
+  const { tutorials } = loaderData;
+  const PAGE = "page";
 
   const resetFilters = React.useCallback(() => {
-    const params = new URLSearchParams();
-    params.set("page", "1");
-    return params;
-  }, []);
+    setSearchParams((prevParams) => {
+      const params = new URLSearchParams();
+      const page = prevParams.get(PAGE);
+      if (page) {
+        params.set(PAGE, page);
+      }
+      return params;
+    });
+  }, [setSearchParams]);
 
   return (
     <>
-      {generateMetadata({ title: "Tutorials | Coding Simba" })}
+      {metadata}
       <Header
         title="tutorials"
         description="Practical, hands-on tutorials to help you master specific technologies and concepts."
@@ -67,10 +78,10 @@ export default function TutorialsRoute() {
         enableSearch
       />
       <section className="container mx-auto px-4 pb-12 pt-6">
-        {/* <ContentFilter /> */}
+        <ContentFilter />
         <section className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {currentTutorials?.length
-            ? currentTutorials.map((tutorial) => (
+          {tutorials?.length
+            ? tutorials.map((tutorial) => (
                 <Link
                   prefetch="intent"
                   key={tutorial.id}
@@ -81,9 +92,8 @@ export default function TutorialsRoute() {
               ))
             : null}
         </section>
-        {currentTutorials?.length ? (
-          // <ContentPagination />
-          <div>Pagination</div>
+        {tutorials?.length ? (
+          <ContentPagination />
         ) : (
           <EmptyState
             icon={<Search className="size-8" />}

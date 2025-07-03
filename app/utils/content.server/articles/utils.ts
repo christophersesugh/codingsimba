@@ -1,11 +1,10 @@
-import type { Article, Category, RelatedArticles, Tag } from "./types";
+import type { Article, RelatedArticles } from "./types";
 import type { QueryParams } from "@sanity/client";
-import type { ArticlesArgs } from "./types";
+import type { Args, Tag } from "../shared-types";
 import { client } from "../loader";
 import {
   articleDetailsQuery,
   articlesQuery,
-  categoryQuery,
   countQuery,
   recentArticlesQuery,
   relatedQuery,
@@ -50,7 +49,7 @@ export async function getArticleIdBySlug(slug: string) {
  *   end: 10
  * });
  */
-export async function getArticles(args: ArticlesArgs) {
+export async function getArticles(args: Args) {
   const {
     search = "",
     category = "",
@@ -182,18 +181,6 @@ export async function getRecentArticles(limit = 2) {
       })),
     )) || []
   );
-}
-
-/**
- * Retrieves all available categories
- * @returns {Promise<Category[]>} Array of all categories
- * @example
- * // Get all categories and display their titles
- * const categories = await getAllCategories();
- * categories.forEach(category => console.log(category.title));
- */
-export async function getAllCategories() {
-  return client.fetch<Category[]>(categoryQuery);
 }
 
 /**

@@ -12,7 +12,7 @@ interface MetadataProps {
 }
 
 export function generateMetadata({
-  title = "TekBreed",
+  title = "Coding Simba",
   description = slogan,
   url = "https://tekbreed.com",
   image = getImgSrc({ path: "assets", fileKey: "icon.png" }),
@@ -20,12 +20,14 @@ export function generateMetadata({
   type = "website",
   keywords,
 }: MetadataProps) {
+  title =
+    title.toLowerCase() !== "tekbreed" ? `${title} | TekBreed` : "TekBreed";
   return (
     <>
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
-      <meta name="author" content="Christopher S. Aondona (The TekBreed)" />
+      <meta name="author" content="Christopher S. Aondona (The Coding Simba)" />
 
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />

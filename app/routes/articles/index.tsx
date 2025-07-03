@@ -1,6 +1,6 @@
 import React from "react";
 import type { Route } from "./+types";
-import { UrlSchema } from "~/utils/content.server/articles/types";
+import { UrlSchema } from "~/utils/content.server/shared-types";
 import { Link, useSearchParams } from "react-router";
 import { Search } from "lucide-react";
 import { StatusCodes } from "http-status-codes";
@@ -10,13 +10,13 @@ import { FeaturedArticle } from "./components/featured-article";
 import { ArticleCard } from "~/routes/articles/components/article-card";
 import { ContentPagination } from "~/components/content-pagination";
 import {
-  getAllCategories,
   getArticles,
   getFeaturedArticle,
 } from "~/utils/content.server/articles/utils";
 import { invariantResponse } from "~/utils/misc";
 import { EmptyState } from "~/components/empty-state";
 import { generateMetadata } from "~/utils/meta";
+import { getAllCategories } from "~/utils/content.server/shared-utils";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const searchParams = Object.fromEntries(
@@ -51,7 +51,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     featuredArticle,
     articles: articlesData.articles,
     total: articlesData.total,
-    currentPage: page,
+    currentPage: safePage,
     totalPages: Math.ceil(articlesData.total / PAGE_SIZE),
     categories,
   };

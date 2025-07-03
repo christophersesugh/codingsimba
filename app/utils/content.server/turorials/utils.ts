@@ -1,206 +1,131 @@
-import type { Tutorial, TutorialLesson } from "./types";
 import type { QueryParams } from "@sanity/client";
-import type { TutorialArgs } from "./types";
+import type { Args } from "../shared-types";
 import { client } from "../loader";
 import {
-  tutorialsQuery,
   tutorialDetailsQuery,
-  tutorialsByCategoryQuery,
-  tutorialLessonQuery,
-  tutorialLessonsQuery,
+  tutorialsQuery,
+  countQuery,
+  lessonsQuery,
+  tutorialIdQuery,
+  lessonDetailsQuery,
 } from "./queries";
-import { bundleMDX } from "~/utils/mdx.server";
-import { bundleComponents, MarkdownConverter } from "~/utils/misc.server";
+import type { Tutorial, Lesson } from "./types";
 
 /**
- * Retrieves a list of tutorials based on specified filtering criteria
- * @param {TutorialArgs} args - The arguments for filtering and pagination
- * @param {string} [args.category=""] - Category slug to filter tutorials
- * @param {string} [args.author=""] - Author slug to filter tutorials
- * @param {string} [args.search=""] - Search term to filter tutorials
- * @param {string} [args.order="createdAt desc"] - Sort order for tutorials
+ * Retrieves the ID of a tutorial by its slug
+ * @param {string} slug - The slug of the tutorial to retrieve
+ * @returns {Promise<string | undefined>} The ID of the tutorial or undefined if not found
+ * @example
+ * // Get the ID of a tutorial about React hooks
+ * const id = await getTutorialIdBySlug("react-hooks-guide");
+ * console.log(id); // "1234567890"
+ */
+export async function getTutorialIdBySlug(slug: string) {
+  return client
+    .fetch<{ id: string }>(tutorialIdQuery, { slug })
+    .then((tutorial) => tutorial.id)
+    .catch(() => undefined);
+}
+
+/**
+ * Retrieves a list of articles based on specified filtering criteria
+ * @param {ArticlesArgs} args - The arguments for filtering and pagination
+ * @param {string} [args.search=""] - Search term to filter articles
+ * @param {string} [args.category=""] - Category slug to filter articles
+ * @param {string} [args.tag=""] - Tag slug to filter articles
+ * @param {string} [args.order="createdAt desc"] - Sort order for articles
  * @param {number} [args.start] - Start index for pagination
  * @param {number} [args.end] - End index for pagination
- * @returns {Promise<Tutorial[]>} Array of filtered tutorials
+ * @returns {Promise<{articles: Article[], total: number}>} Object containing filtered articles and total count
  * @example
- * // Get the first 10 tutorials in the "javascript" category
- * const tutorials = await getTutorials({
+ * // Get the first 10 articles in the "javascript" category
+ * const { articles, total } = await getArticles({
  *   category: "javascript",
  *   start: 0,
  *   end: 10
  * });
  */
-export async function getTutorials(args: TutorialArgs) {
-  const { category = "", search = "", start, end } = args;
+export async function getTutorials(args: Args) {
+  const {
+    search = "",
+    category = "",
+    tag = "",
+    order = "createdAt desc",
+    start,
+    end,
+  } = args;
 
   const queryParams = {
-    ...(category && { categorySlug: category }),
     ...(search && { search: `*${search}*` }),
+    ...(category && { category }),
+    ...(tag && { tag }),
     start,
     end,
   } as QueryParams;
 
-  let query = tutorialsQuery;
-  if (category) query = tutorialsByCategoryQuery;
+  let filters = `_type == "tutorial" && published == true`;
+  if (category) filters += ` && category->slug.current == $category`;
+  if (tag) filters += ` && $tag in tags[]->slug.current`;
 
-  const tutorials = await client.fetch<Tutorial[]>(query, queryParams);
-  return tutorials ?? [];
+  const response = await client.fetch<{
+    tutorials: Tutorial[];
+    total: number;
+  }>(tutorialsQuery({ search, filters, order }), queryParams);
+  return {
+    tutorials: response.tutorials,
+    total: response.total ?? 0,
+  };
+}
+
+/**
+ * Counts the total number of published tutorials
+ * @returns {Promise<{count: number}>} Object containing the total count of tutorials
+ * @example
+ * // Get the total number of published tutorials
+ * const { count } = await countTutorials();
+ * console.log(`Total tutorials: ${count}`);
+ */
+export async function countTutorials() {
+  return client.fetch<number>(countQuery);
 }
 
 /**
  * Retrieves detailed information about a specific tutorial by its slug
- * @param {string} slug - The slug of the tutorial to retrieve
- * @returns {Promise<Tutorial | null>} Detailed tutorial information or null if not found
+ * @param {string} tutorialId - The ID of the tutorial to retrieve
+ * @returns {Promise<Tutorial>} Detailed tutorial information
  * @example
  * // Get full details of a tutorial about React hooks
- * const tutorial = await getTutorialDetails("react-hooks-guide");
+ * const tutorial = await getTutorialDetails("1234567890");
  * console.log(tutorial.title); // "Complete Guide to React Hooks"
  */
-export async function getTutorialDetails(slug: string) {
-  const tutorial = await client.fetch<Tutorial | null>(tutorialDetailsQuery, {
-    slug,
+export async function getTutorialDetails(tutorialId: string) {
+  return await client.fetch<Tutorial>(tutorialDetailsQuery, {
+    tutorialId,
   });
-
-  if (!tutorial) return null;
-
-  // Process lessons content
-  const processedLessons = await Promise.all(
-    tutorial.lessons.map(async (lesson) => {
-      const refinedComponents = bundleComponents(
-        lesson.reactComponents.map((comp) => ({
-          file: {
-            filename: `${comp.title}.tsx`,
-            code: comp.file.code,
-          },
-        })),
-      );
-      const { code } = await bundleMDX({
-        source: lesson.content,
-        files: refinedComponents,
-      });
-
-      return {
-        ...lesson,
-        content: code,
-        markdown: lesson.content,
-        html: await MarkdownConverter.toHtml(lesson.content),
-      };
-    }),
-  );
-
-  return {
-    ...tutorial,
-    lessons: processedLessons,
-  };
 }
 
 /**
- * Retrieves a specific tutorial lesson by its slug
- * @param {string} lessonSlug - The slug of the lesson to retrieve
- * @returns {Promise<TutorialLesson | null>} Detailed lesson information or null if not found
+ * Retrieves the lessons for a specific tutorial
+ * @param {string} tutorialId - The ID of the tutorial to retrieve lessons for
+ * @returns {Promise<TutorialLesson[]>} Array of tutorial lessons
  * @example
- * // Get full details of a lesson
- * const lesson = await getTutorialLesson("introduction-to-hooks");
- * console.log(lesson.title); // "Introduction to React Hooks"
+ * // Get the lessons for a tutorial about React hooks
+ * const lessons = await getTutorialLessons("1234567890");
+ * console.log(lessons.length); // 5
  */
-export async function getTutorialLesson(lessonSlug: string) {
-  const lesson = await client.fetch<TutorialLesson | null>(
-    tutorialLessonQuery,
-    { lessonSlug },
-  );
-
-  if (!lesson) return null;
-
-  const refinedComponents = bundleComponents(
-    lesson.reactComponents.map((comp) => ({
-      file: {
-        filename: `${comp.title}.tsx`,
-        code: comp.file.code,
-      },
-    })),
-  );
-  const { code } = await bundleMDX({
-    source: lesson.content,
-    files: refinedComponents,
-  });
-
-  return {
-    ...lesson,
-    content: code,
-    markdown: lesson.content,
-    html: await MarkdownConverter.toHtml(lesson.content),
-  };
+export async function getTutorialLessons(tutorialId: string) {
+  return client.fetch<Lesson[]>(lessonsQuery, { tutorialId });
 }
 
 /**
- * Retrieves all lessons for a specific tutorial
- * @param {string} tutorialSlug - The slug of the tutorial
- * @returns {Promise<TutorialLesson[]>} Array of lessons for the tutorial
+ * Retrieve a single lesson content
+ * @param {string} lessonId - The ID of the lesson to retrieve
+ * @returns {Promise<Lesson>} The lesson content
  * @example
- * // Get all lessons for a tutorial
- * const lessons = await getTutorialLessons("react-hooks-guide");
- * lessons.forEach(lesson => console.log(lesson.title));
+ * // Get the content of a lesson about React hooks
+ * const lesson = await getTutorialLessonDetails("1234567890");
+ * console.log(lesson.content); // "This is the content of the lesson"
  */
-export async function getTutorialLessons(tutorialSlug: string) {
-  const lessons = await client.fetch<TutorialLesson[]>(tutorialLessonsQuery, {
-    tutorialSlug,
-  });
-
-  const processedLessons = await Promise.all(
-    (lessons ?? []).map(async (lesson) => {
-      const refinedComponents = bundleComponents(
-        lesson.reactComponents.map((comp) => ({
-          file: {
-            filename: `${comp.title}.tsx`,
-            code: comp.file.code,
-          },
-        })),
-      );
-      const { code } = await bundleMDX({
-        source: lesson.content,
-        files: refinedComponents,
-      });
-
-      return {
-        ...lesson,
-        content: code,
-        markdown: lesson.content,
-        html: await MarkdownConverter.toHtml(lesson.content),
-      };
-    }),
-  );
-
-  return processedLessons;
-}
-
-/**
- * Retrieves tutorials by category
- * @param {string} categorySlug - The slug of the category
- * @returns {Promise<Tutorial[]>} Array of tutorials in the category
- * @example
- * // Get all tutorials in the JavaScript category
- * const tutorials = await getTutorialsByCategory("javascript");
- * tutorials.forEach(tutorial => console.log(tutorial.title));
- */
-export async function getTutorialsByCategory(categorySlug: string) {
-  const tutorials = await client.fetch<Tutorial[]>(tutorialsByCategoryQuery, {
-    categorySlug,
-  });
-  return tutorials ?? [];
-}
-
-/**
- * Retrieves a tutorial by its slug
- * @param {string} slug - The slug of the tutorial to retrieve
- * @returns {Promise<Tutorial | null>} Detailed tutorial information or null if not found
- * @example
- * // Get full details of a tutorial about React hooks
- * const tutorial = await getTutorialBySlug("react-hooks");
- * console.log(tutorial.title); // "React Hooks"
- */
-export async function getTutorialBySlug(slug: string) {
-  const tutorial = await client.fetch<Tutorial | null>(tutorialDetailsQuery, {
-    slug,
-  });
-  return tutorial ?? null;
+export async function getTutorialLessonDetails(lessonId: string) {
+  return client.fetch<Lesson>(lessonDetailsQuery, { lessonId });
 }

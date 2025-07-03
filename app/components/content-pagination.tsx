@@ -1,4 +1,5 @@
-import type { Route } from "../routes/articles/+types/index";
+import type { Route as ArticlesRoute } from "../routes/articles/+types/index";
+import type { Route as TutorialsRoute } from "../routes/tutorials/+types/index";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import React from "react";
 import { Link, useLoaderData } from "react-router";
@@ -12,7 +13,10 @@ import {
 import { VisuallyHidden } from "~/components/ui/visually-hidden";
 
 export function ContentPagination() {
-  const loaderData = useLoaderData() as Route.ComponentProps["loaderData"];
+  const loaderData = useLoaderData<
+    | ArticlesRoute.ComponentProps["loaderData"]
+    | TutorialsRoute.ComponentProps["loaderData"]
+  >();
   const currentPage = loaderData.currentPage;
   const totalPages = loaderData.totalPages;
   const firstPage = Math.max(1, currentPage - 2);
